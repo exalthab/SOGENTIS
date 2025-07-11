@@ -1,0 +1,57 @@
+{% load static i18n %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm fixed-top">
+  <div class="container">
+    <a class="navbar-brand fw-bold text-white" href="{% url 'core:home' %}">
+      🛒 SogentisMarket
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarEcom" aria-controls="navbarEcom"
+            aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarEcom">
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link text-white" href="{% url 'ecommerce:products' %}">Produits</a>
+        </li>
+
+        <!-- Dropdown Services -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle text-white" href="#" id="servicesDropdown" role="button"
+             data-bs-toggle="dropdown" aria-expanded="false">
+            Services
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="servicesDropdown">
+            <li><a class="dropdown-item" href="#">🌐 Hosting</a></li>
+            <li><a class="dropdown-item" href="#">🛠️ Maintenance</a></li>
+            <li><a class="dropdown-item" href="{% url 'gestion_projets:services' %}">📁 Gestion de projets</a></li>
+          </ul>
+        </li>
+
+        <!-- Dropdown Formations -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle text-white" href="#" id="formationsDropdown" role="button"
+             data-bs-toggle="dropdown" aria-expanded="false">
+            Formations
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="formationsDropdown">
+            <li><a class="dropdown-item" href="#">📡 Networking</a></li>
+            <li><a class="dropdown-item" href="#">🎨 Webdesign</a></li>
+            <li><a class="dropdown-item" href="{% url 'formations:formations_list' %}">💻 Coding</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link text-white position-relative" href="{% url 'ecommerce:cart_detail' %}">
+            🛍️ Panier
+            <span class="badge bg-warning text-dark position-absolute top-0 start-100 translate-middle">
+              {{ cart.items.count|default:"0" }}
+            </span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

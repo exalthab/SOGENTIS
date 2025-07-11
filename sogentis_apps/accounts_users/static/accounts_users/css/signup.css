@@ -1,0 +1,35 @@
+/* ✅ Signup.css : mise en forme du formulaire d'inscription */
+.auth-form-container {
+  background-color: #f8f9fa;
+  padding: 2rem;
+  border-radius: 8px;
+}
+
+.card {
+  border-radius: 12px;
+}
+
+.form-label {
+  font-weight: 500;
+  color: #333;
+}
+
+.btn-success {
+  background-color: #198754;
+  border-color: #198754;
+}
+
+.btn-success:hover {
+  background-color: #157347;
+  border-color: #146c43;
+}
+
+.text-danger.small {
+  font-size: 0.85rem;
+}
+
+.form-control,
+.form-select {
+  border-radius: 6px;
+}
+

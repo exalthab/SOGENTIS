@@ -1,0 +1,74 @@
+// static/scss/bootstrap/utilities/_spacing.scss
+// ─────────────────────────────────────────────────────────────
+// Classes utilitaires pour espacement (margin & padding)
+// ─────────────────────────────────────────────────────────────
+
+@use '../1-import/variables' as vars;
+@use '../1-import/mixins'    as mix;
+
+$spacers:     vars.$spacers;
+$breakpoints: vars.$breakpoints;
+
+// ── Base : .m-, .p- et directions ────────────────────────────
+@each $dir, $props in (
+  m:   margin,
+  p:   padding,
+  mt:  margin-top,
+  mr:  margin-right,
+  mb:  margin-bottom,
+  ml:  margin-left,
+  mx:  (margin-left, margin-right),
+  my:  (margin-top, margin-bottom),
+  pt:  padding-top,
+  pr:  padding-right,
+  pb:  padding-bottom,
+  pl:  padding-left,
+  px:  (padding-left, padding-right),
+  py:  (padding-top, padding-bottom)
+) {
+  @each $size, $value in $spacers {
+    .#{$dir}-#{$size} {
+      @if type-of($props) == 'list' {
+        // axes horizontales/verticales
+        #{$nth($props,1)}: $value !important;
+        #{$nth($props,2)}: $value !important;
+      } @else {
+        // direction unique
+        #{$props}: $value !important;
+      }
+    }
+  }
+}
+
+// ── Responsive : .m-{break}-*, .p-{break}-* ───────────────────
+@each $break, $breakval in $breakpoints {
+  @include mix.breakpoint-up($break) {
+    @each $dir, $props in (
+      m:   margin,
+      p:   padding,
+      mt:  margin-top,
+      mr:  margin-right,
+      mb:  margin-bottom,
+      ml:  margin-left,
+      mx:  (margin-left, margin-right),
+      my:  (margin-top, margin-bottom),
+      pt:  padding-top,
+      pr:  padding-right,
+      pb:  padding-bottom,
+      pl:  padding-left,
+      px:  (padding-left, padding-right),
+      py:  (padding-top, padding-bottom)
+    ) {
+      @each $size, $value in $spacers {
+        .#{$dir}-#{$break}-#{$size} {
+          @if type-of($props) == 'list' {
+            #{$nth($props,1)}: $value !important;
+            #{$nth($props,2)}: $value !important;
+          } @else {
+            #{$props}: $value !important;
+          }
+        }
+      }
+    }
+  }
+}

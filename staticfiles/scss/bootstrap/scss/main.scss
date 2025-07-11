@@ -1,0 +1,116 @@
+// main.scss — point d’entrée du framework
+
+// 0. Configuration de base
+@use '0-settings/breakpoints';
+@use '0-settings/z-index';
+
+// 1. Import
+@use '1-import/variables'   as vars;
+@use '1-import/mixins'      as mix;
+
+// 2. Normalisation et réinitialisation
+@use '2-tools/normalize';
+@use '2-tools/functions';
+@use '2-tools/helpers';
+@use '2-tools/reset';
+
+// 3. generic
+@use '3-generic/typography';
+
+// 4. Éléments
+@use '4-elements/body';
+@use '4-elements/header';
+@use '4-elements/links';
+@use '4-elements/lists';
+@use '4-elements/box-sizing';
+
+// 5. Système de grille
+@use '5-grid/containers';
+@use '5-grid/grid';
+@use '5-grid/utilities';
+
+// 6. Layout
+@use '6-layout/base';
+@use '6-layout/footer';
+@use '6-layout/main';
+@use '6-layout/soci';
+
+
+// 7. Composants d’interface
+@use '7-components/buttons';
+@use '7-components/forms';
+@use '7-components/cards';
+@use '7-components/navbar';
+@use '7-components/nav';
+@use '7-components/topbar';
+@use '7-components/breadcrumbs';
+@use '7-components/pagination';
+@use '7-components/badges';
+@use '7-components/alerts';
+@use '7-components/modals';
+@use '7-components/carousel';
+@use '7-components/accordion';
+@use '7-components/avatars';
+@use '7-components/tooltips';
+@use '7-components/dropdowns';
+@use '7-components/inputs';
+@use '7-components/sidebars';
+@use '7-components/tables';
+@use '7-components/media';
+@use '7-components/timeline';
+@use '7-components/toasts';
+@use '7-components/tabs';
+@use '7-components/progress';
+
+// 8. Animations et transitions
+@use '8-animations/animations';
+@use '8-animations/transitions';
+
+// 9. Icônes
+@use '9-icons/icons';
+
+// 10. Classes utilitaires
+@use '10-utilities/display';
+@use '10-utilities/position';
+@use '10-utilities/sizing';
+@use '10-utilities/visibility';
+@use '10-utilities/accessibility';
+@use '10-utilities/flex';
+@use '10-utilities/align';
+@use '10-utilities/background';
+@use '10-utilities/borders';
+@use '10-utilities/colors';
+@use '10-utilities/float';
+@use '10-utilities/font';
+@use '10-utilities/height';
+@use '10-utilities/margin';
+@use '10-utilities/opacity';
+@use '10-utilities/overflow';
+@use '10-utilities/padding';
+@use '10-utilities/shadows';
+@use '10-utilities/text';
+@use '10-utilities/transform';
+@use '10-utilities/width';
+
+// 11. Thèmes et personnalisation
+@use '11-themes/default';
+@use '11-themes/dark';
+@use '11-themes/custom';
+@use '11-themes/high-contrast';
+
+// 12. Responsive / Media Queries
+@use '12-responsive/responsive';
+
+// 13. Accessibilité
+@use '13-accessibility/focus';
+@use '13-accessibility/skip-links';
+@use '13-accessibility/aria';
+@use '13-accessibility/contrast';
+
+// 14. Correctifs et compatibilité
+@use '14-fixes/browser';
+@use '14-fixes/polyfills';
+
+// // 15. Librairies externes
+// @use 'bootstrap/scss/bootstrap';
+// @import '@fortawesome/fontawesome-free/css/all.min.css';

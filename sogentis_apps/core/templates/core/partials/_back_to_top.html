@@ -1,0 +1,32 @@
+{% load static i18n %}
+
+<!-- Bouton Retour en haut -->
+<button
+  id="backToTop"
+  class="btn btn-light position-fixed"
+  title="{% trans 'Retour en haut' %}"
+  aria-label="{% trans 'Retour en haut' %}"
+  style="bottom: 20px; right: 20px; display: none"
+>
+  <i class="fas fa-arrow-up"></i>
+</button>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const backToTop = document.getElementById("backToTop");
+
+    // Fonction pour afficher ou cacher le bouton selon la position de scroll
+    function toggleVisibility() {
+      backToTop.style.display = window.scrollY > 300 ? "block" : "none";
+    }
+
+    // Lancer au chargement de la page et à chaque scroll
+    toggleVisibility();
+    window.addEventListener("scroll", toggleVisibility);
+
+    // Scroll vers le haut au clic
+    backToTop.addEventListener("click", function () {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  });
+</script>

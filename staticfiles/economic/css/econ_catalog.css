@@ -1,0 +1,19 @@
+.product-detail-img-area {
+  position: relative;
+  background: linear-gradient(120deg, #eaf6ff 70%, #d1ffe9 100%);
+  border-radius: 1.2rem;
+  padding: 2rem 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.product-detail-img-area img {
+  max-width: 320px;
+  max-height: 260px;
+  box-shadow: 0 6px 24px rgba(46,213,124,.13);
+}
+.product-detail-img-area .badge-new {
+  position: absolute;
+  top: 24px;
+  left: 28px;
+}

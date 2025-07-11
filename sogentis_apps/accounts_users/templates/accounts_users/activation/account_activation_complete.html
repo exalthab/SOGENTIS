@@ -1,0 +1,22 @@
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Activation réussie" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/activation.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+  <div class="card shadow text-center p-4">
+    <div class="card-body">
+      <h2 class="text-success mb-3">
+        <i class="fas fa-check-circle"></i> {% trans "Compte activé !" %}
+      </h2>
+      <p>{% trans "Votre compte a été activé avec succès." %}</p>
+      <a href="{% url 'accounts_users_web:login' %}" class="btn btn-primary mt-3">{% trans "Se connecter" %}</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

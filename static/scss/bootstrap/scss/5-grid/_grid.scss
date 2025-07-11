@@ -1,0 +1,40 @@
+// 5-grid/_grid.scss — utilitaires de grille (gutters)
+// ─────────────────────────────────────────────────────────────
+// Génère les classes utilitaires gx-*, gy-* et leurs variantes responsives
+// ─────────────────────────────────────────────────────────────
+
+@use '../1-import/variables' as vars;
+@use '../1-import/mixins'    as mix;
+@use 'sass:math';
+
+// ====================
+// GUTTERS HORIZONTAUX (gx-*) & VERTICAUX (gy-*)
+// ====================
+
+@each $size, $value in vars.$spacers {
+  .gx-#{$size} {
+    column-gap: $value !important;
+  }
+
+  .gy-#{$size} {
+    row-gap: $value !important;
+  }
+}
+
+// ====================
+// GUTTERS RESPONSIVES (gx-sm-*, gy-md-*, etc.)
+// ====================
+
+@each $breakpoint, $min-width in vars.$breakpoints {
+  @include mix.breakpoint-up($breakpoint) {
+    @each $size, $value in vars.$spacers {
+      .gx-#{$breakpoint}-#{$size} {
+        column-gap: $value !important;
+      }
+
+      .gy-#{$breakpoint}-#{$size} {
+        row-gap: $value !important;
+      }
+    }
+  }
+}

@@ -1,0 +1,8 @@
+<h3>Profils en attente</h3>
+<ul>
+  {% for profile in profiles %}
+    <li>{{ profile.full_name }} - {{ profile.user.email }}</li>
+  {% empty %}
+    <li>Aucun profil en attente.</li>
+  {% endfor %}
+</ul>

@@ -1,0 +1,24 @@
+{% extends "main.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Annulation du Don" %} - SOGEN{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <section class="donation-cancel text-center">
+    <div class="alert alert-warning shadow-sm mb-4" role="alert">
+      <h2 class="mb-3">{% trans "Le don a été annulé" %}</h2>
+      <p class="mb-0">
+        {% trans "Votre transaction a été annulée. Si vous avez des questions, n'hésitez pas à nous contacter." %}
+      </p>
+    </div>
+    <a href="{% url 'social:donate' %}" class="btn btn-primary mt-3">
+      {% trans "Faire un autre don" %}
+    </a>
+    <a href="{% url 'core:contact' %}" class="btn btn-outline-secondary mt-3 ms-2">
+      {% trans "Nous contacter" %}
+    </a>
+  </section>
+</div>
+{% endblock %}
+

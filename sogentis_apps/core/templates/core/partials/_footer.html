@@ -1,0 +1,12 @@
+{% load static i18n %}
+
+<footer class="footer">
+  <p>
+    &copy; {{ YEAR }} {{ PROJECT_NAME }} – {% trans "Tous droits réservés" %}
+  </p>
+  <ul class="footer-links">
+    <li><a href="{% url 'core:privacy_policy' %}">Confidentialité</a></li>
+    <li><a href="{% url 'core:cgu' %}">CGU</a></li>
+    <li><a href="{% url 'core:cookies_policy' %}">Cookies</a></li>
+  </ul>
+</footer>

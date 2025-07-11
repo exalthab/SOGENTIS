@@ -1,0 +1,122 @@
+@use '../1-import/variables' as vars;
+@use 'sass:color';
+
+// Mode sombre par défaut sur `:root.dark` ou `.dark-mode`
+body.dark-mode,
+:root.dark {
+  --bs-body-bg: vars.$dark;
+  --bs-body-color: vars.$light;
+  --bs-primary: vars.$light;
+  --bs-secondary: vars.$secondary;
+  --bs-success: vars.$success;
+  --bs-danger: vars.$danger;
+  --bs-warning: vars.$warning;
+  --bs-info: vars.$info;
+  --bs-light: vars.$dark;
+  --bs-dark: vars.$light;
+}
+
+.dark-mode {
+  background-color: vars.$dark;
+  color: vars.$light;
+
+  // ▸ Zones principales
+  .topbar,
+  .navbar,
+  .footer {
+    background-color: #111 !important;
+    color: vars.$light;
+  }
+
+  .navbar-brand,
+  .nav-link,
+  .topbar a {
+    color: vars.$light !important;
+  }
+
+  .nav-link:hover,
+  .topbar a:hover {
+    color: vars.$primary !important;
+  }
+
+  // ▸ Texte général
+  h1, h2, h3, h4, h5, h6 {
+    color: vars.$light;
+  }
+
+  p, li, span, small {
+    color: color.scale(vars.$light, $lightness: -10%);
+  }
+
+  // ▸ Composants interactifs
+  .btn {
+    background-color: vars.$secondary;
+    color: vars.$white;
+
+    &:hover {
+      background-color: color.scale(vars.$secondary, $lightness: 10%);
+    }
+  }
+
+  .btn-outline-primary {
+    color: vars.$light;
+    border-color: vars.$light;
+
+    &:hover {
+      background-color: vars.$light;
+      color: vars.$dark;
+    }
+  }
+
+  .btn-success {
+    background-color: vars.$success;
+    color: vars.$white;
+
+    &:hover {
+      background-color: color.scale(vars.$success, $lightness: -10%);
+    }
+  }
+
+  // ▸ Alertes
+  .alert {
+    background-color: color.scale(vars.$warning, $lightness: -40%);
+    border: 1px solid color.scale(vars.$warning, $lightness: -30%);
+    color: vars.$black;
+  }
+
+  // ▸ Sections personnalisées
+  .social-index {
+    .quote-section blockquote {
+      color: vars.$light;
+      border-left-color: vars.$warning;
+    }
+
+    .cta-section {
+      background-color: color.scale(vars.$dark, $lightness: 5%);
+      border-top-color: vars.$success;
+    }
+
+    .video-section video,
+    .carousel-inner img {
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.1);
+    }
+
+    .promoteur-section img {
+      border-color: vars.$success;
+    }
+  }
+
+  // ▸ Autres
+  #backToTop {
+    background-color: vars.$secondary;
+    color: vars.$white;
+  }
+
+  .bg-light {
+    background-color: #222 !important;
+  }
+
+  .text-muted {
+    color: color.scale(vars.$light, $lightness: -30%) !important;
+  }
+}

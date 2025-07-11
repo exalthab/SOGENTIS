@@ -1,0 +1,191 @@
+/* =======================
+   🌐 STYLES GÉNÉRAUX
+======================= */
+body {
+  background-color: #f8f9fa;
+  color: #212529;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+:root {
+  --color-accent: #f1c40f;
+}
+
+/* Accessibilité : réduction de mouvement */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
+
+/* =======================
+   🌙 MODE SOMBRE
+======================= */
+body.dark-mode {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+body.dark-mode .topbar {
+  background-color: #1e1e1e;
+}
+
+body.dark-mode .navbar {
+  background-color: #343a40;
+}
+
+body.dark-mode .navbar-nav .nav-link {
+  color: #e0e0e0;
+}
+
+body.dark-mode .navbar-nav .nav-link:hover,
+body.dark-mode .navbar-nav .nav-link:focus-visible {
+  color: #ffd700;
+}
+
+body.dark-mode .footer {
+  background-color: #212121;
+  color: #e0e0e0;
+}
+
+/* =======================
+   🎛️ BOUTON DE THÈME
+======================= */
+#themeToggle {
+  background-color: transparent;
+  border: none;
+  color: inherit;
+  font-size: 1.2rem;
+  padding: 0.5rem;
+  cursor: pointer;
+  transition: transform 0.3s ease, color 0.3s ease;
+  margin-left: 10px;
+}
+
+#themeToggle:hover,
+#themeToggle:focus-visible {
+  transform: scale(1.1);
+  color: var(--color-accent);
+  outline: none;
+}
+
+/* =======================
+   🔝 BOUTON RETOUR HAUT
+======================= */
+#backToTop {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  padding: 0.75rem 1rem;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+#backToTop:hover,
+#backToTop:focus-visible {
+  background-color: #0056b3;
+  transform: scale(1.1);
+  outline: none;
+}
+
+/* =======================
+   🧭 NAVBAR & TOPBAR
+======================= */
+.topbar {
+  padding: 0 1rem;
+  background-color: #ffffff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  z-index: 1000;
+  transition: background-color 0.3s ease;
+}
+
+.topbar .social-icons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.navbar-nav .nav-link {
+  font-size: 1rem;
+  color: #212529;
+  transition: color 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link:focus-visible {
+  color: #007bff;
+  outline: none;
+}
+
+/* =======================
+   🔘 BOUTONS GÉNÉRAUX
+======================= */
+.btn {
+  border-radius: 20px;
+  padding: 10px 20px;
+  font-weight: 600;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  user-select: none;
+}
+
+.btn:hover,
+.btn:focus-visible {
+  transform: scale(1.05);
+  outline: none;
+}
+
+/* =======================
+   ♿ ACCESSIBILITÉ GLOBALE
+======================= */
+a,
+button {
+  cursor: pointer;
+  user-select: none;
+}
+
+/* =======================
+   ⭐ ICONES
+======================= */
+i.fas {
+  font-family: "Font Awesome 6 Free" !important;
+  font-weight: 900 !important;
+  font-style: normal !important;
+}
+
+/* =======================
+   🍪 COOKIE BANNER
+======================= */
+.cookie-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #222;
+  color: #fff;
+  padding: 15px;
+  z-index: 9999;
+  text-align: center;
+}
+
+.cookie-banner .cookie-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.cookie-banner a {
+  color: #00bfff;
+  text-decoration: underline;
+}

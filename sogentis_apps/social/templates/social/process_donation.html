@@ -1,0 +1,19 @@
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Merci pour votre don !" %}{% endblock %}
+
+{% block content %}
+<div class="container mt-5 text-center">
+    <h2 class="text-success mb-4">💚 {% trans "Merci pour votre don !" %}</h2>
+    <p class="lead">{% trans "Votre contribution est précieuse pour notre mission sociale." %}</p>
+    <div class="mt-4">
+        <a href="{% url 'soci_index' %}" class="btn btn-primary">
+            {% trans "Retour à l'accueil social" %}
+        </a>
+        <a href="{% url 'social:donate' %}" class="btn btn-outline-success ms-2">
+            {% trans "Faire un autre don" %}
+        </a>
+    </div>
+</div>
+{% endblock %}

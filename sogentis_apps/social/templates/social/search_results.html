@@ -1,0 +1,62 @@
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Résultats de recherche" %}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+  <h2 class="mb-4">{% trans "Résultats pour" %} <span class="text-primary">"{{ query }}"</span></h2>
+
+  {% if project_results or publication_results or engagement_results %}
+    {% if project_results %}
+      <div class="mb-4">
+        <h4 class="text-success">{% trans "Projets" %}</h4>
+        <ul class="list-group list-group-flush">
+          {% for project in project_results %}
+            <li class="list-group-item">
+              <strong>
+                {% if project.get_absolute_url %}
+                  <a href="{{ project.get_absolute_url }}">{{ project.title }}</a>
+                {% else %}
+                  {{ project.title }}
+                {% endif %}
+              </strong>
+              <span class="text-muted">: {{ project.description|default_if_none:""|truncatewords:20 }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    {% if publication_results %}
+      <div class="mb-4">
+        <h4 class="text-info">{% trans "Publications" %}</h4>
+        <ul class="list-group list-group-flush">
+          {% for pub in publication_results %}
+            <li class="list-group-item">
+              <strong>{{ pub.title }}</strong>
+              <span class="text-muted">: {{ pub.content|default_if_none:""|truncatewords:20 }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    {% if engagement_results %}
+      <div class="mb-4">
+        <h4 class="text-warning">{% trans "Engagements" %}</h4>
+        <ul class="list-group list-group-flush">
+          {% for eng in engagement_results %}
+            <li class="list-group-item">
+              <strong>{{ eng.title }}</strong>
+              <span class="text-muted">: {{ eng.description|default_if_none:""|truncatewords:20 }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+  {% else %}
+    <p class="text-muted">{% trans "Aucun résultat trouvé." %}</p>
+  {% endif %}
+</div>
+{% endblock %}

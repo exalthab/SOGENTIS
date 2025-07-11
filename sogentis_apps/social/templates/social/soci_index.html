@@ -1,0 +1,399 @@
+{% extends "main.html" %}
+{% load static i18n document_filters %}
+
+{% block title %}SOGENTIS | Impact Social{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'social/css/new_social_index.css' %}">
+<link rel="stylesheet" href="{% static 'social/css/vision_mission.css' %}">
+
+{% endblock %}
+
+{% block section_menu %}
+  {% include 'social/partials/_menubar_soci.html' %}
+{% endblock %}
+
+{% block content %}
+<main class="social-index">
+
+  <!-- ✅ Message légal -->
+  <section class="legal-message alert alert-warning text-center fade-in-up">
+    <p class="mb-0"><strong>
+      {% trans "En conformité avec la réglementation applicable aux associations et sociétés, nous procédons actuellement à la constitution des prérequis administratifs. Cette étape est fondamentale pour assurer un cadre opérationnel structuré, conforme et pérenne à nos initiatives sociales et économiques." %}
+    </strong></p>
+  </section>
+
+  <!-- 🔹 HÉRO AVEC CARROUSEL -->
+  <section class="hero position-relative" id="hero">
+    <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+      <div class="carousel-inner">
+        {% for i in "123456"|make_list %}
+        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+          <div class="hero-slide d-flex flex-column justify-content-end text-white text-center" style="height: 100vh; background: url('{% static 'social/img/hero/slide_'|add:i|add:'.png' %}') center center / cover no-repeat;">
+            <div class="overlay position-absolute w-100 h-100" style="background: rgba(0, 0, 0, 0.6); top: 0; left: 0;"></div>
+            <div class="container position-relative z-2 pb-5">
+              <h1 class="display-4 fw-bold mb-3" style="text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.9);">
+                {% trans "Un futur solidaire commence ici" %}
+              </h1>
+              <p class="lead fw-medium mx-auto px-3 py-2 rounded mb-3" style="max-width: 850px; background-color: rgba(0, 0, 0, 0.4); color: #fff; text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.9);">
+                {% trans "Votre engagement est notre force. Notre association s’appuie sur une gestion rigoureuse et moderne des ressources et des revenus..." %}
+              </p>
+              <a href="#participate" class="btn btn-warning btn-lg shadow-lg">
+                {% trans "Je participe" %}
+              </a>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev" aria-label="{% trans 'Diapositive précédente' %}">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      </button>
+
+      <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next" aria-label="{% trans 'Diapositive suivante' %}">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      </button>
+
+    </div>
+  </section>
+
+  <!-- 🔹 ALERTE URGENCE -->
+  <div class="alert alert-danger rounded-0 text-center m-0" role="alert" aria-live="assertive">
+    <strong>🚨 {% trans "Urgence" %}:</strong> {% trans "Aide immédiate requise à Mbour et Ziguinchor." %}
+  </div>
+
+
+  <!-- 🔹 STATISTIQUES (Cartes) -->
+ <section class="container py-5 stats-section-modern">
+  <div class="text-center mb-5">
+    <span class="projects-title-badge-modern">
+      <i class="fas fa-lightbulb me-2"></i>
+      {% trans "Projets" %}
+    </span>
+  </div>
+  <div class="row text-center mb-4 g-4">
+    <div class="col-md-4">
+      <div class="card stats-card-modern h-100 shadow">
+        <div class="card-body">
+          <div class="stats-icon-modern bg-primary mb-3 mx-auto">
+            <i class="fas fa-project-diagram"></i>
+          </div>
+          <h5 class="card-title">{% trans "Projets actifs" %}</h5>
+          <p class="fs-2 fw-bold text-primary stats-value">{{ total_projects }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card stats-card-modern h-100 shadow">
+        <div class="card-body">
+          <div class="stats-icon-modern bg-success mb-3 mx-auto">
+            <i class="fas fa-coins"></i>
+          </div>
+          <h5 class="card-title">{% trans "Cagnotte totale reçue" %}</h5>
+          <p class="fs-2 fw-bold text-success stats-value">{{ total_cagnotte|floatformat:0 }} FCFA</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card stats-card-modern h-100 shadow">
+        <div class="card-body">
+          <div class="stats-icon-modern bg-info mb-3 mx-auto">
+            <i class="fas fa-users"></i>
+          </div>
+          <h5 class="card-title">{% trans "Bénéficiaires" %}</h5>
+          <p class="fs-2 fw-bold text-info stats-value">{{ total_beneficiaires }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  <!-- 🔹 PROJETS EN COURS -->
+<section id="projects" class="section-spacing project-section">
+  <div class="container">
+
+    <!-- Titre moderne -->
+    <div class="projects-title-modern text-center mb-5">
+      <h2 class="fw-bold projects-title-text mb-2">
+        {% trans "Projets en cours" %}
+      </h2>
+      <p class="projects-subtitle-modern mx-auto">
+        {% trans "Nos actions concrètes pour un changement durable et solidaire." %}
+      </p>
+    </div>
+
+    <!-- Grid des projets -->
+    <div class="row g-4">
+      {% for project in projects %}
+      <div class="col-md-6 col-lg-4">
+        <div class="card h-100 shadow-sm project-card-modern">
+          {% if project.image %}
+            <img src="{{ project.image.url }}" class="card-img-top" alt="{{ project.title }}">
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title">{{ project.title }}</h5>
+            <p class="card-text">{{ project.description|truncatewords:25 }}</p>
+            {% with percent=project.percentage_collected %}
+              <div class="progress mb-2" style="height: 1rem;">
+                <div class="progress-bar {% if percent >= 75 %}bg-success{% elif percent >= 50 %}bg-warning text-dark{% else %}bg-danger{% endif %}" role="progressbar"
+                     style="width: {{ percent|floatformat:1 }}%;"
+                     aria-valuenow="{{ percent|floatformat:1 }}" aria-valuemin="0" aria-valuemax="100">
+                  {{ percent|floatformat:1 }}%
+                </div>
+              </div>
+            {% endwith %}
+            <small class="text-muted d-block">
+              {% trans "Collecté" %} : {{ project.total_received|floatformat:"0" }} FCFA<br>
+              {% trans "Objectif" %} : {{ project.goal|floatformat:"0" }} FCFA
+            </small>
+          </div>
+          <div class="card-footer text-center border-0">
+            <a href="{% url 'social:project_detail' project.id %}" class="btn btn-outline-secondary me-2 mb-2">
+              {% trans "Voir le projet" %}
+            </a>
+            <a href="{% url 'social:donation' %}?project={{ project.id }}" class="btn btn-outline-primary w-100">
+              {% trans "Soutenir" %}
+            </a>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <p class="text-center">{% trans "Aucun projet disponible pour le moment." %}</p>
+      {% endfor %}
+    </div>
+
+  </div>
+</section>
+
+
+
+  <!-- 🔹 APPEL À L'ACTION -->
+  <section class="text-center py-5 bg-primary text-white" id="participate">
+    <div class="container">
+      <h2 class="fw-bold display-5" style="color: #fff; text-shadow: 0 0 5px rgba(0,0,0,0.5);">
+        {% trans "Rejoignez notre mission" %}
+      </h2>
+      <p class="lead" style="color: #f0f0f0; text-shadow: 0 0 3px rgba(0,0,0,0.4);">
+        {% trans "Devenez bénévole, partenaire ou mécène en cliquant sur je m'engage." %}
+      </p>
+      <div class="d-flex flex-wrap justify-content-center gap-3 mt-4">
+        <a href="{% url 'accounts_users_web:login' %}" class="btn btn-light btn-lg" target="_blank" rel="noopener noreferrer">
+          {% trans "Je m'engage" %}
+        </a>
+        <a href="{% url 'econ:index' %}" class="btn btn-warning btn-lg" style="color: #0d1e34;" target="_blank" rel="noopener noreferrer">
+          {% trans "J'achète pour soutenir" %}
+        </a>
+      </div>
+      <p class="mt-3 small" style="opacity: .9;">
+        {% trans "Achetez un article pour soutenir nos actions sociales et solidaires en cliquant sur j'achète." %}
+      </p>
+    </div>
+  </section>
+
+  <!-- 🔹 VIDÉO -->
+  <section id="video" class="video-section mb-5 fade-in-up">
+    <h2 class="text-center mb-3">{% trans "Notre vision en images" %}</h2>
+    <p class="text-center mb-4">
+      {% trans "Découvrez ce qui nous anime : solidarité, dignité humaine et transformation sociale." %}
+    </p>
+    <div class="ratio ratio-16x9 mx-auto" style="max-width: 720px;">
+      <video controls preload="metadata" controlslist="nodownload">
+        <source src="{% static 'social/videos/sogentis_video_intro.mp4' %}" type="video/mp4">
+        {% trans "Votre navigateur ne supporte pas la lecture de vidéos HTML5." %}
+      </video>
+
+    </div>
+  </section>
+
+  <!-- 🔹 DOCUMENTS -->
+<section class="section-spacing documents-section bg-documents-gradient">
+  <div class="container">
+    <h2 class="text-center mb-4 fw-bold text-documents-title">
+      {% trans "Documents téléchargeables" %}
+    </h2>
+    <div class="row g-4">
+      {% for doc in publications %}
+      <div class="col-md-6 col-lg-4">
+        <div class="card h-100 shadow bg-doc-card-modern position-relative">
+          {% if not user.is_authenticated or not doc|has_purchase:user %}
+            <div class="locked-overlay" aria-label="{% trans 'Document payant, authentification requise.' %}" role="img">
+              <i class="fas fa-lock fa-lg" aria-hidden="true"></i>
+            </div>
+          {% endif %}
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title mb-2 fw-semibold">
+              <i class="fas fa-file-alt me-2 text-primary"></i>
+              {{ doc.title }}
+            </h5>
+            <div>
+              <p class="desc-short mb-2 text-doc-short" id="desc-short-{{ doc.id }}">
+                {{ doc.description|truncatechars:120 }}
+                {% if doc.description|length > 120 %}
+                <a href="#" class="desc-toggle" data-doc="{{ doc.id }}" data-target="desc-full">{% trans "Voir plus" %}</a>
+                {% endif %}
+              </p>
+              <div class="desc-full" id="desc-full-{{ doc.id }}" style="display:none;">
+                {{ doc.description|linebreaks }}
+                <a href="#" class="desc-toggle" data-doc="{{ doc.id }}" data-target="desc-short">{% trans "Voir moins" %}</a>
+              </div>
+            </div>
+            <div class="mt-auto">
+              {% if user.is_authenticated and doc|has_purchase:user %}
+              <a href="{% url 'social:download_publication' doc.pk %}" class="btn btn-outline-success w-100 mt-2">
+                <i class="fas fa-download me-2"></i> {% trans "Télécharger le PDF" %}
+              </a>
+              {% else %}
+              <a href="{% url 'social:publication_pay_and_request' doc.pk %}" class="btn btn-warning w-100 mt-2 z-3 position-relative">
+                <i class="fas fa-lock me-2"></i> {% trans "Obtenir ce document (payant)" %}
+              </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <p class="text-center text-muted">{% trans "Aucun document disponible." %}</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+  
+<!-- 🔹 STATISTIQUES NUMÉRIQUES RÉELLES CLIQUABLES -->
+<section class="py-5 stats-section">
+  <div class="container text-center">
+    <div class="row g-4 justify-content-center">
+
+      <!-- Carte : Enfants soutenus -->
+      <div class="col-12 col-sm-6 col-md-4">
+        <a href="{% url 'stakeholders:beneficiaries_list' %}" class="stats-card-link">
+          <div class="stats-card h-100">
+            <div class="stats-icon mb-3">
+              <i class="fas fa-child fa-3x text-warning"></i>
+            </div>
+            <h3 class="fw-bold mb-1 stats-value">{{ total_beneficiaries }}</h3>
+            <p class="mb-0">{% trans "Enfants soutenus" %}</p>
+          </div>
+        </a>
+      </div>
+
+      <!-- Carte : Projets réalisés -->
+      <div class="col-12 col-sm-6 col-md-4">
+        <div class="stats-card h-100">
+          <div class="stats-icon mb-3">
+            <i class="fas fa-project-diagram fa-3x text-success"></i>
+          </div>
+          <h3 class="fw-bold mb-1 stats-value">{{ total_projects }}</h3>
+          <p class="mb-0">{% trans "Projets réalisés" %}</p>
+        </div>
+      </div>
+
+      <!-- Carte : Régions couvertes -->
+      <div class="col-12 col-sm-6 col-md-4">
+        <a href="{% url 'stakeholders:regions_covered' %}" class="stats-card-link">
+          <div class="stats-card h-100">
+            <div class="stats-icon mb-3">
+              <i class="fas fa-map-marked-alt fa-3x text-info"></i>
+            </div>
+            <h3 class="fw-bold mb-1 stats-value">{{ total_regions }}</h3>
+            <p class="mb-0">{% trans "Régions couvertes" %}</p>
+          </div>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- 🔹 MISSION -->
+<section class="py-5 bg-mission-gradient text-center text-md-start mission-section">
+  <div class="container">
+    <div class="row align-items-center g-5 flex-md-row flex-column">
+      <!-- IMAGE à gauche -->
+      <div class="col-md-5 text-center mb-4 mb-md-0">
+        <img src="{% static 'social/img/mission.jpg' %}"
+             alt="{% trans 'Image Mission' %}"
+             class="img-fluid rounded-4 shadow mission-img-modern"
+             style="max-width: 420px;">
+      </div>
+      <!-- TEXTE à droite -->
+      <div class="col-md-7 d-flex flex-column justify-content-center align-items-md-start align-items-center">
+        <h2 class="fw-bold mb-3 mission-title-modern">
+          <i class="fas fa-bullseye text-primary me-2"></i>
+          {% trans "Notre Mission" %}
+        </h2>
+        <p class="lead mb-3 mission-lead-modern">
+          {% trans "Notre mission est de promouvoir l'inclusion sociale, d'améliorer les conditions de vie des plus vulnérables, et de favoriser un développement durable à travers des actions concrètes et des partenariats solidaires." %}
+        </p>
+        <p class="mission-desc-modern fw-semibold mb-0">
+          {% trans "Chaque jour, nous œuvrons pour l’éducation, la santé, l’environnement et l’autonomisation des communautés." %}
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- 🔹 VISION - Carte moderne -->
+<section class="py-5 bg-vision-gradient text-center text-md-start vision-section">
+  <div class="container">
+    <div class="row align-items-center g-5 flex-column flex-md-row">
+      <!-- Texte à gauche -->
+      <div class="col-md-7 d-flex flex-column justify-content-center align-items-md-start align-items-center">
+        <h2 class="fw-bold mb-3 vision-title-modern">
+          <i class="fas fa-eye me-2"></i>
+          {% trans "Notre Vision" %}
+        </h2>
+        <p class="lead mb-3 vision-lead-modern">
+          {% trans "Créer un monde équitable où chaque individu, enfant ou adulte, a accès à l'éducation, à la santé, et à une vie digne." %}
+        </p>
+        <p class="vision-desc-modern fw-semibold mb-0">
+          {% trans "Nous croyons en une société forte, innovante et humaine, guidée par la solidarité et le progrès social." %}
+        </p>
+      </div>
+      <!-- Image à droite -->
+      <div class="col-md-5 text-center mb-4 mb-md-0">
+        <img src="{% static 'social/img/vision.jpg' %}"
+             alt="{% trans 'Image Vision' %}"
+             class="img-fluid rounded-4 shadow vision-img-modern"
+             style="max-width: 410px;">
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- 🔹 PARTENAIRES -->
+<section class="text-center py-5 bg-partners">
+  <div class="container">
+    <h2 class="mb-4">{% trans "Nos partenaires" %}</h2>
+    <div class="d-flex justify-content-center gap-4 flex-wrap">
+      {% for i in "1234"|make_list %}
+      <img src="{% static 'social/img/partners/partner_'|add:i|add:'.png' %}"
+           alt="Logo partenaire {{ i }}"
+           class="img-fluid"
+           style="max-height: 60px; max-width: 120px;">
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+
+  <!-- 🔹 BOUTON FLOTTANT -->
+  <a href="{% url 'social:donation' %}"
+    class="btn btn-danger btn-donation-floating shadow-lg"
+    aria-label="{% trans 'Faire un don' %}">
+    ❤️ {% trans "Faire un Don" %}
+  </a>
+
+
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'social/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'social/js/voirplus.js' %}"></script>
+{% endblock %}

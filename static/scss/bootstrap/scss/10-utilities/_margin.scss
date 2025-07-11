@@ -1,0 +1,67 @@
+// static/scss/bootstrap/scss/10-utilities/_margin.scss
+// ────────────────────────────────────────────────────
+// Utilitaires pour les marges (m, mt, mb, ml, mr, mx, my)
+// ──────────────────────────────────────────────────
+
+@use '../1-import/variables' as vars;
+@use '../1-import/mixins' as mix;
+@use 'sass:map';
+@use 'sass:meta';
+
+// Génération de classes utilitaires pour les espacements
+@mixin generate-margin-classes($property, $spacers) {
+  @each $key, $value in $spacers {
+    .#{$property}-#{$key} {
+      margin: $value !important;
+    }
+    .#{$property}t-#{$key} {
+      margin-top: $value !important;
+    }
+    .#{$property}e-#{$key} {
+      margin-inline-end: $value !important;
+    }
+    .#{$property}b-#{$key} {
+      margin-bottom: $value !important;
+    }
+    .#{$property}s-#{$key} {
+      margin-inline-start: $value !important;
+    }
+    .#{$property}x-#{$key} {
+      margin-inline: $value !important;
+    }
+    .#{$property}y-#{$key} {
+      margin-block: $value !important;
+    }
+  }
+}
+
+@include generate-margin-classes('m', vars.$spacers);
+
+// Responsive margins
+@each $break in map.keys(vars.$breakpoints) {
+  @include mix.breakpoint-up($break) {
+    @each $key, $value in vars.$spacers {
+      .m-#{$break}-#{$key} {
+        margin: $value !important;
+      }
+      .mt-#{$break}-#{$key} {
+        margin-top: $value !important;
+      }
+      .me-#{$break}-#{$key} {
+        margin-inline-end: $value !important;
+      }
+      .mb-#{$break}-#{$key} {
+        margin-bottom: $value !important;
+      }
+      .ms-#{$break}-#{$key} {
+        margin-inline-start: $value !important;
+      }
+      .mx-#{$break}-#{$key} {
+        margin-inline: $value !important;
+      }
+      .my-#{$break}-#{$key} {
+        margin-block: $value !important;
+      }
+    }
+  }
+}

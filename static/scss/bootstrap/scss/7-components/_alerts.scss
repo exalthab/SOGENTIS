@@ -1,0 +1,47 @@
+// static/scss/bootstrap/scss/7-components/_alerts.scss
+// ─────────────────────────────────────────────────────────────
+// Composant Alerts (mis à jour pour éviter les dépréciations)
+// ─────────────────────────────────────────────────────────────
+
+@use '../1-import/variables' as vars;
+@use 'sass:color';
+
+.alert {
+  position: relative;
+  padding: 0.75rem 1.25rem;
+  margin-bottom: vars.$spacer;
+  border: vars.$border-width solid transparent;
+  border-radius: vars.$border-radius;
+}
+
+@each $name, $color in (
+  primary:   vars.$primary,
+  secondary: vars.$secondary,
+  success:   vars.$success,
+  danger:    vars.$danger,
+  warning:   vars.$warning,
+  info:      vars.$info,
+  light:     vars.$light,
+  dark:      vars.$dark
+) {
+  .alert-#{$name} {
+    color: if(
+      color.channel($color, "lightness", $space: hsl) > 50%,
+      vars.$dark,
+      vars.$white
+    );
+    background-color: color.adjust($color, $lightness: 90%);
+    border-color:     color.adjust($color, $lightness: 80%);
+
+    a {
+      color: color.adjust($color, $lightness: -20%);
+      font-weight: bold;
+      text-decoration: underline;
+
+      &:hover,
+      &:focus {
+        color: color.adjust($color, $lightness: -30%);
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{% extends "main.html" %}
+{% block content %}
+<div class="container py-5 text-center">
+  <h2 class="mb-4">Merci pour votre commande !</h2>
+  <p>
+    Votre commande a été enregistrée.<br>
+    <strong>Votre code de suivi : <span class="text-success">{{ order.tracking_code }}</span></strong>
+  </p>
+  <a href="{% url 'ecommerce:track_order' %}" class="btn btn-outline-primary mt-4">Suivre ma commande</a>
+</div>
+{% endblock %}

@@ -1,0 +1,306 @@
+/* ==============================
+   SECTION VISION - DARK & LIGHT
+============================== */
+.mission-section {
+  background: linear-gradient(120deg, #5d87b1 75%, #eaf1f7 100%);
+  color: #243447;
+}
+.mission-title {
+  color: #2980b9;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  font-size: 2.2rem;
+  margin-bottom: 1.1rem;
+}
+.mission-lead {
+  color: #314e68;
+  font-size: 1.16em;
+  font-weight: 500;
+  margin-bottom: 1.1em;
+  line-height: 1.7;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+.mission-desc {
+  color: #243447;
+  font-size: 1.06em;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.02);
+  line-height: 1.5;
+}
+.mission-section img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 18px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.14);
+  object-fit: cover;
+}
+
+/* Mode sombre */
+body.dark .mission-section {
+  background: linear-gradient(120deg, #0e69c4 75%, #243447 100%);
+  color: #e3efff;
+}
+body.dark .mission-title {
+  color: #4fc3f7;
+  text-shadow: 0 2px 12px #2228;
+}
+body.dark .mission-lead {
+  color: #e1eaff;
+  text-shadow: 0 1px 4px #10192033;
+}
+body.dark .mission-desc {
+  color: #b3cae5;
+  text-shadow: none;
+}
+body.dark .mission-section img {
+  box-shadow: 0 4px 20px rgba(30,50,80,0.18);
+}
+
+/* =============================
+   DOCUMENTS (cards + dark mode)
+============================= */
+.documents-section {
+  --doc-bg: linear-gradient(120deg, #f7fafc 80%, #eef4f9 100%);
+  background: var(--doc-bg);
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+  transition: background 0.3s;
+}
+.bg-doc-card {
+  background: var(--card-bg, #fff);
+  border-radius: 1.15rem;
+  border: 1px solid var(--card-border, #e1e7ec);
+  box-shadow: 0 2px 10px 0 rgba(18,28,50,0.07);
+  transition: background 0.3s, border-color 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.card-title {
+  color: var(--doc-title, #102146);
+  font-weight: 700;
+  font-size: 1.22rem;
+}
+.desc-short, .desc-full {
+  color: var(--doc-text, #333e50);
+  font-size: 1.04rem;
+  line-height: 1.6;
+}
+.desc-toggle {
+  font-size: 0.99rem;
+  color: var(--primary, #0d6efd);
+  cursor: pointer;
+  text-decoration: underline;
+  margin-left: 0.2em;
+  transition: color 0.2s;
+}
+.desc-toggle:hover, .desc-toggle:focus {
+  color: #dc3545;
+  text-decoration: underline;
+}
+.btn-warning, .btn-outline-success {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  border-radius: 0.5rem;
+}
+.locked-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(28,34,49,0.48);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  color: #ffc107;
+  font-size: 2rem;
+  pointer-events: none;
+}
+@media (max-width: 768px) {
+  .documents-section { padding-top: 2rem; padding-bottom: 2rem; }
+  .card-title { font-size: 1.09rem; }
+}
+body.dark .documents-section {
+  --doc-bg: linear-gradient(135deg, #1c2430 70%, #2d3748 100%);
+}
+body.dark .bg-doc-card {
+  --card-bg: #23293a;
+  --card-border: #2d3748;
+}
+body.dark .card-title,
+body.dark .desc-short,
+body.dark .desc-full {
+  --doc-title: #e7f0fa;
+  --doc-text: #b8c6dc;
+}
+body.dark .desc-toggle {
+  color: #82b7ff;
+}
+body.dark .desc-toggle:hover,
+body.dark .desc-toggle:focus {
+  color: #ffc107;
+}
+body.dark .locked-overlay {
+  background: rgba(40, 48, 66, 0.70);
+  color: #ffde7a;
+}
+
+/* ======================================
+   STATS (Cartes + variantes dark/light)
+====================================== */
+.stats-section {
+  --stats-bg: linear-gradient(120deg,#f0f4f8 80%,#eaf2f9 100%);
+  background: var(--stats-bg);
+  transition: background 0.4s;
+  color: #222;
+}
+.stats-card-link {
+  text-decoration: none !important;
+  color: inherit !important;
+  transition: transform 0.12s cubic-bezier(.4,0,.2,1);
+  display: block;
+}
+.stats-card-link:hover .stats-card,
+.stats-card-link:focus .stats-card {
+  transform: translateY(-5px) scale(1.03);
+  box-shadow: 0 6px 24px 0 rgba(0,0,0,0.20);
+}
+.stats-card {
+  border-radius: 1.25rem;
+  background: rgba(255,255,255,0.06);
+  box-shadow: 0 2px 8px 0 rgba(0,0,0,0.10);
+  padding: 2.5rem 1rem 1.5rem 1rem;
+  transition: background 0.3s, box-shadow 0.3s;
+  min-height: 220px;
+  position: relative;
+  color: inherit;
+  border: none;
+}
+@media (max-width: 600px) {
+  .stats-card {
+    padding: 2rem 0.5rem 1rem 0.5rem;
+  }
+}
+.icon, .stats-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem auto;
+  font-size: 2.5rem;
+  background: rgba(255,255,255,0.08);
+  transition: background 0.3s, color 0.3s;
+}
+.icon-warning { background: rgba(255, 193, 7, 0.16); color: #ffc107; }
+.icon-success { background: rgba(25, 135, 84, 0.18); color: #19a974; }
+.icon-info { background: rgba(13, 202, 240, 0.18); color: #0dcaf0; }
+.stats-value {
+  font-size: 2.7rem;
+  color: inherit;
+}
+.stats-card p {
+  color: #222c3c;
+  letter-spacing: 0.02em;
+  font-size: 1.12rem;
+}
+
+body.dark .stats-section {
+  --stats-bg: linear-gradient(120deg,#12181f 85%,#15212e 100%);
+  background: var(--stats-bg);
+  color: #fff;
+}
+body.dark .stats-card {
+  background: rgba(26,32,44,0.92);
+  color: #f7fafc;
+  box-shadow: 0 4px 32px 0 rgba(0,0,0,0.32);
+}
+body.dark .stats-card p {
+  color: #d4e0ee;
+}
+body.dark .icon-warning {
+  color: #ffe066;
+  background: rgba(255,193,7,0.20);
+}
+body.dark .icon-success {
+  color: #8affb4;
+  background: rgba(25,167,116,0.20);
+}
+body.dark .icon-info {
+  color: #68e7ff;
+  background: rgba(13,202,240,0.21);
+}
+.stats-card-link:focus-visible {
+  outline: 2px solid #ffd43b;
+  border-radius: 1.25rem;
+  outline-offset: 4px;
+}
+@media (max-width: 768px) {
+  .stats-card {
+    min-height: 170px;
+    padding: 1.6rem 0.6rem 1.1rem 0.6rem;
+  }
+}
+
+/*  */
+
+/* =======================
+   PARTENAIRES - SECTION
+======================= */
+.partners-section {
+  background-color: var(--bg-partners, #f8f9fa);
+  padding: 4rem 0;
+  text-align: center;
+  transition: background-color 0.3s ease;
+}
+
+.partners-section h2 {
+  font-weight: 700;
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  color: var(--partners-title, #243447);
+}
+
+/* Grille fluide */
+.partners-logos {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+}
+
+/* Logo partenaire */
+.partner-logo {
+  max-height: 60px;
+  max-width: 120px;
+  transition: transform 0.25s ease, filter 0.3s ease;
+  filter: grayscale(50%);
+  opacity: 0.85;
+}
+.partner-logo:hover,
+.partner-logo:focus {
+  transform: scale(1.05);
+  filter: grayscale(0%);
+  opacity: 1;
+  outline: none;
+}
+
+/* Responsive: réduit légèrement sur petits écrans */
+@media (max-width: 576px) {
+  .partner-logo {
+    max-height: 50px;
+    max-width: 100px;
+  }
+}
+
+/* =========================
+   🌙 Mode sombre amélioré
+========================= */
+body.dark .partners-section {
+  --bg-partners: #121820;
+  --partners-title: #e7f0fa;
+}
+
+/* En plus, renforcer le contraste du contenu si besoin */
+body.dark .partners-section h2 {
+  color: var(--partners-title, #e7f0fa);
+}

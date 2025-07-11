@@ -1,0 +1,116 @@
+// 7-components/_topbar.scss
+// ─────────────────────────────────────────────────────────────
+// Composant Topbar fixe et responsive
+// ─────────────────────────────────────────────────────────────
+
+@use '../1-import/variables' as vars;
+@use '../1-import/mixins' as mix;
+@use 'sass:color';
+
+// === Topbar global ===
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+  z-index: vars.$z-index-fixed or 1050;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.25rem 1rem;
+  font-size: 0.875rem;
+  background-color: #f5f2e9; // ✅ beige clair pour contraste avec logo bleu
+  color: vars.$dark;
+  box-shadow: vars.$box-shadow;
+
+  a {
+    color: vars.$dark;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+      color: vars.$primary;
+    }
+  }
+
+  i {
+    margin-right: 0.25rem;
+  }
+}
+
+// === Branding (logo) ===
+.topbar-logo {
+  display: flex;
+  align-items: center;
+
+  img {
+    height: 40px;
+    width: auto;
+    max-width: 150px;
+  }
+}
+
+// === Navigation (liens) ===
+.topbar-nav {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 1rem;
+}
+
+.topbar-link {
+  color: vars.$dark;
+  padding: 0.25rem 0.75rem;
+  transition: color vars.$transition-base;
+
+  &:hover {
+    color: vars.$primary;
+    text-decoration: none;
+  }
+}
+
+// === Toggler (mobile) ===
+.topbar-toggler {
+  padding: 0.25rem 0.75rem;
+  font-size: 1.25rem;
+  line-height: 1;
+  background-color: transparent;
+  border: 0;
+  color: vars.$dark;
+  cursor: pointer;
+  transition: color vars.$transition-base;
+
+  &:hover {
+    color: vars.$primary;
+  }
+
+  &:focus {
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(vars.$primary, 0.25);
+  }
+}
+
+// === Responsive ===
+@include mix.breakpoint-up('md') {
+  .topbar {
+    padding: 0.5rem 2rem;
+  }
+
+  .topbar-nav {
+    display: flex;
+  }
+}
+
+@include mix.breakpoint-down('sm') {
+  .topbar-nav {
+    display: none;
+  }
+
+  .topbar-toggler {
+    display: block;
+  }
+}

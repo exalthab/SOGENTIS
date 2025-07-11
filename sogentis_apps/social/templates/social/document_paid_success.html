@@ -1,0 +1,52 @@
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Document envoyé !" %}{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="max-width:600px;">
+  <div class="card shadow-sm border-0">
+    <div class="card-body text-center">
+      <div class="display-3 text-success mb-3">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <h2 class="mb-3">
+        {% trans "Merci pour votre paiement !" %}
+      </h2>
+
+      {% if copy_number %}
+        <div class="mb-2">
+          <strong>Référence de votre copie :</strong>
+          {{ doc.title }}/copie/no.{{ copy_number|stringformat:"04d" }}
+        </div>
+      {% endif %}
+
+      {% if already_bought %}
+        <div class="alert alert-info">
+          {% trans "Vous aviez déjà acheté ce document." %}<br>
+          {% trans "Nous venons de vous le renvoyer à :" %} <strong>{{ request.user.email }}</strong>
+        </div>
+      {% else %}
+        <p class="lead">
+          {% trans "Le document" %} <strong>{{ doc.title }}</strong> {% trans "a été envoyé à votre adresse email :" %}<br>
+          <strong>{{ request.user.email }}</strong>
+        </p>
+      {% endif %}
+
+      <p class="text-muted my-4">
+        {% trans "Vérifiez votre boîte de réception (ou les spams). Contactez-nous si vous ne recevez rien dans quelques minutes." %}
+      </p>
+      <a href="{% url 'social:publication_list' %}" class="btn btn-primary mb-2">
+        {% trans "Retour aux documents" %}
+      </a>
+
+      {# Lien direct de téléchargement si accès acquis #}
+      {% if user.is_authenticated %}
+        <a href="{% url 'social:download_publication' doc.pk %}" class="btn btn-outline-success ms-2">
+          <i class="fas fa-file-download"></i> {% trans "Télécharger à nouveau" %}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

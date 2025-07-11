@@ -1,0 +1,380 @@
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "S'inscrire | SOGENTIS" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-form-container container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+          <h3 class="mb-4 text-center">{% trans "Créer un compte" %}</h3>
+
+          {% if account_created %}
+            <div class="alert alert-success text-center" role="alert">
+              {% trans "Votre compte a été créé avec succès. Vous allez être redirigé vers la page d’accueil..." %}
+            </div>
+            <script>
+              setTimeout(function () {
+                window.location.href = "{% url 'home' %}";
+              }, 5000);
+            </script>
+          {% endif %}
+
+          <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+
+            {{ profile_form.non_field_errors }}
+            {{ form.non_field_errors }}
+
+            <div class="mb-3">
+              <label class="form-label">{{ profile_form.full_name.label }} *</label>
+              {{ profile_form.full_name }}
+              {% for error in profile_form.full_name.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">{{ profile_form.phone.label }} *</label>
+              {{ profile_form.phone }}
+              {% for error in profile_form.phone.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">{{ profile_form.country.label }} *</label>
+              {{ profile_form.country }}
+              {% for error in profile_form.country.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">{{ form.email.label }} *</label>
+              {{ form.email }}
+              {% for error in form.email.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">{{ form.username.label }} *</label>
+              {{ form.username }}
+              {% for error in form.username.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">{{ form.password.label }} *</label>
+              {{ form.password }}
+              {% for error in form.password.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">{{ form.password_confirm.label }} *</label>
+              {{ form.password_confirm }}
+              {% for error in form.password_confirm.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">{{ profile_form.membership_role.label }} *</label>
+              {{ profile_form.membership_role }}
+              {% for error in profile_form.membership_role.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">{{ profile_form.profile_picture.label }}</label>
+              {{ profile_form.profile_picture }}
+              {% for error in profile_form.profile_picture.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">{{ profile_form.judicial_record.label }} *</label>
+              {{ profile_form.judicial_record }}
+              {% for error in profile_form.judicial_record.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+              <div id="pdf-preview" class="mt-2"></div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">{{ profile_form.message.label }}</label>
+              {{ profile_form.message }}
+              {% for error in profile_form.message.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-3 form-check">
+              {{ profile_form.terms }}
+              <label class="form-check-label">
+                {% trans "J'accepte les conditions générales et confirme sur mon honneur que mon identification est authentique" %}
+              </label>
+              {% for error in profile_form.terms.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="d-grid">
+              <button type="submit" class="btn btn-success">{% trans "S'inscrire" %}</button>
+            </div>
+          </form>
+
+          <div class="text-center mt-3">
+            <small>
+              {% trans "Déjà inscrit ?" %}
+              <a href="{% url 'accounts_users_web:login' %}">{% trans "Se connecter" %}</a>
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const input = document.getElementById("id_judicial_record");
+    const preview = document.getElementById("pdf-preview");
+
+    if (input) {
+      input.addEventListener("change", function () {
+        const file = input.files[0];
+        if (file && file.type === "application/pdf") {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            preview.innerHTML = `<embed src="${e.target.result}" type="application/pdf" width="100%" height="300px" />`;
+          };
+          reader.readAsDataURL(file);
+        } else {
+          preview.innerHTML = "<p class='text-danger'>Fichier non pris en charge. Format PDF requis.</p>";
+        }
+      });
+    }
+  });
+</script>
+{% endblock %}
+
+
+
+
+
+{% comment %} {% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n user_form_tags %}
+
+{% block title %}{% trans "S'inscrire | SOGENTIS" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-form-container container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+          <h3 class="mb-4 text-center">{% trans "Créer un compte" %}</h3>
+
+          <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+
+            <!-- ✅ Nom complet -->
+            <div class="mb-3">
+              <label for="{{ profile_form.full_name.id_for_label }}" class="form-label">
+                {{ profile_form.full_name.label }} *
+              </label>
+              {{ profile_form.full_name|add_class:"form-control" }}
+              {% for error in profile_form.full_name.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <!-- ✅ Téléphone -->
+            <div class="mb-3">
+              <label for="{{ profile_form.phone.id_for_label }}" class="form-label">
+                {{ profile_form.phone.label }} *
+              </label>
+              {{ profile_form.phone|add_class:"form-control" }}
+              {% for error in profile_form.phone.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <!-- ✅ Pays -->
+            <div class="mb-3">
+              <label for="{{ profile_form.country.id_for_label }}" class="form-label">
+                {{ profile_form.country.label }} *
+              </label>
+              {{ profile_form.country|add_class:"form-control" }}
+              {% for error in profile_form.country.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <!-- ✅ Adresse électronique -->
+            <div class="mb-3">
+              <label for="{{ form.email.id_for_label }}" class="form-label">
+                {{ form.email.label }} *
+              </label>
+              {{ form.email|add_class:"form-control" }}
+              {% for error in form.email.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <!-- ✅ Nom d'utilisateur -->
+            <div class="mb-3">
+              <label for="{{ form.username.id_for_label }}" class="form-label">
+                {{ form.username.label }} *
+              </label>
+              {{ form.username|add_class:"form-control" }}
+              {% for error in form.username.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <!-- ✅ Créer un mot de passe -->
+            <div class="mb-3">
+              <label for="{{ form.password.id_for_label }}" class="form-label">
+                {{ form.password.label }} *
+              </label>
+              {{ form.password|add_class:"form-control" }}
+              {% for error in form.password.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <!-- ✅ Confirmer le mot de passe -->
+            <div class="mb-3">
+              <label for="{{ form.password_confirm.id_for_label }}" class="form-label">
+                {{ form.password_confirm.label }} *
+              </label>
+              {{ form.password_confirm|add_class:"form-control" }}
+              {% for error in form.password_confirm.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <!-- ✅ Type d’adhésion -->
+            <div class="mb-3">
+              <label for="{{ profile_form.membership_role.id_for_label }}" class="form-label">
+                {{ profile_form.membership_role.label }} *
+              </label>
+              {{ profile_form.membership_role|add_class:"form-select" }}
+              {% for error in profile_form.membership_role.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <!-- ✅ Photo de profil -->
+            <div class="mb-3">
+              <label for="{{ profile_form.profile_picture.id_for_label }}" class="form-label">
+                {{ profile_form.profile_picture.label }}
+              </label>
+              {{ profile_form.profile_picture|add_class:"form-control-file" }}
+              {% for error in profile_form.profile_picture.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <!-- ✅ Casier judiciaire -->
+            <div class="mb-3">
+              <label for="{{ profile_form.judicial_record.id_for_label }}" class="form-label">
+                {{ profile_form.judicial_record.label }} *
+              </label>
+              {{ profile_form.judicial_record|add_class:"form-control-file" }}
+              {% if profile_form.judicial_record.help_text %}
+                <div class="form-text small">{{ profile_form.judicial_record.help_text|safe }}</div>
+              {% endif %}
+              {% for error in profile_form.judicial_record.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div id="pdf-preview" class="mb-3"></div>
+
+            <!-- ✅ Message -->
+            <div class="mb-3">
+              <label for="{{ profile_form.message.id_for_label }}" class="form-label">
+                {{ profile_form.message.label }}
+              </label>
+              {{ profile_form.message|add_class:"form-control" }}
+              {% for error in profile_form.message.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <!-- ✅ Terms -->
+            <div class="mb-3 form-check">
+              {{ profile_form.terms }}
+              <label class="form-check-label" for="{{ profile_form.terms.id_for_label }}">
+                {% trans "J'accepte les conditions générales et confirme sur mon honneur que mon identification est authentique" %}
+              </label>
+              {% for error in profile_form.terms.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <!-- ✅ Bouton -->
+            <div class="d-grid">
+              <button type="submit" class="btn btn-success">{% trans "S'inscrire" %}</button>
+            </div>
+          </form>
+
+          <div class="text-center mt-3">
+            <small>
+              {% trans "Déjà inscrit ?" %}
+              <a href="{% url 'accounts_users_web:login' %}">{% trans "Se connecter" %}</a>
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const input = document.getElementById("id_judicial_record");
+    const preview = document.getElementById("pdf-preview");
+
+    if (input) {
+      input.addEventListener("change", function () {
+        const file = input.files[0];
+        if (file && file.type === "application/pdf") {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            preview.innerHTML = `<embed src="${e.target.result}" type="application/pdf" width="100%" height="300px" />`;
+          };
+          reader.readAsDataURL(file);
+        } else {
+          preview.innerHTML = "<p class='text-danger'>Fichier non pris en charge. Format PDF requis.</p>";
+        }
+      });
+    }
+  });
+</script>
+{% endblock %} {% endcomment %}

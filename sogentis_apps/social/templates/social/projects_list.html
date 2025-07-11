@@ -1,0 +1,59 @@
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Nos Projets à soutenir" %}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <h2 class="text-center mb-5">{% trans "Nos Projets à soutenir" %}</h2>
+
+  <div class="row">
+    {% for project in projects %}
+      <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100 shadow-sm">
+          {% if project.image %}
+            <img src="{{ project.image.url }}" class="card-img-top" alt="{{ project.title }}" style="height: 200px; object-fit: cover;">
+          {% endif %}
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">{{ project.title }}</h5>
+            <p class="card-text small text-muted">{{ project.description|truncatewords:25 }}</p>
+
+            <div class="mt-auto">
+              {% with percent=project.percentage_collected %}
+                {% if percent >= 75 %}
+                  {% with bar_class="bg-success" %}
+                {% elif percent >= 50 %}
+                  {% with bar_class="bg-warning text-dark" %}
+                {% else %}
+                  {% with bar_class="bg-danger" %}
+                {% endif %}
+                <div class="progress mb-2" style="height: 10px;">
+                  <div class="progress-bar {{ bar_class }}" role="progressbar"
+                       style="width: {{ percent|floatformat:1 }}%;"
+                       aria-valuenow="{{ percent|floatformat:1 }}" aria-valuemin="0" aria-valuemax="100">
+                  </div>
+                </div>
+                {% endwith %}
+              {% endwith %}
+              <small>
+                {{ project.total_received|floatformat:0 }} FCFA / {{ project.goal|floatformat:0 }} FCFA
+              </small>
+
+              <div class="mt-3 text-center">
+                <a href="{% url 'social:project_detail' project.pk %}" class="btn btn-outline-primary btn-sm">
+                  {% trans "Voir le projet" %}
+                </a>
+                <a href="{% url 'social:donate' %}?project={{ project.id }}" class="btn btn-primary btn-sm">
+                  {% trans "Faire un don" %}
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p class="text-muted text-center">{% trans "Aucun projet disponible pour le moment." %}</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

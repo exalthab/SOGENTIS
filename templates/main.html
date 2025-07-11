@@ -1,0 +1,88 @@
+{% load static i18n %}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Cache-Control" content="no-store" />
+  <meta http-equiv="Pragma" content="no-cache" />
+
+  <title>{% block title %}{{ PROJECT_NAME }}{% endblock %}</title>
+
+  <!-- Styles & Fonts -->
+  <link rel="stylesheet" href="{% static 'global/css/vendors/fontawesome/css/all.min.css' %}" />
+  <link rel="stylesheet" href="{% static 'global/css/vendors/bootstrap/css/bootstrap.min.css' %}" />
+  <link rel="stylesheet" href="{% static 'global/css/sogentis/bootstrap/css/main_sogentis.css' %}" />
+  <link rel="stylesheet" href="{% static 'global/css/contact.css' %}" />
+
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+  <div class="wrapper d-flex flex-column min-vh-100">
+
+    <!-- 🔝 Topbar uniquement sur la page d'accueil -->
+    {% if request.path == '/' %}
+      {% include 'core/partials/_topbar.html' %}
+    {% endif %}
+
+    <!-- 📍 Menu secondaire dynamique -->
+    {% block section_menu %}{% endblock %}
+
+    <!-- 📍 Menu secondaire dynamique (spécifique aux autres pages) -->
+    {% if section_menu %}
+      {% include section_menu %}
+    {% endif %}
+
+    <!-- 🧱 Contenu principal -->
+    <main class="flex-fill container-fluid {% if request.path != '/' %}pt-5 mt-4{% else %}pt-3 mt-3{% endif %}">
+      {% block content %}{% endblock %}
+    </main>
+
+    <!-- 🔚 Pied de page -->
+    {% include 'core/partials/_footer.html' %}
+  </div>
+
+  <!-- ⬆️ Bouton retour en haut -->
+  {% include 'core/partials/_back_to_top.html' %}
+
+  <!-- 🔔 Messages Django (toasts) -->
+  {% if messages %}
+    <div aria-live="polite" aria-atomic="true" class="position-fixed bottom-0 end-0 p-3" style="z-index: 1080;">
+      {% for message in messages %}
+        <div class="toast text-bg-{{ message.tags }} border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+          <div class="d-flex">
+            <div class="toast-body">{{ message }}</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="{% trans 'Fermer' %}"></button>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <!-- Scripts globaux -->
+  <script src="{% static 'global/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'global/js/theme.js' %}"></script>
+  <script src="{% static 'global/js/main.js' %}"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      document.querySelectorAll(".toast").forEach(el => new bootstrap.Toast(el).show());
+    });
+  </script>
+
+  {% block extra_js %}{% endblock %}
+
+  <!-- 🍪 Bannière de cookies -->
+  <div id="cookie-banner" class="cookie-banner" style="display: none;">
+    <div class="cookie-content">
+      <p>
+        {% trans "Ce site utilise des cookies pour améliorer votre expérience." %}
+        <a href="{% url 'core:cookies_policy' %}">{% trans "En savoir plus" %}</a>.
+      </p>
+      <button id="accept-cookies" class="btn btn-primary btn-sm">{% trans "Accepter" %}</button>
+    </div>
+  </div>
+</body>
+</html>

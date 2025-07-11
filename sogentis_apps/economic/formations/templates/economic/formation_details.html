@@ -1,0 +1,10 @@
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block content %}
+<div class="container py-5">
+  <h2>{{ formation.title }}</h2>
+  <p class="text-muted">{{ formation.short_description }}</p>
+  <div>{{ formation.content|safe }}</div>
+</div>
+{% endblock %}

@@ -1,0 +1,40 @@
+// 5-grid/_utilities.scss — utilitaires de grille
+// ─────────────────────────────────────────────────────────────
+// Génère les classes utilitaires de spacing pour les colonnes
+// (gutters horizontaux gx-* et verticaux gy-*), y compris en responsive
+// ─────────────────────────────────────────────────────────────
+
+@use '../1-import/variables' as vars;
+@use '../1-import/mixins'    as mix;
+
+// ==========================
+// GUTTERS DE BASE (non responsive)
+// ==========================
+
+@each $size, $space in vars.$spacers {
+  .gx-#{$size} {
+    column-gap: $space !important;
+  }
+
+  .gy-#{$size} {
+    row-gap: $space !important;
+  }
+}
+
+// ==========================
+// GUTTERS RESPONSIFS
+// ==========================
+
+@each $breakpoint, $min-width in vars.$breakpoints {
+  @include mix.breakpoint-up($breakpoint) {
+    @each $size, $space in vars.$spacers {
+      .gx-#{$breakpoint}-#{$size} {
+        column-gap: $space !important;
+      }
+
+      .gy-#{$breakpoint}-#{$size} {
+        row-gap: $space !important;
+      }
+    }
+  }
+}

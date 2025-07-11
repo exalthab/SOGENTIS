@@ -1,0 +1,16 @@
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Lien d'activation invalide" %}{% endblock %}
+
+{% block content %}
+<div class="container my-5 text-center">
+  <div class="alert alert-danger">
+    <h4>{% trans "Lien invalide ou expiré" %}</h4>
+    <p>{% trans "Le lien d'activation n'est plus valide. Veuillez demander un nouveau lien ou créer un nouveau compte." %}</p>
+    <a href="{% url 'accounts_users_web:signup' %}" class="btn btn-outline-primary mt-3">
+      {% trans "Créer un compte" %}
+    </a>
+  </div>
+</div>
+{% endblock %}

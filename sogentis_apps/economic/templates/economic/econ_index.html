@@ -1,0 +1,202 @@
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}SOGENTIS | Marketplace Sociale{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'economic/css/ecom_menubar.css' %}">
+  <link rel="stylesheet" href="{% static 'economic/css/econ.css' %}">
+  <link rel="stylesheet" href="{% static 'economic/css/econ_catalog.css' %}">
+{% endblock %}
+
+{% block section_menu %}
+  {% include 'economic/eco_partials/_ecommerce_navbar.html' %}
+{% endblock %}
+
+{% block content %}
+<main class="econ-index bg-gradient-market">
+
+  <!-- HERO -->
+  <section class="econ-hero-modern d-flex align-items-center justify-content-center">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-6 text-center text-lg-start mb-5 mb-lg-0">
+          <span class="econ-badge-modern mb-3">Marketplace sociale & Formation</span>
+          <h1 class="display-4 fw-bold mb-3">Le pôle économique <span class="brand-gradient">SOGENTIS</span></h1>
+          <p class="lead mb-4">
+            Soutenez les projets solidaires, accédez à nos <b>produits éthiques</b> & <b>services responsables</b>,
+            formez-vous à l'entrepreneuriat solidaire et traquez vos achats.
+          </p>
+          <div class="d-flex flex-wrap gap-3 mb-4 justify-content-center justify-content-lg-start">
+            <a href="#products" class="btn btn-gradient-market btn-lg rounded-pill shadow">Découvrir la boutique</a>
+            <a href="#impact" class="btn btn-outline-light btn-lg rounded-pill">Notre impact</a>
+          </div>
+          <div class="hero-promo-banner shadow">
+            <i class="fas fa-gift me-2"></i>
+            <span>Pendant juillet : 10 % reversés à un projet éducatif pour chaque commande !</span>
+          </div>
+        </div>
+        <div class="col-lg-6 d-flex justify-content-center">
+          <div class="econ-hero-video-glass position-relative">
+            <video autoplay loop muted playsinline class="econ-hero-video" poster="{% static 'economic/img/hero_video_poster.jpg' %}">
+              <source src="{% static 'economic/videos/economic_intro.mp4' %}" type="video/mp4" />
+            </video>
+            <div class="econ-hero-glass"></div>
+            <div class="econ-hero-video-caption text-light small">
+              <i class="fas fa-play-circle me-1"></i> SOGENTIS en action
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRACKING -->
+  <section class="track-order-modern container">
+    <form method="get" action="{% url 'ecommerce:track_order' %}" class="econ-track-form d-flex flex-wrap align-items-center justify-content-center gap-3">
+      <label class="fw-bold me-2" for="trackcode">
+        <i class="fas fa-search-location"></i> Suivre ma commande :
+      </label>
+      <input type="text" name="code" id="trackcode" placeholder="Code de suivi" required>
+      <button class="btn btn-primary" type="submit">Traquer</button>
+    </form>
+    <div class="small text-muted mt-1 text-center">Livraison, statut, impact… Tout est transparent !</div>
+  </section>
+
+  <!-- PRODUITS -->
+  <section class="products-section-modern container py-5" id="products">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+      <h2 class="econ-section-title-modern mb-0">Nos produits énergie renouvelable</h2>
+      <div class="market-pills-filters d-flex gap-2 flex-wrap">
+        <a href="{% url 'ecommerce:products' %}" class="filter-pill {% if not request.GET.category %}active{% endif %}">
+          Toutes les catégories
+        </a>
+        {% for cat in categories %}
+        <a href="?category={{ cat.slug }}" class="filter-pill {% if request.GET.category == cat.slug %}active{% endif %}">
+          {{ cat.name }}
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="row g-4">
+      {% for product in products %}
+      <div class="col-md-6 col-lg-4 d-flex">
+        <div class="product-card-modern card flex-fill h-100">
+          <div class="product-img-area">
+            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+            {% if product.is_new %}
+              <span class="badge badge-new">Nouveau</span>
+            {% endif %}
+          </div>
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">{{ product.name }}</h5>
+            <div class="mb-2 fw-bold text-success">{{ product.price|floatformat:0 }} XOF</div>
+            <p class="card-text small mb-3 flex-grow-1">{{ product.description|truncatechars:80 }}</p>
+            <div class="d-flex flex-wrap gap-2 mt-auto">
+              <a href="{% url 'ecommerce:product_detail' product.slug %}" class="btn btn-outline-primary rounded-pill flex-grow-1">Détails</a>
+              <form method="post" action="{% url 'ecommerce:add_to_cart' product.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-gradient-market rounded-pill flex-grow-1">Ajouter</button>
+              </form>
+            </div>
+          </div>
+          <div class="product-actions-bar d-flex justify-content-end align-items-center px-3 pb-3">
+            <button class="btn btn-outline-danger btn-fav"><i class="far fa-heart"></i></button>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="col-12 text-center text-muted">Aucun produit trouvé dans cette catégorie.</div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- FORMATIONS -->
+  <section class="formations-section-modern container my-5">
+    <div class="d-flex align-items-center mb-4 gap-3">
+      <h2 class="econ-section-title-modern mb-0 flex-grow-1"><i class="fas fa-graduation-cap me-2"></i> Formations en ligne</h2>
+      <a href="{% url 'formations:formations_list' %}" class="btn btn-outline-success rounded-pill">Toutes les formations</a>
+    </div>
+    <div class="row g-4">
+      {% for formation in online_courses %}
+      <div class="col-md-6 col-lg-4 d-flex">
+        <div class="econ-formation-card-modern card flex-fill p-4 d-flex flex-column">
+          <h5 class="mb-2">{{ formation.title }}</h5>
+          <div class="mb-2 small text-muted">{{ formation.short_description }}</div>
+          <a href="{{ formation.get_absolute_url }}" class="btn btn-outline-success mt-auto rounded-pill">S’inscrire</a>
+        </div>
+      </div>
+      {% empty %}
+      <div class="col-12 text-center text-muted">Aucune formation disponible.</div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- IMPACT -->
+  <section class="impact-section-modern container" id="impact">
+    <div class="row justify-content-center align-items-center g-4">
+      <div class="col-md-5 text-center text-md-start">
+        <h2 class="econ-section-title-modern">Notre Impact</h2>
+        <p class="lead text-muted">Chaque achat soutient directement nos bénéficiaires :</p>
+        <ul class="impact-list list-unstyled mb-4">
+          <li>👧 124 enfants scolarisés</li>
+          <li>💼 48 femmes formées à l’entrepreneuriat</li>
+          <li>🌱 12 projets agricoles accompagnés</li>
+          <li>💸 78 familles bénéficient du micro-crédit</li>
+        </ul>
+        <a href="{% url 'soci:index' %}" class="btn btn-success rounded-pill shadow">Voir nos projets sociaux</a>
+      </div>
+      <div class="col-md-6">
+        <div class="impact-cards-grid d-flex flex-wrap gap-3 justify-content-center">
+          <div class="impact-card-modern shadow-sm">
+            <i class="fas fa-child fa-2x text-warning mb-2"></i>
+            <div class="fw-bold fs-5">124</div>
+            <div class="small text-muted">Enfants aidés</div>
+          </div>
+          <div class="impact-card-modern shadow-sm">
+            <i class="fas fa-briefcase fa-2x text-success mb-2"></i>
+            <div class="fw-bold fs-5">48</div>
+            <div class="small text-muted">Femmes autonomisées</div>
+          </div>
+          <div class="impact-card-modern shadow-sm">
+            <i class="fas fa-leaf fa-2x text-success mb-2"></i>
+            <div class="fw-bold fs-5">12</div>
+            <div class="small text-muted">Projets agricoles</div>
+          </div>
+          <div class="impact-card-modern shadow-sm">
+            <i class="fas fa-coins fa-2x text-info mb-2"></i>
+            <div class="fw-bold fs-5">78</div>
+            <div class="small text-muted">Familles soutenues</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Témoignage -->
+  <section class="testimonial-modern container py-5 text-center">
+    <blockquote class="econ-quote-modern mx-auto">
+      <span class="econ-quote-mark">“</span>
+      Grâce à SOGENTIS, j’ai créé ma première boutique et aujourd’hui j’aide d’autres femmes à réussir !
+      <span class="econ-quote-mark">”</span>
+      <div class="econ-quote-person text-end mt-3 small text-muted">
+        — Aminata, entrepreneure soutenue
+      </div>
+    </blockquote>
+  </section>
+
+  <!-- CTA -->
+  <div class="cta-modern text-center mt-5 mb-5">
+    <a href="{% url 'soci:index' %}" class="btn btn-gradient-market btn-lg rounded-pill px-5 shadow">
+      Rejoindre l’aventure solidaire 🚀
+    </a>
+  </div>
+
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'economic/js/bootstrap.bundle.min.js' %}"></script>
+{% comment %} <script src="{% static 'economic/js/voirplus.js' %}"></script> {% endcomment %}
+{% endblock %}

@@ -1,0 +1,73 @@
+// 6-layout/_footer.scss
+// ─────────────────────────────────────────────────────────────
+// Styles pour le pied de page (footer)
+// ─────────────────────────────────────────────────────────────
+
+@use '../1-import/variables' as vars;
+@use '../1-import/mixins' as mix;
+
+.footer {
+  background-color: vars.$dark;
+  color: vars.$white;
+  text-align: center;
+  padding: vars.$spacer * 1.5 0;
+  margin-top: vars.$spacer;
+  font-size: 0.85rem;
+  border-top: 1px solid rgba(vars.$white, 0.1);
+  transition: background-color 0.3s ease, color 0.3s ease;
+
+  a {
+    color: vars.$white;
+    text-decoration: underline;
+    transition: color vars.$transition-base;
+
+    &:hover,
+    &:focus {
+      color: vars.$info;
+    }
+  }
+}
+
+body.dark-mode {
+  .footer {
+    background-color: vars.$gray-900;
+    color: vars.$light;
+    border-top-color: rgba(vars.$light, 0.1);
+
+    a {
+      color: vars.$light;
+
+      &:hover,
+      &:focus {
+        color: vars.$warning;
+      }
+    }
+  }
+}
+
+@include mix.breakpoint-up('sm') {
+  .footer {
+    padding: vars.$spacer * 2 0;
+    font-size: vars.$font-size-base;
+  }
+}
+
+// Sticky footer avec wrapper en min-height: 100vh
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.wrapper > header,
+.wrapper > main {
+  flex-shrink: 0; // header et main ne rétrécissent pas
+}
+
+.wrapper > main {
+  flex-grow: 1; // main prend tout l’espace disponible
+}
+
+.footer {
+  margin-top: auto; // pousse le footer en bas
+}

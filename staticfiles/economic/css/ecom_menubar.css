@@ -1,0 +1,37 @@
+/* Décalage du contenu à cause de la navbar fixe */
+body {
+  padding-top: 70px;
+}
+
+.navbar-brand {
+  font-size: 1.3rem;
+}
+
+.navbar .nav-link {
+  font-weight: 500;
+  padding: 0.6rem 1rem;
+}
+
+.navbar .badge {
+  font-size: 0.75rem;
+  padding: 0.4em 0.6em;
+  border-radius: 1rem;
+}
+
+.navbar.bg-primary {
+  background: linear-gradient(90deg, #34a1fd 70%, #1bb661 100%) !important;
+  box-shadow: 0 3px 24px rgba(46,213,124,.10) !important;
+}
+.navbar-brand {
+  font-size: 1.23rem;
+  letter-spacing: 0.5px;
+}
+.navbar .nav-link.active,
+.navbar .nav-link:hover {
+  color: #ffe36b !important;
+}
+.badge.bg-warning {
+  font-weight: 700;
+  font-size: .95em;
+  box-shadow: 0 2px 6px rgba(20,108,67,0.10);
+}

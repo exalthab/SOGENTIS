@@ -1,0 +1,81 @@
+{% load static i18n %}
+<nav class="navbar soci-navbar navbar-expand-lg navbar-dark bg-dark shadow-sm" aria-label="{% trans 'Menu de navigation social' %}" role="navigation">
+  <div class="container align-items-center">
+
+    <!-- 🔹 Logo -->
+    <a class="navbar-brand fw-bold d-flex align-items-center py-0" href="{% url 'core:home' %}">
+      <img src="{% static 'global/image/Sogentis3.png' %}" alt="Sogentis Logo" class="logo-sogentis" style="max-height: 48px;">
+    </a>
+
+    <!-- 🔹 Burger mobile -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#socialNavbar"
+            aria-controls="socialNavbar" aria-expanded="false" aria-label="{% trans 'Basculer la navigation' %}">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- 🔹 Contenu du menu -->
+    <div class="collapse navbar-collapse" id="socialNavbar">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-lg-2">
+
+        <!-- Accueil -->
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'index' %}active text-warning{% endif %}" 
+             href="{% url 'social:index' %}">{% trans "Accueil Social" %}</a>
+        </li>
+
+        <!-- À propos de nous -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="aboutDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            À propos
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="aboutDropdown">
+            <li><a class="dropdown-item" href="#mission">Mission</a></li>
+            <li><a class="dropdown-item" href="#vision">Vision</a></li>
+          </ul>
+        </li>
+
+        <!-- Projets -->
+        <li class="nav-item">
+          <a class="nav-link" href="#projects">{% trans "Projets" %}</a>
+        </li>
+
+        <!-- Participer -->
+        <li class="nav-item">
+          <a class="nav-link" href="#participate">{% trans "Participer" %}</a>
+        </li>
+
+        <!-- Vidéo -->
+        <li class="nav-item">
+          <a class="nav-link" href="#video">{% trans "Vidéo" %}</a>
+        </li>
+
+        <!-- Contact -->
+        <li class="nav-item">
+          <a class="nav-link text-white" href="{% url 'core:contact' %}">📧 {% trans "Contact" %}</a>
+        </li>
+      </ul>
+
+      <!-- 🔎 Recherche + donation (compacte, alignée à droite) -->
+      <div class="d-flex align-items-center ms-lg-auto gap-2 search-navbar-group">
+        <form class="d-flex align-items-center" role="search" method="get" action="{% url 'social:search' %}" style="margin-bottom:0;">
+          <input class="form-control form-control-sm me-2 rounded-pill" type="search"
+                placeholder="{% trans 'Rechercher...' %}" name="q"
+                aria-label="{% trans 'Rechercher' %}" style="max-width: 180px;">
+          <button class="btn btn-sm btn-primary rounded-pill px-3" type="submit">
+            {% trans "OK" %}
+          </button>
+        </form>
+        <a href="{% url 'social:donation' %}" class="btn btn-warning fw-bold rounded-pill px-4 py-2 d-inline-flex align-items-center" 
+          target="_blank" rel="noopener noreferrer" style="font-size: 1.1rem;">
+          {% trans "Faire un don" %}
+        </a>
+        {% if request.user.is_authenticated and request.user.is_staff %}
+          <a href="{% url 'admin:index' %}" class="btn btn-outline-light ms-2 rounded-pill">
+            <i class="fas fa-tools me-1"></i> Admin
+          </a>
+        {% endif %}
+      </div>
+
+  </div>
+</nav>

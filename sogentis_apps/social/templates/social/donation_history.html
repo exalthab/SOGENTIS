@@ -1,0 +1,69 @@
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Mes Dons" %}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <h2 class="mb-4 text-center">{% trans "Historique de mes dons" %}</h2>
+
+  {% if donations %}
+    <div class="table-responsive overflow-auto">
+      <table class="table table-hover table-striped shadow-sm rounded">
+        <thead class="table-light">
+          <tr>
+            <th scope="col">{% trans "Date" %}</th>
+            <th scope="col">{% trans "Montant" %}</th>
+            <th scope="col">{% trans "Projet" %}</th>
+            <th scope="col">{% trans "Type" %}</th>
+            <th scope="col">{% trans "Méthode" %}</th>
+            <th scope="col">{% trans "Statut" %}</th>
+            <th scope="col">{% trans "Reçu" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for d in donations %}
+            <tr>
+              <td>{{ d.created_at|date:"d/m/Y" }}</td>
+              <td><strong>{{ d.amount|floatformat:0 }} FCFA</strong></td>
+              <td>{{ d.project.title|default:"—" }}</td>
+              <td>
+                {% if d.monthly %}
+                  <span class="badge bg-info text-white">{% trans "Mensuel" %}</span>
+                {% else %}
+                  <span class="badge bg-light text-dark border">{% trans "Ponctuel" %}</span>
+                {% endif %}
+              </td>
+              <td>{{ d.get_payment_method_display }}</td>
+              <td>
+                {% if d.status == "paid" %}
+                  <span class="badge bg-success">{% trans "Payé" %}</span>
+                {% elif d.status == "pending" %}
+                  <span class="badge bg-warning text-dark">{% trans "En attente" %}</span>
+                {% elif d.status == "failed" %}
+                  <span class="badge bg-danger">{% trans "Échoué" %}</span>
+                {% else %}
+                  <span class="badge bg-secondary">{{ d.get_status_display }}</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if d.pdf_receipt %}
+                  <a href="{% url 'social:download_receipt' d.id %}" class="btn btn-sm btn-outline-primary" target="_blank">
+                    📄 {% trans "Reçu" %}
+                  </a>
+                {% else %}
+                  <span class="text-muted">—</span>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="text-muted text-center mt-4">{% trans "Aucun don enregistré." %}</p>
+  {% endif %}
+</div>
+{% endblock %}
+
+

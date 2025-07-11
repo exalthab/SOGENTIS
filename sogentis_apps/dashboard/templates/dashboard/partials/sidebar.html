@@ -1,0 +1,26 @@
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <h3>SOGENTIS</h3>
+  </div>
+  <ul class="sidebar-nav">
+    {% comment %} <li><a href="{% url 'dashboard:home' %}"><i class="fa fa-home"></i> Accueil</a></li> {% endcomment %}
+    <li><a href="{% url 'dashboard:index' %}"><i class="fa fa-home"></i> Accueil</a></li>
+    <li><a href="{% url 'dashboard:notes_list' %}">Mes notes</a></li>
+
+    <li><a href="{% url 'dashboard:index' %}"><i class="fa fa-chart-line"></i> Tableau de bord</a></li>
+    <li><a href="{% url 'dashboard:profile' %}"><i class="fa fa-user"></i> Profil</a></li>
+    <li><a href="{% url 'dashboard:engagements_list' %}"><i class="fa fa-handshake"></i> Engagements</a></li>
+    <li><a href="{% url 'dashboard:stats' %}"><i class="fa fa-chart-pie"></i> Statistiques</a></li>
+    <li><a href="{% url 'accounts_users_web:logout' %}"><i class="fa fa-sign-out-alt"></i> Déconnexion</a></li>
+  </ul>
+</nav>
+{% comment %} 
+<nav class="sidebar">
+  <ul>
+    <li><a href="{% url 'dashboard:index' %}">Accueil</a></li>
+    <li><a href="{% url 'dashboard:notes_list' %}">Mes notes</a></li>
+    <li><a href="{% url 'dashboard:stats' %}">Statistiques</a></li>
+    <li><a href="{% url 'dashboard:profile' %}">Profil</a></li>
+    <!-- Ajoute les liens vers dons, engagements, etc. -->
+  </ul>
+</nav> {% endcomment %}

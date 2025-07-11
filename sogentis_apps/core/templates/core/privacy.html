@@ -1,0 +1,50 @@
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}
+    Mentions légales
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h1 class="mb-4">Mentions légales</h1>
+
+  <h3>1. Propriétaire du site</h3>
+  <p>Le site <strong>{{ PROJECT_NAME|default:"Nom du projet" }}</strong> est édité par :</p>
+  <p>Nom de l'entreprise : SOGENTIS</p>
+
+  <p>Adresse de l'entreprise : Dakar-Sénégal</p>
+
+  <h3>2. Hébergement</h3>
+  <p>Le site est hébergé par :SOGENTIS</p>
+  <p>Nom de l'hébergeur : SOGENTIS</p>
+  <p>Adresse de l'hébergeur:Dakar-Sénégal</p>
+
+  <h3>3. Propriété intellectuelle</h3>
+  <p>
+    Tous les contenus présents sur le site <strong>{{ PROJECT_NAME|default:"Nom du projet" }}</strong>
+    sont protégés par la législation sur la propriété intellectuelle.
+  </p>
+
+  <h3>4. Données personnelles</h3>
+  <p>
+    Les données personnelles recueillies sur ce site sont traitées conformément
+    à notre 
+    <a href="{% url 'core:privacy_policy' %}">Politique de confidentialité</a>.
+  </p>
+
+  <h3>5. Responsabilité</h3>
+  <p>
+    Le site <strong>{{ PROJECT_NAME|default:"Nom du projet" }}</strong> ne peut être tenu responsable des erreurs ou
+    omissions pouvant apparaître sur les pages du site.
+  </p>
+
+  <h3>6. Contact</h3>
+  <p>
+    Pour plus d'informations, veuillez nous contacter à :
+    <a href="mailto:{{ CONTACT_EMAIL|default:'contact@example.com' }}">
+      {{ CONTACT_EMAIL|default:'contact@example.com' }}
+    </a>
+  </p>
+</div>
+{% endblock %}

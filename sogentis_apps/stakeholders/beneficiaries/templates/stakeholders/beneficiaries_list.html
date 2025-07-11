@@ -1,0 +1,14 @@
+{# stakeholders/beneficiaries/templates/stakeholders/beneficiaries_list.html #}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block content %}
+  <h1>Liste des enfants</h1>
+  <ul>
+    {% for beneficiary in beneficiaries %}
+      <li>{{ beneficiary.name }}</li>
+    {% empty %}
+      <li>Aucun enfant trouvé.</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

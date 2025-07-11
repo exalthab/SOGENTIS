@@ -1,0 +1,59 @@
+// 10-utilities/_padding.scss — version corrigée avec meta.type-of
+// static/scss/bootstrap/scss/10-utilities/_padding.scss
+// ─────────────────────────────────────────────────────────────
+// Classes utilitaires pour le padding (espacement intérieur)
+// ─────────────────────────────────────────────────────────────
+
+@use '../1-import/variables' as vars;
+@use '../1-import/mixins' as mix;
+@use 'sass:map';
+@use 'sass:meta';
+
+// Génération des directions
+$directions: (
+  '': '',
+  't': 'top',
+  'r': 'right',
+  'b': 'bottom',
+  'l': 'left',
+  'x': ('left', 'right'),
+  'y': ('top', 'bottom')
+);
+
+// Génération des classes p-0 à p-5, pt-0 à pt-5, etc.
+@each $abbr, $dirs in $directions {
+  @each $i, $space in vars.$spacers {
+    .p#{$abbr}-#{$i} {
+      @if meta.type-of($dirs) == 'list' {
+        @each $dir in $dirs {
+          padding-#{$dir}: $space !important;
+        }
+      } @else if $dirs != '' {
+        padding-#{$dirs}: $space !important;
+      } @else {
+        padding: $space !important;
+      }
+    }
+  }
+}
+
+// Responsive (ex: p-md-3, py-lg-4)
+@each $break in map.keys(vars.$breakpoints) {
+  @include mix.breakpoint-up($break) {
+    @each $abbr, $dirs in $directions {
+      @each $i, $space in vars.$spacers {
+        .p#{$abbr}-#{$break}-#{$i} {
+          @if meta.type-of($dirs) == 'list' {
+            @each $dir in $dirs {
+              padding-#{$dir}: $space !important;
+            }
+          } @else if $dirs != '' {
+            padding-#{$dirs}: $space !important;
+          } @else {
+            padding: $space !important;
+          }
+        }
+      }
+    }
+  }
+}

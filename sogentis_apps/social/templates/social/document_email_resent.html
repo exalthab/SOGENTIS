@@ -1,0 +1,27 @@
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Document renvoyé" %}{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="max-width: 600px;">
+  <div class="card shadow-sm border-0">
+    <div class="card-body text-center">
+      <div class="display-4 mb-3 text-success">
+        <i class="fas fa-envelope"></i>
+      </div>
+      <h2 class="mb-3">{% trans "Le document a été renvoyé !" %}</h2>
+      <p>
+        {% trans "Le document" %} <strong>{{ doc.title }}</strong> {% trans "a été envoyé à votre adresse email :" %}
+        <br><strong>{{ request.user.email }}</strong>
+      </p>
+      <p class="text-muted mt-4">
+        {% trans "Merci pour votre confiance. Vérifiez votre boîte de réception (et les spams) !" %}
+      </p>
+      <a href="{% url 'social:publication_list' %}" class="btn btn-primary mt-2">
+        <i class="fas fa-arrow-left"></i> {% trans "Retour à la liste des documents" %}
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

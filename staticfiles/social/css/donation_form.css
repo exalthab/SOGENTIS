@@ -1,0 +1,199 @@
+/* ===============================
+   Donation Form (donation_form.css)
+   =============================== */
+
+/* --- Container & Card --- */
+.container {
+  background: var(--bg-form, #fff);
+  border-radius: 1.25rem;
+  box-shadow: 0 8px 32px rgba(34,34,34,0.06);
+  padding: 2.5rem 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+/* --- Responsive --- */
+@media (max-width: 767px) {
+  .container {
+    padding: 1.2rem .3rem;
+    border-radius: 1rem;
+  }
+}
+
+/* --- Form Labels --- */
+.form-label, .form-check-label {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: #13396a;
+  margin-bottom: 0.3rem;
+}
+
+/* --- Inputs, Select, Textarea --- */
+.form-control, .form-select {
+  border-radius: 0.7rem;
+  border: 1.5px solid #dbe8ff;
+  font-size: 1.08rem;
+  background: #fafdff;
+  padding: .7rem 1rem;
+  transition: border-color 0.2s;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #4583d3;
+  box-shadow: 0 0 0 2px #b2d2fa88;
+}
+
+/* --- Error Styling --- */
+.text-danger.small {
+  font-size: 0.96rem;
+  color: #d01a4d !important;
+  margin-top: 2px;
+}
+
+/* --- Amount Buttons --- */
+.amount-btn {
+  min-width: 74px;
+  font-weight: 600;
+  border-radius: 2rem !important;
+  border: 1.5px solid #a2bce8;
+  background: #fafdff;
+  color: #204060;
+  transition: all 0.18s;
+}
+
+.amount-btn:active,
+.amount-btn.active,
+.amount-btn:focus {
+  background: #4583d3;
+  color: #fff;
+  border-color: #4583d3;
+  box-shadow: 0 2px 6px #2a60b020;
+}
+
+.amount-btn:last-child {
+  border-color: #c6b184;
+  color: #6e5833;
+}
+
+/* --- Checkbox (Mensuel) --- */
+.form-check {
+  display: flex;
+  align-items: center;
+  padding-left: 0;
+  margin-bottom: 1.3rem;
+  user-select: none;
+}
+.form-check-input[type="checkbox"] {
+  width: 1.25rem;
+  height: 1.25rem;
+  accent-color: #1cb68b;
+  margin-right: .7rem;
+  border-radius: .35rem;
+  border: 2px solid #b7ebd1;
+  transition: border-color 0.2s, background .2s;
+  box-shadow: none;
+}
+.form-check-input:focus {
+  outline: 2px solid #23e0ac66;
+  border-color: #23e0ac;
+}
+.form-check-label {
+  font-size: 1.08rem;
+  color: #17462f;
+  cursor: pointer;
+}
+
+/* --- Success Button --- */
+.btn-success {
+  font-size: 1.15rem;
+  font-weight: 700;
+  border-radius: 2rem;
+  padding: .9rem 0;
+  background: linear-gradient(90deg, #1cb68b 60%, #47ecaf 100%);
+  border: none;
+  box-shadow: 0 6px 24px #1cb68b15;
+  transition: background .18s, box-shadow .18s;
+}
+.btn-success:hover,
+.btn-success:focus {
+  background: linear-gradient(90deg, #16a074 50%, #38d99b 100%);
+  box-shadow: 0 4px 32px #1cb68b25;
+  outline: none;
+}
+
+/* --- Alerts --- */
+.alert-info {
+  background: #e8f6fd;
+  border: 1.5px solid #b3e1ff;
+  color: #246180;
+  border-radius: 1rem;
+}
+.alert-danger {
+  background: #ffe8f1;
+  color: #b9264f;
+  border-radius: 1rem;
+  border: 1.5px solid #fbc2d3;
+}
+
+/* --- Title --- */
+h2.text-center {
+  color: #204060;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+/* --- Dark mode support --- */
+body.dark .container,
+body[data-theme="dark"] .container {
+  background: #191f24;
+  box-shadow: 0 4px 20px #1cb68b11;
+}
+body.dark .form-label,
+body.dark .form-check-label,
+body.dark h2.text-center {
+  color: #fff;
+}
+body.dark .form-control,
+body.dark .form-select {
+  background: #21282d;
+  border-color: #315063;
+  color: #c9efeb;
+}
+body.dark .form-control:focus,
+body.dark .form-select:focus {
+  border-color: #23e0ac;
+  box-shadow: 0 0 0 2px #23e0ac55;
+}
+body.dark .amount-btn {
+  background: #222;
+  color: #e5fff5;
+  border-color: #34b991;
+}
+body.dark .amount-btn:active,
+body.dark .amount-btn.active,
+body.dark .amount-btn:focus {
+  background: #23e0ac;
+  color: #181c1b;
+  border-color: #23e0ac;
+}
+body.dark .alert-info {
+  background: #14313c;
+  color: #c3f9e9;
+  border-color: #34b991;
+}
+body.dark .alert-danger {
+  background: #381f2c;
+  color: #ffc8e0;
+  border-color: #c86a92;
+}
+body.dark .btn-success {
+  background: linear-gradient(90deg, #23e0ac 60%, #70fadf 100%);
+  color: #1a3530;
+  box-shadow: 0 8px 32px #1cb68b15;
+}
+
+/* --- Transition pour les boutons et champs --- */
+.form-control, .form-select, .amount-btn, .btn-success {
+  transition: background .15s, color .15s, border-color .15s, box-shadow .15s;
+}
+
+/* --- End --- */

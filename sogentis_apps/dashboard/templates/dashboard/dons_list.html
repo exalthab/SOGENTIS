@@ -1,0 +1,81 @@
+{% extends 'dashboard/base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Mes Dons" %} | SOGENTIS{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="h4 mb-0">{% trans "Mes Dons" %}</h2>
+    {# Tu peux ajouter ici un bouton vers un don rapide, ex : #}
+    {# <a href="{% url 'social:donation' %}" class="btn btn-outline-success btn-sm">Faire un don</a> #}
+  </div>
+  <div class="card shadow-sm">
+    <div class="card-header bg-light">
+      <strong>{% trans "Historique de mes dons" %}</strong>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-striped mb-0 align-middle">
+          <thead class="table-dark">
+            <tr>
+              <th>{% trans "Montant" %}</th>
+              <th>{% trans "Date" %}</th>
+              <th>{% trans "Projet" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for don in dons %}
+            <tr>
+              <td><strong>{{ don.montant|floatformat:0 }} FCFA</strong></td>
+              <td>{{ don.date|date:"d/m/Y" }}</td>
+              <td>
+                {% if don.project %}
+                  {{ don.project.title }}
+                {% else %}
+                  <span class="text-muted">—</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="3" class="text-center text-muted py-4">{% trans "Aucun don enregistré." %}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+
+
+
+
+{% comment %} {% extends 'dashboard/base.html' %}
+
+{% block content %}
+<h3>Mes Dons</h3>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Montant</th>
+      <th>Date</th>
+      <th>Projet</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for don in dons %}
+    <tr>
+      <td>{{ don.amount }} €</td>
+      <td>{{ don.created_at|date:"d/m/Y" }}</td>
+      <td>{{ don.project.title }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="3">Aucun don enregistré.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %} {% endcomment %}

@@ -1,0 +1,73 @@
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}Accueil - SOGENTIS{% endblock %}
+
+{% block extra_css %}
+  <!-- CSS spécifique à la page d'accueil. -->
+  <link rel="stylesheet" href="{% static 'core/css/home.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div
+  class="home-container"
+  style="background-image: url('{% static 'core/images/kids2.jpg' %}')"
+>
+  <div class="background-overlay text-center text-white">
+    <h1>
+      <span class="highlight-white">Bienvenue sur</span>
+      <span class="highlight-yellow">SOGENTIS</span>
+    </h1>
+
+    <p class="subtitle">
+      <span class="color1">Unir l’économie</span>,
+      <span class="color2">le social</span>,
+      <span class="color3">pour un avenir durable.</span>
+    </p>
+
+    <img
+      src="{% static 'core/images/flag.svg' %}"
+      alt="Drapeau du Sénégal"
+      class="flag"
+    />
+
+    <div class="main-layout d-flex justify-content-center align-items-center gap-4 flex-wrap mt-4">
+      <a href="{% url 'econ:index' %}" class="btn btn-business btn-lg">
+        💼 Pôle Économique
+      </a>
+
+      <div id="globe-container" class="my-3">
+        <div class="pulse-ring"></div>
+        <div id="globe-wrapper">
+          <canvas id="globe-canvas"></canvas>
+        </div>
+      </div>
+
+      <a href="{% url 'soci:index' %}" class="btn btn-social btn-lg">
+        🌍 Pôle Social
+      </a>
+    </div>
+
+    <p class="impact-message mt-5">
+      <span class="highlight-primary">
+        100 % de vos paiements — achats, services ou dons —
+      </span><br />
+      <span class="highlight-secondary">
+        contribuent à nos actions sociales.
+      </span><br />
+      <span class="highlight-accent">
+        <i class="fas fa-hand-holding-heart" style="color: #e63946"></i>
+        Chaque geste compte.
+      </span>
+    </p>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+  <script type="module">
+    import * as THREE from "https://unpkg.com/three@0.159.0/build/three.module.js";
+    import { initGlobe } from "{% static 'core/js/globe.js' %}";
+    initGlobe(THREE);
+  </script>
+{% endblock %}

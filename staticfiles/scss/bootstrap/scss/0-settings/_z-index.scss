@@ -1,0 +1,44 @@
+// 0-settings/_z-index.scss
+// ─────────────────────────────────────────────────────────────
+// Z-INDEX — Niveaux de superposition globaux
+// ─────────────────────────────────────────────────────────────
+
+@use 'sass:map';
+
+// 🎯 Map centralisée des couches Z
+$z-indices: (
+  base:             0,
+  dropdown:         1000,
+  sticky:           1020,
+  fixed:            1030,
+  navbar:           1040,
+  modal-backdrop:   1050,
+  topbar:           1060,
+  modal:            1070,
+  offcanvas:        1080,
+  popover:          1090,
+  tooltip:          1100,
+  toast:            1110,
+  overlay:          1120
+) !default;
+
+// 🔢 Accès direct par variable (facilite l’usage dans composants)
+$z-index-base:            map.get($z-indices, 'base')            !default;
+$z-index-dropdown:        map.get($z-indices, 'dropdown')        !default;
+$z-index-sticky:          map.get($z-indices, 'sticky')          !default;
+$z-index-fixed:           map.get($z-indices, 'fixed')           !default;
+$z-index-navbar:          map.get($z-indices, 'navbar')          !default;
+$z-index-modal-backdrop:  map.get($z-indices, 'modal-backdrop')  !default;
+$z-index-topbar:          map.get($z-indices, 'topbar')          !default;
+$z-index-modal:           map.get($z-indices, 'modal')           !default;
+$z-index-offcanvas:       map.get($z-indices, 'offcanvas')       !default;
+$z-index-popover:         map.get($z-indices, 'popover')         !default;
+$z-index-tooltip:         map.get($z-indices, 'tooltip')         !default;
+$z-index-toast:           map.get($z-indices, 'toast')           !default;
+$z-index-overlay:         map.get($z-indices, 'overlay')         !default;
+
+// 🛠️ Fonction utilitaire pour appel dynamique
+/// Exemple : `z(topbar)` renvoie `1060`
+@function z($key) {
+  @return map.get($z-indices, $key);
+}

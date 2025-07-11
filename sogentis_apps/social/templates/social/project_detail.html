@@ -1,0 +1,74 @@
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{{ project.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+  <!-- Titre et image -->
+  <div class="text-center mb-4">
+    <h2>{{ project.title }}</h2>
+    {% if project.image %}
+      <img src="{{ project.image.url }}" alt="{{ project.title }}" class="img-fluid rounded shadow-sm mt-3" style="max-height: 350px;">
+    {% endif %}
+  </div>
+
+  <!-- Description -->
+  <div class="mb-4">
+    <p>{{ project.description|linebreaks }}</p>
+  </div>
+
+  <!-- Objectif & barre de progression -->
+  <div class="mb-4">
+    <h5>{% trans "Objectif de financement" %}</h5>
+    {% with percent=project.percentage_collected %}
+      {% if percent >= 75 %}
+        {% with bar_class="bg-success" %}
+          <div class="progress mb-2" style="height: 25px;">
+            <div class="progress-bar {{ bar_class }}" role="progressbar"
+                 style="width: {{ percent|floatformat:1 }}%;"
+                 aria-valuenow="{{ percent|floatformat:1 }}"
+                 aria-valuemin="0" aria-valuemax="100">
+              {{ percent|floatformat:1 }}%
+            </div>
+          </div>
+        {% endwith %}
+      {% elif percent >= 50 %}
+        {% with bar_class="bg-warning text-dark" %}
+          <div class="progress mb-2" style="height: 25px;">
+            <div class="progress-bar {{ bar_class }}" role="progressbar"
+                 style="width: {{ percent|floatformat:1 }}%;"
+                 aria-valuenow="{{ percent|floatformat:1 }}"
+                 aria-valuemin="0" aria-valuemax="100">
+              {{ percent|floatformat:1 }}%
+            </div>
+          </div>
+        {% endwith %}
+      {% else %}
+        {% with bar_class="bg-danger" %}
+          <div class="progress mb-2" style="height: 25px;">
+            <div class="progress-bar {{ bar_class }}" role="progressbar"
+                 style="width: {{ percent|floatformat:1 }}%;"
+                 aria-valuenow="{{ percent|floatformat:1 }}"
+                 aria-valuemin="0" aria-valuemax="100">
+              {{ percent|floatformat:1 }}%
+            </div>
+          </div>
+        {% endwith %}
+      {% endif %}
+    {% endwith %}
+    <small>
+      {{ project.total_received|floatformat:0 }} FCFA / {{ project.goal|floatformat:0 }} FCFA
+    </small>
+  </div>
+
+  <!-- Bouton pour donner -->
+  <div class="text-center mt-5">
+    <a href="{% url 'social:donation' %}?project={{ project.id }}" class="btn btn-primary btn-lg">
+      🤝 {% trans "Faire un don pour ce projet" %}
+    </a>
+  </div>
+
+</div>
+{% endblock %}

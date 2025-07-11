@@ -1,0 +1,32 @@
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Statistiques des dons" %}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <h2 class="mb-4 text-center">{% trans "Statistiques des dons" %}</h2>
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-sm mb-3">
+        <div class="card-body">
+          <h5 class="card-title">{% trans "Total des dons collectés" %}</h5>
+          <p class="fs-4 fw-bold text-success">
+            {{ stats.total_dons|floatformat:0 }} FCFA
+          </p>
+        </div>
+      </div>
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">{% trans "Nombre de donateurs" %}</h5>
+          <p class="fs-4 fw-bold text-primary">
+            {{ stats.nb_dons }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+

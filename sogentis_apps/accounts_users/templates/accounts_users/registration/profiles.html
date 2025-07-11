@@ -1,0 +1,26 @@
+{% extends "dashboard/base.html" %}
+{% block title %}Mon Profil – SOGENTIS{% endblock %}
+
+{% block dashboard_header %}
+<h2 class="mb-4">Mon Profil</h2>
+{% endblock %}
+
+{% block dashboard_content %}
+<form method="post" enctype="multipart/form-data" class="row g-3">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+
+  <div class="col-md-6">{{ form.first_name.label_tag }} {{ form.first_name }}</div>
+  <div class="col-md-6">{{ form.last_name.label_tag }} {{ form.last_name }}</div>
+  <div class="col-md-6">{{ form.email.label_tag }} {{ form.email }}</div>
+  <div class="col-md-6">{{ form.phone.label_tag }} {{ form.phone }}</div>
+  <div class="col-md-6">{{ form.country.label_tag }} {{ form.country }}</div>
+  <div class="col-md-6">{{ form.role.label_tag }} {{ form.role }}</div>
+  <div class="col-md-12">{{ form.message.label_tag }} {{ form.message }}</div>
+  <div class="col-md-12">{{ form.judicial_record.label_tag }} {{ form.judicial_record }}</div>
+
+  <div class="col-12">
+    <button type="submit" class="btn btn-success">Mettre à jour</button>
+  </div>
+</form>
+{% endblock %}

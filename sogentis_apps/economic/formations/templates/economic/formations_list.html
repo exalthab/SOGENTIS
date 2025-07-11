@@ -1,0 +1,30 @@
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block content %}
+<section class="formations-section-modern container py-5" id="formations">
+  <h2 class="econ-section-title-modern mb-4">Formations en ligne</h2>
+  <div class="row g-4">
+    {% for formation in formations %}
+      <div class="col-md-6 col-lg-4 d-flex">
+        <div class="econ-formation-card-modern card flex-fill p-4 d-flex flex-column">
+          <h5 class="mb-2">{{ formation.title }}</h5>
+          <div class="mb-2 small text-muted">{{ formation.short_description }}</div>
+
+          {% if formation.get_absolute_url %}
+            <a href="{{ formation.get_absolute_url }}" class="btn btn-outline-success mt-auto rounded-pill">
+              Découvrir
+            </a>
+          {% else %}
+            <a href="{% url 'formations:formation_detail' slug=formation.slug %}" class="btn btn-outline-success mt-auto rounded-pill">
+              Découvrir
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    {% empty %}
+      <div class="col-12 text-center text-muted">Aucune formation disponible.</div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

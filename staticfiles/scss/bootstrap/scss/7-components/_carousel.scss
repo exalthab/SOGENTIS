@@ -1,0 +1,104 @@
+@use '../1-import/variables' as vars;
+@use '../1-import/mixins'    as mix;
+
+.carousel {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+
+  // Conteneur des slides
+  .carousel-inner {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    transition: transform 0.6s ease;
+  }
+
+  // Slide individuelle
+  .carousel-item {
+    flex: 0 0 100%;
+    width: 100%;
+    display: none;
+    transition: transform 0.6s ease, opacity 0.6s ease;
+
+    &.active,
+    &.carousel-item-next,
+    &.carousel-item-prev,
+    &.active.carousel-item-start,
+    &.active.carousel-item-end {
+      display: block;
+    }
+  }
+
+  // Image dans le slide
+  img {
+    width: 100%;
+    height: 250px; // fixe une hauteur harmonieuse (modifiable)
+    object-fit: cover; // remplit le conteneur sans déformer
+    display: block;
+    border-radius: 0.25rem;
+  }
+
+  // Contrôles (précédent / suivant)
+  .carousel-control-prev,
+  .carousel-control-next {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2.5rem;
+    color: vars.$white;
+    background-color: rgba(vars.$black, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color vars.$transition-base;
+
+    &:hover {
+      background-color: rgba(vars.$black, 0.7);
+    }
+  }
+
+  .carousel-control-prev {
+    left: 0;
+  }
+
+  .carousel-control-next {
+    right: 0;
+  }
+
+  // Icônes de contrôle
+  .carousel-control-prev-icon,
+  .carousel-control-next-icon {
+    background-size: 1.5rem 1.5rem;
+  }
+
+  // Indicateurs en bas (si activés dans HTML)
+  .carousel-indicators {
+    position: absolute;
+    bottom: 0.5rem;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+
+    button {
+      width: 10px;
+      height: 10px;
+      margin: 0 4px;
+      border-radius: 50%;
+      background-color: rgba(vars.$black, 0.4);
+      border: none;
+      transition: background-color 0.3s;
+
+      &.active,
+      &:hover {
+        background-color: vars.$primary;
+      }
+    }
+  }
+}

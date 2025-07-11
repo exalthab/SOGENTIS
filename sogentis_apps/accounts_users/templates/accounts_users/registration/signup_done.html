@@ -1,0 +1,16 @@
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="container py-5 text-center">
+  <h2>{% trans "Merci pour votre inscription !" %}</h2>
+  <p>{% trans "Veuillez vérifier votre email afin d'activer votre compte." %}</p>
+  <p>{% trans "Vous serez redirigé dans quelques secondes..." %}</p>
+
+  <script>
+    setTimeout(function () {
+      window.location.href = "{% url 'accounts_users_web:login' %}";
+    }, 5000);
+  </script>
+</div>
+{% endblock %}

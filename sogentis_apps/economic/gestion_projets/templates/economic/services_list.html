@@ -1,0 +1,32 @@
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block content %}
+
+<section class="services-section-modern container py-5" id="services">
+  <h2 class="econ-section-title-modern mb-4">Nos services</h2>
+  <div class="row g-4">
+    {% for service in services %}
+      <div class="col-md-6 col-lg-4 d-flex">
+        <div class="econ-service-card-modern card flex-fill p-4 d-flex flex-column">
+          <h5 class="mb-2">{{ service.title }}</h5>
+          <div class="mb-2 small text-muted">{{ service.short_description }}</div>
+
+          {% if service.get_absolute_url %}
+            <a href="{{ service.get_absolute_url }}" class="btn btn-outline-primary mt-auto rounded-pill">
+              En savoir plus
+            </a>
+          {% else %}
+            <a href="{% url 'gestion_projets:service_detail' slug=service.slug %}" class="btn btn-outline-primary mt-auto rounded-pill">
+              En savoir plus
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    {% empty %}
+      <div class="col-12 text-center text-muted">Aucun service disponible.</div>
+    {% endfor %}
+  </div>
+</section>
+
+{% endblock %}

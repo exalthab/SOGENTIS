@@ -1,0 +1,145 @@
+{% extends "dashboard/base.html" %}
+{% load static i18n dashboard_tags %}
+
+{% block title %}{% trans "Accueil du tableau de bord" %}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h1 class="mb-4">{% trans "Bienvenue sur votre tableau de bord" %}</h1>
+
+  <!-- Cartes Résumées, si tu veux des stats ici aussi -->
+  {% if cards %}
+  <div class="row g-4 mb-5">
+    {% for label, value, icon, color in cards %}
+      <div class="col-md-6 col-xl-4">
+        <div class="card border-start border-{{ color }} shadow-sm h-100">
+          <div class="card-body d-flex align-items-center">
+            <i class="bi {{ icon }} fs-2 text-{{ color }} me-3"></i>
+            <div>
+              <h6 class="card-title mb-1">{{ label }}</h6>
+              <p class="fs-4 fw-bold mb-0">{{ value }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Accès rapides -->
+  <div class="row g-4 mb-4">
+    <div class="col-md-4">
+      <a href="{% url 'dashboard:profile' %}" class="card text-decoration-none shadow-sm h-100">
+        <div class="card-body text-center">
+          <i class="fas fa-user fa-2x mb-2 text-primary"></i>
+          <h5 class="card-title">{% trans "Profil" %}</h5>
+          <p class="card-text">{% trans "Consulter et mettre à jour vos informations personnelles." %}</p>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-4">
+      <a href="{% url 'dashboard:engagements_list' %}" class="card text-decoration-none shadow-sm h-100">
+        <div class="card-body text-center">
+          <i class="fas fa-handshake fa-2x mb-2 text-success"></i>
+          <h5 class="card-title">{% trans "Engagements" %}</h5>
+          <p class="card-text">{% trans "Voir votre liste d'engagements et vos missions." %}</p>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-4">
+      <a href="{% url 'dashboard:dons_list' %}" class="card text-decoration-none shadow-sm h-100">
+        <div class="card-body text-center">
+          <i class="fas fa-donate fa-2x mb-2 text-danger"></i>
+          <h5 class="card-title">{% trans "Dons" %}</h5>
+          <p class="card-text">{% trans "Historique de vos contributions financières." %}</p>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Derniers engagements et dons, si transmis dans le contexte -->
+  <div class="row mt-4">
+    <div class="col-md-6">
+      <h4>{% trans "Derniers engagements" %}</h4>
+      {% if derniers_engagements %}
+        <ul class="list-group mb-3">
+          {% for e in derniers_engagements %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              {{ e.description|truncatewords:10 }}
+              <span class="badge bg-secondary">{{ e.date|date:"d F Y" }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="text-muted">{% trans "Aucun engagement récent." %}</p>
+      {% endif %}
+      <a href="{% url 'dashboard:engagements_list' %}" class="btn btn-outline-primary btn-sm">
+        {% trans "Voir tous les engagements" %}
+      </a>
+    </div>
+    <div class="col-md-6">
+      <h4>{% trans "Derniers dons" %}</h4>
+      {% if derniers_dons %}
+        <ul class="list-group mb-3">
+          {% for d in derniers_dons %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              {{ d.amount|floatformat:0 }} FCFA
+              <span class="badge bg-secondary">{{ d.date|date:"d F Y" }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="text-muted">{% trans "Aucun don récemment." %}</p>
+      {% endif %}
+      <a href="{% url 'dashboard:dons_list' %}" class="btn btn-outline-success btn-sm">
+        {% trans "Voir tous les dons" %}
+      </a>
+    </div>
+  </div>
+
+  <!-- Prochain événement, si transmis -->
+  {% if prochain_evenement %}
+  <div class="mt-5">
+    <h5 class="text-info"><i class="fas fa-calendar-check"></i> {% trans "Prochain événement" %}</h5>
+    <div class="alert alert-info">
+      <strong>{{ prochain_evenement.titre }}</strong> –
+      {{ prochain_evenement.lieu }} –
+      {{ prochain_evenement.date|date:"d F Y H:i" }}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+
+
+
+{% comment %} <div class="row">
+  <div class="col-md-4 mb-4">
+    <a href="{% url 'dashboard:profile' %}" class="card text-decoration-none shadow-sm h-100">
+      <div class="card-body text-center">
+        <i class="fas fa-user fa-2x mb-2 text-primary"></i>
+        <h5 class="card-title">Profil</h5>
+        <p class="card-text">Consulter et mettre à jour vos informations personnelles.</p>
+      </div>
+    </a>
+  </div>
+  <div class="col-md-4 mb-4">
+    <a href="{% url 'dashboard:engagements_list' %}" class="card text-decoration-none shadow-sm h-100">
+      <div class="card-body text-center">
+        <i class="fas fa-handshake fa-2x mb-2 text-success"></i>
+        <h5 class="card-title">Engagements</h5>
+        <p class="card-text">Voir votre liste d'engagements et vos missions.</p>
+      </div>
+    </a>
+  </div>
+  <div class="col-md-4 mb-4">
+    <a href="{% url 'dashboard:dons_list' %}" class="card text-decoration-none shadow-sm h-100">
+      <div class="card-body text-center">
+        <i class="fas fa-donate fa-2x mb-2 text-danger"></i>
+        <h5 class="card-title">Dons</h5>
+        <p class="card-text">Historique de vos contributions financières.</p>
+      </div>
+    </a>
+  </div>
+</div> {% endcomment %}

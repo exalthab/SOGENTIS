@@ -1,0 +1,63 @@
+// static/scss/bootstrap/scss/7-components/_tooltips.scss
+// ─────────────────────────────────────────────────────────────
+// Composant Tooltips (corrigé pour utiliser zi.$z-index-tooltip)
+// ─────────────────────────────────────────────────────────────
+
+@use '../1-import/variables' as vars;
+@use '../1-import/mixins'    as mix;
+@use '../0-settings/z-index' as zi;
+@use 'sass:color';
+
+.tooltip {
+  position: absolute;
+  z-index: zi.$z-index-tooltip;    // utilisation de la variable zi.$z-index-tooltip
+  display: block;
+  margin: 0;
+  font-family: vars.$font-family-base;
+  font-style: normal;
+  font-weight: 400;
+  line-height: vars.$line-height-base;
+  text-align: left;
+  text-decoration: none;
+  text-shadow: none;
+  text-transform: none;
+  letter-spacing: normal;
+  word-break: normal;
+  word-spacing: normal;
+  white-space: normal;
+  line-break: auto;
+  font-size: 0.875rem;
+  opacity: 0;
+
+  &.show {
+    opacity: 0.9;
+  }
+}
+
+.tooltip-inner {
+  max-width: 200px;
+  padding: 0.25rem 0.5rem;
+  color: vars.$white;
+  text-align: center;
+  background-color: vars.$dark;
+  border-radius: vars.$border-radius;
+}
+
+.tooltip-arrow {
+  position: absolute;
+  width: 0.8rem;
+  height: 0.4rem;
+
+  &::before {
+    position: absolute;
+    content: "";
+    border-color: transparent;
+    border-style: solid;
+  }
+}
+
+@include mix.breakpoint-up('sm') {
+  .tooltip {
+    font-size: 1rem;
+  }
+}

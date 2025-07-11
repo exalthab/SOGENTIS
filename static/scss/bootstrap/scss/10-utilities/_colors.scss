@@ -1,0 +1,48 @@
+// ─────────────────────────────────────────────────────────────
+// 10-utilities/_colors.scss — Utilitaires de couleur
+// Généré depuis vars.$color-map
+// ─────────────────────────────────────────────────────────────
+
+@use '../1-import/variables' as vars;
+@use 'sass:map';
+
+// 🎨 Palette de couleurs étendue
+$color-map: (
+  "primary":       vars.$primary,
+  "secondary":     vars.$secondary,
+  "success":       vars.$success,
+  "danger":        vars.$danger,
+  "warning":       vars.$warning,
+  "info":          vars.$info,
+  "light":         vars.$light,
+  "dark":          vars.$dark,
+  "white":         vars.$white,
+  "black":         vars.$black,
+  "nike-primary":  vars.$nike-primary,
+  "nike-accent":   vars.$nike-accent,
+  "brand-blue":    vars.$brand-blue,
+  "olive-green":   vars.$olive-green,
+  "cream":         vars.$cream,
+  "transparent":   transparent
+);
+
+// ▸ Couleur du texte
+@each $name, $color in $color-map {
+  .text-#{$name} {
+    color: $color !important;
+  }
+}
+
+// ▸ Couleur de fond
+@each $name, $color in $color-map {
+  .bg-#{$name} {
+    background-color: $color !important;
+  }
+}
+
+// ▸ Couleur de bordure
+@each $name, $color in $color-map {
+  .border-#{$name} {
+    border-color: $color !important;
+  }
+}

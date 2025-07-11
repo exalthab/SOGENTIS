@@ -1,0 +1,55 @@
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Choisir le mode de paiement" %}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <h2 class="mb-4 text-center">{% trans "Choisissez un moyen de paiement" %}</h2>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show text-center" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{% trans 'Fermer' %}"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <form method="post" autocomplete="off">
+    {% csrf_token %}
+    <input type="hidden" name="step" value="2">
+
+    <div class="row justify-content-center g-3">
+      <div class="col-12 col-md-4">
+        <button name="payment_method" value="stripe" class="btn btn-outline-primary w-100 py-3" type="submit">
+          <span class="fs-5">💳</span> Stripe<br>
+          <span class="small">{% trans "Carte bancaire" %}</span>
+        </button>
+      </div>
+      <div class="col-12 col-md-4">
+        <button name="payment_method" value="paypal" class="btn btn-outline-info w-100 py-3" type="submit">
+          <span class="fs-5">🅿️</span> PayPal
+        </button>
+      </div>
+      <div class="col-12 col-md-4">
+        <button name="payment_method" value="orange_money" class="btn btn-outline-warning w-100 py-3" type="submit">
+          <span class="fs-5">🟧</span> Orange Money
+        </button>
+      </div>
+      <div class="col-12 col-md-4">
+        <button name="payment_method" value="wave" class="btn btn-outline-success w-100 py-3" type="submit">
+          <span class="fs-5">🌊</span> Wave
+        </button>
+      </div>
+      <div class="col-12 col-md-4">
+        <button name="payment_method" value="visa" class="btn btn-outline-dark w-100 py-3" type="submit">
+          <span class="fs-5">💳</span> VISA
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+

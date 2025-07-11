@@ -1,0 +1,19 @@
+repos:
+  - repo: https://github.com/psf/black
+    rev: 24.3.0 # ou la dernière version stable
+    hooks:
+      - id: black
+        exclude: 'templates/.*\.html'
+
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        exclude: "templates/"
+
+  - repo: https://github.com/Riverside-Healthcare/djLint
+    rev: v1.34.1 # ou la dernière version stable
+    hooks:
+      - id: djlint
+        args: [--reformat]
+        files: \.html$

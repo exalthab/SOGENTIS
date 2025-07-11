@@ -1,0 +1,58 @@
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'economic/css/econ_catalog.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <h2 class="mb-4">Votre panier</h2>
+
+  {% if cart_items %}
+  <div class="table-responsive">
+    <table class="table align-middle">
+      <thead>
+        <tr>
+          <th>Produit</th>
+          <th class="text-center">Quantité</th>
+          <th class="text-end">Prix Unitaire</th>
+          <th class="text-end">Sous-total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in cart_items %}
+        <tr>
+          <td>
+            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" width="50" class="rounded me-2">
+            <span class="fw-bold">{{ item.product.name }}</span>
+          </td>
+          <td class="text-center">{{ item.qty }}</td>
+          <td class="text-end">{{ item.product.price|floatformat:0 }} XOF</td>
+          <td class="text-end fw-bold">{{ item.subtotal|floatformat:0 }} XOF</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3" class="text-end fw-bold fs-5">Total</td>
+          <td class="text-end fw-bold fs-5">{{ total|floatformat:0 }} XOF</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <div class="text-end mt-4">
+    <a href="{% url 'ecommerce:checkout' %}" class="btn btn-gradient-market btn-lg rounded-pill">
+      Procéder au paiement
+    </a>
+  </div>
+
+  {% else %}
+  <div class="alert alert-info text-center">
+    Votre panier est vide.<br>
+    <a href="{% url 'ecommerce:products' %}">Découvrir nos produits</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

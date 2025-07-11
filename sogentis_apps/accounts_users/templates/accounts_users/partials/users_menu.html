@@ -1,0 +1,63 @@
+{% load static i18n %}
+<div class="dropdown">
+  <button class="btn btn-light dropdown-toggle" type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+    <i class="fas fa-user-circle me-1"></i> {{ request.user.first_name }}
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+
+    <!-- ✅ Lien vers la vue "Mon profil" -->
+    <li>
+      <a class="dropdown-item" href="{% url 'dashboard:profile' %}">
+        <i class="fas fa-user me-2"></i> {% trans "Mon profil" %}
+      </a>
+    </li>
+
+    <!-- ✅ Lien vers changement de mot de passe -->
+    <li>
+      <a class="dropdown-item" href="{% url 'accounts_users:password_change' %}">
+        <i class="fas fa-key me-2"></i> {% trans "Changer mot de passe" %}
+      </a>
+    </li>
+
+    <li><hr class="dropdown-divider"></li>
+
+    <!-- ✅ Formulaire de déconnexion -->
+    <li>
+      <form method="post" action="{% url 'accounts_users_web:logout' %}" style="margin: 0;">
+        {% csrf_token %}
+        <button type="submit" class="dropdown-item text-danger">
+          <i class="fas fa-sign-out-alt me-2"></i> {% trans "Déconnexion" %}
+        </button>
+      </form>
+    </li>
+  </ul>
+</div>
+
+
+
+
+
+
+{% comment %} 
+{% load static i18n %}
+<div class="dropdown">
+  <button class="btn btn-light dropdown-toggle" type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+    <i class="fas fa-user-circle me-1"></i> {{ request.user.first_name }}
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+    <li><a class="dropdown-item" href="{% url 'dashboard:profile' %}"><i class="fas fa-user me-2"></i> Mon profil</a></li>
+    <li><a class="dropdown-item" href="{% url 'accounts_users:password_change' %}"><i class="fas fa-key me-2"></i> Changer mot de passe</a></li>
+
+    {% if request.user.is_staff %}
+    <li><a class="dropdown-item" href="{% url 'admin:index' %}"><i class="fas fa-tools me-2"></i> Administration</a></li>
+    {% endif %}
+
+    <li><hr class="dropdown-divider"></li>
+    <li>
+      <form method="post" action="{% url 'accounts_users_web:logout' %}" style="margin: 0;">
+        {% csrf_token %}
+        <button type="submit" class="dropdown-item text-danger"><i class="fas fa-sign-out-alt me-2"></i> Déconnexion</button>
+      </form>
+    </li>
+  </ul>
+</div> {% endcomment %}

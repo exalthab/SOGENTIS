@@ -1,0 +1,117 @@
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Engagements" %} | SOGENTIS{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="h4 mb-0">{% trans "Liste des engagements" %}</h2>
+    <a href="{% url 'dashboard:create_engagement' %}" class="btn btn-outline-primary btn-sm">
+      <i class="bi bi-plus-circle me-1"></i> {% trans "Ajouter un engagement" %}
+    </a>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-header bg-light">
+      <strong>{% trans "Engagements récents" %}</strong>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-striped mb-0 align-middle">
+          <thead class="table-dark">
+            <tr>
+              <th>{% trans "Bénéficiaire" %}</th>
+              <th>{% trans "Titre" %}</th>
+              <th>{% trans "Date" %}</th>
+              <th>{% trans "Statut" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for engagement in engagements %}
+            <tr>
+              <td>{{ engagement.user.get_full_name|default:engagement.user.email }}</td>
+              <td>{{ engagement.title }}</td>
+              <td>{{ engagement.date|date:"d/m/Y" }}</td>
+              <td>
+                {% if engagement.is_active %}
+                  <span class="badge bg-success">{% trans "Actif" %}</span>
+                {% else %}
+                  <span class="badge bg-secondary">{% trans "Inactif" %}</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="4" class="text-center text-muted py-4">
+                {% trans "Aucun engagement trouvé." %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+
+
+{% comment %} {% extends "dashboard/base.html" %}
+{% load i18n %}
+
+{% block title %}Engagements | SOGENTIS{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="h4 mb-0">{% trans "Liste des engagements" %}</h2>
+    <a href="#" class="btn btn-outline-primary btn-sm">
+      <i class="bi bi-plus-circle me-1"></i> {% trans "Ajouter un engagement" %}
+    </a>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-header bg-light">
+      <strong>{% trans "Engagements récents" %}</strong>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-striped mb-0 align-middle">
+          <thead class="table-dark">
+            <tr>
+              <th>{% trans "Bénéficiaire" %}</th>
+              <th>{% trans "Titre" %}</th>
+              <th>{% trans "Date" %}</th>
+              <th>{% trans "Statut" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for engagement in engagements %}
+            <tr>
+              <td>{{ engagement.user.get_full_name|default:engagement.user.email }}</td>
+              <td>{{ engagement.title }}</td>
+              <td>{{ engagement.date|date:"d/m/Y" }}</td>
+              <td>
+                {% if engagement.is_active %}
+                  <span class="badge bg-success">{% trans "Actif" %}</span>
+                {% else %}
+                  <span class="badge bg-secondary">{% trans "Inactif" %}</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="4" class="text-center text-muted py-4">
+                {% trans "Aucun engagement trouvé." %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% endcomment %}

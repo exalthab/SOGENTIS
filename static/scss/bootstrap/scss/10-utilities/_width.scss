@@ -1,0 +1,36 @@
+// 10-utilities/_width.scss — version corrigée
+// static/scss/bootstrap/scss/10-utilities/_width.scss
+// ─────────────────────────────────────────────────────────────
+// Utilitaires de largeur (w-25, w-50, w-100, w-auto, etc.)
+// ─────────────────────────────────────────────────────────────
+
+@use '../1-import/variables' as vars;
+@use '../1-import/mixins' as mix;
+@use 'sass:map';
+
+// Largeurs fixes
+$widths: (
+  25: 25%,
+  50: 50%,
+  75: 75%,
+  100: 100%,
+  auto: auto
+);
+
+// Génération des classes : .w-25, .w-50, ...
+@each $key, $value in $widths {
+  .w-#{$key} {
+    width: $value !important;
+  }
+}
+
+// Largeur responsive : .w-md-50, .w-lg-auto, etc.
+@each $break in map.keys(vars.$breakpoints) {
+  @include mix.breakpoint-up($break) {
+    @each $key, $value in $widths {
+      .w-#{$break}-#{$key} {
+        width: $value !important;
+      }
+    }
+  }
+}

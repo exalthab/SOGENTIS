@@ -1,0 +1,15 @@
+{% extends "main.html" %}
+{% load static i18n %}
+{% block content %}
+<div class="container my-5" style="max-width: 540px;">
+  <h3 class="mb-2">{{ doc.title }}</h3>
+  <div class="mb-3 text-secondary" style="font-size:1.02rem;">
+    {{ doc.description|linebreaks }}
+  </div>
+  <form method="post" class="mt-4">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-success">{% trans "Valider et télécharger" %}</button>
+    <a href="{% url 'social:publication_list' %}" class="btn btn-link">{% trans "Annuler" %}</a>
+  </form>
+</div>
+{% endblock %}

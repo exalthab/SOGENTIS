@@ -1,0 +1,12 @@
+.charts-section {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.05);
+}
+
+/* Style pour les canvas de Chart.js */
+canvas {
+  display: block;
+  max-width: 100%;
+}

@@ -1,0 +1,21 @@
+// 6-layout/_base.scss
+// ─────────────────────────────────────────────────────────────
+// Styles globaux de base pour le body et typographie
+// ─────────────────────────────────────────────────────────────
+
+@use '../1-import/variables' as vars;
+
+body {
+  font-family: vars.$font-family-base;
+  font-size: vars.$font-size-base;
+  line-height: vars.$line-height-base;
+  background-color: vars.$white;
+  color: vars.$dark;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+// Mode sombre — classe dark-mode ajoutée dynamiquement via JS
+body.dark-mode {
+  background-color: vars.$dark;
+  color: vars.$light;
+}

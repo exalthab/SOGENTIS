@@ -1,0 +1,125 @@
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block content %}
+<div class="container my-5">
+
+  <!-- Boutons Back / Home -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <a href="{% url 'core:home' %}" class="btn btn-outline-secondary">
+      <i class="fas fa-home"></i> {% trans "Accueil" %}
+    </a>
+    <a href="javascript:history.back()" class="btn btn-outline-primary">
+      <i class="fas fa-arrow-left"></i> {% trans "Retour" %}
+    </a>
+  </div>
+
+  <!-- Notice Sign Out avec POST sécurisé -->
+  {% if user.is_authenticated %}
+    <div class="alert alert-warning d-flex align-items-center gap-3 mb-4" role="alert">
+      <i class="fas fa-sign-out-alt fa-lg"></i>
+      <span>
+        {% trans "Vous pouvez fermer votre session à tout moment." %}
+      </span>
+      <form method="post" action="{% url 'accounts_users:logout' %}" style="display:inline;" class="ms-auto mb-0">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-sm btn-outline-danger">
+          <i class="fas fa-power-off"></i> {% trans "Se déconnecter" %}
+        </button>
+      </form>
+    </div>
+  {% endif %}
+
+  <h2 class="mb-4">{% trans "Publications à télécharger" %}</h2>
+  <div class="row g-4">
+    {% for doc in publications %}
+      <div class="col-md-6 col-lg-4">
+        <div class="card h-100 shadow-sm border">
+          <div class="card-body">
+            <h5 class="card-title">{{ doc.title }}</h5>
+            <p class="card-text text-muted">
+              {{ doc.description|truncatechars:120 }}
+              {% if doc.description|length > 120 %}
+                <a href="#" class="desc-toggle" data-target="#desc-{{ doc.pk }}">{% trans "Voir plus" %}</a>
+              {% endif %}
+            </p>
+            <div class="desc-full collapse" id="desc-{{ doc.pk }}">
+              {{ doc.description|linebreaks }}
+              <a href="#" class="desc-toggle" data-target="#desc-{{ doc.pk }}">{% trans "Voir moins" %}</a>
+            </div>
+            {% if doc.file %}
+              {% if doc.purchased %}
+                {% if doc.purchase_obj.has_downloaded %}
+                  <span class="badge bg-success mb-2">{% trans "Déjà obtenu" %}</span>
+                  <!-- Formulaire POST pour renvoi email -->
+                  <form method="post" action="{% url 'social:publication_email_request' doc.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-info w-100">
+                      <i class="fas fa-envelope"></i> {% trans "Recevoir à nouveau par email" %}
+                    </button>
+                  </form>
+                {% else %}
+                  <a href="{% url 'social:download_publication' doc.pk %}" class="btn btn-outline-success w-100">
+                    <i class="fas fa-file-download"></i> {% trans "Télécharger" %}
+                  </a>
+                {% endif %}
+              {% else %}
+                <a href="{% url 'social:publication_pay_and_request' doc.pk %}" class="btn btn-warning w-100">
+                  <i class="fas fa-credit-card"></i> {% trans "Obtenir ce document (payant)" %}
+                </a>
+              {% endif %}
+            {% else %}
+              <span class="badge bg-warning text-dark">{% trans "Fichier indisponible" %}</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p class="text-center text-muted">{% trans "Aucune publication disponible." %}</p>
+    {% endfor %}
+  </div>
+  <!-- Pagination -->
+  <div class="mt-4 d-flex justify-content-center">
+    {% if publications.has_other_pages %}
+      <ul class="pagination">
+        {% if publications.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ publications.previous_page_number }}">&laquo;</a>
+          </li>
+        {% endif %}
+        {% for num in publications.paginator.page_range %}
+          <li class="page-item {% if publications.number == num %}active{% endif %}">
+            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+          </li>
+        {% endfor %}
+        {% if publications.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ publications.next_page_number }}">&raquo;</a>
+          </li>
+        {% endif %}
+      </ul>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Voir plus/moins JS -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  document.querySelectorAll(".desc-toggle").forEach(function(link) {
+    link.addEventListener("click", function(e) {
+      e.preventDefault();
+      const target = document.querySelector(link.dataset.target);
+      if (target) {
+        target.classList.toggle("show");
+        // Alterner l'affichage du bouton selon l'état
+        if (target.classList.contains('show')) {
+          link.textContent = "{% trans 'Voir moins' %}";
+        } else {
+          link.textContent = "{% trans 'Voir plus' %}";
+        }
+      }
+    });
+  });
+});
+</script>
+{% endblock %}

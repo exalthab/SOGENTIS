@@ -1,0 +1,14 @@
+{% extends "main.html" %}
+{% load static i18n %}
+{% block content %}
+<div class="container my-5" style="max-width:500px;">
+  <h3 class="mb-2">{{ doc.title }}</h3>
+  <div class="mb-3 text-secondary">{{ doc.description|linebreaks }}</div>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-warning btn-lg w-100">
+      {% blocktrans %}Payer {{ price }} FCFA pour recevoir ce document{% endblocktrans %}
+    </button>
+  </form>
+</div>
+{% endblock %}

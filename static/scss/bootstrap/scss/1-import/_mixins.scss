@@ -1,0 +1,49 @@
+// ─────────────────────────────────────────────────────────────
+// MIXINS — Utilitaires de media queries et helpers visuels
+// ─────────────────────────────────────────────────────────────
+
+@use '../1-import/variables' as vars;
+@use 'sass:map';
+@use 'sass:meta';
+
+// ▸ Mixin : Media query min-width
+@mixin breakpoint-up($size) {
+  $breakpoint: map.get(vars.$breakpoints, $size);
+
+  @if $breakpoint {
+    @media (min-width: #{$breakpoint}) {
+      @content;
+    }
+  } @else {
+    @warn "⚠️  Le breakpoint `#{$size}` est introuvable dans vars.$breakpoints.";
+  }
+}
+
+// ▸ Mixin : Media query max-width (strictement inférieur)
+@mixin breakpoint-down($size) {
+  $breakpoint: map.get(vars.$breakpoints, $size);
+
+  @if $breakpoint {
+    @media (max-width: calc(#{$breakpoint} - 0.02px)) {
+      @content;
+    }
+  } @else {
+    @warn "⚠️  Le breakpoint `#{$size}` est introuvable dans vars.$breakpoints.";
+  }
+}
+
+// ✅ Alias Bootstrap-like
+@mixin media-breakpoint-down($size) {
+  @include breakpoint-down($size) {
+    @content;
+  }
+}
+
+// ▸ Mixin : Masquer scrollbar (cross-browser)
+@mixin hide-scrollbar {
+  -ms-overflow-style: none;        // IE & Edge
+  scrollbar-width: none;           // Firefox
+  &::-webkit-scrollbar {
+    display: none !important;      // Webkit (Chrome, Safari, Opera)
+  }
+}

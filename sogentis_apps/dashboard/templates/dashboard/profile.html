@@ -1,0 +1,228 @@
+{% extends "dashboard/base.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Profil Utilisateur" %}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h2 class="mb-4">{% trans "Mon Profil" %}</h2>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{% trans 'Fermer' %}"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <!-- 🔹 Informations utilisateur -->
+  <div class="card mb-4 shadow-sm">
+    <div class="card-header bg-light">
+      <strong>{% trans "Informations actuelles" %}</strong>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-3 text-center">
+          {% if request.user.userprofile.profile_picture %}
+            <img src="{{ request.user.userprofile.profile_picture.url }}" alt="Photo de profil"
+                 class="img-thumbnail mb-2" style="max-width:120px;">
+          {% else %}
+            <div class="bg-light rounded-circle d-inline-block" style="width:120px; height:120px; line-height:120px;">
+              <i class="bi bi-person fs-1 text-muted"></i>
+            </div>
+          {% endif %}
+        </div>
+        <div class="col-md-9">
+          <p><strong>{% trans "Nom" %} :</strong> {{ request.user.get_full_name|default:"—" }}</p>
+          <p><strong>Email :</strong> {{ request.user.email }}</p>
+          {% if request.user.userprofile %}
+            <p><strong>{% trans "Rôle" %} :</strong> {{ request.user.userprofile.membership_role.name }}</p>
+            <p><strong>{% trans "Téléphone" %} :</strong> {{ request.user.userprofile.phone }}</p>
+            <p><strong>{% trans "Pays" %} :</strong> {{ request.user.userprofile.country }}</p>
+          {% else %}
+            <p class="text-muted">{% trans "Aucun profil utilisateur associé." %}</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🔹 Formulaire de mise à jour -->
+  <div class="card shadow-sm">
+    <div class="card-header bg-light">
+      <strong>{% trans "Mettre à jour mes informations" %}</strong>
+    </div>
+    <div class="card-body">
+      <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+        {% csrf_token %}
+        <div class="row g-3">
+          {% for field in form %}
+            <div class="col-md-{{ field.name in 'message profile_picture judicial_record'|yesno:'12,6' }}">
+              <label for="{{ field.id_for_label }}" class="form-label">
+                {{ field.label }}{% if field.field.required %} *{% endif %}
+              </label>
+              {{ field }}
+              {% if field.errors %}
+                <div class="text-danger small">{{ field.errors|striptags }}</div>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+        <div class="mt-4">
+          <button type="submit" class="btn btn-success">
+            <i class="bi bi-save"></i> {% trans "Mettre à jour" %}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+
+
+
+
+
+{% comment %} {% extends "dashboard/base.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Profil Utilisateur" %}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h2 class="mb-4">{% trans "Mon Profil" %}</h2>
+
+  <!-- 🔹 Informations utilisateur -->
+  <div class="card mb-4 shadow-sm">
+    <div class="card-header bg-light">
+      <strong>{% trans "Informations actuelles" %}</strong>
+    </div>
+    <div class="card-body">
+      <p><strong>{% trans "Nom" %} :</strong> {{ request.user.get_full_name|default:"—" }}</p>
+      <p><strong>Email :</strong> {{ request.user.email }}</p>
+      {% if request.user.userprofile %}
+        <p><strong>{% trans "Rôle" %} :</strong> {{ request.user.userprofile.membership_role.name }}</p>
+        <p><strong>{% trans "Téléphone" %} :</strong> {{ request.user.userprofile.phone }}</p>
+        <p><strong>{% trans "Pays" %} :</strong> {{ request.user.userprofile.country }}</p>
+      {% else %}
+        <p class="text-muted">{% trans "Aucun profil utilisateur associé." %}</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- 🔹 Formulaire de mise à jour -->
+  <div class="card shadow-sm">
+    <div class="card-header bg-light">
+      <strong>{% trans "Mettre à jour mes informations" %}</strong>
+    </div>
+    <div class="card-body">
+      <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+        {% csrf_token %}
+        <div class="row g-3">
+          <div class="col-md-6">
+            {{ form.full_name.label_tag }} {{ form.full_name }}
+          </div>
+          <div class="col-md-6">
+            {{ form.phone.label_tag }} {{ form.phone }}
+          </div>
+          <div class="col-md-6">
+            {{ form.country.label_tag }} {{ form.country }}
+          </div>
+          <div class="col-md-6">
+            {{ form.membership_role.label_tag }} {{ form.membership_role }}
+          </div>
+          <div class="col-md-12">
+            {{ form.message.label_tag }} {{ form.message }}
+          </div>
+          <div class="col-md-6">
+            {{ form.profile_picture.label_tag }} {{ form.profile_picture }}
+          </div>
+          <div class="col-md-6">
+            {{ form.judicial_record.label_tag }} {{ form.judicial_record }}
+          </div>
+        </div>
+        <div class="mt-4">
+          <button type="submit" class="btn btn-success">
+            <i class="bi bi-save"></i> {% trans "Mettre à jour" %}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {% extends "dashboard/base.html" %}
+{% load static i18n %}
+
+{% block title %}Profil utilisateur | SOGENTIS{% endblock %}
+
+{% block dashboard_header %}
+<h2>Mon profil</h2>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="profile-section">
+  <p><strong>Nom :</strong> {{ user.get_full_name }}</p>
+  <p><strong>Email :</strong> {{ user.email }}</p>
+  <p><strong>Rôle :</strong> {{ user.role_profile.get_role_display }}</p>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+  <h1 class="mt-4">{% trans "Mon Profil" %}</h1>
+  <div class="row g-4 mt-3">
+
+    <div class="col-md-4">
+      <div class="card shadow-sm">
+        <div class="card-body text-center">
+          {% if user.userprofile.profile_picture %}
+            <img src="{{ user.userprofile.profile_picture.url }}" class="rounded-circle img-fluid mb-2" width="120">
+          {% else %}
+            <img src="{% static 'dashboard/img/default_user.png' %}" class="rounded-circle img-fluid mb-2" width="120">
+          {% endif %}
+          <h5 class="mb-0">{{ user.userprofile.full_name }}</h5>
+          <p class="text-muted">{{ user.email }}</p>
+          <span class="badge bg-info">{{ user.userprofile.role.name }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-8">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">{% trans "Informations personnelles" %}</h5>
+          <dl class="row">
+            <dt class="col-sm-4">{% trans "Nom complet" %}</dt>
+            <dd class="col-sm-8">{{ user.userprofile.full_name }}</dd>
+
+            <dt class="col-sm-4">{% trans "Téléphone" %}</dt>
+            <dd class="col-sm-8">{{ user.userprofile.phone }}</dd>
+
+            <dt class="col-sm-4">{% trans "Pays" %}</dt>
+            <dd class="col-sm-8">{{ user.userprofile.country }}</dd>
+
+            <dt class="col-sm-4">{% trans "Message" %}</dt>
+            <dd class="col-sm-8">{{ user.userprofile.message }}</dd>
+
+            <dt class="col-sm-4">{% trans "Rôle" %}</dt>
+            <dd class="col-sm-8">{{ user.userprofile.membership_role.name }}</dd>
+          </dl>
+          <a href="{% url 'dashboard:profile_edit' %}" class="btn btn-primary mt-3">
+            <i class="fas fa-edit"></i> {% trans "Modifier le profil" %}
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %} {% endcomment %}

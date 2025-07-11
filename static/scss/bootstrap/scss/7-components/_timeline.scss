@@ -1,0 +1,111 @@
+// static/scss/bootstrap/scss/7-components/_timeline.scss
+// ─────────────────────────────────────────────────────────────
+// Composant Timeline – prise en charge des layouts vertical et horizontal
+// ─────────────────────────────────────────────────────────────
+
+@use '../1-import/variables' as vars;
+@use 'sass:map';
+
+// Timeline verticale (par défaut)
+.timeline-wrapper {
+  border-color: #0d6efd;
+}
+
+.timeline {
+  position: relative;
+  padding: vars.$spacer 0;
+  list-style: none;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: calc(vars.$spacer * 2);
+    width: 2px;
+    background-color: vars.$light;
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: vars.$spacer * 2;
+    padding-left: calc(vars.$spacer * 4);
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: calc(vars.$spacer * 2 - (2px / 2));
+      top: vars.$spacer;
+      width: vars.$spacer;
+      height: vars.$spacer;
+      border-radius: 50%;
+      background-color: vars.$primary;
+    }
+
+    .timeline-content {
+      background-color: vars.$white;
+      padding: vars.$spacer;
+      border: vars.$border-width solid vars.$light;
+      border-radius: vars.$border-radius;
+      box-shadow: vars.$box-shadow;
+    }
+  }
+}
+
+// Timeline horizontale
+.timeline-horizontal {
+  position: relative;
+  display: flex;
+  padding: vars.$spacer 0 0;
+  list-style: none;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(vars.$spacer * 2);
+    height: 2px;
+    background-color: vars.$light;
+  }
+
+  .timeline-item {
+    position: relative;
+    flex: 1 1 0;
+    text-align: center;
+    padding-top: calc(vars.$spacer * 4);
+    padding-left: 0;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: calc(vars.$spacer * 2 - (2px / 2));
+      left: 50%;
+      transform: translateX(-50%);
+      width: vars.$spacer;
+      height: vars.$spacer;
+      border-radius: 50%;
+      background-color: vars.$primary;
+    }
+
+    .timeline-content {
+      display: inline-block;
+      background-color: vars.$white;
+      padding: vars.$spacer;
+      border: vars.$border-width solid vars.$light;
+      border-radius: vars.$border-radius;
+      box-shadow: vars.$box-shadow;
+      margin-top: vars.$spacer;
+    }
+  }
+}
+
+// Responsive : passe en horizontale sur md+
+@media (min-width: map.get(vars.$breakpoints, 'md')) {
+  .timeline {
+    display: none;
+  }
+  .timeline-horizontal {
+    display: flex;
+  }
+}

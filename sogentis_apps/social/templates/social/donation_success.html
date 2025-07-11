@@ -1,0 +1,49 @@
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Don réussi" %}{% endblock %}
+
+{% block content %}
+<section class="donation-success">
+  <div class="container text-center py-5">
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{% trans 'Fermer' %}"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <h2 class="mb-4">🎉 {% trans "Merci pour votre générosité !" %}</h2>
+    <p class="lead">
+      {% trans "Votre don a été effectué avec succès. Nous vous remercions sincèrement pour votre soutien à notre mission." %}
+    </p>
+
+    {% if user.is_authenticated and donation_id %}
+      <div class="mt-4">
+        <a href="{% url 'social:download_receipt' donation_id=donation_id %}" class="btn btn-primary btn-lg">
+          📄 {% trans "Télécharger mon reçu de don" %}
+        </a>
+      </div>
+    {% else %}
+      <p class="mt-4 text-muted">
+        {% trans "Connectez-vous pour accéder à votre reçu." %}
+      </p>
+    {% endif %}
+
+    <div class="mt-5">
+      <a href="{% url 'social:donate' %}" class="btn btn-outline-success">
+        {% trans "Faire un autre don" %}
+      </a>
+      <a href="{% url 'core:home' %}" class="btn btn-outline-secondary ms-2">
+        {% trans "Retour à l'accueil" %}
+      </a>
+    </div>
+
+  </div>
+</section>
+{% endblock %}
+
+

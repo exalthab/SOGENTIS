@@ -1,0 +1,38 @@
+// static/scss/bootstrap/scss/10-utilities/_accessibility.scss
+// ─────────────────────────────────────────────────────────────
+// Accessibilité – focus, visuellement caché, z-index ARIA, etc.
+// ─────────────────────────────────────────────────────────────
+
+@use '../1-import/variables' as vars;
+@use 'sass:map';
+
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.focus-outline {
+  outline: 2px dashed vars.$primary;
+  outline-offset: 2px;
+}
+
+[aria-hidden="true"] {
+  display: none !important;
+}
+
+[aria-disabled="true"] {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.tooltip-accessible {
+  position: absolute;
+  z-index: map.get(vars.$z-indices, 'tooltip'); // ✅ Correction appliquée
+}

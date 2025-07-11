@@ -1,0 +1,28 @@
+// 13-accessibility/_aria.scss — Accessibilité ARIA
+// static/scss/bootstrap/scss/13-accessibility/_aria.scss
+// ─────────────────────────────────────────────────────────────
+// Classes utilitaires pour les attributs ARIA
+// ─────────────────────────────────────────────────────────────
+
+[aria-hidden="true"] {
+  display: none !important;
+}
+
+[aria-disabled="true"] {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+[aria-busy="true"] {
+  cursor: progress;
+}
+
+[aria-pressed="true"],
+[aria-checked="true"] {
+  font-weight: bold;
+  outline: 2px solid currentColor;
+}
+
+[aria-expanded="false"] {
+  display: none !important;
+}

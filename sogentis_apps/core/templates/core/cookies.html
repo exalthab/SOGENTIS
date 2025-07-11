@@ -1,0 +1,38 @@
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}Politique de cookies{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h1 class="mb-4">Politique de cookies</h1>
+
+  <h3>1. Qu’est-ce qu’un cookie ?</h3>
+  <p>
+    Un cookie est un petit fichier texte stocké sur votre appareil lors de votre visite sur un site web.
+  </p>
+
+  <h3>2. Utilisation des cookies</h3>
+  <p>
+    Le site <strong>{{ PROJECT_NAME|default:"Nom du projet" }}</strong> utilise des cookies pour améliorer votre expérience utilisateur,
+    mesurer l’audience et faciliter certaines fonctionnalités comme l’authentification.
+  </p>
+
+  <h3>3. Cookies tiers</h3>
+  <p>
+    Certains cookies peuvent être déposés par des services tiers comme Google Analytics ou les réseaux sociaux.
+  </p>
+
+  <h3>4. Gestion des cookies</h3>
+  <p>
+    Vous pouvez à tout moment configurer votre navigateur pour refuser ou supprimer les cookies.
+    Le refus des cookies peut altérer certaines fonctionnalités du site.
+  </p>
+
+  <h3>5. Contact</h3>
+  <p>
+    Pour toute question relative à notre politique de cookies, contactez-nous à :
+    <a href="mailto:{{ CONTACT_EMAIL|default:'contact@example.com' }}">{{ CONTACT_EMAIL|default:'contact@example.com' }}</a>
+  </p>
+</div>
+{% endblock %}

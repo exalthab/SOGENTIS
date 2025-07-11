@@ -1,0 +1,28 @@
+// 2-tools/_functions.scss — fonctions utilitaires SCSS
+// ─────────────────────────────────────────────────────────────
+// Fournit des fonctions SCSS personnalisées pour rem & spacers
+// ─────────────────────────────────────────────────────────────
+
+@use '../1-import/variables' as vars;
+
+/// Convertit une valeur en pixels vers rem (base 16px)
+/// @param {Number} $px - valeur en pixels (ex: 24)
+/// @return {String} - valeur en rem (ex: 1.5rem)
+@function rem($px) {
+  @if (type-of($px) != 'number') {
+    @error 'La fonction rem() attend un nombre, reçu: #{$px}';
+  }
+  @return #{($px / 16)}rem;
+}
+
+/// Renvoie la valeur de l’espacement depuis la map $spacers
+/// @param {String} $size - clé de la map (ex: "md", "lg")
+/// @return {Number|Null} - la valeur correspondante ou null
+@function spacer($size) {
+  @if map-has-key(vars.$spacers, $size) {
+    @return map-get(vars.$spacers, $size);
+  } @else {
+    @warn 'Clé "#{$size}" introuvable dans la map $spacers.';
+    @return null;
+  }
+}

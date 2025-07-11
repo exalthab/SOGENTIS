@@ -1,0 +1,41 @@
+@use '../1-import/variables' as vars;
+@use '../1-import/mixins'    as mix;
+
+.container {
+  width: 100%;
+  padding-right: vars.$spacer;
+  padding-left:  vars.$spacer;
+  margin-right: auto;
+  margin-left:  auto;
+}
+
+@include mix.breakpoint-up('sm') {
+  .container {
+    max-width: 540px;
+  }
+}
+
+@include mix.breakpoint-up('md') {
+  .container {
+    max-width: 720px;
+  }
+}
+
+@include mix.breakpoint-up('lg') {
+  .container {
+    max-width: 960px;
+  }
+}
+
+@include mix.breakpoint-up('xl') {
+  .container {
+    max-width: 1140px;
+  }
+}
+
+// Optionnel si défini
+@include mix.breakpoint-up('xxl') {
+  .container {
+    max-width: 1320px;
+  }
+}

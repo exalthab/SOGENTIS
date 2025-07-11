@@ -1,0 +1,34 @@
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Recevoir à nouveau le document par email" %}{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="max-width: 600px;">
+  <div class="card shadow-sm border-0">
+    <div class="card-body text-center">
+      <div class="display-4 mb-3 text-primary">
+        <i class="fas fa-envelope-open-text"></i>
+      </div>
+      <h2 class="mb-3">{% trans "Demander le renvoi par email" %}</h2>
+      <p>
+        {% trans "Vous avez déjà téléchargé ce document. Pour des raisons de sécurité, il ne peut être téléchargé qu’une seule fois depuis le site." %}
+      </p>
+      <p>
+        {% trans "Vous pouvez le redemander par email ci-dessous (à l’adresse enregistrée sur votre compte) :" %}
+      </p>
+      <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary btn-lg">
+          <i class="fas fa-paper-plane"></i> {% trans "Recevoir à nouveau par email" %}
+        </button>
+      </form>
+      <div class="mt-4">
+        <a href="{% url 'social:publication_list' %}" class="btn btn-outline-secondary">
+          <i class="fas fa-arrow-left"></i> {% trans "Retour à la liste" %}
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

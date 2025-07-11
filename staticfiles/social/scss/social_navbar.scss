@@ -1,0 +1,83 @@
+// Variables
+$navbar-bg: #212529;
+$navbar-link-color: #f8f9fa;
+$navbar-link-hover: #ffc107;
+$btn-donate-color: #ffc107;
+$btn-donate-hover: darken($btn-donate-color, 5%);
+
+// Navbar de base
+.soci-navbar {
+  background-color: $navbar-bg;
+
+  .navbar-brand {
+    img {
+      max-height: 48px;
+    }
+  }
+
+  .navbar-nav {
+    .nav-link {
+      color: $navbar-link-color !important;
+      font-weight: 500;
+      transition: color 0.3s;
+
+      &:hover,
+      &.active {
+        color: $navbar-link-hover !important;
+      }
+    }
+
+    .dropdown-toggle::after {
+      margin-left: 0.25rem;
+    }
+
+    .dropdown-menu {
+      background-color: $navbar-bg;
+      border: none;
+      box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.2);
+
+      .dropdown-item {
+        color: $navbar-link-color;
+
+        &:hover {
+          background-color: lighten($navbar-bg, 10%);
+        }
+      }
+    }
+  }
+
+  .btn-warning {
+    background-color: $btn-donate-color;
+    border-color: $btn-donate-color;
+    font-weight: bold;
+    transition: background-color 0.3s, border-color 0.3s;
+
+    &:hover {
+      background-color: $btn-donate-hover;
+      border-color: $btn-donate-hover;
+    }
+  }
+
+  .btn-outline-light {
+    margin-top: 0.5rem;
+
+    @media (min-width: 992px) {
+      margin-top: 0;
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 991.98px) {
+  .soci-navbar {
+    .btn-warning {
+      width: 100%;
+      margin: 0.75rem 0;
+    }
+
+    .btn-outline-light {
+      width: 100%;
+      margin: 0.75rem 0;
+    }
+  }
+}

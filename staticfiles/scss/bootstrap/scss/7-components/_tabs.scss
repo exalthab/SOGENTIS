@@ -1,0 +1,45 @@
+// 7-components/_tabs.scss — version corrigée et moderne
+
+@use '../1-import/variables' as vars;
+@use '../1-import/mixins' as mix;
+@use 'sass:color';
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  border-bottom: vars.$border-width solid vars.$light;
+  margin-bottom: 1rem;
+}
+
+.tab-item {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  margin-bottom: -1px;
+  border: vars.$border-width solid transparent;
+  border-radius: vars.$border-radius vars.$border-radius 0 0;
+  background-color: vars.$white;
+  color: vars.$dark;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+
+  &:hover {
+    background-color: color.scale(vars.$primary, $lightness: 50%);
+    color: vars.$primary;
+  }
+
+  &.active {
+    background-color: vars.$white;
+    border-color: vars.$light vars.$light vars.$white;
+    color: vars.$primary;
+    font-weight: 600;
+  }
+}
+
+.tab-content {
+  width: 100%;
+  padding: 1rem;
+  border: vars.$border-width solid vars.$light;
+  border-top: none;
+  background-color: vars.$white;
+  border-radius: 0 0 vars.$border-radius vars.$border-radius;
+}

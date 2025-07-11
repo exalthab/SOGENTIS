@@ -1,0 +1,12 @@
+{% extends "main.html" %}
+
+{% block content %}
+  <div class="alert alert-warning text-center">
+    <h3>Profil en attente de validation</h3>
+    <p>Votre profil est en cours de vérification. Vous recevrez un e-mail une fois qu’il aura été validé ou refusé.</p>
+
+    <a href="{% url 'soci:index' %}" class="btn btn-outline-primary mt-4">
+      ⬅️ Revenir à la page sociale
+    </a>
+  </div>
+{% endblock %}

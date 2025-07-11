@@ -1,0 +1,53 @@
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block content %}
+<div class="container py-5">
+  <h2 class="mb-4">📦 Suivi de commande</h2>
+
+  <!-- Formulaire de recherche -->
+  <form method="get" class="mb-4 d-flex gap-2">
+    <input type="text" name="code" class="form-control" placeholder="Entrez votre code de suivi" value="{{ code|default:'' }}">
+    <button class="btn btn-primary" type="submit">Chercher</button>
+  </form>
+
+  <!-- Résultat trouvé -->
+  {% if order %}
+    <div class="alert alert-success">
+      ✅ Statut de la commande <strong>{{ code }}</strong> : 
+      <span class="fw-bold">{{ order.get_status_display|default:order.status }}</span>
+    </div>
+
+    <div class="card shadow mt-3">
+      <div class="card-body">
+        <h5 class="card-title">Commande {{ order.tracking_code }}</h5>
+        <p><strong>Date :</strong> {{ order.created_at|date:"d/m/Y H:i" }}</p>
+        <p><strong>Client :</strong> {{ order.customer_name }}</p>
+        <p><strong>Total :</strong> {{ order.total_amount|default:order.total|floatformat:0 }} XOF</p>
+
+        {% if order.items.exists %}
+        <h6 class="mt-4">Articles commandés :</h6>
+        <ul>
+          {% for item in order.items.all %}
+            <li>{{ item.product.name }} × {{ item.quantity }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+    </div>
+
+  <!-- Code entré mais commande introuvable -->
+  {% elif code %}
+    <div class="alert alert-danger">
+      ⚠️ Aucune commande trouvée pour le code <strong>{{ code }}</strong>.
+    </div>
+    <a href="{% url 'ecommerce:track_order' %}" class="btn btn-outline-primary mt-3">Réessayer</a>
+
+  <!-- Aucun code entré encore -->
+  {% else %}
+    <div class="alert alert-info">
+      Veuillez entrer votre code de suivi dans le formulaire ci-dessus.
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

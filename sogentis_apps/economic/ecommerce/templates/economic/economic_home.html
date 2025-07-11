@@ -1,0 +1,53 @@
+{% comment %} {% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}SOGENTIS | Pôle Économique{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'economic/css/econ.css' %}">
+{% endblock %}
+{% block section_menu %}
+  {% include 'economic/ecommerce/_ecommerce_navbar.html' %}
+{% endblock %}
+
+{% block content %}
+<main class="econ-index">
+  <section class="economic container py-5">
+    <!-- Intro, vidéo, projets -->
+    <!-- … -->
+
+    <div class="products-section mt-5">
+      <h3 class="mb-4">🛍️ Nos Produits</h3>
+      <div class="row">
+        {% for product in products %}
+        <div class="col-md-4 mb-4">
+          <div class="card h-100 shadow-sm">
+            {% if product.image %}
+              <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+            {% else %}
+              <img src="{% static 'economic/img/placeholder.png' %}" class="card-img-top" alt="Placeholder">
+            {% endif %}
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title">{{ product.name }}</h5>
+              <p class="card-text">{{ product.description|truncatechars:100 }}</p>
+              <p class="fw-bold">{{ product.price }} XOF</p>
+              <a href="{% url 'ecommerce:add_to_cart' product.id %}" class="btn btn-primary w-100 mt-auto">
+                Ajouter au panier
+              </a>
+            </div>
+          </div>
+        </div>
+        {% empty %}
+        <p class="text-muted">Aucun produit pour le moment.</p>
+        {% endfor %}
+      </div>
+      <div class="text-center mt-4">
+        <a href="{% url 'ecommerce:products_list' %}" class="btn btn-outline-secondary">
+          Voir tous les produits →
+        </a>
+      </div>
+    </div>
+
+    <!-- CTA participation -->
+  </section>
+</main>
+{% endblock %} {% endcomment %}

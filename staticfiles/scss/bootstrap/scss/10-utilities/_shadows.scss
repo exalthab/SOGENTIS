@@ -1,0 +1,19 @@
+// 10-utilities/_shadows.scss — utilitaires d'ombres
+// static/scss/bootstrap/scss/10-utilities/_shadows.scss
+// ─────────────────────────────────────────────────────────────
+// Classes utilitaires pour gérer les ombres
+// ─────────────────────────────────────────────────────────────
+
+@use '../1-import/variables' as vars;
+
+.shadow {
+  box-shadow: vars.$box-shadow !important;
+}
+
+.shadow-lg {
+  box-shadow: vars.$box-shadow-lg !important;
+}
+
+.shadow-none {
+  box-shadow: none !important;
+}

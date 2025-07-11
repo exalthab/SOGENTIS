@@ -1,0 +1,37 @@
+/* Style de la topbar */
+.dashboard-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background-color: #fff;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.search-box {
+  width: 100%;
+  max-width: 300px;
+}
+
+.search-box input {
+  border-radius: 20px;
+  padding: 0.25rem 0.75rem;
+}
+
+.notifications {
+  position: relative;
+}
+
+.notifications .badge {
+  font-size: 0.60rem;
+  padding: 0.25em 0.4em;
+}
+
+.user-avatar img {
+  border: 2px solid transparent;
+  transition: border-color 0.2s;
+}
+
+.user-avatar img:hover {
+  border-color: #007bff;
+}

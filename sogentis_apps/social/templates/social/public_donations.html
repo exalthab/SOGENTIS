@@ -1,0 +1,46 @@
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Contributions Publiques" %}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <h1 class="text-center mb-4">{% trans "Contributions reçues" %}</h1>
+  <div class="table-responsive">
+    <table class="table table-bordered align-middle">
+      <thead class="table-light">
+        <tr>
+          <th scope="col">{% trans "Nom" %}</th>
+          <th scope="col">{% trans "Montant" %}</th>
+          <th scope="col">{% trans "Message" %}</th>
+          <th scope="col">{% trans "Date" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for don in donations %}
+        <tr>
+          <td>
+            {{ don.donor_name|default:"Anonyme" }}
+          </td>
+          <td>
+            {{ don.amount|floatformat:0 }} FCFA
+          </td>
+          <td>
+            {{ don.message|default_if_none:"—" }}
+          </td>
+          <td>
+            {{ don.created_at|date:"d/m/Y" }}
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="4" class="text-center text-muted">
+            {% trans "Aucun don enregistré pour le moment." %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
