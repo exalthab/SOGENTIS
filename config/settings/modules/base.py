@@ -1,7 +1,9 @@
+import os
 from pathlib import Path
 from decouple import Csv, config
 from django.core.exceptions import ImproperlyConfigured
 
+# === BASE DIRECTORY ===
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 
 # === ENVIRONMENT FLAGS ===
@@ -29,7 +31,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # Externes (activer uniquement ce dont tu as besoin !)
+    # Externes (désactive ce que tu n'utilises pas)
     # "rest_framework",
     # "crispy_forms",
     # "django_countries",
@@ -62,14 +64,17 @@ LOGIN_URL = 'accounts_users_web:login'
 LOGIN_REDIRECT_URL = 'dashboard:index'
 LOGOUT_REDIRECT_URL = 'accounts_users_web:logout'
 
-# === EMAIL CONFIG (production: SMTP obligatoire) ===
+# === EMAIL CONFIG ===
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = config("EMAIL_HOST", default="mail.infomaniak.com")
 EMAIL_PORT = config("EMAIL_PORT", default=587, cast=int)
 EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="contact@sogentis.org")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
-EMAIL_USE_TLS = True
 
+if not DEBUG and not EMAIL_HOST_PASSWORD:
+    raise ImproperlyConfigured("EMAIL_HOST_PASSWORD must be set in production")
+
+EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default="contact@sogentis.org")
 CONTACT_EMAIL = config("CONTACT_EMAIL", default="contact@sogentis.org")
 ADMINS = [("Admin SOGENTIS", "utracorp@gmail.com")]
@@ -88,38 +93,16 @@ if not DEBUG:
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
 
-# === STATIC & MEDIA (à adapter selon structure) ===
+# === STATIC & MEDIA ===
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
-# === DATABASE (exemple PostgreSQL) ===
+# === DATABASE ===
 import dj_database_url
 DATABASES = {
     "default": dj_database_url.config(
         default=config("DATABASE_URL")
     )
 }
-
-# === LOGGING (PRODUCTION) ===
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "handlers": {
-        "console": {
-            "level": "INFO",
-            "class": "logging.StreamHandler",
-        },
-        "file": {
-            "level": "WARNING",
-            "class": "logging.FileHandler",
-            "filename": BASE_DIR / "logs/django.log",
-        },
-    },
-    "root": {
-        "handlers": ["console", "file"],
-        "level": "WARNING",
-    },
-}
-

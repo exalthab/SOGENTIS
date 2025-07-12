@@ -5,18 +5,17 @@ PROJECT_NAME="SOGENTIS"
 DOMAIN_NAME="sogentis.org"
 USER_NAME="$USER"
 PROJECT_DIR="/home/$USER_NAME/$PROJECT_NAME"
-REPO_URL="https://github.com/exalthab/SOGENTIS.git"      # <---- MODIFIE !
+REPO_URL="https://github.com/exalthab/SOGENTIS.git"
 SOCK_FILE="$PROJECT_DIR/gunicorn.sock"
 VENV_DIR="$PROJECT_DIR/venv"
+DJANGO_WSGI_MODULE="config.wsgi:application"    # adapter si différent
 
-# --- SYSTEME ---
 echo "📦 Mise à jour du serveur..."
 sudo apt update && sudo apt upgrade -y
 
 echo "🐍 Installation des dépendances système..."
 sudo apt install python3 python3-venv python3-pip nginx git build-essential libpq-dev ufw -y
 
-# --- PROJET DJANGO ---
 echo "📁 Création du dossier projet..."
 mkdir -p "$PROJECT_DIR"
 cd "$PROJECT_DIR"
@@ -54,6 +53,7 @@ STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxx
 EMAIL_HOST=mail.infomaniak.com
 EMAIL_HOST_USER=contact@sogentis.org
 EMAIL_HOST_PASSWORD=********
+LOG_PATH=$PROJECT_DIR/logs/django_error.log
 EODE
 fi
 
@@ -62,8 +62,13 @@ python manage.py migrate --noinput
 python manage.py collectstatic --noinput
 
 # --- LOGS ---
-mkdir -p "$PROJECT_DIR/logs"
-sudo chown -R "$USER_NAME":www-data "$PROJECT_DIR/logs"
+LOGS_DIR="$PROJECT_DIR/logs"
+LOG_FILE="$LOGS_DIR/django_error.log"
+mkdir -p "$LOGS_DIR"
+touch "$LOG_FILE"
+sudo chown -R "$USER_NAME":www-data "$LOGS_DIR"
+sudo chmod -R 775 "$LOGS_DIR"
+sudo chmod 664 "$LOG_FILE"
 
 # --- SYSTEMD (GUNICORN) ---
 echo "🔐 Création du service Gunicorn..."
@@ -76,14 +81,14 @@ After=network.target
 User=$USER_NAME
 Group=www-data
 WorkingDirectory=$PROJECT_DIR
-ExecStart=$VENV_DIR/bin/gunicorn --access-logfile - --workers 3 --bind unix:$SOCK_FILE $PROJECT_NAME.wsgi:application
+ExecStart=$VENV_DIR/bin/gunicorn --access-logfile - --workers 3 --bind unix:$SOCK_FILE $DJANGO_WSGI_MODULE
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
 sudo systemctl daemon-reload
-sudo systemctl start $PROJECT_NAME
+sudo systemctl restart $PROJECT_NAME
 sudo systemctl enable $PROJECT_NAME
 
 # --- NGINX ---
@@ -95,7 +100,7 @@ server {
 
     location = /favicon.ico { access_log off; log_not_found off; }
     location /static/ {
-        alias $PROJECT_DIR/static/;
+        alias $PROJECT_DIR/staticfiles/;
     }
     location /media/ {
         alias $PROJECT_DIR/media/;
