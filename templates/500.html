@@ -1,0 +1,17 @@
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block content %}
+<div style="text-align: center; padding: 3rem;">
+    <h1 style="font-size: 3rem; color: #c0392b;">{% trans "500 - Erreur interne du serveur" %}</h1>
+    <p style="font-size: 1.2rem;">{% trans "Une erreur inattendue s'est produite. Veuillez réessayer plus tard." %}</p>
+    
+    <p>{% trans "Si le problème persiste, contactez notre support :" %}
+        <a href="{% url 'core:contact' %}" style="color: #3498db;">
+            {% trans "Contact" %}
+        </a>
+    </p>
+
+    <p><a href="/" style="color: #3498db;">{% trans "Retour à l'accueil" %}</a></p>
+</div>
+{% endblock %}

@@ -2,161 +2,65 @@
 
 set -e
 
-# === 1. Génération interactive du .env ===
-ENV_FILE=".env"
-echo "🛠 Génération du fichier .env de production..."
-
-read -p "➤ Clé secrète Django (SECRET_KEY) : " SECRET_KEY
-read -p "➤ Domaine principal (ex: sogentis.org) : " DOMAIN_NAME
-read -p "➤ Autres domaines (séparés par virgule, ex: sogentis.org,www.sogentis.org,sogentis.com,sogentis.sn) : " ALLOWED_HOSTS
-read -p "➤ URL de la base de données (postgres://USER:PASSWORD@HOST:PORT/DBNAME) : " DATABASE_URL
-read -p "➤ Email d’envoi (EMAIL_HOST_USER) : " EMAIL_USER
-read -sp "➤ Mot de passe email (EMAIL_HOST_PASSWORD) : " EMAIL_PASSWORD
-echo
-read -p "➤ Email expéditeur par défaut (DEFAULT_FROM_EMAIL) : " DEFAULT_FROM_EMAIL
-
-echo
-read -p "➤ Utiliser le mode SANDBOX pour les paiements (tests) ? (y/N) : " USE_SANDBOX_INPUT
-USE_SANDBOX=$( [[ "$USE_SANDBOX_INPUT" =~ ^[Yy]$ ]] && echo "True" || echo "False" )
-
-# --- STRIPE ---
-echo
-read -p "➤ Stripe Secret Key : " STRIPE_SECRET_KEY
-read -p "➤ Stripe Publishable Key : " STRIPE_PUBLISHABLE_KEY
-read -p "➤ Stripe Webhook Secret : " STRIPE_WEBHOOK_SECRET
-
-# --- PAYPAL ---
-echo
-read -p "➤ PayPal Client ID : " PAYPAL_CLIENT_ID
-read -p "➤ PayPal Secret : " PAYPAL_SECRET
-
-# --- ORANGEMONEY / WAVE / VISA ---
-echo
-read -p "➤ OrangeMoney API Key : " ORANGE_MONEY_API_KEY
-read -p "➤ Wave API Key : " WAVE_API_KEY
-read -p "➤ VISA Merchant ID : " VISA_MERCHANT_ID
-read -p "➤ VISA API Key : " VISA_API_KEY
-
-read -p "➤ Utiliser AWS S3 ? (y/N) : " USE_S3_INPUT
-USE_S3=$( [[ "$USE_S3_INPUT" =~ ^[Yy]$ ]] && echo "True" || echo "False" )
-read -p "➤ Nom du projet Django (dossier principal, ex: SOGENTIS) : " PROJECT_NAME
-read -p "➤ Chemin utilisateur système (par défaut: $(whoami)) : " USER_INPUT
+# === Configuration initiale ===
+read -p "Nom du projet Django (ex: SOGENTIS): " PROJECT_NAME
+read -p "Nom d'utilisateur système (par défaut: $(whoami)): " USER_INPUT
 USER_NAME=${USER_INPUT:-$(whoami)}
-read -p "➤ URL du dépôt Git (ex: https://github.com/exalthab/SOGENTIS.git) : " REPO_URL
+read -p "Domaine principal (ex: sogentis.org): " DOMAIN_NAME
+read -p "Autres domaines (séparés par virgule, ex: sogentis.org,www.sogentis.org): " ALLOWED_HOSTS
 
-if [[ "$USE_S3" == "True" ]]; then
-    read -p "➤ AWS_ACCESS_KEY_ID : " AWS_KEY
-    read -p "➤ AWS_SECRET_ACCESS_KEY : " AWS_SECRET
-    read -p "➤ AWS_STORAGE_BUCKET_NAME : " AWS_BUCKET
-fi
-
-cat > "$ENV_FILE" <<EOF
-DJANGO_ENV=prod
-SECRET_KEY=$SECRET_KEY
-ALLOWED_HOSTS=$ALLOWED_HOSTS
-DATABASE_URL=$DATABASE_URL
-
-EMAIL_HOST=smtp.infomaniak.com
-EMAIL_PORT=587
-EMAIL_USE_TLS=True
-EMAIL_USE_SSL=False
-EMAIL_HOST_USER=$EMAIL_USER
-EMAIL_HOST_PASSWORD=$EMAIL_PASSWORD
-DEFAULT_FROM_EMAIL=$DEFAULT_FROM_EMAIL
-
-# Paiements
-USE_SANDBOX=$USE_SANDBOX
-
-# Stripe
-STRIPE_SECRET_KEY=$STRIPE_SECRET_KEY
-STRIPE_PUBLISHABLE_KEY=$STRIPE_PUBLISHABLE_KEY
-STRIPE_WEBHOOK_SECRET=$STRIPE_WEBHOOK_SECRET
-
-# PayPal
-PAYPAL_CLIENT_ID=$PAYPAL_CLIENT_ID
-PAYPAL_SECRET=$PAYPAL_SECRET
-
-# Orange Money
-ORANGE_MONEY_API_KEY=$ORANGE_MONEY_API_KEY
-
-# Wave
-WAVE_API_KEY=$WAVE_API_KEY
-
-# VISA
-VISA_MERCHANT_ID=$VISA_MERCHANT_ID
-VISA_API_KEY=$VISA_API_KEY
-
-REDIS_URL=redis://localhost:6379/1
-USE_S3=$USE_S3
-EOF
-
-if [[ "$USE_S3" == "True" ]]; then
-    cat >> "$ENV_FILE" <<EOF
-AWS_ACCESS_KEY_ID=$AWS_KEY
-AWS_SECRET_ACCESS_KEY=$AWS_SECRET
-AWS_STORAGE_BUCKET_NAME=$AWS_BUCKET
-EOF
-fi
-
-cat >> "$ENV_FILE" <<EOF
-
-DJANGO_LOG_DIR=/var/log/$PROJECT_NAME
-# SENTRY_DSN=https://your-sentry-dsn
-EOF
-
-echo "✅ Fichier .env généré : $ENV_FILE"
-echo
-
-# === 2. Déploiement projet complet ===
 PROJECT_DIR="/home/$USER_NAME/$PROJECT_NAME"
 SOCK_FILE="$PROJECT_DIR/gunicorn.sock"
 VENV_DIR="$PROJECT_DIR/venv"
 DJANGO_WSGI_MODULE="$PROJECT_NAME.wsgi:application"
+NGINX_CONFIG="/etc/nginx/sites-available/$PROJECT_NAME"
+LOGS_DIR="$PROJECT_DIR/logs"
+LOG_FILE="$LOGS_DIR/django_error.log"
+ENV_FILE="$PROJECT_DIR/.env"
 
-echo "📦 Mise à jour du serveur..."
-sudo apt update && sudo apt upgrade -y
-
-echo "🐍 Installation des dépendances système..."
-sudo apt install python3 python3-venv python3-pip nginx git build-essential libpq-dev ufw -y
-
-echo "📁 Création du dossier projet..."
-mkdir -p "$PROJECT_DIR"
-cd "$PROJECT_DIR"
-
-echo "🔁 Clonage ou mise à jour du dépôt Git..."
-if [ -d ".git" ]; then
-    echo "Le dépôt Git existe déjà, mise à jour..."
-    git pull || { echo "Mise à jour git échouée !"; exit 1; }
-else
-    git clone "$REPO_URL" . || { echo "Clonage échoué !"; exit 1; }
+# --- Vérification .env ---
+if [ ! -f "$ENV_FILE" ]; then
+  echo "❌ Le fichier $ENV_FILE n'existe pas ! Crée-le avant de lancer ce script."
+  echo "Il doit contenir :"
+  echo "LOG_PATH=$LOG_FILE"
+  exit 1
 fi
 
-echo "🐍 Création de l'environnement virtuel..."
+# --- Mise à jour du système ---
+echo "📦 Mise à jour du serveur..."
+sudo apt update && sudo apt upgrade -y
+sudo apt install python3 python3-venv python3-pip nginx git build-essential libpq-dev ufw certbot python3-certbot-nginx -y
+
+# --- Setup virtualenv ---
 if [ ! -d "$VENV_DIR" ]; then
-    python3 -m venv "$VENV_DIR"
+  echo "🐍 Création de l’environnement virtuel Python..."
+  python3 -m venv "$VENV_DIR"
 fi
 source "$VENV_DIR/bin/activate"
 
+# --- Dépendances Python ---
 echo "📦 Installation des dépendances Python..."
 pip install --upgrade pip setuptools wheel
-pip install -r requirements.txt
+pip install -r "$PROJECT_DIR/requirements.txt"
 
-cp "$ENV_FILE" "$PROJECT_DIR/.env"
+# --- Vérification Gunicorn ---
+if ! pip show gunicorn > /dev/null; then
+  pip install gunicorn
+fi
 
-echo "⚙️ Migration et collecte des fichiers statiques..."
+# --- Migration et fichiers statiques ---
+cd "$PROJECT_DIR"
 python manage.py migrate --noinput
 python manage.py collectstatic --noinput
 
-# --- Logs ---
-LOGS_DIR="$PROJECT_DIR/logs"
-LOG_FILE="$LOGS_DIR/django_error.log"
-mkdir -p "$LOGS_DIR"
+# --- Dossiers logs et media ---
+mkdir -p "$LOGS_DIR" "$PROJECT_DIR/media"
 touch "$LOG_FILE"
-sudo chown -R "$USER_NAME":www-data "$LOGS_DIR"
-sudo chmod -R 775 "$LOGS_DIR"
+sudo chown -R "$USER_NAME":www-data "$LOGS_DIR" "$PROJECT_DIR/media"
+sudo chmod -R 775 "$LOGS_DIR" "$PROJECT_DIR/media"
 sudo chmod 664 "$LOG_FILE"
 
-# --- Systemd Gunicorn ---
+# --- Création du service systemd Gunicorn ---
 echo "🔐 Création du service Gunicorn..."
 sudo tee /etc/systemd/system/$PROJECT_NAME.service > /dev/null <<EOF
 [Unit]
@@ -167,7 +71,11 @@ After=network.target
 User=$USER_NAME
 Group=www-data
 WorkingDirectory=$PROJECT_DIR
+EnvironmentFile=$ENV_FILE
 ExecStart=$VENV_DIR/bin/gunicorn --access-logfile - --workers 3 --bind unix:$SOCK_FILE $DJANGO_WSGI_MODULE
+Restart=always
+RestartSec=5
+UMask=007
 
 [Install]
 WantedBy=multi-user.target
@@ -177,7 +85,7 @@ sudo systemctl daemon-reload
 sudo systemctl restart $PROJECT_NAME
 sudo systemctl enable $PROJECT_NAME
 
-# === Multi-domaines pour NGINX/Certbot ===
+# --- Préparation multi-domaines ---
 IFS=',' read -ra DOMAINS <<< "$ALLOWED_HOSTS"
 NGINX_SERVER_NAMES=""
 CERTBOT_DOMAINS=""
@@ -186,9 +94,14 @@ for d in "${DOMAINS[@]}"; do
   CERTBOT_DOMAINS="$CERTBOT_DOMAINS -d $d"
 done
 
-NGINX_CONFIG="/etc/nginx/sites-available/$PROJECT_NAME"
+# --- Fichier TLS de Certbot si manquant ---
+SSL_OPTIONS="/etc/letsencrypt/options-ssl-nginx.conf"
+if [ ! -f "$SSL_OPTIONS" ]; then
+  sudo wget https://raw.githubusercontent.com/certbot/certbot/master/certbot-nginx/certbot_nginx/_internal/tls_configs/options-ssl-nginx.conf -O $SSL_OPTIONS
+fi
 
-echo "🌐 Génération de la config Nginx + SSL (multi-domaine)..."
+# --- Configuration NGINX ---
+echo "🌐 Génération de la configuration NGINX + SSL..."
 sudo tee "$NGINX_CONFIG" > /dev/null <<EOF
 server {
     listen 80;
@@ -221,29 +134,34 @@ server {
     location / {
         include proxy_params;
         proxy_pass http://unix:$SOCK_FILE;
+        proxy_read_timeout 300;
     }
-    proxy_read_timeout 300;
 }
 EOF
 
 sudo ln -sf "$NGINX_CONFIG" /etc/nginx/sites-enabled/
-sudo nginx -t && sudo systemctl reload nginx
+
+# --- Test NGINX ---
+if ! sudo nginx -t; then
+  echo "❌ Erreur dans la configuration NGINX. Abandon."
+  exit 1
+fi
+sudo systemctl reload nginx
 
 # --- Firewall ---
-echo "🔓 Activation du firewall (UFW)..."
+echo "🔓 Activation du firewall UFW..."
 sudo ufw allow 'Nginx Full'
 sudo ufw --force enable
 
-# --- Certbot SSL ---
-echo "🔐 Installation de Certbot (HTTPS)..."
-sudo apt install certbot python3-certbot-nginx -y
+# --- SSL avec Certbot ---
+echo "🔐 Installation ou renouvellement du certificat SSL..."
 sudo certbot --nginx $CERTBOT_DOMAINS --non-interactive --agree-tos -m webmaster@$DOMAIN_NAME
 
-echo "🕓 Activation du renouvellement auto SSL..."
+# --- Activation du renouvellement auto ---
 sudo systemctl enable certbot.timer
 sudo systemctl start certbot.timer
 
 echo
-echo "🎉 Déploiement Django terminé !"
+echo "🎉 Déploiement Django terminé avec succès !"
 echo "🌐 Accède à : https://$DOMAIN_NAME"
-echo "🌐 Ou sur les domaines secondaires : $NGINX_SERVER_NAMES"
+echo "🌐 Domaines supplémentaires :$NGINX_SERVER_NAMES"

@@ -1,35 +1,39 @@
-import os
-from decouple import config
-from pathlib import Path
+# config/settings/modules/logging.py
 
-# BASE_DIR récupéré du contexte global (si settings_loader.py est bien exécuté)
+import os
+from pathlib import Path
+from decouple import config
+from django.core.exceptions import ImproperlyConfigured
+
+# === BASE_DIR fallback ===
 try:
     BASE_DIR = Path(globals().get("BASE_DIR") or __file__).resolve().parent.parent.parent
 except Exception:
     BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-# Définition du chemin du fichier de log (via .env ou par défaut)
+# === Fichier de log défini dans .env ou par défaut
 LOG_PATH = config("LOG_PATH", default=str(BASE_DIR / "logs/django_error.log"))
 log_dir = os.path.dirname(LOG_PATH)
 
-# --- Création dossier/fichier log si besoin, et vérification droits ---
+# === Crée le dossier de logs s’il n'existe pas
 try:
     if log_dir and not os.path.exists(log_dir):
         os.makedirs(log_dir, exist_ok=True)
     if not os.path.exists(LOG_PATH):
         with open(LOG_PATH, 'a'):
             os.utime(LOG_PATH, None)
-    # Vérifie les droits d'écriture
     if not os.access(LOG_PATH, os.W_OK):
-        raise PermissionError(f"Le fichier log '{LOG_PATH}' n'est pas accessible en écriture pour l'utilisateur courant ({os.getlogin()})")
+        raise PermissionError(
+            f"❌ Le fichier log '{LOG_PATH}' n’est pas accessible en écriture pour l’utilisateur courant."
+        )
 except Exception as e:
-    from django.core.exceptions import ImproperlyConfigured
-    raise ImproperlyConfigured(f"Erreur lors de la création du fichier de log : {e}")
+    raise ImproperlyConfigured(f"⚠️ Erreur lors de la configuration du fichier de log : {e}")
 
-# --- (DEBUG) Affiche le chemin du log à l'initialisation ---
-print("LOG_PATH =", LOG_PATH)
+# ✅ Affichage utile uniquement si DEBUG est activé
+if config("DEBUG", cast=bool, default=False):
+    print(f"✅ Fichier de log utilisé : {LOG_PATH}")
 
-# --- Configuration LOGGING Django ---
+# === LOGGING CONFIGURATION ===
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
