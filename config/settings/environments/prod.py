@@ -3,7 +3,8 @@ from decouple import Csv, config
 from dotenv import load_dotenv
 import dj_database_url
 
-from ..modules.base import *
+# from ..modules.base import *
+from config.settings.modules.base import *
 
 # === Load environment variables ===
 load_dotenv()

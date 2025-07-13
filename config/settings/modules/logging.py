@@ -2,26 +2,34 @@ import os
 from decouple import config
 from pathlib import Path
 
-# BASE_DIR est défini par le context global dans settings_loader
+# BASE_DIR récupéré du contexte global (si settings_loader.py est bien exécuté)
 try:
     BASE_DIR = Path(globals().get("BASE_DIR") or __file__).resolve().parent.parent.parent
 except Exception:
     BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
+# Définition du chemin du fichier de log (via .env ou par défaut)
 LOG_PATH = config("LOG_PATH", default=str(BASE_DIR / "logs/django_error.log"))
-
-# Crée le dossier log si inexistant, et le fichier log s'il n'existe pas
 log_dir = os.path.dirname(LOG_PATH)
+
+# --- Création dossier/fichier log si besoin, et vérification droits ---
 try:
     if log_dir and not os.path.exists(log_dir):
         os.makedirs(log_dir, exist_ok=True)
     if not os.path.exists(LOG_PATH):
         with open(LOG_PATH, 'a'):
             os.utime(LOG_PATH, None)
+    # Vérifie les droits d'écriture
+    if not os.access(LOG_PATH, os.W_OK):
+        raise PermissionError(f"Le fichier log '{LOG_PATH}' n'est pas accessible en écriture pour l'utilisateur courant ({os.getlogin()})")
 except Exception as e:
     from django.core.exceptions import ImproperlyConfigured
     raise ImproperlyConfigured(f"Erreur lors de la création du fichier de log : {e}")
 
+# --- (DEBUG) Affiche le chemin du log à l'initialisation ---
+print("LOG_PATH =", LOG_PATH)
+
+# --- Configuration LOGGING Django ---
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
