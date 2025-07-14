@@ -1,0 +1,36 @@
+// 10-utilities/_height.scss — version corrigée
+// static/scss/bootstrap/scss/10-utilities/_height.scss
+// ─────────────────────────────────────────────────────────────
+// Classes utilitaires pour la hauteur (.h-25, .h-md-100, .h-auto, etc.)
+// ─────────────────────────────────────────────────────────────
+
+@use '../1-import/variables' as vars;
+@use '../1-import/mixins' as mix;
+@use 'sass:map';
+
+// Hauteurs prédéfinies
+$heights: (
+  25: 25%,
+  50: 50%,
+  75: 75%,
+  100: 100%,
+  auto: auto
+);
+
+// Génération des classes de base .h-25, .h-50, etc.
+@each $key, $value in $heights {
+  .h-#{$key} {
+    height: $value !important;
+  }
+}
+
+// Génération responsive : .h-sm-50, .h-lg-100, etc.
+@each $break in map.keys(vars.$breakpoints) {
+  @include mix.breakpoint-up($break) {
+    @each $key, $value in $heights {
+      .h-#{$break}-#{$key} {
+        height: $value !important;
+      }
+    }
+  }
+}

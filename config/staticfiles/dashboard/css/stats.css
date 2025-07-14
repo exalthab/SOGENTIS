@@ -1,0 +1,10 @@
+/* ✅ dashboard/css/stats.css */
+.stat-card {
+  transition: transform 0.2s ease;
+}
+.stat-card:hover {
+  transform: translateY(-4px);
+}
+canvas {
+  max-width: 100%;
+}

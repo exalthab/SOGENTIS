@@ -1,0 +1,29 @@
+/* users_menu.css */
+.auth-menu .dropdown-toggle {
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.auth-menu img {
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+}
+
+.auth-menu .dropdown-menu {
+  min-width: 200px;
+  font-size: 0.95rem;
+  border-radius: 0.4rem;
+}
+
+.auth-menu .dropdown-menu a.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.auth-menu .dropdown-item:hover {
+  background-color: #f8f9fa;
+}

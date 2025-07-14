@@ -1,0 +1,242 @@
+.social-index {
+  background-color: #fff;
+  color: #212529;
+}
+.social-index .legal-message {
+  background-color: #fff3cd;
+  border-color: #ffeeba;
+  font-size: 1.1rem;
+}
+.social-index .hero .carousel-item {
+  height: 100vh;
+}
+.social-index .hero .hero-slide {
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  padding-bottom: 5rem;
+}
+.social-index .hero .hero-slide .overlay {
+  background: rgba(0, 0, 0, 0.6);
+}
+.social-index .hero .hero-slide h1, .social-index .hero .hero-slide p {
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+}
+.social-index .hero .hero-slide .btn {
+  font-weight: bold;
+  padding: 0.75rem 2rem;
+}
+.social-index .hero .carousel-control-prev,
+.social-index .hero .carousel-control-next {
+  width: 50px;
+  height: 50px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: background-color 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.social-index .hero .carousel-control-prev:hover,
+.social-index .hero .carousel-control-next:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+.social-index .hero .carousel-control-prev .carousel-custom-icon,
+.social-index .hero .carousel-control-next .carousel-custom-icon {
+  display: flex;
+}
+.social-index .hero .carousel-control-prev .carousel-custom-icon svg,
+.social-index .hero .carousel-control-next .carousel-custom-icon svg {
+  width: 24px;
+  height: 24px;
+  fill: #fff;
+}
+.social-index .hero .carousel-control-prev {
+  left: 1rem;
+}
+.social-index .hero .carousel-control-next {
+  right: 1rem;
+}
+.social-index .alert-danger {
+  font-size: 1.05rem;
+}
+.social-index .card {
+  border: none;
+  transition: transform 0.3s ease-in-out;
+}
+.social-index .card:hover {
+  transform: translateY(-5px);
+}
+.social-index .card .card-title {
+  font-weight: 600;
+}
+.social-index .card .card-body p {
+  font-size: 2rem;
+}
+.social-index .card .progress {
+  height: 1rem;
+}
+.social-index .card .progress .progress-bar {
+  font-weight: bold;
+  font-size: 0.85rem;
+}
+.social-index .card .card-footer .btn {
+  font-weight: 500;
+}
+.social-index .video-section {
+  padding: 3rem 1rem;
+  background-color: #fff;
+}
+.social-index .stats-section {
+  background-color: #111;
+  padding: 4rem 1rem;
+  color: #f8f9fa;
+}
+.social-index .stats-section h3 {
+  font-size: 2.5rem;
+}
+.social-index .stats-section p {
+  font-size: 1.1rem;
+  color: #ffffff;
+}
+.social-index .stats-section .icon {
+  margin-bottom: 1rem;
+}
+.social-index .stats-section .text-light {
+  color: rgba(255, 255, 255, 0.8);
+}
+.social-index .stats-section a {
+  color: inherit;
+  text-decoration: none;
+}
+.social-index .stats-section a:hover {
+  text-decoration: underline;
+  color: #FFD700;
+}
+.social-index #mission {
+  background-color: #f8f9fa;
+}
+.social-index #mission img {
+  max-width: 100%;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+.social-index #mission p.lead {
+  font-size: 1.2rem;
+  color: #212529;
+}
+.social-index #vision {
+  background: linear-gradient(120deg, #002B45, #006699);
+  color: #f1f1f1;
+}
+.social-index #vision h2 {
+  color: #FFD700;
+}
+.social-index #vision p {
+  color: #E6F2FA;
+}
+.social-index #vision img {
+  max-width: 100%;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+.social-index .partner-section img {
+  max-height: 60px;
+  max-width: 120px;
+  -o-object-fit: contain;
+     object-fit: contain;
+  filter: grayscale(100%);
+  transition: filter 0.3s ease-in-out;
+}
+.social-index .partner-section img:hover {
+  filter: grayscale(0%);
+}
+.social-index .fade-in-up {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.6s ease-out;
+}
+.social-index .fade-in-up.appear, .social-index .fade-in-up.animate {
+  opacity: 1;
+  transform: translateY(0);
+}
+.social-index .delay-1 {
+  transition-delay: 0.2s;
+}
+.social-index .delay-2 {
+  transition-delay: 0.4s;
+}
+.social-index .delay-3 {
+  transition-delay: 0.6s;
+}
+.social-index .section-spacing {
+  padding: 4rem 0;
+}
+.social-index .btn-donation-floating {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 1000;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+}
+.social-index .btn-donation-floating:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.soci-navbar {
+  background-color: #212529;
+}
+.soci-navbar .navbar-brand img {
+  max-height: 48px;
+}
+.soci-navbar .nav-link {
+  color: #f8f9fa !important;
+  font-weight: 500;
+}
+.soci-navbar .nav-link.active, .soci-navbar .nav-link:hover {
+  color: #ffc107 !important;
+}
+.soci-navbar .dropdown-menu {
+  background-color: #343a40;
+  border: none;
+}
+.soci-navbar .dropdown-menu .dropdown-item {
+  color: #fff;
+}
+.soci-navbar .dropdown-menu .dropdown-item:hover {
+  background-color: #006699;
+}
+.soci-navbar .btn-warning {
+  font-weight: bold;
+  padding: 0.5rem 1.25rem;
+}
+
+@media (max-width: 767.98px) {
+  .social-index .hero-slide {
+    padding-bottom: 2rem;
+  }
+  .social-index .hero-slide h1 {
+    font-size: 2rem;
+  }
+  .social-index .hero-slide p {
+    font-size: 1rem;
+  }
+  .social-index .stats-section h3 {
+    font-size: 1.8rem;
+  }
+  .social-index .btn-donation-floating {
+    bottom: 1rem;
+    right: 1rem;
+    font-size: 0.9rem;
+  }
+  .soci-navbar .btn {
+    margin-top: 1rem;
+  }
+}/*# sourceMappingURL=social_index.css.map */

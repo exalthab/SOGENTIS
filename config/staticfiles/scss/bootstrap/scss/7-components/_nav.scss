@@ -1,0 +1,108 @@
+// 7-components/_nav.scss
+// Composant Nav — onglets, liens, pillules, etc.
+
+@use '../1-import/variables' as vars;
+@use '../1-import/mixins' as mix;
+@use '../0-settings/z-index' as zi;
+@use 'sass:color';
+
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  padding-left: 0;
+  margin-bottom: 0;
+  list-style: none;
+}
+
+.nav-link {
+  display: block;
+  padding: var(--bs-nav-link-padding-y) var(--bs-nav-link-padding-x);
+  font-size: var(--bs-nav-link-font-size);
+  font-weight: var(--bs-nav-link-font-weight);
+  color: var(--bs-nav-link-color);
+  text-decoration: none;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out;
+
+  &:hover,
+  &:focus {
+    color: var(--bs-nav-link-hover-color);
+  }
+
+  &.disabled {
+    color: var(--bs-nav-link-disabled-color);
+    pointer-events: none;
+  }
+}
+
+// Nav Tabs
+.nav-tabs {
+  border-bottom: var(--bs-nav-tabs-border-width) solid var(--bs-nav-tabs-border-color);
+
+  .nav-link {
+    margin-bottom: calc(-1 * var(--bs-nav-tabs-border-width));
+    border: var(--bs-nav-tabs-border-width) solid transparent;
+    border-radius: var(--bs-nav-tabs-border-radius) var(--bs-nav-tabs-border-radius) 0 0;
+
+    &.active {
+      color: var(--bs-nav-tabs-link-active-color);
+      background-color: var(--bs-nav-tabs-link-active-bg);
+      border-color: var(--bs-nav-tabs-link-active-border-color);
+    }
+
+    &:hover,
+    &:focus {
+      border-color: var(--bs-nav-tabs-link-hover-border-color);
+    }
+  }
+}
+
+// Nav Pills
+.nav-pills {
+  .nav-link {
+    border-radius: var(--bs-nav-pills-border-radius);
+
+    &.active {
+      color: #fff;
+      background-color: #0d6efd;
+    }
+  }
+}
+
+// Nav Underline
+.nav-underline {
+  gap: var(--bs-nav-underline-gap);
+
+  .nav-link {
+    border-bottom: var(--bs-nav-underline-border-width) solid transparent;
+
+    &:hover,
+    &:focus {
+      border-bottom-color: currentcolor;
+    }
+
+    &.active {
+      font-weight: 700;
+      color: var(--bs-nav-underline-link-active-color);
+      border-bottom-color: currentcolor;
+    }
+  }
+}
+
+// Nav Fill & Justified
+.nav-fill > .nav-link,
+.nav-justified > .nav-link,
+.nav-fill .nav-item,
+.nav-justified .nav-item {
+  flex: 1 1 auto;
+  text-align: center;
+}
+
+// Tab Content
+.tab-content > .tab-pane {
+  display: none;
+
+  &.active {
+    display: block;
+  }
+}

@@ -1,0 +1,72 @@
+// 10-utilities/_align.scss — version mise à jour et compatible Dart Sass 3+
+// ─────────────────────────────────────────────────────────────
+// Classes utilitaires pour alignement (text-align, vertical-align, justify-content…)
+// ─────────────────────────────────────────────────────────────
+
+@use '../1-import/variables' as vars;
+@use '../1-import/mixins' as mix;
+
+// Text alignment utilities
+@each $align, $value in (
+  start: left,
+  center: center,
+  end: right,
+  justify: justify
+) {
+  .text-#{$align} {
+    text-align: $value !important;
+  }
+
+  @include mix.breakpoint-up('md') {
+    .text-md-#{$align} {
+      text-align: $value !important;
+    }
+  }
+
+  @include mix.breakpoint-up('lg') {
+    .text-lg-#{$align} {
+      text-align: $value !important;
+    }
+  }
+}
+
+// Vertical alignment utilities
+@each $valign, $prop in (
+  baseline: baseline,
+  top: top,
+  middle: middle,
+  bottom: bottom,
+  text-top: text-top,
+  text-bottom: text-bottom
+) {
+  .align-#{$valign} {
+    vertical-align: $prop !important;
+  }
+}
+
+// Flexbox — justify-content
+@each $jc, $value in (
+  start: flex-start,
+  center: center,
+  end: flex-end,
+  between: space-between,
+  around: space-around,
+  evenly: space-evenly
+) {
+  .justify-content-#{$jc} {
+    justify-content: $value !important;
+  }
+}
+
+// Flexbox — align-items
+@each $ai, $value in (
+  start: flex-start,
+  center: center,
+  end: flex-end,
+  baseline: baseline,
+  stretch: stretch
+) {
+  .align-items-#{$ai} {
+    align-items: $value !important;
+  }
+}

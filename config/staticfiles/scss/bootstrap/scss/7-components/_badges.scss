@@ -1,0 +1,50 @@
+// static/scss/bootstrap/scss/7-components/_badges.scss
+// ─────────────────────────────────────────────────────────────
+// Composant Badges (mis à jour pour éviter les dépréciations)
+// ─────────────────────────────────────────────────────────────
+
+@use '../1-import/variables' as vars;
+@use 'sass:color';
+
+.badge {
+  display: inline-block;
+  padding: 0.25em 0.4em;
+  font-size: 75%;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: vars.$border-radius;
+  transition: background-color vars.$transition-base, color vars.$transition-base;
+}
+
+@each $name, $color in (
+  primary:   vars.$primary,
+  secondary: vars.$secondary,
+  success:   vars.$success,
+  danger:    vars.$danger,
+  warning:   vars.$warning,
+  info:      vars.$info,
+  light:     vars.$light,
+  dark:      vars.$dark
+) {
+  .badge-#{$name} {
+    color: if(
+      color.channel($color, "lightness", $space: hsl) > 50%,
+      vars.$dark,
+      vars.$white
+    );
+    background-color: $color;
+
+    a {
+      color: inherit;
+      text-decoration: none;
+
+      &:hover,
+      &:focus {
+        text-decoration: underline;
+      }
+    }
+  }
+}

@@ -118,6 +118,11 @@ else:
 CSRF_TRUSTED_ORIGINS = [
     "https://sogentis.org",
     "https://www.sogentis.org",
+    "https://sogentis.sn",
+    "https://www.sogentis.sn",
+    "https://sogentis.com",
+    "https://www.sogentis.com",
+    
 ]
 
 # ============================

@@ -1,0 +1,132 @@
+@use 'sass:map';
+
+// 🎨 Couleurs — Palette principale
+$primary:   #007bff !default;
+$secondary: #6c757d !default;
+$success:   #28a745 !default;
+$danger:    #dc3545 !default;
+$warning:   #ffc107 !default;
+$info:      #17a2b8 !default;
+$light:     #f8f9fa !default;
+$dark:      #343a40 !default;
+$white:     #ffffff !default;
+$black:     #000000 !default;
+
+// ➕ Couleurs personnalisées
+$brand-blue:  #0C2D46 !default; // Bleu profond (logo)
+$olive-green: #758C64 !default;
+$cream:       #f5f2e9 !default; // Crème / beige clair
+
+$nike-primary: #ff3e3e !default;
+$nike-accent:  #000000 !default;
+
+// 🎨 Couleurs — Palette de gris (Bootstrap inspired)
+$gray-100: #f8f9fa !default;
+$gray-200: #e9ecef !default;
+$gray-300: #dee2e6 !default;
+$gray-400: #ced4da !default;
+$gray-500: #adb5bd !default;
+$gray-600: #6c757d !default;
+$gray-700: #495057 !default;
+$gray-800: #343a40 !default;
+$gray-900: #212529 !default;
+
+// 🎨 Thème — Regroupement des couleurs dans une map
+$theme-colors: (
+  "primary": $primary,
+  "secondary": $secondary,
+  "success": $success,
+  "danger": $danger,
+  "warning": $warning,
+  "info": $info,
+  "light": $light,
+  "dark": $dark,
+  "white": $white,
+  "black": $black,
+  "brand-blue": $brand-blue,
+  "olive-green": $olive-green,
+  "cream": $cream,
+  "nike-primary": $nike-primary,
+  "nike-accent": $nike-accent,
+  "gray-100": $gray-100,
+  "gray-200": $gray-200,
+  "gray-300": $gray-300,
+  "gray-400": $gray-400,
+  "gray-500": $gray-500,
+  "gray-600": $gray-600,
+  "gray-700": $gray-700,
+  "gray-800": $gray-800,
+  "gray-900": $gray-900
+) !default;
+
+// 🔠 Typographie
+$font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !default;
+$font-size-base:   1rem !default; // 16px
+$line-height-base: 1.5 !default;
+$headings-font-weight: 500 !default;
+
+$font-sizes: (
+  h1:    2.5rem,
+  h2:    2rem,
+  h3:    1.75rem,
+  h4:    1.5rem,
+  h5:    1.25rem,
+  h6:    1rem,
+  p:     1rem,
+  small: 0.875rem
+) !default;
+
+// 📱 Breakpoints responsives
+$breakpoints: (
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+  xxl: 1400px
+) !default;
+
+// 📏 Espacement & Grille
+$spacer: 1rem !default;
+
+$spacers: (
+  0: 0,
+  1: $spacer * 0.25,
+  2: $spacer * 0.5,
+  3: $spacer,
+  4: $spacer * 1.5,
+  5: $spacer * 3
+) !default;
+
+$grid-columns:       12 !default;
+$grid-gutter-width:  $spacer !default;
+
+// 📦 Bordures et ombrages
+$border-radius:  0.25rem !default;
+$border-width:   1px !default;
+
+$box-shadow:     0 0.125rem 0.25rem rgba($black, 0.075) !default;
+$box-shadow-lg:  0 0.5rem 1rem rgba($black, 0.15) !default;
+
+// 🔁 Transitions
+$transition-base: all 0.15s ease-in-out !default;
+
+// 🔢 Z-Index hiérarchique
+$z-indices: (
+  dropdown:        1000,
+  sticky:          1020,
+  fixed:           1030,
+  modal-backdrop:  1040,
+  modal:           1050,
+  popover:         1060,
+  tooltip:         1070,
+  toast:           1080
+) !default;
+
+$z-index-dropdown:        map.get($z-indices, dropdown)       !default;
+$z-index-sticky:          map.get($z-indices, sticky)         !default;
+$z-index-fixed:           map.get($z-indices, fixed)          !default;
+$z-index-modal-backdrop:  map.get($z-indices, modal-backdrop) !default;
+$z-index-modal:           map.get($z-indices, modal)          !default;
+$z-index-popover:         map.get($z-indices, popover)        !default;
+$z-index-tooltip:         map.get($z-indices, tooltip)        !default;
+$z-index-toast:           map.get($z-indices, toast)          !default;

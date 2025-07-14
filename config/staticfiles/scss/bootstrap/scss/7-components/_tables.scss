@@ -1,0 +1,93 @@
+// static/scss/bootstrap/scss/7-components/_tables.scss
+// ─────────────────────────────────────────────────────────────
+// Composant Tables – compatible navigateurs modernes
+// (Chrome, Edge, Firefox, Safari, etc.)
+// ─────────────────────────────────────────────────────────────
+
+@use '../1-import/variables' as vars;
+@use '../1-import/mixins' as mix;
+@use 'sass:color';
+@use 'sass:map';
+
+.table {
+  width: 100%;
+  margin-bottom: vars.$spacer;
+  color: vars.$dark;
+  border-collapse: collapse;
+  border-spacing: 0;
+
+  th,
+  td {
+    padding: 0.75rem 1rem;
+    vertical-align: top;
+    border-top: vars.$border-width solid vars.$dark;
+    table-layout: fixed;
+    word-wrap: break-word;
+    white-space: normal;
+  }
+
+  thead th {
+    vertical-align: bottom;
+    border-bottom: 2px solid vars.$light;
+    font-weight: vars.$headings-font-weight;
+  }
+
+  &-striped {
+    tbody tr:nth-of-type(odd) {
+      background-color: vars.$light;
+    }
+  }
+
+  &-bordered {
+    border: vars.$border-width solid vars.$light;
+    th,
+    td {
+      border: vars.$border-width solid vars.$light;
+    }
+  }
+
+  &-hover {
+    tbody tr {
+      transition: background-color vars.$transition-base;
+      &:hover {
+        background-color: color.adjust(vars.$light, $lightness: -5%);
+      }
+    }
+  }
+
+  &-responsive {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+
+    @include mix.breakpoint-up('md') {
+      display: table;
+      overflow: visible;
+    }
+  }
+
+  &-fixed-header {
+    display: block;
+    max-height: 400px;
+    overflow-y: auto;
+
+    thead,
+    tbody,
+    tr,
+    th,
+    td {
+      display: block;
+    }
+
+    thead {
+      position: sticky;
+      top: 0;
+      z-index: map.get(vars.$z-indices, 'sticky'); // ✅ FIX
+      background-color: vars.$white;
+    }
+
+    tbody {
+      height: auto;
+    }
+  }
+}

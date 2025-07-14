@@ -1,0 +1,163 @@
+// static/scss/bootstrap/scss/7-components/_buttons.scss
+// ─────────────────────────────────────────────────────────────
+// Composant Boutons (mise à jour pour éviter les dépréciations Sass + support mode sombre)
+// ─────────────────────────────────────────────────────────────
+
+@use '../1-import/variables' as vars;
+@use 'sass:color';
+
+button,
+.btn {
+  display: inline-block;
+  font-weight: 400;
+  color: vars.$white;
+  text-align: center;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  user-select: none;
+  background-color: vars.$primary;
+  border: vars.$border-width solid vars.$primary;
+  padding: 0.375rem 0.75rem;
+  font-size: vars.$font-size-base;
+  line-height: vars.$line-height-base;
+  border-radius: vars.$border-radius;
+  transition: background-color vars.$transition-base, border-color vars.$transition-base;
+
+  &:hover {
+    background-color: color.adjust(vars.$primary, $lightness: -10%);
+    border-color: color.adjust(vars.$primary, $lightness: -10%);
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.2rem color.adjust(vars.$primary, $alpha: -0.75);
+  }
+
+  &:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+}
+
+// Variantes de bouton
+@each $name, $color in (
+  primary:   vars.$primary,
+  secondary: vars.$secondary,
+  success:   vars.$success,
+  danger:    vars.$danger,
+  warning:   vars.$warning,
+  info:      vars.$info,
+  light:     vars.$light,
+  dark:      vars.$dark
+) {
+  .btn-#{$name} {
+    background-color: $color;
+    border-color:     $color;
+    color: if(
+      color.channel($color, "lightness", $space: hsl) > 50%,
+      vars.$dark,
+      vars.$white
+    );
+
+    &:hover {
+      background-color: color.adjust($color, $lightness: -10%);
+      border-color:     color.adjust($color, $lightness: -10%);
+    }
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 0.2rem rgba($color, 0.25);
+    }
+    &:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+  }
+
+  .btn-outline-#{$name} {
+    background-color: transparent;
+    border-color:     $color;
+    color:            $color;
+
+    &:hover {
+      background-color: $color;
+      color:            vars.$white;
+    }
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 0.2rem rgba($color, 0.25);
+    }
+    &:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+  }
+}
+
+// Mode sombre - adaptations boutons
+body.dark-mode {
+  button,
+  .btn {
+    background-color: vars.$gray-700 !important;
+    border-color: vars.$gray-600 !important;
+    color: vars.$light !important;
+
+    &:hover {
+      background-color: vars.$warning !important;
+      border-color: vars.$warning !important;
+      color: vars.$dark !important;
+    }
+
+    &:focus {
+      box-shadow: 0 0 0 0.2rem rgba(vars.$warning, 0.5) !important;
+    }
+  }
+
+  @each $name, $color in (
+    primary:   vars.$primary,
+    secondary: vars.$secondary,
+    success:   vars.$success,
+    danger:    vars.$danger,
+    warning:   vars.$warning,
+    info:      vars.$info,
+    light:     vars.$light,
+    dark:      vars.$dark
+  ) {
+    .btn-#{$name} {
+      background-color: color.adjust($color, $lightness: -20%) !important;
+      border-color: color.adjust($color, $lightness: -30%) !important;
+      color: vars.$light !important;
+
+      &:hover {
+        background-color: color.adjust($color, $lightness: -10%) !important;
+        border-color: color.adjust($color, $lightness: -10%) !important;
+        color: vars.$dark !important;
+      }
+      &:focus {
+        box-shadow: 0 0 0 0.2rem rgba(color.adjust($color, $lightness: -10%), 0.5) !important;
+      }
+    }
+
+    .btn-outline-#{$name} {
+      background-color: transparent !important;
+      border-color: color.adjust($color, $lightness: -30%) !important;
+      color: color.adjust($color, $lightness: -30%) !important;
+
+      &:hover {
+        background-color: color.adjust($color, $lightness: -10%) !important;
+        color: vars.$light !important;
+      }
+      &:focus {
+        box-shadow: 0 0 0 0.2rem rgba(color.adjust($color, $lightness: -10%), 0.5) !important;
+      }
+    }
+  }
+}
+
+// ✅ Back to Top button
+#backToTop {
+  z-index: vars.$z-index-tooltip;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  box-shadow: vars.$box-shadow;
+}

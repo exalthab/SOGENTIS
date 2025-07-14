@@ -1,0 +1,74 @@
+// 7-components/_toasts.scss — version corrigée
+
+@use '../1-import/variables' as vars;
+@use '../1-import/mixins' as mix;
+@use 'sass:color';
+@use 'sass:math';
+
+.toast {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: vars.$z-index-toast or vars.$z-index-modal; // fallback
+  display: flex;
+  flex-direction: column;
+  min-width: 250px;
+  max-width: 350px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  background-color: vars.$white;
+  border: vars.$border-width solid vars.$light;
+  border-radius: vars.$border-radius;
+  box-shadow: vars.$box-shadow-lg;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  transform: translateY(20px);
+  pointer-events: none;
+
+  &.show {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  &.hide {
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none;
+  }
+}
+
+.toast-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 500;
+  color: vars.$dark;
+  background-color: color.adjust(vars.$light, $lightness: -5%);
+  padding: 0.5rem 1rem;
+  border-bottom: vars.$border-width solid vars.$light;
+  border-top-left-radius: vars.$border-radius;
+  border-top-right-radius: vars.$border-radius;
+}
+
+.toast-body {
+  padding: 0.75rem 1rem;
+  color: vars.$dark;
+}
+
+.toast-close {
+  background: transparent;
+  border: 0;
+  font-size: 1.25rem;
+  line-height: 1;
+  color: vars.$dark;
+  opacity: 0.7;
+
+  &:hover,
+  &:focus {
+    color: vars.$primary;
+    opacity: 1;
+    outline: none;
+  }
+}

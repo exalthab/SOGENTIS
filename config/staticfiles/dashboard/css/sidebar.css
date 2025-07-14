@@ -1,0 +1,36 @@
+/* Style de la sidebar */
+.dashboard-container { display: flex; }
+.sidebar {
+  width: 240px;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+  border-right: 1px solid #dee2e6;
+
+}
+
+.sidebar h5 {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.sidebar .nav-link {
+  color: #333;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  transition: background-color 0.2s;
+}
+
+.sidebar .nav-link:hover,
+.sidebar .nav-link.active {
+  background-color: #e9ecef;
+  border-radius: 4px;
+
+}
+
+.sidebar .nav-link i {
+  margin-right: 8px;
+  width: 20px;
+
+}

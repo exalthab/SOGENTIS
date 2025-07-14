@@ -19,7 +19,7 @@ if not SECRET_KEY or SECRET_KEY == "insecure-secret-for-dev":
 # === ALLOWED HOSTS ===
 ALLOWED_HOSTS = config(
     "ALLOWED_HOSTS",
-    default="sogentis.org,www.sogentis.org,127.0.0.1,localhost",
+    default="sogentis.org,127.0.0.1,localhost",
     cast=Csv()
 )
 
@@ -61,7 +61,7 @@ INSTALLED_APPS = [
     "stakeholders.members",
     "stakeholders.friends",
 
-    # Développement uniquement
+    # Development only (comment in development)
     # "sslserver",  # ❌ à désactiver en production
 ]
 
@@ -84,9 +84,9 @@ EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
 
 DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default="contact@sogentis.org")
-CONTACT_EMAIL = config("CONTACT_EMAIL", default="admin@sogentis.org")
+CONTACT_EMAIL = config("CONTACT_EMAIL", default="contact@sogentis.org")
 
-ADMINS = [("Admin SOGENTIS", "utracorp@gmail.com")]
+ADMINS = [("Admin SOGENTIS", "contact@sogentis.org")]
 
 # === EMAIL SECURE CHECK ===
 if not DEBUG and not EMAIL_HOST_PASSWORD:
@@ -111,12 +111,10 @@ if not DATABASE_URL:
 DATABASES = {
     "default": dj_database_url.config(
         default=DATABASE_URL,
-        conn_max_age=600
+        conn_max_age=600,
+        ssl_require=not DEBUG,  # sslmode require if not DEBUG
     )
 }
-
-if not DEBUG:
-    DATABASES["default"]["OPTIONS"] = {"sslmode": "require"}
 
 # === SECURITY HEADERS (production only) ===
 if not DEBUG:

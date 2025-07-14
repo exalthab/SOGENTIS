@@ -1,0 +1,198 @@
+// static/scss/bootstrap/scss/7-components/_dropdowns.scss
+// ─────────────────────────────────────────────────────────────
+// Composant Dropdowns (corrigé pour utiliser zi.$z-index-dropdown)30/06
+// ─────────────────────────────────────────────────────────────
+
+
+// 7-components/_dropdowns.scss
+// Composant Dropdowns — styles des menus déroulants
+
+@use '../1-import/variables' as vars;
+@use '../1-import/mixins'    as mix;
+@use '../0-settings/z-index' as zi;
+@use 'sass:color';
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+
+  .dropdown-toggle {
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    display: none;
+    min-width: 10rem;
+    padding: 0.5rem 0;
+    margin: 0.125rem 0 0;
+    font-size: 1rem;
+    color: #343a40;
+    background-color: #ffffff;
+    background-clip: padding-box;
+    border: 1px solid #f8f9fa;
+    border-radius: 0.25rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  }
+
+  &.show .dropdown-menu {
+    display: block;
+  }
+
+  .dropdown-item {
+    display: block;
+    width: 100%;
+    padding: 0.25rem 1.5rem;
+    clear: both;
+    font-weight: 400;
+    color: #343a40;
+    text-align: inherit;
+    white-space: nowrap;
+    background-color: transparent;
+    border: 0;
+    transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
+
+    &:hover,
+    &:focus {
+      background-color: #dae0e5;
+      color: #007bff;
+      text-decoration: none;
+    }
+  }
+}
+
+// Navbar dropdown support
+.navbar-nav {
+  .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    display: none;
+    background-color: var(--bs-dropdown-bg, #fff);
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 0.25rem;
+  }
+
+  .dropdown:hover > .dropdown-menu {
+    display: block;
+  }
+}
+
+// Custom dropdown variant
+.nav-item-dropdown {
+  position: relative;
+
+  .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    display: none;
+    margin-top: 0.25rem;
+    background-color: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 0.25rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.175);
+    z-index: 1050;
+
+    .dropdown-item {
+      padding: 0.5rem 1rem;
+      color: #343a40;
+      text-decoration: none;
+
+      &:hover {
+        background-color: #f8f9fa;
+        color: #007bff;
+      }
+    }
+  }
+
+  &:hover .dropdown-menu {
+    display: block;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// // static/scss/bootstrap/scss/7-components/_dropdowns.scss
+// // ─────────────────────────────────────────────────────────────
+// // Composant Dropdowns (corrigé pour utiliser zi.$z-index-dropdown)
+// // ─────────────────────────────────────────────────────────────
+
+// @use '../1-import/variables' as vars;
+// @use '../1-import/mixins'    as mix;
+// @use '../0-settings/z-index' as zi;
+// @use 'sass:color';
+
+// .dropdown {
+//   position: relative;
+//   display: inline-block;
+
+//   .dropdown-toggle {
+//     cursor: pointer;
+//     user-select: none;
+//   }
+
+//   .dropdown-menu {
+//     position: absolute;
+//     top: 100%;
+//     left: 0;
+//     z-index: zi.$z-index-dropdown; // utilisation de la variable pré-déclarée
+//     display: none;
+//     min-width: 10rem;
+//     padding: 0.5rem 0;
+//     margin: 0.125rem 0 0;
+//     font-size: vars.$font-size-base;
+//     color: vars.$dark;
+//     text-align: left;
+//     list-style: none;
+//     background-color: vars.$white;
+//     background-clip: padding-box;
+//     border: vars.$border-width solid vars.$light;
+//     border-radius: vars.$border-radius;
+//     box-shadow: vars.$box-shadow;
+//   }
+
+//   &.show {
+//     .dropdown-menu {
+//       display: block;
+//     }
+//   }
+
+//   .dropdown-item {
+//     display: block;
+//     width: 100%;
+//     padding: 0.25rem 1.5rem;
+//     clear: both;
+//     font-weight: 400;
+//     color: vars.$dark;
+//     text-align: inherit;
+//     white-space: nowrap;
+//     background-color: transparent;
+//     border: 0;
+//     transition: background-color vars.$transition-base, color vars.$transition-base;
+
+//     &:hover,
+//     &:focus {
+//       background-color: color.adjust(vars.$light, $lightness: -10%);
+//       color: vars.$primary;
+//       text-decoration: none;
+//     }
+//   }
+// }
+
