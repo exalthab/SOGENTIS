@@ -11,7 +11,7 @@ TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [BASE_DIR / "templates"],
-        "APP_DIRS": True,
+        "APP_DIRS": False,  # Doit être False si on utilise des loaders personnalisés
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.debug",
