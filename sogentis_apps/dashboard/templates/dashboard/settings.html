@@ -1,0 +1,20 @@
+{% extends "dashboard/base.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Paramètres du compte" %}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h2 class="mb-4">{% trans "Paramètres du compte" %}</h2>
+  <form method="post">
+    {% csrf_token %}
+    <!-- Place tes champs de paramètres ici -->
+    <div class="mb-3">
+      <label for="email" class="form-label">{% trans "Email" %}</label>
+      <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}">
+    </div>
+    <!-- Ajoute d'autres champs au besoin -->
+    <button type="submit" class="btn btn-success">{% trans "Mettre à jour" %}</button>
+  </form>
+</div>
+{% endblock %}

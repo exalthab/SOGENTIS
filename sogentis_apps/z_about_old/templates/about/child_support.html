@@ -1,0 +1,301 @@
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{{ child.name }} - {% trans "Profil & Soutien" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'about/css/about.css' %}">
+<style>
+.child-profile-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+.child-profile-container .left {
+    flex: 1 1 250px;
+    text-align: center;
+}
+.child-profile-container .left img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    margin-bottom: 1rem;
+}
+.child-profile-container .left ul {
+    list-style: none;
+    padding: 0;
+    text-align: left;
+    margin-bottom: 1rem;
+}
+.child-profile-container .left li {
+    margin-bottom: 0.5rem;
+}
+.child-profile-container .right {
+    flex: 2 1 400px;
+}
+.support-btn, .back-btn {
+    margin-top: 0.75rem;
+    width: 100%;
+}
+.child-donations {
+    margin-top: 2rem;
+}
+@media (max-width: 768px) {
+    .child-profile-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    .child-profile-container .right {
+        text-align: center;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="child-profile container my-5">
+  <div class="child-profile-container">
+
+    <!-- =======================
+         COLONNE GAUCHE : photo + infos
+    ======================= -->
+    <div class="left">
+      <img src="{{ child.photo_url|default:'/static/about/img/silhouette_child.png' }}" 
+           alt="{{ child.name }}">
+
+      <ul>
+        <li><strong>{% trans "Nom" %} :</strong> {{ child.name }}</li>
+
+        {% if child.age %}
+          <li><strong>{% trans "Âge" %} :</strong> {{ child.age }} {% trans "ans" %}</li>
+        {% endif %}
+
+        <li><strong>{% trans "Numéro d’inscription" %} :</strong> {{ child.registration_number|default:"—" }}</li>
+        <li><strong>{% trans "École" %} :</strong> {{ child.school|default:"—" }}</li>
+      </ul>
+
+      <a href="{% url 'about:child_support' child.pk %}" class="btn btn-primary support-btn">
+        💙 {% trans "Soutenir cet enfant" %}
+      </a>
+
+      <a href="{% url 'about:children_list' %}" class="btn btn-outline-secondary back-btn">
+        ← {% trans "Retour à la liste" %}
+      </a>
+    </div>
+
+    <!-- =======================
+         COLONNE DROITE : description + dons
+    ======================= -->
+    <div class="right">
+      {% if child.story or child.description %}
+        <h3 class="mb-3">{% trans "Histoire / Description" %}</h3>
+        <p>{{ child.story|default:child.description|linebreaks }}</p>
+      {% else %}
+        <p class="text-muted">{% trans "Aucune description disponible pour cet enfant." %}</p>
+      {% endif %}
+
+      <div class="child-donations">
+        <h4 class="mt-4">{% trans "Fonds reçus" %}</h4>
+        <p><strong>{% trans "Total financé" %} :</strong> {{ total_funded|default:0 }} FCFA</p>
+
+        {% if donations %}
+          <ul class="list-group">
+            {% for donation in donations %}
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ donation.sponsor.name|default:"Anonyme" }}
+                <span class="badge bg-success">{{ donation.amount }} FCFA</span>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="text-muted mt-3">{% trans "Aucun don enregistré pour le moment." %}</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+
+
+
+{% comment %} {% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{{ child.name }} - {% trans "Profil & Soutien" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'about/css/about.css' %}">
+<style>
+.child-profile-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+.child-profile-container .left {
+    flex: 1 1 250px;
+    text-align: center;
+}
+.child-profile-container .left img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    margin-bottom: 1rem;
+}
+.child-profile-container .left ul {
+    list-style: none;
+    padding: 0;
+    text-align: left;
+}
+.child-profile-container .left li {
+    margin-bottom: 0.5rem;
+}
+.child-profile-container .right {
+    flex: 2 1 400px;
+}
+.support-btn, .back-btn {
+    margin-top: 1rem;
+    width: 100%;
+}
+@media (max-width: 768px) {
+    .child-profile-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    .child-profile-container .right {
+        text-align: center;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="child-profile container my-5">
+  <div class="child-profile-container">
+    <!-- Colonne gauche : photo + infos -->
+    <div class="left">
+      <img src="{{ child.photo.url|default:child.photo_url }}" alt="{{ child.name }}">
+      <ul>
+        <li><strong>{% trans "Nom" %} :</strong> {{ child.name }}</li>
+        {% if child.age %}
+        <li><strong>{% trans "Âge" %} :</strong> {{ child.age }} {% trans "ans" %}</li>
+        {% endif %}
+        <li><strong>{% trans "Numéro d’inscription" %} :</strong> {{ child.registration_number|default:"—" }}</li>
+        <li><strong>{% trans "École" %} :</strong> {{ child.school|default:"—" }}</li>
+      </ul>
+
+      <a href="{% url 'about:child_support' child.pk %}" class="btn btn-primary support-btn">
+        💙 {% trans "Soutenir cet enfant" %}
+      </a>
+
+      <a href="{% url 'about:children_list' %}" class="btn btn-outline-secondary back-btn">
+        ← {% trans "Retour à la liste" %}
+      </a>
+    </div>
+
+    <!-- Colonne droite : story / description -->
+    <div class="right">
+      {% if child.story or child.description %}
+        <h3>{% trans "Histoire / Description" %}</h3>
+        <p>{{ child.story|default:child.description|linebreaks }}</p>
+      {% else %}
+        <p class="text-muted">{% trans "Aucune description disponible pour cet enfant." %}</p>
+      {% endif %}
+
+      {% if donations %}
+        <h4 class="mt-4">{% trans "Fonds reçus" %}</h4>
+        <p><strong>{% trans "Total financé" %} :</strong> {{ total_funded|default:0 }} FCFA</p>
+        <ul class="list-group">
+          {% for donation in donations %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              {{ donation.sponsor.name|default:"Anonyme" }}
+              <span class="badge bg-success">{{ donation.amount }} FCFA</span>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="text-muted mt-3">{% trans "Aucun don enregistré pour le moment." %}</p>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %} {% endcomment %}
+
+
+
+
+{% comment %} 
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}Soutenir {{ child.name }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'about/css/about.css' %}">
+<style>
+  .child-detail-card {
+    max-width: 800px;
+    margin: auto;
+    background: #fff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  .child-detail-photo {
+    max-width: 200px;
+    border-radius: 12px;
+    object-fit: cover;
+    margin-bottom: 1rem;
+  }
+  .child-info p {
+    margin-bottom: 0.5rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+  <!-- BOUTON RETOUR -->
+  <div class="mb-4">
+    <a href="{% url 'about:children_list' %}" class="btn btn-outline-primary">
+      ← Retour à la liste des enfants
+    </a>
+  </div>
+
+  <!-- CHILD DETAIL -->
+  <div class="child-detail-card text-center">
+    <img 
+      src="{{ child.photo_url|default:'/static/about/img/silhouette_child.png' }}" 
+      alt="{{ child.name }}" 
+      class="child-detail-photo"
+    >
+    <h2 class="mt-3">{{ child.name }}</h2>
+
+    <div class="child-info text-start mt-3 px-3">
+      <p><strong>ID :</strong> {{ child.registration_number }}</p>
+      <p><strong>Âge :</strong> {{ child.age }} ans</p>
+      <p><strong>École :</strong> {{ child.school|default:"—" }}</p>
+      <hr>
+      <h5>Petite histoire :</h5>
+      <p>{{ child.story|default:"Aucune histoire disponible." }}</p>
+    </div>
+
+    <!-- BOUTON SOUTENIR -->
+    <div class="mt-4">
+      <a href="{% url 'about:child_support' child.id %}" class="btn btn-primary btn-lg">
+        ❤️ Soutenir {{ child.name }}
+      </a>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %} {% endcomment %}

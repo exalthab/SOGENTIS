@@ -1,0 +1,39 @@
+{% load static i18n about_tags %}
+
+<div class="partners-grid">
+
+    {% for p in partners %}
+    <div class="partner-card">
+
+        <!-- Logo -->
+        <div class="partner-logo">
+            <img src="{{ p.logo_url }}" alt="{{ p|translate:'name' }}">
+        </div>
+
+        <!-- Nom -->
+        <h3 class="partner-name">
+            {{ p|translate:'name' }}
+        </h3>
+
+        <!-- Description -->
+        {% with desc=p|translate:'description' %}
+            {% if desc %}
+                <p class="partner-description">
+                    {{ desc|safe }}
+                </p>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Site web -->
+        {% if p.website %}
+            <a href="{{ p.website }}" target="_blank" rel="noopener noreferrer" class="partner-link">
+                {% trans "Visiter le site" %}
+            </a>
+        {% endif %}
+
+    </div>
+    {% empty %}
+        <p class="text-center">{% trans "Aucun partenaire pour le moment." %}</p>
+    {% endfor %}
+
+</div>

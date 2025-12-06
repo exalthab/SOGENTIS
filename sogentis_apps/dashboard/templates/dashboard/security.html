@@ -1,0 +1,22 @@
+{% extends "dashboard/base.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Sécurité du compte" %}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h2 class="mb-4">{% trans "Sécurité du compte" %}</h2>
+  <ul class="list-group mb-4">
+    <li class="list-group-item">
+      <strong>{% trans "Dernière connexion" %}</strong> : {{ user.last_login|date:"d M Y H:i" }}
+    </li>
+    <li class="list-group-item">
+      <strong>{% trans "Email" %}</strong> : {{ user.email }}
+    </li>
+    <li class="list-group-item">
+      <strong>{% trans "Changement de mot de passe" %}</strong> :
+      <a href="{% url 'accounts_users_web:password_change' %}" class="btn btn-outline-primary btn-sm ms-2">{% trans "Changer" %}</a>
+    </li>
+  </ul>
+</div>
+{% endblock %}

@@ -1,0 +1,111 @@
+{% load static i18n about_tags %}
+
+<div class="children-grid">
+
+    {% for c in children %}
+
+    <!-- ===== Child Card ===== -->
+    <div class="child-card fade-in">
+
+        <!-- Photo -->
+        <div class="child-photo">
+            {% if c.photo %}
+                <img src="{{ c.photo.url }}" alt="{{ c.name }}">
+            {% else %}
+                <img src="{% static 'global/image/default-child.png' %}" alt="Child">
+            {% endif %}
+        </div>
+
+        <!-- Name -->
+        <h3 class="child-name">{{ c.name }}</h3>
+
+        <!-- Main info -->
+        <div class="child-meta">
+
+            {% if c.age %}
+            <p><strong>{% trans "Âge" %} :</strong> {{ c.age }} {% trans "ans" %}</p>
+            {% endif %}
+
+            {% if c.school_class %}
+            <p><strong>{% trans "Classe" %} :</strong> {{ c.school_class }}</p>
+            {% endif %}
+
+            {% if c.school_name %}
+            <p><strong>{% trans "École" %} :</strong> {{ c.school_name }}</p>
+            {% endif %}
+
+            {% if c.annual_budget %}
+            <p>
+                <strong>{% trans "Budget annuel" %} :</strong>
+                {{ c.annual_budget }} {{ c.currency|default:"XOF" }}
+            </p>
+            {% endif %}
+
+        </div>
+
+        <!-- Actions -->
+        <div class="child-actions">
+
+            <!-- Donation link -->
+            <a href="{% url 'social:donation_child' c.id %}" class="btn-support">
+                {% trans "Soutenir cet enfant" %}
+            </a>
+
+            <!-- Show modal -->
+            {% if c.description %}
+            <button class="btn btn-outline-primary open-child-modal"
+                    data-target="#child-modal-{{ c.id }}">
+                {% trans "Voir description" %}
+            </button>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    <!-- ===== Modal ===== -->
+    {% if c.description %}
+    <div class="child-modal" id="child-modal-{{ c.id }}" aria-hidden="true">
+
+        <div class="child-modal-content">
+
+            <button class="close-modal" aria-label="{% trans 'Fermer' %}">&times;</button>
+
+            <h3 class="modal-name">{{ c.name }}</h3>
+
+            <div class="modal-body">
+
+                {% if c.birth_date %}
+                <p><strong>{% trans "Date de naissance" %} :</strong> {{ c.birth_date }}</p>
+                {% endif %}
+
+                {% if c.country %}
+                <p><strong>{% trans "Pays" %} :</strong> {{ c.country }}</p>
+                {% endif %}
+
+                {% if c.identification_number %}
+                <p><strong>{% trans "Identifiant" %} :</strong> {{ c.identification_number }}</p>
+                {% endif %}
+
+                <div class="modal-story">{{ c.description|safe }}</div>
+
+            </div>
+
+            <div class="modal-footer">
+                <a href="{% url 'social:donation_child' c.id %}" class="btn-support">
+                    {% trans "Soutenir cet enfant" %}
+                </a>
+            </div>
+
+        </div>
+    </div>
+    {% endif %}
+
+    {% empty %}
+    <p class="text-center">{% trans "Aucun enfant disponible." %}</p>
+    {% endfor %}
+
+</div>
+
+<script src="{% static 'about/js/new_children.js' %}"></script>
+

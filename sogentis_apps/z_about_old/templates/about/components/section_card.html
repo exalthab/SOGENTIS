@@ -1,0 +1,58 @@
+{# about/components/section_card.html #}
+<div class="section-card {{ section_type }}-card" onclick="toggleDetail('section-{{ item.id }}')" aria-expanded="false">
+    <img src="{{ item.image|file_or_static:'/static/about/img/default_section.jpg' }}" 
+         alt="{{ item.title }}" class="section-card-img" loading="lazy">
+    <div class="section-card-header">
+        <h3 class="section-card-title">{{ item.title }} <span class="toggle-indicator">+</span></h3>
+    </div>
+    <div id="section-{{ item.id }}" class="section-card-body">
+        <div class="section-item">{{ item.description|safe }}</div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+{% comment %} {# about/components/section_card.html #}
+<div class="section-card {{ section_type }}-card" onclick="toggleDetail('section-{{ item.id }}')" role="button" aria-expanded="false" aria-controls="section-{{ item.id }}" tabindex="0" onkeypress="if(event.key==='Enter'){toggleDetail('section-{{ item.id }}')}">
+    <img src="{{ item.image|file_or_static:'/static/about/img/default_section.jpg' }}" 
+         alt="{{ item.title }}" 
+         class="section-card-img" 
+         loading="lazy">
+
+    <div class="section-card-header">
+        <h3 class="section-card-title">{{ item.title }} 
+            <span class="toggle-indicator" aria-hidden="true">+</span>
+        </h3>
+    </div>
+
+    <div id="section-{{ item.id }}" class="section-card-body">
+        <div class="section-card-content section-item">
+            {{ item.description|safe }}
+        </div>
+    </div>
+</div> {% endcomment %}
+
+
+
+
+{% comment %} <div class="section-card {{ section_type }}-card" onclick="toggleDetail('{{ section_type }}-{{ item.id }}')">
+    <img src="{{ item.image.url|default:'/static/about/img/default_section.jpg' }}" alt="{{ item.title }}" class="section-card-img">
+
+    <div class="section-card-header">
+        <h3 class="section-card-title">
+            {{ item.title }}
+            <span class="toggle-indicator">+</span>
+        </h3>
+    </div>
+
+    <div id="{{ section_type }}-{{ item.id }}" class="section-card-body">
+        <div class="section-card-content">
+            {{ item.description|safe }}
+        </div>
+    </div>
+</div> {% endcomment %}

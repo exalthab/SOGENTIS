@@ -1,0 +1,96 @@
+{% load static i18n %} 
+<section id="children" class="about-section fade-in-up">
+  <div class="container">
+    <div class="section-header text-center mb-5">
+      <h2 class="section-title">{% trans "Nos Enfants" %}</h2>
+      <p class="section-subtitle">{% trans "Découvrez les enfants que nous accompagnons avec amour et engagement." %}</p>
+    </div>
+
+    <div class="row justify-content-center">
+      {% for child in children %}
+      <div class="col-md-4 col-sm-6 mb-4">
+        <div class="child-card card h-100 shadow-sm fade-in-up">
+          <img src="{{ child.photo.url }}" alt="{{ child.name }}" class="card-img-top">
+          <div class="card-body">
+            <h5 class="card-title">{{ child.name }}</h5>
+            <p class="card-text description">{{ child.description }}</p>
+            <!-- Bouton "Voir plus / Voir moins" sera ajouté par about.js -->
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <p class="text-muted text-center">{% trans "Aucun enfant enregistré pour le moment." %}</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+
+
+
+
+
+
+{% comment %} {% load static i18n %}
+{% if children %}
+<section id="children" class="about-section reveal">
+  <div class="container">
+    <div class="section-header text-center mb-5">
+      <h2 class="section-title">🧒 {% trans "Nos Enfants" %}</h2>
+      <p class="section-subtitle">{% trans "Découvrez les enfants que nous accompagnons avec amour et engagement." %}</p>
+    </div>
+
+    <div class="row justify-content-center">
+      {% for child in children %}
+      <div class="col-md-4 col-sm-6 mb-4">
+        <div class="child-card card h-100 shadow-sm fade-in-up">
+          {% if child.photo %}
+          <img src="{{ child.photo.url }}" alt="{{ child.name }}" class="card-img-top profile-photo">
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title">{{ child.name }}</h5>
+            <p class="card-text see-text" style="max-height: 80px; overflow: hidden;">{{ child.description }}</p>
+            {% if child.description|length > 120 %}
+            <span class="see-more">Voir plus ▼</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <p class="text-muted text-center">{% trans "Aucun enfant enregistré pour le moment." %}</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+ {% endcomment %}
+
+
+
+{% comment %} 
+<section id="children" class="about-section reveal">
+  <div class="container">
+    <div class="section-header text-center mb-5">
+      <h2 class="section-title">Nos Enfants</h2>
+      <p class="section-subtitle">Découvrez les enfants que nous accompagnons avec amour et engagement.</p>
+    </div>
+
+    <div class="row justify-content-center">
+      {% for child in children %}
+      <div class="col-md-4 col-sm-6 mb-4">
+        <div class="child-card card h-100 shadow-sm">
+          <img src="{{ child.photo.url }}" alt="{{ child.name }}" class="card-img-top">
+          <div class="card-body">
+            <h5 class="card-title">{{ child.name }}</h5>
+            <p class="card-text">{{ child.description|truncatewords:20 }}</p>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <p class="text-muted text-center">Aucun enfant enregistré pour le moment.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+ {% endcomment %}

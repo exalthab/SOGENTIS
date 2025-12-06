@@ -1,4 +1,4 @@
-# #dashboard/views/stats.py
+#dashboard/views/stats.py
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.utils.translation import gettext_lazy as _
@@ -8,15 +8,25 @@ from social.models import Donation, Engagement
 def dashboard_stats_view(request):
     user = request.user
 
-    # Total des dons via manager custom (None sécurisé)
+    # Total des dons de l'utilisateur (gère None pour éviter les erreurs)
     donation_total = Donation.objects.aggregate_total_amount(user=user) or 0
 
+    # Nombre d'engagements
     engagement_count = Engagement.objects.filter(user=user).count()
 
-    # Cartes dynamiques pour affichage dans le template
+    # Construction des cartes résumées pour le template
     summary_cards = [
-        {"label": _("Total des dons"), "value": f"{donation_total:.2f} FCFA", "color": "primary"},
-        {"label": _("Engagements"), "value": engagement_count, "color": "success"},
+        {
+            "label": _("Total des dons"),
+            "value": f"{donation_total:,.2f} FCFA",  # Formatage 1 234,56 FCFA
+            "color": "primary"
+        },
+        {
+            "label": _("Engagements"),
+            "value": engagement_count,
+            "color": "success"
+        },
+        # Tu peux ajouter d'autres cards ici si besoin
     ]
 
     context = {
@@ -25,6 +35,45 @@ def dashboard_stats_view(request):
         "summary_cards": summary_cards,
     }
     return render(request, "dashboard/stats.html", context)
+
+
+
+
+
+
+
+
+
+
+
+
+
+# from django.contrib.auth.decorators import login_required
+# from django.shortcuts import render
+# from django.utils.translation import gettext_lazy as _
+# from social.models import Donation, Engagement
+
+# @login_required
+# def dashboard_stats_view(request):
+#     user = request.user
+
+#     # Total des dons via manager custom (None sécurisé)
+#     donation_total = Donation.objects.aggregate_total_amount(user=user) or 0
+
+#     engagement_count = Engagement.objects.filter(user=user).count()
+
+#     # Cartes dynamiques pour affichage dans le template
+#     summary_cards = [
+#         {"label": _("Total des dons"), "value": f"{donation_total:.2f} FCFA", "color": "primary"},
+#         {"label": _("Engagements"), "value": engagement_count, "color": "success"},
+#     ]
+
+#     context = {
+#         "donation_total": donation_total,
+#         "engagement_count": engagement_count,
+#         "summary_cards": summary_cards,
+#     }
+#     return render(request, "dashboard/stats.html", context)
 
 
 

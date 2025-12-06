@@ -1,0 +1,27 @@
+{% extends "dashboard/base.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Support" %}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h2 class="mb-4">{% trans "Support & Assistance" %}</h2>
+  <p>{% trans "Besoin d’aide ? Contactez notre équipe :" %}</p>
+  <ul class="list-group mb-4">
+    <li class="list-group-item">
+      <strong>Email :</strong> <a href="mailto:contact@sogentis.org">contact@sogentis.org</a>
+    </li>
+    <li class="list-group-item">
+      <strong>Téléphone :</strong> +221 77 000 00 00
+    </li>
+  </ul>
+  <form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label class="form-label">{% trans "Votre message" %}</label>
+      <textarea class="form-control" name="message" rows="4"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">{% trans "Envoyer" %}</button>
+  </form>
+</div>
+{% endblock %}

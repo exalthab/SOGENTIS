@@ -1,0 +1,21 @@
+{% extends "dashboard/base.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Notifications" %}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h2 class="mb-4">{% trans "Notifications" %}</h2>
+  <ul class="list-group">
+    {% for notification in notifications %}
+      <li class="list-group-item{% if not notification.read %} list-group-item-warning{% endif %}">
+        <strong>{{ notification.title }}</strong>
+        <div>{{ notification.message }}</div>
+        <small class="text-muted">{{ notification.created_at|date:"d M Y H:i" }}</small>
+      </li>
+    {% empty %}
+      <li class="list-group-item">{% trans "Aucune notification pour le moment." %}</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

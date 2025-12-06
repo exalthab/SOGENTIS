@@ -1,0 +1,71 @@
+.hero-section {
+    position: relative;
+    width: 100%;
+    min-height: 65vh;
+    background-size: cover;
+    background-position: center;
+    padding: 120px 20px 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 3;
+    color: white;
+    max-width: 850px;
+}
+
+.hero-title {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 20px;
+}
+
+.hero-subtitle {
+    font-size: 1.25rem;
+    opacity: 0.9;
+    margin-bottom: 30px;
+}
+
+.hero-btn {
+    padding: 12px 28px;
+    font-size: 1.1rem;
+    border-radius: 50px;
+}
+
+/* Bouton retour style pilule */
+.hero-back-floating.pill {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(255,255,255,0.12);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    padding: 10px 16px;
+    border-radius: 50px;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 5;
+    transition: 0.25s ease-in-out;
+}
+
+.hero-back-floating.pill:hover {
+    background: rgba(255,255,255,0.25);
+}
+
+.icon-pill {
+    width: 22px;
+    height: 22px;
+}

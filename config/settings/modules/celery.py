@@ -1,3 +1,4 @@
+# config/settings/modules/celery.py
 from decouple import config
 
 REDIS_URL = config("REDIS_URL", default="redis://localhost:6379/1")

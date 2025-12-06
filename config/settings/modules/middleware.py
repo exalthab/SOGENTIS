@@ -6,6 +6,9 @@ MIDDLEWARE = [
 
     # Gestion des sessions utilisateur
     "django.contrib.sessions.middleware.SessionMiddleware",
+    
+    # Ajout du middleware de gestion des langues
+    "django.middleware.locale.LocaleMiddleware",  # <= entre Session et Common
 
     # Middleware général pour diverses fonctionnalités
     "django.middleware.common.CommonMiddleware",
@@ -24,6 +27,7 @@ MIDDLEWARE = [
 
     # Middleware personnalisé pour le suivi des utilisateurs
     "accounts_users.middleware.users_tracking_middleware.UsersTrackingMiddleware",
+    
 ]
 
 # === Configuration optionnelle des tags messages pour Bootstrap 5 ===

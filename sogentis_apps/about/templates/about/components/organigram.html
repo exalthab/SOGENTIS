@@ -1,0 +1,77 @@
+{% load static i18n about_tags %}
+
+<section class="organigram-section">
+
+  <!-- Toggle -->
+  <button id="org-toggle-btn" class="organigram-toggle-btn">
+    <span class="icon">📊</span>
+    <span>{% trans "Structure organisationnelle" %}</span>
+    <span id="org-arrow" class="arrow">▼</span>
+  </button>
+
+  <!-- Wrapper -->
+  <div id="org-wrapper" class="organigram-wrapper hidden">
+
+    <!-- Niveau 1: Assemblée Générale -->
+    <div class="org-level level-1">
+      <div class="org-card main">
+        <h3>{% trans "Assemblée Générale" %}</h3>
+        <p>{% trans "Pilotage global de l'organisation" %}</p>
+      </div>
+    </div>
+
+    <!-- Connector Level 1 -> Level 2 -->
+    <div class="org-connector vertical"></div>
+
+    <!-- Niveau 2 A: Conseil d'Administration -->
+    <div class="org-level level-2">
+      <div class="org-card board">
+        <h4>{% trans "Conseil d'Administration" %}</h4>
+        <p>{% trans "Supervision stratégique" %}</p>
+      </div>
+    </div>
+
+    <!-- Connector Level 2 -> Direction Exécutive -->
+    <div class="org-connector vertical"></div>
+    <div class="org-connector horizontal"></div>
+
+    <!-- Niveau 2 B: Direction Exécutive -->
+    <div class="org-level level-2">
+      <div class="org-card executive">
+        <h4>{% trans "DIRECTION EXECUTIVE" %}</h4>
+        <p>{% trans "Fonctionnement & gestion" %}</p>
+      </div>
+    </div>
+
+    <!-- Connectors Level 2 -> Level 3 -->
+    <div class="org-connector vertical"></div>
+    <div class="org-connector horizontal"></div>
+
+    <!-- Niveau 3: Departments -->
+    <div class="org-level level-3">
+      <div class="org-card department">
+        <h4>{% trans "Ressources Humaines" %}</h4>
+        <p>{% trans "Recrutement & Gestion du personnel" %}</p>
+      </div>
+      <div class="org-card department">
+        <h4>{% trans "Finance" %}</h4>
+        <p>{% trans "Gestion budgétaire & comptable" %}</p>
+      </div>
+      <div class="org-card department">
+        <h4>{% trans "Programmes" %}</h4>
+        <p>{% trans "Coordination & suivi des projets" %}</p>
+      </div>
+      <div class="org-card department">
+        <h4>{% trans "Communication" %}</h4>
+        <p>{% trans "Relations publiques & médias" %}</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Link CSS -->
+<link rel="stylesheet" href="{% static 'css/organigram.css' %}">
+<!-- Link JS -->
+<script src="{% static 'js/organigram.js' %}"></script>
+

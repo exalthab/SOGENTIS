@@ -1,3 +1,4 @@
+# /accounts_users/middleware/users_tracking_middleware.py
 class UsersTrackingMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response

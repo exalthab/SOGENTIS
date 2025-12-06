@@ -1,0 +1,16 @@
+{% load static i18n %}
+
+<div class="widget shadow-sm p-3 mb-4">
+  <div class="fw-bold mb-3 fs-6">Visiteurs par pays</div>
+  <ul class="list-unstyled mb-3">
+    {% for c in visitors_countries %}
+      <li class="d-flex justify-content-between align-items-center">
+        <span>{{ c.country }}</span>
+        <span class="badge bg-info rounded-pill">{{ c.percent }}%</span>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <!-- Mini carte illustrative -->
+  <img src="{% static 'dashboard/img/world_map_mini.jpg' %}" alt="Carte du monde" style="width: 100%; max-width: 220px; opacity: 0.7;">
+</div>

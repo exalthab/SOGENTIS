@@ -1,3 +1,5 @@
+# social/models/project.py
+
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.db.models import Sum
@@ -12,13 +14,16 @@ class Project(models.Model):
         blank=True,
         null=True
     )
-    goal = models.DecimalField(  # 👈 Nom conservé comme demandé
+
+    goal = models.DecimalField(
         _("Objectif du projet (FCFA)"),
         max_digits=12,
         decimal_places=2,
-        default=1000000  # 👈 Défaut ajouté pour éviter les erreurs à la migration
+        default=1000000
     )
+
     is_active = models.BooleanField(_("Projet actif ?"), default=True)
+
     created_at = models.DateTimeField(_("Date de création"), auto_now_add=True)
     updated_at = models.DateTimeField(_("Dernière modification"), auto_now=True)
 
@@ -30,20 +35,34 @@ class Project(models.Model):
     def __str__(self):
         return self.title
 
+    # ---------------------------------------------------------
+    # 🔹 Montant total collecté pour le projet
+    # ---------------------------------------------------------
     def total_collected(self):
-        total = self.donation_set.filter(status="paid").aggregate(
+        """
+        Somme totale des dons payés pour ce projet.
+        Aligné avec Donation.project.related_name = 'donations'
+        """
+        total = self.donations.filter(status="paid").aggregate(
             total=Sum("amount")
         )["total"]
-        try:
-            return float(total) if total is not None else 0.0
-        except (ValueError, TypeError):
+
+        return float(total or 0.0)
+
+    # ---------------------------------------------------------
+    # 🔹 Pourcentage atteint par rapport à l'objectif
+    # ---------------------------------------------------------
+    def percentage_collected(self):
+        """
+        Calcule le pourcentage de l’objectif atteint.
+        Retourne un nombre entre 0 et 100.
+        """
+        goal = float(self.goal or 0)
+        if goal <= 0:
             return 0.0
 
-    def percentage_collected(self):
-        try:
-            if self.goal and float(self.goal) > 0:
-                percent = (self.total_collected() / float(self.goal)) * 100
-                return min(percent, 100.0)
-        except (ValueError, ZeroDivisionError, TypeError):
-            pass
-        return 0.0
+        collected = self.total_collected()
+        percent = (collected / goal) * 100
+
+        # On limite à 100% maximum
+        return min(round(percent, 2), 100.0)

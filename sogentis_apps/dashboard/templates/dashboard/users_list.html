@@ -1,0 +1,40 @@
+{% extends "dashboard/base.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Utilisateurs" %}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h2 class="mb-4">{% trans "Utilisateurs" %}</h2>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>{% trans "Nom" %}</th>
+        <th>{% trans "Email" %}</th>
+        <th>{% trans "Rôle" %}</th>
+        <th>{% trans "Statut" %}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in users %}
+        <tr>
+          <td>{{ user.get_full_name|default:user.username }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.profile.get_role_display }}</td>
+          <td>
+            {% if user.is_active %}
+              <span class="badge bg-success">{% trans "Actif" %}</span>
+            {% else %}
+              <span class="badge bg-secondary">{% trans "Inactif" %}</span>
+            {% endif %}
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="4" class="text-center">{% trans "Aucun utilisateur." %}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

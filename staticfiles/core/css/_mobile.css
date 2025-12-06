@@ -1,0 +1,33 @@
+/* Mobile Menu Improvements */
+.mobile-nav-link {
+  color: #fff;
+  padding: 8px 0;
+  display: block;
+  font-size: 1rem;
+  text-decoration: none;
+}
+
+.mobile-nav-link:hover {
+  color: #ffd96b;
+}
+
+.mobile-info-link {
+  color: #66cfff;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.mobile-info-link:hover {
+  color: #ffd96b;
+}
+
+.mobile-social-btn {
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  border-radius: 4px;
+}
+
+.mobile-social-btn:hover {
+  background: #fff;
+  color: #000 !important;
+}

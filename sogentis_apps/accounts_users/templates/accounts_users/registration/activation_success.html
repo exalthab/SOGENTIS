@@ -1,0 +1,25 @@
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Compte activé" %} | SOGENTIS{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="card shadow-sm mx-auto" style="max-width: 450px;">
+    <div class="card-body text-center">
+      {% if already_active %}
+        <h2 class="mb-3 text-success" aria-live="polite">✅ {% trans "Compte déjà activé" %}</h2>
+        <p class="mb-3">{% trans "Votre compte est déjà actif. Vous pouvez vous connecter." %}</p>
+      {% else %}
+        <h2 class="mb-3 text-success" aria-live="polite">🎉 {% trans "Activation réussie !" %}</h2>
+        <p class="mb-3">
+          {% trans "Votre compte a été activé avec succès. Vous pouvez maintenant vous connecter à SOGENTIS." %}
+        </p>
+      {% endif %}
+      <a href="{% url 'accounts_users_web:login' %}" class="btn btn-primary">
+        <i class="fas fa-sign-in-alt me-1"></i> {% trans "Se connecter" %}
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

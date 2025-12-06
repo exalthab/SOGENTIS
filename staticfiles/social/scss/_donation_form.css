@@ -1,0 +1,130 @@
+/* --------------------------------------------------
+   🔹 Cartes de sélection de fréquence
+-------------------------------------------------- */
+
+.donation-frequency-group {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.donation-frequency {
+    flex: 1;
+    padding: 15px;
+    border: 2px solid #0d6efd;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.25s, color 0.25s, border-color 0.25s;
+    user-select: none;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    background-color: white;
+}
+
+/* Hover */
+.donation-frequency:hover {
+    background-color: #e8f0ff;
+}
+
+/* Cache le radio */
+.donation-frequency input[type="radio"] {
+    display: none;
+}
+
+/* Tick visuel */
+.donation-frequency .tick {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #0d6efd;
+    border-radius: 50%;
+    margin-bottom: 8px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: transparent;
+    background-color: transparent;
+    transition: background 0.3s, color 0.3s;
+}
+
+/* Tick sélectionné */
+.donation-frequency input[type="radio"]:checked + .tick {
+    background-color: #0d6efd;
+    color: white;
+}
+
+/* Texte */
+.donation-frequency .label-text {
+    font-weight: 600;
+    color: #0d6efd;
+    font-size: 0.95rem;
+}
+
+/* Carte sélectionnée */
+.donation-frequency input[type="radio"]:checked + .tick + .label-text {
+    color: #0a58ca;
+}
+
+/* --------------------------------------------------
+   🔹 Preview enfant sélectionné
+-------------------------------------------------- */
+
+.selected-child-preview {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    margin-top: 10px;
+    padding: 12px;
+    border: 1px dashed #0d6efd;
+    border-radius: 10px;
+    background-color: #f8f9fa;
+
+    animation: fadeIn 0.25s ease-in-out;
+}
+
+.selected-child-preview img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+
+    border-radius: 50%;
+    border: 2px solid #0d6efd;
+}
+
+.selected-child-info {
+    font-size: 0.92rem;
+    color: #333;
+}
+
+/* Petite animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+
+/* --------------------------------------------------
+   🔹 Responsive
+-------------------------------------------------- */
+
+@media (max-width: 600px) {
+    .donation-frequency-group {
+        flex-direction: column;
+    }
+
+    .donation-frequency {
+        padding: 12px;
+    }
+
+    .selected-child-preview img {
+        width: 65px;
+        height: 65px;
+    }
+}

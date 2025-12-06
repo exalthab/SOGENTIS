@@ -1,24 +1,31 @@
 # accounts_users/tokens.py
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.translation import gettext_lazy as _
+from django.utils.crypto import salted_hmac
+from django.utils.encoding import force_str
 from django.utils import timezone
 
 class AccountActivationTokenGenerator(PasswordResetTokenGenerator):
+    """
+    Générateur de token d'activation amélioré :
+    - Invalide si mot de passe changé
+    - Invalide si utilisateur désactivé
+    - Permet de vérifier la dernière connexion
+    """
     def _make_hash_value(self, user, timestamp):
-        return f"{user.pk}{timestamp}{user.is_active}"
+        login_timestamp = '' if user.last_login is None else user.last_login.replace(microsecond=0, tzinfo=None)
+        return f"{user.pk}{user.password}{timestamp}{user.is_active}{login_timestamp}"
+
+    def make_token(self, user):
+        """
+        Génère un token unique.
+        """
+        return super().make_token(user)
+
+    def check_token(self, user, token):
+        """
+        Vérifie si le token est toujours valide.
+        """
+        return super().check_token(user, token)
 
 account_activation_token = AccountActivationTokenGenerator()
-
-
-
-
-## accounts_users/tokens.py - > 01/07/
-# from django.contrib.auth.tokens import PasswordResetTokenGenerator
-
-# class AccountActivationTokenGenerator(PasswordResetTokenGenerator):
-#     def _make_hash_value(self, user, timestamp):
-#         return f"{user.pk}{timestamp}{user.is_active}"
-
-# account_activation_token = AccountActivationTokenGenerator()

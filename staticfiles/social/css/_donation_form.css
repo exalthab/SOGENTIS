@@ -1,0 +1,94 @@
+/* --------------------------------------------------
+   Donation Form Styling
+-------------------------------------------------- */
+
+.donation-wrapper {
+    max-width: 900px;
+}
+
+/* Blocks */
+.form-block label {
+    display: block;
+    margin-bottom: 6px;
+}
+
+/* Quick Amount Buttons */
+.preset-amount-grid .amount-btn {
+    flex: 1 0 calc(33% - 10px);
+    min-width: 140px;
+    padding: 10px 0;
+    font-weight: 600;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.preset-amount-grid .amount-btn.active {
+    background-color: #0d6efd;
+    color: white;
+}
+
+/* Donation Frequency */
+.donation-frequency-group {
+    display: flex;
+    gap: 20px;
+}
+
+.donation-frequency {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.donation-frequency input {
+    display: none;
+}
+
+/* custom radio */
+.donation-frequency .tick {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #0d6efd;
+    border-radius: 50%;
+    position: relative;
+    transition: all 0.2s ease-in-out;
+}
+
+.donation-frequency input:checked + .tick {
+    background-color: #0d6efd;
+}
+
+.donation-frequency input:checked + .tick:after {
+    content: "";
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 3px;
+    left: 3px;
+}
+
+/* Child preview */
+.selected-child-preview {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    margin-top: 10px;
+    border-radius: 6px;
+    background: #f8f9fa;
+}
+
+.selected-child-preview img {
+    width: 70px;
+    height: 70px;
+    border-radius: 6px;
+    object-fit: cover;
+}
+
+.selected-child-info {
+    font-size: 14px;
+    color: #333;
+}

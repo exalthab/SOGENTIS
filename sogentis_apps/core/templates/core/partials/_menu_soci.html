@@ -1,0 +1,198 @@
+{# core/partials/_menu_soci_search_only.html #}
+{% load static i18n %}
+
+{% if request.resolver_match.url_name == "social_index" %}
+
+<ul class="list-group mb-4">
+
+  <!-- 🔍 Lien vers la recherche avancée -->
+  <li class="list-group-item">
+    <a href="{% url 'search:search' %}"
+       class="d-flex align-items-center text-decoration-none"
+       aria-label="{% trans 'Recherche avancée' %}">
+      <span class="me-2">🔍</span>
+      <span class="fw-semibold">{% trans "Recherche avancée" %}</span>
+    </a>
+  </li>
+
+  <!-- ⌨️ Barre de recherche rapide -->
+  <li class="list-group-item">
+    <form action="{% url 'search:search' %}"
+          method="get"
+          class="d-flex align-items-center gap-2"
+          role="search"
+          aria-label="{% trans 'Recherche de documents' %}">
+
+      <label for="quick-search-q" class="visually-hidden">
+        {% trans "Rechercher un document" %}
+      </label>
+
+      <input id="quick-search-q"
+             type="search"
+             name="q"
+             class="form-control"
+             placeholder="{% trans 'Rechercher un document' %}"
+             aria-label="{% trans 'Rechercher un document' %}"
+             autocomplete="off"
+             required>
+
+      <button class="btn btn-outline-primary btn-sm px-3" type="submit">
+        {% trans "Go" %}
+      </button>
+
+    </form>
+  </li>
+
+</ul>
+
+{% endif %}
+
+
+
+
+
+
+{% comment %} {# core/partials/_menu_soci_search_only.html #}
+{% load static i18n %}
+
+<ul class="list-group mb-4">
+
+  <!-- Lien vers la recherche avancée -->
+  <li class="list-group-item">
+    <a href="{% url 'search:search' %}"
+       class="d-flex align-items-center text-decoration-none"
+       aria-label="{% trans 'Recherche avancée' %}">
+      <span class="me-2">🔍</span>
+      <span class="fw-semibold">{% trans "Recherche avancée" %}</span>
+    </a>
+  </li>
+
+  <!-- Barre de recherche rapide -->
+  <li class="list-group-item">
+    <form action="{% url 'search:search' %}"
+          method="get"
+          class="d-flex"
+          role="search"
+          aria-label="{% trans 'Recherche de documents' %}">
+
+      <label for="quick-search-q" class="visually-hidden">
+        {% trans "Rechercher un document" %}
+      </label>
+
+      <input id="quick-search-q"
+             type="search"
+             name="q"
+             class="form-control me-2"
+             placeholder="{% trans 'Rechercher un document' %}"
+             aria-label="{% trans 'Rechercher un document' %}"
+             autocomplete="off"
+             required>
+
+      <button class="btn btn-sm btn-outline-primary px-3" type="submit">
+        {% trans "Go" %}
+      </button>
+
+    </form>
+  </li>
+
+</ul> {% endcomment %}
+
+
+
+
+
+
+
+
+{% comment %} {# core/partials/_menu_soci_search_only.html #}
+{% load static i18n %}
+
+<ul class="list-group mb-4">
+  <!-- Lien vers la page de recherche avancée (publique) -->
+  <li class="list-group-item">
+    <a href="{% url 'search:search' %}" class="d-flex align-items-center" aria-label="{% trans 'Recherche avancée' %}">
+      <span class="me-2">🔍</span>
+      <span>{% trans "Recherche avancée" %}</span>
+    </a>
+  </li>
+
+  <!-- Formulaire de recherche rapide (méthode GET) visible publiquement -->
+  <li class="list-group-item">
+    <form action="{% url 'search:search' %}" method="get" class="d-flex" role="search" aria-label="{% trans 'Recherche de documents' %}">
+      <label for="quick-search-q" class="visually-hidden">{% trans "Rechercher un document" %}</label>
+      <input
+        id="quick-search-q"
+        type="search"
+        name="q"
+        class="form-control me-2"
+        placeholder="{% trans 'Rechercher un document' %}"
+        aria-label="{% trans 'Rechercher un document' %}"
+        required
+      >
+      <button class="btn btn-sm btn-outline-primary" type="submit">{% trans "Go" %}</button>
+    </form>
+  </li>
+</ul> {% endcomment %}
+
+
+
+
+{% comment %} {# core/partials/_menu_soci.html #}
+{% load i18n %}
+
+<ul class="list-group mb-4">
+  <li class="list-group-item">
+    <a href="{% url 'documents:list' %}">
+      📄 {% trans "Tous les documents" %}
+    </a>
+  </li>
+  <li class="list-group-item">
+    <a href="{% url 'documents:create' %}">
+      ➕ {% trans "Ajouter un document" %}
+    </a>
+  </li>
+  <li class="list-group-item">
+    <a href="{% url 'documents:archived' %}">
+      🗃️ {% trans "Archives" %}
+    </a>
+  </li>
+  <li class="list-group-item">
+    <a href="{% url 'social:search' %}">
+      🔍 {% trans "Recherche avancée" %}
+    </a>
+  </li>
+  <li class="list-group-item">
+    <form action="{% url 'documents:search' %}" method="get" class="d-flex">
+      <input type="text" name="q" class="form-control me-2" placeholder="{% trans 'Rechercher un document' %}">
+      <button class="btn btn-sm btn-outline-primary" type="submit">{% trans "Go" %}</button>
+    </form>
+  </li>
+</ul> {% endcomment %}
+
+
+
+
+
+{% comment %} {# core/partials/_menu_soci.html #}
+<ul class="list-group mb-4">
+  <li class="list-group-item">
+    <a href="{% url 'documents:list' %}">
+      📄 Tous les documents
+    </a>
+  </li>
+  <li class="list-group-item">
+    <a href="{% url 'documents:create' %}">
+      ➕ Ajouter un document
+    </a>
+  </li>
+  <li class="list-group-item">
+    <a href="{% url 'documents:archived' %}">
+      🗃️ Archives
+    </a>
+  </li>
+  <li class="list-group-item">
+    <a href="{% url 'social:search' %}">
+      🔍 Recherche
+    </a>
+  </li>
+</ul> {% endcomment %}

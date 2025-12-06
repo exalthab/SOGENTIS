@@ -1,6 +1,63 @@
 {% extends "accounts_users/registration/base_auth.html" %}
 {% load static i18n %}
 
+{% block title %}{% trans "Lien invalide ou expiré" %} | SOGENTIS{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="card shadow-sm mx-auto" style="max-width: 450px;">
+    <div class="card-body text-center">
+      <h2 class="mb-3 text-danger" aria-live="polite">❌ {% trans "Lien invalide ou expiré" %}</h2>
+      <p class="mb-3">
+        {% trans "Le lien d’activation est invalide, déjà utilisé ou a expiré. Si besoin, demandez un nouveau lien ou contactez le support." %}
+      </p>
+      <div class="d-grid gap-2">
+        <a href="{% url 'accounts_users_web:resend_activation' %}" class="btn btn-warning mb-2">
+          <i class="fas fa-envelope-open-text me-1"></i> {% trans "Demander un nouveau lien d’activation" %}
+        </a>
+        <a href="{% url 'accounts_users_web:login' %}" class="btn btn-outline-primary">
+          <i class="fas fa-sign-in-alt me-1"></i> {% trans "Retour à la connexion" %}
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+{% comment %} {% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Lien invalide ou expiré" %} | SOGENTIS{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="card shadow-sm mx-auto" style="max-width: 450px;">
+    <div class="card-body text-center">
+      <h2 class="mb-3 text-danger">❌ {% trans "Lien invalide ou expiré" %}</h2>
+      <p class="mb-3">
+        {% trans "Le lien d’activation est invalide, déjà utilisé ou a expiré. Si besoin, demandez un nouveau lien ou contactez le support." %}
+      </p>
+      <a href="{% url 'accounts_users_web:login' %}" class="btn btn-outline-primary">
+        <i class="fas fa-sign-in-alt me-1"></i> {% trans "Retour à la connexion" %}
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+ {% endcomment %}
+
+
+
+
+{% comment %} {% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n %}
+
 {% block title %}{% trans "Lien d'activation invalide" %}{% endblock %}
 
 {% block content %}
@@ -13,4 +70,4 @@
     </a>
   </div>
 </div>
-{% endblock %}
+{% endblock %} {% endcomment %}

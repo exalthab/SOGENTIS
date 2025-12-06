@@ -1,0 +1,25 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { font-family: Arial, sans-serif; background: #f9f9f9; }
+    .container { background: #fff; padding: 2rem; border-radius: 7px; max-width: 550px; margin: auto; }
+    .title { color: #e74c3c; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2 class="title">{% trans "Profil refusé" %}</h2>
+    <p>
+      {% blocktrans %}Bonjour {{ user.get_full_name|default:user.username }},{% endblocktrans %}
+      <br><br>
+      {% trans "Votre profil SOGENTIS n'a pas été validé. Pour plus d'informations, contactez l'équipe SOGENTIS." %}
+    </p>
+    <p>
+      {% trans "Merci de votre compréhension." %}
+    </p>
+  </div>
+</body>
+</html>

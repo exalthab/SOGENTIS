@@ -1,0 +1,41 @@
+{% comment %} {% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{{ document.title }}{% endblock %}
+
+{% block section_menu %}
+  {% include "core/partials/_menu_soci.html" %}
+{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <h2>{{ document.title }}</h2>
+
+  {% if user.is_authenticated and user == document.author %}
+    <form method="post" action="{% url 'documents:toggle_visibility' document.pk %}" class="mb-3">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-sm {% if document.is_public %}btn-outline-secondary{% else %}btn-outline-warning{% endif %}">
+        {% if document.is_public %}
+          🔒 {% trans "Rendre privé" %}
+        {% else %}
+          🌐 {% trans "Rendre public" %}
+        {% endif %}
+      </button>
+    </form>
+  {% endif %}
+
+  <p>{{ document.description }}</p>
+
+  {% if document.file %}
+    <p>
+      <a href="{% url 'documents:download' document.pk %}" class="btn btn-sm btn-success">
+        📥 {% trans "Télécharger" %} ({{ document.download_count }})
+      </a>
+    </p>
+  {% endif %}
+
+  <p class="text-muted">
+    {% trans "Créé le" %} {{ document.created_at|date:"d/m/Y H:i" }}
+  </p>
+</div>
+{% endblock %} {% endcomment %}

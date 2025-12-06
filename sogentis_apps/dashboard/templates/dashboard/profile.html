@@ -1,9 +1,9 @@
 {% extends "dashboard/base.html" %}
-{% load static i18n %}
+{% load static widget_tweaks i18n %}
 
 {% block title %}{% trans "Profil Utilisateur" %}{% endblock %}
 
-{% block content %}
+{% block dashboard_content %}
 <div class="container py-4">
   <h2 class="mb-4">{% trans "Mon Profil" %}</h2>
 
@@ -18,30 +18,28 @@
 
   <!-- 🔹 Informations utilisateur -->
   <div class="card mb-4 shadow-sm">
-    <div class="card-header bg-light">
-      <strong>{% trans "Informations actuelles" %}</strong>
-    </div>
+    <div class="card-header bg-light fw-bold">{% trans "Informations actuelles" %}</div>
     <div class="card-body">
-      <div class="row">
+      <div class="row g-4 align-items-center">
         <div class="col-md-3 text-center">
           {% if request.user.userprofile.profile_picture %}
             <img src="{{ request.user.userprofile.profile_picture.url }}" alt="Photo de profil"
-                 class="img-thumbnail mb-2" style="max-width:120px;">
+                 class="img-thumbnail mb-2 rounded-circle shadow-sm" style="width:120px; height:120px; object-fit:cover;">
           {% else %}
-            <div class="bg-light rounded-circle d-inline-block" style="width:120px; height:120px; line-height:120px;">
+            <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center shadow-sm" style="width:120px; height:120px;">
               <i class="bi bi-person fs-1 text-muted"></i>
             </div>
           {% endif %}
         </div>
         <div class="col-md-9">
-          <p><strong>{% trans "Nom" %} :</strong> {{ request.user.get_full_name|default:"—" }}</p>
-          <p><strong>Email :</strong> {{ request.user.email }}</p>
+          <div class="mb-2"><strong>{% trans "Nom" %} :</strong> {{ request.user.get_full_name|default:"—" }}</div>
+          <div class="mb-2"><strong>Email :</strong> {{ request.user.email }}</div>
           {% if request.user.userprofile %}
-            <p><strong>{% trans "Rôle" %} :</strong> {{ request.user.userprofile.membership_role.name }}</p>
-            <p><strong>{% trans "Téléphone" %} :</strong> {{ request.user.userprofile.phone }}</p>
-            <p><strong>{% trans "Pays" %} :</strong> {{ request.user.userprofile.country }}</p>
+            <div class="mb-2"><strong>{% trans "Rôle" %} :</strong> {{ request.user.userprofile.membership_role.label|default:"—" }}</div>
+            <div class="mb-2"><strong>{% trans "Téléphone" %} :</strong> {{ request.user.userprofile.phone|default:"—" }}</div>
+            <div class="mb-2"><strong>{% trans "Pays" %} :</strong> {{ request.user.userprofile.country|default:"—" }}</div>
           {% else %}
-            <p class="text-muted">{% trans "Aucun profil utilisateur associé." %}</p>
+            <div class="text-muted">{% trans "Aucun profil utilisateur associé." %}</div>
           {% endif %}
         </div>
       </div>
@@ -50,19 +48,20 @@
 
   <!-- 🔹 Formulaire de mise à jour -->
   <div class="card shadow-sm">
-    <div class="card-header bg-light">
-      <strong>{% trans "Mettre à jour mes informations" %}</strong>
-    </div>
+    <div class="card-header bg-light fw-bold">{% trans "Mettre à jour mes informations" %}</div>
     <div class="card-body">
       <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
         {% csrf_token %}
         <div class="row g-3">
           {% for field in form %}
-            <div class="col-md-{{ field.name in 'message profile_picture judicial_record'|yesno:'12,6' }}">
+            <div class="col-md-{% if field.name in 'message profile_picture judicial_record' %}12{% else %}6{% endif %}">
               <label for="{{ field.id_for_label }}" class="form-label">
-                {{ field.label }}{% if field.field.required %} *{% endif %}
+                {{ field.label }}{% if field.field.required %}<span class="text-danger">*</span>{% endif %}
               </label>
-              {{ field }}
+              {% render_field field class="form-control" %}
+              {% if field.help_text %}
+                <div class="form-text">{{ field.help_text }}</div>
+              {% endif %}
               {% if field.errors %}
                 <div class="text-danger small">{{ field.errors|striptags }}</div>
               {% endif %}
@@ -79,6 +78,7 @@
   </div>
 </div>
 {% endblock %}
+
 
 
 

@@ -1,38 +1,468 @@
-{% load static i18n dashboard_tags %}
+{% load static i18n %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Tableau de bord{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Bootstrap 5 -->
+  <link rel="stylesheet" href="{% static 'dashboard/css/bootstrap.min.css' %}">
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="{% static 'dashboard/css/fontawesome.min.css' %}">
+  <!-- Dashboard CSS -->
+  <link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
+  <!-- Leaflet CSS (si carte) -->
+  <link rel="stylesheet" href="{% static 'dashboard/leaflet/leaflet.css' %}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+  <div class="dashboard-layout d-flex min-vh-100">
+    <!-- Sidebar -->
+    <aside class="sidebar bg-dark text-white flex-shrink-0">
+      <div class="p-3">
+        <div class="brand mb-4 fs-5 text-center">SOGENTIS</div>
+        <div class="user mb-4 text-center">
+          <img src="{% static 'dashboard/img/avatar.jpg' %}" alt="Avatar" class="avatar mb-2 rounded-circle shadow" width="64" height="64">
+          <div>
+            <small class="text-white-50">Bienvenue,</small><br>
+            <b>{{ user.get_full_name|default:user.username }}</b>
+          </div>
+        </div>
+        <nav>
+          <ul class="nav flex-column gap-1">
+            <li class="nav-item"><a class="nav-link text-white" href="{% url 'dashboard:index' %}"><i class="fas fa-home me-2"></i>Dashboard</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="#"><i class="fas fa-chart-bar me-2"></i>Statistiques</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="#"><i class="fas fa-pen me-2"></i>Formulaires</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="#"><i class="fas fa-table me-2"></i>Données</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="#"><i class="fas fa-cube me-2"></i>UI Elements</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="#"><i class="fas fa-flag me-2"></i>Landing Page</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div class="sidebar-footer mt-auto text-center py-3">
+        <a href="#"><i class="fas fa-cog fa-lg me-3"></i></a>
+        <a href="#"><i class="fas fa-sign-out-alt fa-lg"></i></a>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <div class="dashboard-main flex-grow-1 d-flex flex-column bg-light">
+      <!-- Topbar -->
+      <header class="dashboard-header d-flex align-items-center justify-content-between px-4 py-3 border-bottom bg-white shadow-sm">
+        <h1 class="dashboard-title mb-0 fs-4">{% block header %}Tableau de bord{% endblock %}</h1>
+        <div class="user-actions d-flex align-items-center gap-2">
+          <span class="me-2">{{ user.get_full_name|default:user.username }}</span>
+          <img src="{% static 'dashboard/img/avatar.jpg' %}" alt="Avatar" class="avatar-sm rounded-circle shadow" width="36" height="36">
+        </div>
+      </header>
+      <!-- Contenu principal -->
+      <main class="dashboard-content flex-grow-1 p-4">
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+  </div>
+  <!-- JS requis -->
+  <script src="{% static 'dashboard/js/chart.min.js' %}"></script>
+  <script src="{% static 'dashboard/leaflet/leaflet.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>
+
+
+
+
+
+
+
+
+{% comment %} {% load static bootstrap4 i18n dashboard_tags %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Tableau de bord{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <!-- Bootstrap 5 local -->
+  <link href="{% static 'dashboard/css/bootstrap.min.css' %}" rel="stylesheet">
+  <!-- FontAwesome local -->
+  <link href="{% static 'dashboard/css/fontawesome.min.css' %}" rel="stylesheet">
+  <!-- Dashboard CSS -->
+  <link href="{% static 'dashboard/css/dashboard.css' %}" rel="stylesheet">
+
+  <!-- Leaflet CSS local (pour la carte interactive) -->
+  <link href="{% static 'dashboard/leaflet/leaflet.css' %}" rel="stylesheet">
+  
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+  <div class="dashboard-layout d-flex">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand mb-4">Gentellela Alela!</div>
+      <div class="user mb-4">
+        <img src="{% static 'dashboard/img/avatar.jpg' %}" alt="Avatar" class="avatar mb-2">
+        <div>
+          Bienvenue,<br>
+          <b>{{ user.get_full_name|default:user.username }}</b>
+        </div>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="{% url 'dashboard:index' %}"><i class="fas fa-home me-2"></i>Dashboard</a></li>
+          <li><a href="#"><i class="fas fa-chart-bar me-2"></i>Statistiques</a></li>
+          <li><a href="#"><i class="fas fa-pen me-2"></i>Formulaires</a></li>
+          <li><a href="#"><i class="fas fa-table me-2"></i>Données</a></li>
+          <li><a href="#"><i class="fas fa-cube me-2"></i>UI Elements</a></li>
+          <li><a href="#"><i class="fas fa-flag me-2"></i>Landing Page</a></li>
+        </ul>
+      </nav>
+      <div class="sidebar-footer mt-auto d-flex justify-content-around pt-3">
+        <a href="#"><i class="fas fa-cog"></i></a>
+        <a href="#"><i class="fas fa-sign-out-alt"></i></a>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="dashboard-main flex-grow-1">
+      <header class="dashboard-header d-flex align-items-center justify-content-between px-4 py-3 border-bottom bg-white">
+        <h1 class="dashboard-title mb-0">{% block header %}Tableau de bord{% endblock %}</h1>
+        <div class="user-actions d-flex align-items-center gap-2">
+          <span>{{ user.get_full_name|default:user.username }}</span>
+          <img src="{% static 'dashboard/img/avatar.jpg' %}" alt="Avatar" class="avatar-sm rounded-circle">
+        </div>
+      </header>
+      <section class="dashboard-content p-4">
+        {% block content %}{% endblock %}
+      </section>
+    </main>
+  </div>
+
+  <!-- Chart.js (optionnel, à charger dans chaque page si besoin) -->
+  {# <script src="{% static 'dashboard/chartjs/chart.min.js' %}"></script> #}
+  <!-- Leaflet JS local (pour la carte) -->
+  <script src="{% static 'dashboard/leaflet/leaflet.js' %}"></script>
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>
+
+
+ {% endcomment %}
+
+
+
+
+
+
+
+
+
+
+
+
+{% comment %} 
+{% load static bootstrap4 i18n dashboard_tags %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Dashboard{% endblock %}</title>
+
+    <!-- CSS Principaux -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/css/cards_stats.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/css/charts.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/css/sidebar.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/css/dash_index.css' %}">
+    
+    {% block extra_css %}{% endblock %}
+
+    <style>
+      /* Layout principal */
+      .dashboard-layout {
+          display: flex;
+          min-height: 100vh;
+      }
+      .sidebar {
+          width: 240px;
+          background: #2c3e50;
+          color: #fff;
+          padding: 2rem 1rem;
+          display: flex;
+          flex-direction: column;
+          min-height: 100vh;
+      }
+      .dashboard-main {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          background: #f5f6f8;
+          min-width: 0;
+      }
+      .dashboard-content {
+          flex: 1;
+          padding: 2.5rem 2rem 1.5rem 2rem;
+          width: 100%;
+          min-width: 0;
+      }
+
+      @media (max-width: 900px) {
+          .dashboard-layout {
+              flex-direction: column;
+          }
+          .sidebar {
+              width: 100%;
+              min-height: auto;
+          }
+          .dashboard-main {
+              margin-left: 0;
+          }
+      }
+    </style>
+</head>
+<body>
+  <div class="dashboard-layout">
+    
+    {% include "dashboard/partials/sidebar.html" %}
+    
+    <div class="dashboard-main">
+      
+      {% include "dashboard/partials/topbar.html" %}
+      
+      <main class="dashboard-content">
+        {% block dashboard_content %}{% endblock %}
+      </main>
+    </div>
+  </div>
+
+  <!-- JS -->
+  <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'dashboard/js/chart.js' %}"></script>
+  <script src="{% static 'dashboard/js/dashboard.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html> {% endcomment %}
+
+
+
+
+
+{% comment %} {% load static bootstrap4 i18n dashboard_tags %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Dashboard{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
+  {% block extra_css %}{% endblock %}
+  <style>
+    /* FLEX LAYOUT GLOBAL */
+    .dashboard-layout { display: flex; min-height: 100vh; }
+    .sidebar {
+      width: 240px;
+      background: #2c3e50;
+      color: #fff;
+      padding: 2rem 1rem;
+      display: flex; flex-direction: column; min-height: 100vh;
+    }
+    .dashboard-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #f5f6f8;
+      min-width: 0;
+    }
+    .dashboard-content {
+      flex: 1;
+      padding: 2.5rem 2rem 1.5rem 2rem;
+      width: 100%;
+      min-width: 0;
+    }
+    @media (max-width: 900px) {
+      .dashboard-layout { flex-direction: column; }
+      .sidebar { width: 100%; min-height: auto; }
+      .dashboard-main { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-layout">
+    {% include "dashboard/partials/sidebar.html" %}
+    <div class="dashboard-main">
+      {% include "dashboard/partials/topbar.html" %}
+      <main class="dashboard-content">
+        {% block dashboard_content %}{% endblock %}
+      </main>
+    </div>
+  </div>
+  <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html> {% endcomment %}
+
+
+
+
+{% comment %} 
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <title>{% block title %}SOGENTIS - Tableau de Bord{% endblock %}</title>
+    <title>{% block title %}SOGENTIS - Tableau de bord{% endblock %}</title>
 
-    <!-- 🔹 Bootstrap local -->
+    <!-- Styles de base -->
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'icons/bootstrap-icons.css' %}">
-
-    <!-- 🔹 Styles dashboard -->
-    <link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
     <link rel="stylesheet" href="{% static 'dashboard/css/sidebar.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/css/dash_index.css' %}">
+
+    <style>
+        body {
+            background-color: #f7f8fa;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .dashboard-layout {
+            display: flex;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        .dashboard-main {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .dashboard-content {
+            flex: 1;
+            padding: 1.5rem;
+        }
+    </style>
 
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <div id="dashboard-wrapper" class="d-flex min-vh-100">
+    <div class="dashboard-layout">
 
-        <!-- 🔹 SIDEBAR -->
+        <!-- Sidebar -->
+        {% include "dashboard/partials/sidebar.html" %}
+
+        <!-- Contenu principal -->
+        <div class="dashboard-main">
+
+            <!-- Topbar -->
+            <header class="topbar d-flex justify-content-between align-items-center px-3 py-2 shadow-sm bg-white">
+                <div class="topbar-left d-flex align-items-center">
+                    <span class="fw-bold text-primary fs-5">
+                        Bienvenue, {{ request.user.first_name|default:request.user.username }}
+                    </span>
+                </div>
+                <div class="topbar-right d-flex align-items-center gap-3">
+                    <a href="{% url 'dashboard:profile' %}" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-person-circle"></i> Mon Profil
+                    </a>
+                    <a href="{% url 'accounts_users_web:logout' %}" class="btn btn-sm btn-outline-danger">
+                        <i class="bi bi-box-arrow-right"></i> Déconnexion
+                    </a>
+                </div>
+            </header>
+
+            <!-- Zone de messages -->
+            {% if messages %}
+            <div class="container mt-3">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Contenu injecté -->
+            <main class="dashboard-content">
+                {% block dashboard_content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <!-- Scripts JS -->
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/chart.min.js' %}"></script>
+    <script src="{% static 'dashboard/js/dashboard.js' %}"></script>
+    {% bootstrap_javascript jquery='full' %}
+    {% block extra_js %}{% endblock %}
+</body>
+</html> {% endcomment %}
+
+
+
+
+
+
+{% comment %} {% load static bootstrap4 i18n dashboard_tags %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}SOGENTIS{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+  <style>
+    .layout { display: flex; min-height: 100vh; }
+    .sidebar { width: 240px; background: #2a3440; color: #fff; }
+    .main { flex:1; background: #f7f8fa; }
+  </style>
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+  <div class="layout">
+    {% include "dashboard/partials/sidebar.html" %}
+    <div class="main">
+      {% block dashboard_content %}{% endblock %}
+    </div>
+  </div>
+</body>
+</html> {% endcomment %}
+
+
+
+
+{% comment %} {% load static bootstrap4 i18n dashboard_tags %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SOGENTIS - Tableau de Bord{% endblock %}</title>
+
+    <!-- Bootstrap et icons -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'icons/bootstrap-icons.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/css/sidebar.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/css/dash_index.css' %}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="dashboard-layout d-flex min-vh-100">
+
+        <!-- Sidebar -->
         {% include 'dashboard/partials/sidebar.html' %}
 
-        <!-- 🔹 ZONE PRINCIPALE -->
-        <div class="main-content flex-grow-1 d-flex flex-column">
-
-            <!-- 🔹 TOPBAR -->
+        <!-- Zone principale -->
+        <div class="dashboard-main flex-grow-1 d-flex flex-column">
             {% include 'dashboard/partials/topbar.html' %}
 
-            <!-- 🔹 NAVBAR SECONDAIRE -->
+            <!-- Barre secondaire -->
             <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-2 shadow-sm">
                 <div class="container-fluid px-4">
-                    <a class="navbar-brand" href="{% url 'dashboard:index' %}">Mon Dashboard</a>
+                    <a class="navbar-brand" href="{% url 'dashboard:index' %}">SOGENTIS</a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSecondary">
                         <span class="navbar-toggler-icon"></span>
                     </button>
@@ -53,8 +483,8 @@
                 </div>
             </nav>
 
-            <!-- 💡 Contenu principal -->
-            <main class="flex-fill p-4">
+            <!-- Contenu principal -->
+            <main class="dashboard-content flex-fill">
                 {% if messages %}
                 <div class="mb-3">
                     {% for message in messages %}
@@ -62,88 +492,18 @@
                     {% endfor %}
                 </div>
                 {% endif %}
-              
-                {% block dashboard_content %}{% endblock %}
-                    </main>
 
+                {% block dashboard_content %}{% endblock %}
+            </main>
         </div>
     </div>
 
-    <!-- 🔹 JS -->
+    <!-- JS -->
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'js/chart.min.js' %}"></script>
     <script src="{% static 'dashboard/js/dashboard.js' %}"></script>
-
+    {% bootstrap_javascript jquery='full' %}
     {% block extra_js %}{% endblock %}
 </body>
 </html>
-
-
-
-
-
-
-
-{% comment %} {% load static i18n %}
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <title>{% block title %}SOGENTIS - Tableau de Bord{% endblock %}</title>
-
-    <!-- CSS Bootstrap local -->
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-    <!-- Bootstrap Icons local (optionnel) -->
-    <link rel="stylesheet" href="{% static 'icons/bootstrap-icons.css' %}">
-
-    <!-- CSS spécifiques au dashboard -->
-    <link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
-    <link rel="stylesheet" href="{% static 'dashboard/css/sidebar.css' %}">
-
-    {% block extra_css %}{% endblock %}
-</head>
-<body>
-    <div id="dashboard-wrapper" class="d-flex">
-
-        <!-- 🔹 SIDEBAR -->
-        {% include 'dashboard/partials/sidebar.html' %}
-
-        <!-- 🔹 CONTENU PRINCIPAL -->
-        <div class="main-content flex-grow-1">
-
-            <!-- 🔹 TOPBAR -->
-            {% include 'dashboard/partials/topbar.html' %}
-
-            <!-- 🔹 NAVBAR SECONDAIRE (externe ou interne selon usage) -->
-            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-                <div class="container">
-                    <a class="navbar-brand" href="{% url 'dashboard:index' %}">Mon Dashboard</a>
-                    <div class="collapse navbar-collapse">
-                        <ul class="navbar-nav ms-auto">
-                            <li class="nav-item"><a href="{% url 'dashboard:profile' %}" class="nav-link">Profil</a></li>
-                            <li class="nav-item"><a href="{% url 'logout' %}" class="nav-link">Déconnexion</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
-
-            <!-- 🔹 CONTENU CENTRAL -->
-            <main class="container-fluid py-4">
-                {% block content %}{% endblock %}
-            </main>
-
-        </div>
-    </div>
-
-    <!-- JS Bootstrap local -->
-    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-    <!-- JS du dashboard -->
-    <script src="{% static 'dashboard/js/dashboard.js' %}"></script>
-    <!-- Chart.js local (optionnel) -->
-    <script src="{% static 'js/chart.min.js' %}"></script>
-
-    {% block extra_js %}{% endblock %}
-</body>
-</html> {% endcomment %}
+ {% endcomment %}

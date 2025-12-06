@@ -1,0 +1,3 @@
+# from .modules.static import *
+# from .modules.ckeditor import *
+# # et les autres modules...

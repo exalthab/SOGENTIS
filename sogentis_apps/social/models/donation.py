@@ -3,15 +3,13 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from django.db.models import Sum
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from .project import Project
 
 
 class DonationManager(models.Manager):
     def aggregate_total_amount(self, user=None):
-        """
-        Retourne la somme totale des montants de dons.
-        Optionnellement filtré par utilisateur connecté.
-        """
         qs = self.get_queryset()
         if user:
             qs = qs.filter(user=user)
@@ -34,33 +32,62 @@ class Donation(models.Model):
         ("visa", _("Visa / Carte bancaire")),
     ]
 
-    # Donateur connecté (optionnel)
+    # 🔹 Donateur
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        verbose_name=_("Utilisateur")
+        verbose_name=_("Utilisateur"),
+        related_name="donations"
     )
-
-    # Donateur invité (nom/email)
     donor_name = models.CharField(_("Nom du donateur"), max_length=255, blank=True)
     email = models.EmailField(_("Email du donateur"), blank=True)
 
-    # Projet associé (facultatif)
+    # 🔹 Projet optionnel
     project = models.ForeignKey(
         Project,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        verbose_name=_("Projet")
+        verbose_name=_("Projet"),
+        related_name="donations"
     )
 
-    # Montant et date
+    # 🔥 Cible explicite
+    target_type = models.CharField(
+        _("Type de cible"),
+        max_length=50,
+        null=True,
+        blank=True,
+        help_text=_("mother / child / project")
+    )
+    target_id = models.PositiveIntegerField(
+        _("ID brut de la cible"),
+        null=True,
+        blank=True
+    )
+
+    # 🔥 GenericForeignKey
+    target_content_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_("Type de cible")
+    )
+    target_object_id = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+        verbose_name=_("ID de la cible")
+    )
+    target = GenericForeignKey("target_content_type", "target_object_id")
+
+    # 💰 Montant et message
     amount = models.DecimalField(_("Montant du don"), max_digits=10, decimal_places=2)
     message = models.TextField(_("Message"), blank=True)
 
-    # Paiement
+    # 💳 Paiement
     payment_method = models.CharField(
         _("Méthode de paiement"),
         max_length=50,
@@ -75,7 +102,7 @@ class Donation(models.Model):
     )
     monthly = models.BooleanField(_("Don mensuel récurrent ?"), default=False)
 
-    # Reçu PDF
+    # 📄 PDF du reçu
     pdf_receipt = models.FileField(
         _("Reçu PDF"),
         upload_to="donations/receipts/",
@@ -85,6 +112,7 @@ class Donation(models.Model):
 
     created_at = models.DateTimeField(_("Créé le"), auto_now_add=True)
 
+    # Manager custom
     objects = DonationManager()
 
     class Meta:
@@ -92,11 +120,17 @@ class Donation(models.Model):
         verbose_name_plural = _("Dons")
         ordering = ['-created_at']
 
+    # ---------------------------------------------------------
+    # 🔹 Affichage
+    # ---------------------------------------------------------
     def __str__(self):
-        label = self.user.email if self.user else (self.donor_name or _("Anonyme"))
-        type_label = _("mensuel") if self.monthly else _("ponctuel")
-        return f"{label} – {self.amount} FCFA – {self.get_payment_method_display()} ({type_label})"
+        donor = self.user.email if self.user else (self.donor_name or _("Anonyme"))
+        target_label = f" → {self.target}" if self.target else ""
+        return f"{donor} – {self.amount} FCFA{target_label}"
 
+    # ---------------------------------------------------------
+    # 🔹 Helpers
+    # ---------------------------------------------------------
     def is_paid(self):
         return self.status == "paid"
 

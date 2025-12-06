@@ -1,0 +1,93 @@
+{% load static i18n %}
+
+{# CSS spécifique du hero #}
+<link rel="stylesheet" href="{% static 'about/css/_hero.css' %}">
+
+{% if hero %}
+<section class="about-hero" id="about-hero">
+
+    <!-- Bouton retour -->
+    <a href="{% url 'core:home' %}" class="hero-back-btn">
+        <span class="arrow">←</span> {% trans "Accueil" %}
+    </a>
+
+    <!-- Background -->
+    <div class="hero-bg"
+         {% if hero.background_image %}
+             style="background-image: url('{{ hero.background_image.url }}');"
+         {% endif %}>
+    </div>
+
+    <!-- Dégradé violet / rouge -->
+    <div class="hero-overlay"></div>
+
+    <!-- Contenu principal -->
+    <div class="hero-content">
+
+        <!-- Ligne décorative premium -->
+        <div class="hero-line-wrapper">
+            <div class="hero-line"></div>
+            <div class="hero-dot"></div>
+        </div>
+
+        <!-- Titre -->
+        <h1 class="hero-title">{{ hero.title }}</h1>
+
+        <!-- Sous-titre -->
+        {% if hero.subtitle %}
+            <p class="hero-subtitle">{{ hero.subtitle|safe }}</p>
+        {% endif %}
+
+        <!-- Bouton CTA optionnel -->
+        {% if hero.button_text and hero.button_link %}
+        <div class="hero-actions fade-up">
+            <a href="{{ hero.button_link }}" class="hero-btn-primary">
+
+                <!-- Icône SVG premium -->
+                <span class="hero-btn-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6 6H4M4 6L6.5 14H18.5L21 8H7M4 6L3 3H1"
+                            stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="9" cy="19" r="2" fill="currentColor"/>
+                        <circle cx="17" cy="19" r="2" fill="currentColor"/>
+                    </svg>
+                </span>
+
+                {{ hero.button_text }}
+            </a>
+        </div>
+        {% endif %}
+
+    </div>
+</section>
+
+{% else %}
+{# Fallback si aucun Hero en base #}
+<section class="about-hero hero-fallback" id="about-hero">
+
+    <!-- Bouton retour -->
+    <a href="{% url 'core:home' %}" class="hero-back-btn">
+        <span class="arrow">←</span> {% trans "Accueil" %}
+    </a>
+
+    <!-- Fond uni + overlay -->
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+        <div class="hero-line-wrapper">
+            <div class="hero-line"></div>
+            <div class="hero-dot"></div>
+        </div>
+
+        <h1 class="hero-title">
+            {% trans "À propos de SOGENTIS" %}
+        </h1>
+        <p class="hero-subtitle">
+            {% trans "Une plateforme sociale et économique dédiée à l'humain, à l'enfance et aux communautés." %}
+        </p>
+    </div>
+</section>
+{% endif %}

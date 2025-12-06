@@ -1,0 +1,36 @@
+{% comment %} {% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Résultats de recherche" %}{% endblock %}
+
+{% block section_menu %}
+  {% include "core/partials/_menu_soci.html" %}
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+
+  <a href="{% url 'social:index' %}" class="btn btn-outline-secondary mb-4">
+    ⬅️ {% trans "Retour à l'accueil" %}
+  </a>
+
+  <h2 class="mb-4">{% trans "Résultats pour" %} <span class="text-primary">"{{ query }}"</span></h2>
+
+  {% if documents %}
+    <ul class="list-group">
+      {% for doc in documents %}
+        <li class="list-group-item">
+          <a href="{{ doc.get_absolute_url }}">{{ doc.title }}</a>
+          {% if not doc.is_public %}
+            <span class="badge bg-warning text-dark">{% trans "Privé" %}</span>
+          {% endif %}
+          <p class="text-muted">{{ doc.description|truncatewords:20 }}</p>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="text-muted">{% trans "Aucun résultat trouvé." %}</p>
+  {% endif %}
+</div>
+{% endblock %}
+ {% endcomment %}

@@ -45,19 +45,3 @@ def generate_membership_code(role_code):
 
     return f"{prefix}{last_number + 1:03d}"
 
-
-
-
-## accounts_users/users_service.py
-# from accounts_users.models.users import CustomUser
-
-# def get_active_users():
-#     return CustomUser.objects.filter(is_active=True)
-
-# def create_user_with_profile(user_data, profile_data):
-#     user = CustomUser.objects.create_user(email=user_data['email'], password=user_data['password'])
-#     user.userprofile.full_name = profile_data['full_name']
-#     user.userprofile.phone = profile_data['phone']
-#     user.userprofile.country = profile_data['country']
-#     user.userprofile.save()
-#     return user

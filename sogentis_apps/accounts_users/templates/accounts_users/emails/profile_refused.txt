@@ -1,0 +1,5 @@
+Bonjour {{ user.get_full_name|default:user.username }},
+
+Votre profil SOGENTIS n'a pas été validé. Pour plus d'informations, contactez l'équipe SOGENTIS.
+
+Merci de votre compréhension.

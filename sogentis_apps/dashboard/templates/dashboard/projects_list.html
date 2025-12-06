@@ -1,0 +1,27 @@
+{% extends "dashboard/base.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Projets en cours" %}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h2 class="mb-4">{% trans "Projets en cours" %}</h2>
+  <div class="row">
+    {% for project in projects %}
+      <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">{{ project.title }}</h5>
+            <p class="card-text">{{ project.description|truncatewords:20 }}</p>
+            <a href="{% url 'dashboard:project_detail' project.pk %}" class="btn btn-outline-info">{% trans "Voir détail" %}</a>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <div class="col-12">
+        <div class="alert alert-warning text-center">{% trans "Aucun projet en cours." %}</div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

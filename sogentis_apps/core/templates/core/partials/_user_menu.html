@@ -1,0 +1,48 @@
+{# core/partials/_user_menu.html #}
+{% load static i18n %}
+
+<div class="user-menu text-white">
+
+    {% if user.is_authenticated %}
+
+        <!-- ===== USER HEADER ===== -->
+        <div class="d-flex align-items-center mb-3">
+            <img src="{{ user.profile.photo.url|default:'/static/global/image/default_avatar.png' }}"
+                 alt="Avatar"
+                 class="rounded-circle"
+                 style="width: 48px; height: 48px; object-fit: cover; border: 2px solid #ffffff22;">
+
+            <div class="ms-2">
+                <strong>{{ user.get_full_name|default:user.username }}</strong><br>
+                <small class="text-info">
+                    {{ user.profile.role.label|default:_("Utilisateur") }}
+                </small>
+            </div>
+        </div>
+
+        <!-- ===== ACTIONS ===== -->
+        <a href="{% url 'dashboard:home' %}"
+           class="btn btn-sm btn-outline-light w-100 mb-2 d-flex align-items-center">
+            <i class="fas fa-chart-line me-2"></i>
+            {% trans "Tableau de bord" %}
+        </a>
+
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button class="btn btn-sm btn-outline-danger w-100 d-flex align-items-center">
+                <i class="fas fa-power-off me-2"></i>
+                {% trans "Se déconnecter" %}
+            </button>
+        </form>
+
+    {% else %}
+
+        <!-- ===== GUEST ACTIONS ===== -->
+        <a href="{% url 'accounts_users_web:login' %}?next={{ request.get_full_path|urlencode }}"
+        class="btn-login-premium">
+        <i class="fas fa-user-lock me-1"></i>
+        {% trans "Se connecter" %}
+        </a>
+
+    {% endif %}
+</div>

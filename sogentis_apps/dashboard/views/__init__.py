@@ -5,6 +5,8 @@ from .dons import dashboard_dons_list_view
 from .engagements import dashboard_engagements_list_view
 from .index import index_redirect_view
 from .lists import dashboard_lists_view
+from .activity import recent_activity_logs_view
+
 
 # from .index import *
 # from .profile import *

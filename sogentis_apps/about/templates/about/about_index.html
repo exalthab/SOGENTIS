@@ -1,0 +1,246 @@
+{% extends "main.html" %}
+{% load static i18n about_tags %}
+
+{# ============== SEO PAGE ABOUT ============== #}
+{% block seo_title %}{% trans "À propos de SOGENTIS" %}{% endblock %}
+
+{% block seo_description %}
+  {% blocktrans %}
+    Découvrez la vision, la gouvernance, les enfants, les mamans et les partenaires de SOGENTIS.
+  {% endblocktrans %}
+{% endblock %}
+
+{% block seo_og_title %}{% trans "À propos de SOGENTIS" %}{% endblock %}
+{% block seo_og_description %}
+  {% blocktrans %}
+    SOGENTIS se structure autour d’un pôle social et d’un pôle économique pour soutenir durablement les enfants, les femmes et les communautés.
+  {% endblocktrans %}
+{% endblock %}
+
+{% block seo_og_image %}
+  {% if hero and hero.background_image %}
+    {{ hero.background_image.url }}
+  {% else %}
+    {{ SEO_OG_IMAGE_DEFAULT }}
+  {% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'about/css/new_about_index.css' %}">
+<link rel="stylesheet" href="{% static 'about/css/_team_member.css' %}">
+<link rel="stylesheet" href="{% static 'about/css/_organigram.css' %}">
+<link rel="stylesheet" href="{% static 'about/css/new_children.css' %}">
+<link rel="stylesheet" href="{% static 'about/css/_mothers.css' %}">
+<link rel="stylesheet" href="{% static 'about/css/_partners.css' %}">
+<link rel="stylesheet" href="{% static 'about/css/_about_subsections.css' %}">
+<link rel="stylesheet" href="{% static 'about/css/_hero.css' %}">
+<link rel="stylesheet" href="{% static 'about/css/_poles_about_index.css' %}">
+{% endblock %}
+
+
+{% block content %}
+
+<div class="about-page">
+
+    <!-- ============================ -->
+    <!-- STICKY NAVIGATION            -->
+    <!-- ============================ -->
+    <div class="about-sticky-bar">
+        <div class="about-sticky-inner container">
+            <ul class="about-sticky-tabs">
+                <li><a href="#about-hero" class="tab-link">{% trans "Intro" %}</a></li>
+                <li><a href="#about-overview" class="tab-link">{% trans "À propos" %}</a></li>
+                <li><a href="#about-governance" class="tab-link">{% trans "Gouvernance" %}</a></li>
+                <li><a href="#about-children" class="tab-link">{% trans "Enfants" %}</a></li>
+                <li><a href="#about-mothers" class="tab-link">{% trans "Mamans" %}</a></li>
+                <li><a href="#about-partners" class="tab-link">{% trans "Partenaires" %}</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============================ -->
+    <!-- HERO                         -->
+    <!-- ============================ -->
+    <section id="about-hero" class="section-reveal">
+        {% render_hero %}
+    </section>
+
+    <!-- ============================ -->
+    <!-- ABOUT SUBSECTIONS            -->
+    <!-- ============================ -->
+    <section id="about-overview" class="about-card section-reveal">
+        <div class="container">
+            {% render_about_subsections %}
+        </div>
+    </section>
+
+    <!-- ============================ -->
+    <!-- GOUVERNANCE                  -->
+    <!-- ============================ -->
+    <section id="about-governance" class="about-section section-reveal">
+        <div class="container">
+
+            <header class="section-header text-center">
+                <h2 class="section-title">{% trans "Gouvernance et équipe" %}</h2>
+                <p class="section-subtitle">
+                    {% trans "Une équipe engagée pour porter la vision de SOGENTIS." %}
+                </p>
+            </header>
+
+            <div class="team-block">
+                <div class="team-tabs">
+                    <button class="team-tab active" data-tab="board">🏛️ {% trans "Conseil" %}</button>
+                    <button class="team-tab" data-tab="employees">💼 {% trans "Employés" %}</button>
+                </div>
+
+                <!-- CONSEIL -->
+                <div class="team-tab-content" id="team-board">
+                    <div class="team-grid">
+                        {% for t in team_members %}
+                            {% if t.category == "board" %}
+                                {% include "about/components/team_member_card.html" %}
+                            {% endif %}
+                        {% empty %}
+                        <p class="text-center text-muted">{% trans "Aucun membre trouvé." %}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- EMPLOYÉS -->
+                <div class="team-tab-content hidden" id="team-employees">
+                    <div class="team-grid">
+                        {% for t in team_members %}
+                            {% if t.category == "employee" %}
+                                {% include "about/components/team_member_card.html" %}
+                            {% endif %}
+                        {% empty %}
+                        <p class="text-center text-muted">{% trans "Aucun employé trouvé." %}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="organigram-block mt-5">
+                <h3 class="section-subtitle text-center mb-3">
+                    {% trans "Organisation interne" %}
+                </h3>
+                {% render_organigram %}
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ============================ -->
+    <!-- ENFANTS                      -->
+    <!-- ============================ -->
+    <section id="about-children" class="about-section section-reveal">
+        <div class="container">
+
+            <header class="section-header text-center">
+                <h2 class="section-title">{% trans "Enfants bénéficiaires" %}</h2>
+                <p class="section-subtitle">
+                    {% trans "Des parcours d'enfants accompagnés dans leur scolarité et leur épanouissement." %}
+                </p>
+            </header>
+
+            {% render_child %}
+        </div>
+    </section>
+
+    <!-- ============================ -->
+    <!-- MAMANS                       -->
+    <!-- ============================ -->
+    <section id="about-mothers" class="about-section section-reveal">
+        <div class="container">
+
+            <header class="section-header text-center">
+                <h2 class="section-title">{% trans "Mamans bénéficiaires" %}</h2>
+                <p class="section-subtitle">
+                    {% trans "Des femmes soutenues pour développer leurs activités et stabiliser leur foyer." %}
+                </p>
+            </header>
+
+            {% render_mothers %}
+        </div>
+    </section>
+
+    <!-- ============================ -->
+    <!-- PARTENAIRES                  -->
+    <!-- ============================ -->
+    <section id="about-partners" class="about-section section-reveal">
+        <div class="container">
+
+            <header class="section-header text-center">
+                <h2 class="section-title">{% trans "Partenaires" %}</h2>
+                <p class="section-subtitle">
+                    {% trans "Des institutions et organisations qui rendent ce travail possible." %}
+                </p>
+            </header>
+
+            {% render_partners %}
+        </div>
+    </section>
+
+
+    <!-- ========================================= -->
+    <!-- 🔥 NOS 2 PÔLES D’ACTIVITÉ — SECTION PREMIUM -->
+    <!-- ========================================= -->
+    <section id="ong-poles" class="ong-poles-section section-reveal">
+    <div class="container">
+
+        <h2 class="poles-title text-center mb-4">
+        {% trans "Nos deux pôles d’activité" %}
+        </h2>
+
+        <p class="poles-subtitle text-center mb-5">
+        {% trans "Une structure innovante qui combine impact social et solutions économiques pour un développement durable." %}
+        </p>
+
+        <div class="row justify-content-center g-4">
+
+        <!-- PÔLE SOCIAL -->
+        <div class="col-md-5">
+            <a href="{% url 'social:index' %}" class="pole-card">
+            <div class="pole-icon social">
+                <i class="fas fa-hand-holding-heart"></i>
+            </div>
+            <h3 class="pole-title">{% trans "Pôle Social" %}</h3>
+            <p class="pole-desc">
+                {% trans "Éducation, environnement, infrastructures, aide aux enfants, femmes et familles vulnérables." %}
+            </p>
+            <span class="pole-action">{% trans "Découvrir le pôle" %} →</span>
+            </a>
+        </div>
+
+        <!-- PÔLE ÉCONOMIQUE -->
+        <div class="col-md-5">
+            <a href="{% url 'econ:index' %}" class="pole-card">
+            <div class="pole-icon economic">
+                <i class="fas fa-store"></i>
+            </div>
+            <h3 class="pole-title">{% trans "Pôle Économique" %}</h3>
+            <p class="pole-desc">
+                {% trans "Boutique solidaire, services, formations, consultance, IT, hébergement et solutions durables." %}
+            </p>
+            <span class="pole-action">{% trans "Découvrir le pôle" %} →</span>
+            </a>
+        </div>
+
+        </div>
+    </div>
+    </section>
+
+
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+<script src="{% static 'about/js/new_about_index.js' %}"></script>
+<script src="{% static 'about/js/_team_member.js' %}"></script>
+<script src="{% static 'about/js/about_subsection_tabs.js' %}"></script>
+<script src="{% static 'about/js/_organigram.js' %}"></script>
+<script src="{% static 'about/js/_poles_about_index.js' %}"></script>
+{% endblock %}
+

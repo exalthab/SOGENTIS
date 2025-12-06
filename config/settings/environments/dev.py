@@ -11,6 +11,7 @@ from config.settings.modules.base import *
 
 # === Chargement des variables d'environnement depuis un fichier .env ===
 load_dotenv()
+# load_dotenv()  # Inutile si vous utilisez decouple avec un .env à la racine
 
 # === Répertoire racine du projet ===
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
@@ -51,7 +52,8 @@ CACHES = {
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 EMAIL_HOST = config("EMAIL_HOST", default="localhost")
 EMAIL_PORT = config("EMAIL_PORT", cast=int, default=1025)
-DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default="no-reply@example.com")
+# DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default="no-reply@example.com")
+DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default="webmaster@localhost")
 
 # === Logging simple vers la console ===
 LOGGING = {

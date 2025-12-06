@@ -38,9 +38,11 @@ print(f"✅ Configuration Django : environnement {ENVIRONMENT.upper()}")
 # Chargement modulaire
 include(
     BASE_DIR / "config" / "settings" / "modules" / "base.py",
+    BASE_DIR / "config" / "settings" / "modules" / "apps.py",
     BASE_DIR / "config" / "settings" / "modules" / "database.py",
     BASE_DIR / "config" / "settings" / "modules" / "logging.py",
     BASE_DIR / "config" / "settings" / "modules" / "celery.py",
+    BASE_DIR / "config" / "settings" / "modules" / "ckeditor.py",
     BASE_DIR / "config" / "settings" / "modules" / "middleware.py",
     BASE_DIR / "config" / "settings" / "modules" / "static.py",
     BASE_DIR / "config" / "settings" / "modules" / "security.py",
@@ -50,3 +52,6 @@ include(
     BASE_DIR / "config" / "settings" / "modules" / "authentication.py",
     BASE_DIR / "config" / "settings" / "environments" / f"{ENVIRONMENT}.py",
 )
+
+
+

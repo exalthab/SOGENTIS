@@ -1,0 +1,116 @@
+{% load static i18n about_tags %}
+
+<div class="mothers-grid">
+
+    {% for m in mothers %}
+    <!-- Carte mère -->
+    <div class="mother-card fade-in">
+
+        <!-- Photo ronde -->
+        <div class="mother-photo">
+            <img src="{{ m.photo.url }}" alt="{{ m.name }}">
+        </div>
+
+        <!-- Nom -->
+        <h3 class="mother-name">{{ m.name }}</h3>
+
+        <!-- Infos principales -->
+        <div class="mother-meta">
+
+            {% if m.age %}
+            <p class="mother-info-line"><strong>{% trans "Âge" %} :</strong> {{ m.age }} ans</p>
+            {% endif %}
+
+            {% if m.country %}
+            <p class="mother-info-line"><strong>{% trans "Pays" %} :</strong> {{ m.country }}</p>
+            {% endif %}
+
+            {% if m.activity %}
+            <p class="mother-info-line"><strong>{% trans "Activité" %} :</strong> {{ m.activity }}</p>
+            {% endif %}
+
+            {% if m.monthly_income %}
+            <p class="mother-info-line"><strong>{% trans "Revenu mensuel" %} :</strong> {{ m.monthly_income }} {{ m.currency }}</p>
+            {% endif %}
+
+            {% if m.capital_amount %}
+            <p class="mother-info-line"><strong>{% trans "Capital nécessaire" %} :</strong> {{ m.capital_amount }} {{ m.currency }}</p>
+            {% endif %}
+
+        </div>
+
+        <!-- Actions -->
+        <div class="mother-actions">
+            <a href="{% url 'social:donation_mother' m.id %}" class="btn-support">
+                {% trans "Soutenir cette mère" %}
+            </a>
+
+            <button class="btn btn-outline open-mother-modal" data-target="#mother-modal-{{ m.id }}">
+                {% trans "Voir description" %}
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Modal -->
+    <div class="mother-modal" id="mother-modal-{{ m.id }}">
+
+        <div class="mother-modal-content">
+
+            <button class="close-modal" aria-label="{% trans 'Fermer' %}">&times;</button>
+
+            <h3 class="modal-name">{{ m.name }}</h3>
+
+            <div class="modal-body">
+
+                {% if m.birth_date %}
+                <p><strong>{% trans "Date de naissance" %} :</strong> {{ m.birth_date }}</p>
+                {% endif %}
+
+                {% if m.country %}
+                <p><strong>{% trans "Pays" %} :</strong> {{ m.country }}</p>
+                {% endif %}
+
+                {% if m.identification_number %}
+                <p><strong>{% trans "Numéro d'identification" %} :</strong> {{ m.identification_number }}</p>
+                {% endif %}
+
+                {% if m.activity %}
+                <p><strong>{% trans "Activité" %} :</strong> {{ m.activity }}</p>
+                {% endif %}
+
+                {% if m.capital_amount %}
+                <p><strong>{% trans "Capital nécessaire" %} :</strong> {{ m.capital_amount }} {{ m.currency }}</p>
+                {% endif %}
+
+                {% if m.monthly_income %}
+                <p><strong>{% trans "Revenu mensuel" %} :</strong> {{ m.monthly_income }} {{ m.currency }}</p>
+                {% endif %}
+
+                {% if m.story %}
+                <div class="modal-story">{{ m.story|safe }}</div>
+                {% endif %}
+
+            </div>
+
+            <!-- Footer actions modal -->
+            <div class="modal-footer">
+                <a href="{% url 'social:donation_mother' m.id %}" class="btn-support">
+                    {% trans "Soutenir cette mère" %}
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+
+    {% empty %}
+    <p>{% trans "Aucune mère disponible pour le moment." %}</p>
+    {% endfor %}
+
+</div>
+
+<!-- CSS et JS -->
+<link rel="stylesheet" href="{% static 'about/css/_mothers.css' %}">
+<script src="{% static 'about/js/_mothers.js' %}"></script>
+

@@ -1,0 +1,41 @@
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Nos Enfants" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'about/css/children.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="children-section py-5">
+  <div class="container">
+    <h2 class="text-center mb-4">{% trans "Nos Enfants" %}</h2>
+    <div class="row g-4">
+      {% for child in children %}
+        <div class="col-md-4 col-lg-3">
+          <div class="child-card card h-100 shadow-sm border-0">
+            <img src="{{ child.photo_url }}" alt="{{ child.name }}" class="card-img-top rounded-top"
+                 style="height:220px; object-fit:cover;">
+            <div class="card-body text-center">
+              <h5 class="card-title mb-1">{{ child.name }}</h5>
+              {% if child.age %}
+                <p class="text-muted mb-1">{% trans "Âge" %} : {{ child.age }} ans</p>
+              {% endif %}
+              <p class="small text-secondary">{{ child.school|default:"" }}</p>
+              {% if child.short_story %}
+                <p class="small text-muted">{{ child.short_story|truncatewords:15 }}</p>
+              {% endif %}
+              <a href="{% url 'about:child_detail' child.id %}" class="btn btn-outline-primary btn-sm mt-2">
+                {% trans "Voir le profil" %}
+              </a>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <p class="text-center text-muted">{% trans "Aucun enfant enregistré pour le moment." %}</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

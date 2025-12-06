@@ -1,0 +1,18 @@
+.children-section {
+  background-color: #f8f9fa;
+}
+
+.child-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 1rem;
+}
+
+.child-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.child-card img {
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+}

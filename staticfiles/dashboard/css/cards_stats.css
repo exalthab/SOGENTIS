@@ -1,0 +1,109 @@
+/* ========================
+   STATS CARDS – Compactes & colorées
+======================== */
+.stats-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  flex: 1;
+  min-width: 180px;
+  padding: 1rem;
+  border-radius: 12px;
+  text-align: center;
+  color: white;
+  background-color: #007bff; /* par défaut */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card h4 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.stat-card p {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Couleurs de fond personnalisées */
+.stat-card.green  { background-color: #28a745; }
+.stat-card.blue   { background-color: #007bff; }
+.stat-card.orange { background-color: #fd7e14; }
+
+/* ========================
+   STATS CARDS – Blanches / Résumées
+======================== */
+.stats-card,
+.stats-summary-card {
+  background-color: #fff;
+  border-radius: 1.1rem;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  box-shadow: 0 1px 8px rgba(44, 62, 80, 0.09);
+  transition: box-shadow 0.18s ease, transform 0.18s ease;
+}
+
+.stats-card:hover,
+.stats-summary-card:hover {
+  box-shadow: 0 8px 32px 0 rgba(60, 60, 60, 0.09);
+  transform: translateY(-1px) scale(1.03);
+}
+
+.stats-value,
+.stats-summary-card .value {
+  font-size: 2.2rem;
+  font-weight: bold;
+  color: #18bc9c;
+}
+
+.stats-label,
+.stats-summary-card .label {
+  font-size: 1rem;
+  color: #7d8da1;
+  margin-top: 0.3rem;
+  letter-spacing: 0.5px;
+}
+
+/* ========================
+   GRAPHIQUES
+======================== */
+canvas {
+  max-width: 100%;
+  background: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 1px 8px rgba(30, 60, 90, 0.03);
+  padding: 0.4rem;
+  margin-top: 0.8rem;
+}
+
+/* ========================
+   DARK MODE
+======================== */
+@media (prefers-color-scheme: dark) {
+  .stats-card,
+  .stats-summary-card {
+    background-color: #23272b;
+    color: #eee;
+    border: 1px solid #444;
+  }
+
+  .stats-label,
+  .stats-summary-card .label {
+    color: #aaa;
+  }
+
+  .stats-value,
+  .stats-summary-card .value {
+    color: #4bd0c8;
+  }
+}

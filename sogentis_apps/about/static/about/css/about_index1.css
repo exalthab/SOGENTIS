@@ -1,0 +1,125 @@
+/* ============================= */
+/* ABOUT INDEX GLOBAL STYLES     */
+/* ============================= */
+
+/* Conteneur général */
+.about-card, .about-section {
+    margin: 2rem auto;
+    padding: 2rem;
+    max-width: 1200px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+/* Titres principaux */
+.about-card-title, .section-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: #333333;
+    text-align: center;
+}
+
+/* Contenu textuel */
+.about-card-content p {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    color: #555555;
+    text-align: justify;
+}
+
+/* Bouton retour */
+.btn-outline-primary {
+    font-weight: 500;
+    padding: 0.5rem 1.2rem;
+    border-width: 2px;
+    display: inline-block;
+}
+
+.btn-outline-primary:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+/* Sections individuelles */
+.about-section {
+    padding: 3rem 1rem;
+}
+
+.about-section h2.section-title {
+    margin-bottom: 2rem;
+}
+
+/* Team members, organigram, children, mothers, partners - flex wrap */
+.about-section > div, 
+.about-section > ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+}
+
+/* Responsive images */
+.about-section img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* HERO SECTION */
+.hero-section {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    background-size: cover;
+    background-position: center;
+    margin-bottom: 3rem;
+    border-radius: 12px;
+}
+
+/* Bouton flottant “Faire un don” */
+.btn-donation-floating {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1050;
+    padding: 0.75rem 1.2rem;
+    font-size: 1rem;
+    border-radius: 50px;
+}
+
+/* Retour à propos en haut à gauche (fixe) */
+.btn-return-about {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1050;
+    padding: 0.5rem 1rem;
+}
+
+/* Petites animations sur hover */
+.about-section img:hover, .about-card-content img:hover {
+    transform: scale(1.03);
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .about-card, .about-section {
+        padding: 1.5rem;
+    }
+
+    .about-card-title, .section-title {
+        font-size: 1.5rem;
+    }
+
+    .btn-return-about {
+        top: 10px;
+        left: 10px;
+        padding: 0.4rem 0.8rem;
+        font-size: 0.9rem;
+    }
+}

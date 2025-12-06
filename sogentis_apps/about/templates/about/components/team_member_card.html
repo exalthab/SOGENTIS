@@ -1,0 +1,34 @@
+{# about/components/team_member_card.html #}
+{% load static i18n about_tags %}
+
+<div class="team-card fade-in-up">
+
+    <!-- Photo -->
+    <div class="team-photo-wrapper">
+        {% if t.photo %}
+            <img src="{{ t.photo.url }}" alt="{{ t|translate:'name' }}" class="team-photo">
+        {% else %}
+            <img src="{% static 'about/img/default_user.png' %}" alt="{{ t|translate:'name' }}" class="team-photo">
+        {% endif %}
+    </div>
+
+    <!-- Nom -->
+    <h3 class="team-name">
+        {{ t|translate:"name" }}
+    </h3>
+
+    <!-- Rôle -->
+    {% if t.role %}
+        <p class="team-role">
+            {{ t|translate:"role" }}
+        </p>
+    {% endif %}
+
+    <!-- Bio -->
+    {% if t.bio %}
+        <p class="team-bio">
+            {{ t|translate:"bio"|safe }}
+        </p>
+    {% endif %}
+
+</div>

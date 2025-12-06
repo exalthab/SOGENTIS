@@ -1,0 +1,50 @@
+{# about/templates/about/components/about_subsection.html #}
+{% load static i18n about_tags %}
+
+<link rel="stylesheet" href="{% static 'about/css/about_tabs.css' %}">
+
+<div class="about-tabs-container">
+
+    <!-- NAVIGATION -->
+    <ul class="about-tabs-nav">
+        {% for item in subsections %}
+            <li class="tab-link {% if forloop.first %}active{% endif %}"
+                data-tab="tab-{{ item.key }}">
+                {{ item|translate:"title" }}
+            </li>
+        {% empty %}
+            <li class="tab-link active">
+                {% trans "Aucune section disponible" %}
+            </li>
+        {% endfor %}
+    </ul>
+
+    <!-- CONTENU -->
+    <div class="about-tabs-content">
+        {% for item in subsections %}
+            <div id="tab-{{ item.key }}" class="tab-content {% if forloop.first %}active{% endif %}">
+
+                <h2>{{ item|translate:"title" }}</h2>
+
+                {% with subtitle=item|translate:"subtitle" %}
+                    {% if subtitle %}
+                        <p>{{ subtitle|safe }}</p>
+                    {% endif %}
+                {% endwith %}
+
+                <div class="tab-body">
+                    {{ item|translate:"content"|safe }}
+                </div>
+
+                {% if item.image %}
+                    <img src="{{ item.image.url }}" alt="{{ item|translate:'title' }}" class="tab-image">
+                {% endif %}
+
+            </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+<script src="{% static 'about/js/about_tabs.js' %}"></script>
+

@@ -1,0 +1,38 @@
+{% load static i18n %}
+
+<div class="about-ong-menu container my-4">
+    <h3 class="about-ong-title text-center">
+        {% trans "Nos deux pôles d'activité" %}
+    </h3>
+
+    <div class="row g-4 justify-content-center">
+
+        <!-- 🌍 PÔLE SOCIAL -->
+        <div class="col-lg-5 col-md-6">
+            <div class="ong-card social-card">
+                <h4>🌍 {% trans "Pôle Social" %}</h4>
+                <ul>
+                    <li><a href="{% url 'social:index' %}">➡️ {% trans "Accueil Social" %}</a></li>
+                    <li><a href="{% url 'social:donation' %}">❤️ {% trans "Faire un don" %}</a></li>
+                    <li><a href="{% url 'social:public_donations' %}">📢 {% trans "Dons publics" %}</a></li>
+                    <li><a href="{% url 'social:donation_history' %}">📜 {% trans "Historique des dons" %}</a></li>
+                    <li><a href="{% url 'social:projects_list' %}">🏗️ {% trans "Projets & Infrastructures" %}</a></li>
+                    <li><a href="{% url 'social:engagement' %}">🤝 {% trans "Volontariat & Engagement" %}</a></li>
+                    <li><a href="{% url 'social:publication_list' %}">📘 {% trans "Publications" %}</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 💼 PÔLE ÉCONOMIQUE -->
+        <div class="col-lg-5 col-md-6">
+            <div class="ong-card econ-card">
+                <h4>💼 {% trans "Pôle Économique" %}</h4>
+                <ul>
+                    <li><a href="{% url 'econ:index' %}">➡️ {% trans "Accueil Économique" %}</a></li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</div>
+

@@ -12,6 +12,103 @@
   <h2 class="mb-4">{% trans "Statistiques globales" %}</h2>
 
   <!-- 🔹 Cartes de synthèse -->
+  <div class="row mb-4 g-4 justify-content-center">
+    {% if summary_cards %}
+      {% for card in summary_cards %}
+        <div class="col-12 col-sm-6 col-md-4">
+          <div class="card border-{{ card.color }} stats-card shadow h-100">
+            <div class="card-body text-center">
+              <div class="h3 mb-2 fw-bold text-{{ card.color }}">{{ card.value }}</div>
+              <div class="small text-muted">{{ card.label }}</div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+
+  <!-- 🔹 Diagramme principal -->
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <canvas id="statsChart" height="80"></canvas>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'js/chart.min.js' %}"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Les labels et datas sont passés par le contexte Django (cf. ta vue)
+      const labels = {{ stats_labels|default:"['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin']"|safe }};
+      const data = {{ stats_data|default:"[12, 19, 8, 15, 20, 25]"|safe }};
+
+      const ctx = document.getElementById('statsChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: '{% trans "Utilisateurs actifs" %}',
+            data: data,
+            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+            borderColor: 'rgb(54, 162, 235)',
+            borderWidth: 1,
+            borderRadius: 7,
+            maxBarThickness: 38,
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: '{% trans "Évolution des utilisateurs actifs (1er semestre)" %}',
+              font: { size: 18 }
+            },
+            legend: { position: 'top' }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: '{% trans "Nombre d’utilisateurs" %}'
+              }
+            }
+          }
+        }
+      });
+    });
+  </script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+{% comment %} {% extends "dashboard/base.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Statistiques" %} | SOGENTIS{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'dashboard/css/stats.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h2 class="mb-4">{% trans "Statistiques globales" %}</h2>
+
+  <!-- 🔹 Cartes de synthèse -->
   <div class="row mb-4">
     {% if summary_cards %}
       {% for card in summary_cards %}
@@ -81,7 +178,7 @@
     });
   });
   </script>
-{% endblock %}
+{% endblock %} {% endcomment %}
 
 
 

@@ -1,0 +1,15 @@
+{% comment %} {% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Ajouter un document" %}{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h2>{% trans "Ajouter un document" %}</h2>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">{% trans "Enregistrer" %}</button>
+  </form>
+</div>
+{% endblock %} {% endcomment %}

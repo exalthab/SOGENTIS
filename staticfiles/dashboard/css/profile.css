@@ -1,5 +1,135 @@
 /* Styles spécifiques à la page Profil */
 .profile-header {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  letter-spacing: 0.01em;
+  color: #233045;
+  text-align: left;
+}
+
+.profile-card {
+  border: 1px solid #dee2e6;
+  border-radius: 12px;
+  padding: 2rem 1.5rem 1.5rem 1.5rem;
+  background-color: #fff;
+  box-shadow: 0 6px 18px rgba(40, 50, 70, 0.05);
+  margin-bottom: 2rem;
+  transition: box-shadow 0.19s;
+}
+.profile-card:hover {
+  box-shadow: 0 10px 32px rgba(40,50,90,0.11);
+}
+
+.profile-card h5 {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: #27394d;
+}
+
+.profile-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 1.1rem;
+  border: 4px solid #f2f2f7;
+  box-shadow: 0 2px 12px rgba(80,100,120,0.09);
+  background: #f9fafc;
+}
+
+.profile-info-row {
+  margin-bottom: 0.9rem;
+  font-size: 1.04rem;
+}
+.profile-info-row strong {
+  color: #29344d;
+  min-width: 90px;
+  display: inline-block;
+}
+
+@media (max-width: 767px) {
+  .profile-card, .profile-form-card {
+    padding: 1.1rem 0.8rem;
+  }
+  .profile-header {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+  }
+  .profile-avatar {
+    width: 86px;
+    height: 86px;
+  }
+}
+
+/* Formulaire mise à jour */
+.profile-form-card {
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid #e4e8ef;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+  padding: 2rem 1.5rem;
+}
+
+.profile-form-card .form-label {
+  font-weight: 500;
+  color: #27394d;
+}
+.profile-form-card .form-control:focus {
+  border-color: #80c2fa;
+  box-shadow: 0 0 0 0.13rem rgba(0,123,255,.16);
+}
+.profile-form-card button {
+  min-width: 120px;
+  font-size: 1.08rem;
+}
+
+/* Dark mode auto */
+@media (prefers-color-scheme: dark) {
+  .profile-card,
+  .profile-form-card {
+    background: #232a35;
+    border-color: #373c47;
+    color: #e6eaf1;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.13);
+  }
+  .profile-card h5,
+  .profile-header {
+    color: #d3e7ff;
+  }
+  .profile-info-row strong {
+    color: #a6bed8;
+  }
+  .profile-avatar {
+    border-color: #34405a;
+    background: #1c2532;
+  }
+}
+
+.profile-edit-page h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #2a3440;
+}
+.profile-edit-page .card {
+  border-radius: 1rem;
+}
+.profile-edit-page .img-thumbnail {
+  border: 3px solid #e9ecef;
+  margin-bottom: 1rem;
+}
+
+
+
+
+
+
+
+
+
+
+/* Styles spécifiques à la page Profil
+.profile-header {
   font-size: 1.8rem;
   font-weight: 600;
   margin-bottom: 1.5rem;
@@ -24,4 +154,4 @@
   border-radius: 50%;
   object-fit: cover;
   margin-bottom: 1rem;
-}
+} */

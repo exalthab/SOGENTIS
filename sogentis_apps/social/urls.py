@@ -1,4 +1,4 @@
-#social/urls.py
+# social/urls.py
 from django.urls import path
 
 from social.views.publication_view import (
@@ -9,7 +9,7 @@ from social.views.publication_view import (
     publication_email_request,
 )
 from social.views.donations import (
-    soci_index,
+    soci_index_view,
     donation_view,
     public_donations_view,
     donation_success_view,
@@ -18,7 +18,6 @@ from social.views.donations import (
     donation_payment_choice_view,
     donation_history_view,
 )
-from social.views.publication_view import publication_list
 from social.views.projects import (
     projects_list_view,
     create_project_view,
@@ -38,14 +37,20 @@ from social.views.payments import (
     StripeWebhookView,
 )
 from social.views.volunteers import engagement_view
-from social.search_view import search_view
+# from social.search_v import ajax_search, search_view
+
+# ✅ Nouvel import pour gérer les codes de téléchargement
+from social.views import download as download_views
+
 
 app_name = "social"
 
 urlpatterns = [
     # 🌍 Accueil et recherche
-    path("", soci_index, name="index"),
-    path("search/", search_view, name="search"),
+    path("", soci_index_view, name="index"),
+    # path("search/", search_view, name="search"),
+    # path("search/ajax/", ajax_search, name="ajax_search"),
+
 
     # 💕 Dons
     path("donation/", donation_view, name="donation"),
@@ -55,7 +60,9 @@ urlpatterns = [
     path("public-donations/", public_donations_view, name="public_donations"),
     path("donation/history/", donation_history_view, name="donation_history"),
     path("donation/<int:donation_id>/receipt/", download_receipt_view, name="download_receipt"),
-
+    # URLs distinctes pour enfant et mère
+    path('donate/child/<int:child_id>/', donation_view, name='donation_child'),
+    path('donate/mother/<int:mother_id>/', donation_view, name='donation_mother'),
     # 💳 Intégrations Paiements
     path("payment/stripe/<int:donation_id>/", stripe_checkout_view, name="stripe_checkout"),
     path("payment/paypal/<int:donation_id>/", paypal_checkout_view, name="paypal_checkout"),
@@ -77,7 +84,7 @@ urlpatterns = [
     path("publication/<int:pk>/request-access/", publication_request_access, name="publication_request_access"),
     path("publication/<int:pk>/pay/", publication_pay_and_request, name="publication_pay_and_request"),
     path("publication/<int:pk>/download/", download_publication, name="download_publication"),
-    path('publication/<int:pk>/email_request/', publication_email_request, name='publication_email_request'),
+    path("publication/<int:pk>/email_request/", publication_email_request, name="publication_email_request"),
 
     # 📁 Projets
     path("projects/", projects_list_view, name="projects_list"),
@@ -86,4 +93,7 @@ urlpatterns = [
     path("projects/<int:pk>/edit/", update_project_view, name="update_project"),
     path("projects/<int:pk>/delete/", delete_project_view, name="delete_project"),
 
+    # 🔑 Téléchargement sécurisé par code
+    path("publication/<int:doc_id>/send-code/", download_views.send_download_code, name="send_download_code"),
+    path("download/code/", download_views.enter_download_code, name="enter_download_code"),
 ]

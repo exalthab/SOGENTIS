@@ -1,3 +1,1682 @@
+{# social/templates/social/donation_form.html #}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Faire un Don" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'social/css/_donation.css' %}">
+{% endblock %}
+
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+
+            <!-- 🔹 Titre -->
+            <h2 class="text-center mb-4 fw-bold">{% trans "Soutenir SOGENTIS" %}</h2>
+
+            <!-- 🔹 Info / Merci -->
+            <div class="alert alert-info text-center mb-4">
+                {% trans "Merci de soutenir nos actions !" %}<br>
+                <small>💱 {% trans "Taux de change approximatif" %} : <strong>1 $ ≈ 0.91 € ≈ 610 FCFA</strong></small>
+            </div>
+
+            <!-- 🔹 Cible sélectionnée -->
+            {% if target %}
+            <div class="alert alert-secondary text-center mb-4">
+                {% trans "Vous soutenez :" %} <strong>{{ target }}</strong>
+            </div>
+            {% endif %}
+
+            <!-- 🔹 Formulaire -->
+            <form method="POST" novalidate class="donation-form">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                {% endif %}
+
+                <!-- Projet -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold" for="id_project">{% trans "Choisissez un projet à soutenir" %}</label>
+                    {{ form.project }}
+                    {% if form.project.errors %}<div class="text-danger small">{{ form.project.errors }}</div>{% endif %}
+                </div>
+
+                <!-- Enfant -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold" for="id_child">{% trans "Choisissez un enfant à soutenir" %}</label>
+                    {{ form.child }}
+                    {% if form.child.errors %}<div class="text-danger small">{{ form.child.errors }}</div>{% endif %}
+                    <div id="child-preview" class="selected-child-preview mt-2" style="display:none;">
+                        <img id="child-preview-img" src="" alt="">
+                        <div class="selected-child-info">
+                            <strong id="child-preview-name"></strong><br>
+                            <span id="child-preview-id"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mère -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold" for="id_mother">{% trans "Choisissez une mère à soutenir" %}</label>
+                    {{ form.mother }}
+                    {% if form.mother.errors %}<div class="text-danger small">{{ form.mother.errors }}</div>{% endif %}
+                </div>
+
+                <!-- Montants rapides -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold">{% trans "Choisissez un montant rapide" %}</label>
+                    <div class="d-flex flex-wrap gap-2">
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="1000">1 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="5000">5 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="10000">10 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="50000">50 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="100000">100 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-secondary amount-btn" data-amount="">{% trans "Autre" %}</button>
+                    </div>
+                </div>
+
+                <!-- Montant libre -->
+                <div class="mb-3">
+                    <label class="form-label" for="id_amount">{% trans "Montant en FCFA (XOF)" %}</label>
+                    {{ form.amount }}
+                    {% if form.amount.errors %}<div class="text-danger small">{{ form.amount.errors }}</div>{% endif %}
+                </div>
+
+                <!-- Fréquence du don -->
+                <div class="mb-4">
+                    <label class="fw-bold">{% trans "Fréquence du don" %}</label>
+                    <div class="d-flex gap-3">
+                        <label class="form-check">
+                            <input type="radio" name="monthly" value="False" class="form-check-input" {% if not form.monthly.value %}checked{% endif %}>
+                            <span class="form-check-label">{% trans "Ponctuel" %}</span>
+                        </label>
+                        <label class="form-check">
+                            <input type="radio" name="monthly" value="True" class="form-check-input" {% if form.monthly.value %}checked{% endif %}>
+                            <span class="form-check-label">{% trans "Mensuel" %}</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Nom et email -->
+                <div class="mb-3">
+                    <label class="form-label" for="id_donor_name">{% trans "Nom complet" %}</label>
+                    {{ form.donor_name }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="id_email">{% trans "Adresse email" %}</label>
+                    {{ form.email }}
+                </div>
+
+                <!-- Message -->
+                <div class="mb-3">
+                    <label class="form-label" for="id_message">{% trans "Message (optionnel)" %}</label>
+                    {{ form.message }}
+                </div>
+
+                {% if target_type and target_id %}
+                <input type="hidden" name="target_type" value="{{ target_type }}">
+                <input type="hidden" name="target_id" value="{{ target_id }}">
+                {% endif %}
+
+                <!-- Bouton de validation -->
+                <button class="btn btn-success btn-lg w-100 mt-3">
+                    {% trans "Continuer vers le paiement" %}
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'social/js/_donation.js' %}"></script>
+{% endblock %}
+
+
+
+
+
+
+{% comment %} {# social/donation_form.html #}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Faire un Don" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'social/css/_donation_form.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="donation-wrapper container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+
+            <h2 class="text-center mb-4 fw-bold">{% trans "Soutenir SOGENTIS" %}</h2>
+
+            <div class="donation-info alert alert-info text-center mb-4">
+                {% trans "Merci de soutenir nos actions !" %}<br>
+                <small>💱 {% trans "Taux de change approximatif" %} :
+                    <strong>1 $ ≈ 0.91 € ≈ 610 FCFA</strong>
+                </small>
+            </div>
+
+            {% if target %}
+            <div class="alert alert-secondary text-center mb-4">
+                {% trans "Vous soutenez :" %} <strong>{{ target }}</strong>
+            </div>
+            {% endif %}
+
+            <form method="POST" novalidate class="donation-form">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                {% endif %}
+
+                <!-- 🎯 Projet -->
+                <div class="form-block mb-3">
+                    <label class="form-label fw-bold" for="id_project">
+                        {% trans "Choisissez un projet à soutenir" %}
+                    </label>
+                    {{ form.project }}
+                    {% if form.project.errors %}
+                    <div class="text-danger small">{{ form.project.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 👶 Enfant -->
+                <div class="form-block mb-3">
+                    <label class="form-label fw-bold" for="id_child">
+                        {% trans "Choisissez un enfant à soutenir" %}
+                    </label>
+                    {{ form.child }}
+                    {% if form.child.errors %}
+                    <div class="text-danger small">{{ form.child.errors }}</div>
+                    {% endif %}
+
+                    <!-- Aperçu enfant -->
+                    <div id="child-preview" class="selected-child-preview" style="display:none;">
+                        <img id="child-preview-img" src="" alt="">
+                        <div class="selected-child-info">
+                            <strong id="child-preview-name"></strong><br>
+                            <span id="child-preview-id"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 👩 Mère -->
+                <div class="form-block mb-3">
+                    <label class="form-label fw-bold" for="id_mother">
+                        {% trans "Choisissez une mère à soutenir" %}
+                    </label>
+                    {{ form.mother }}
+                    {% if form.mother.errors %}
+                    <div class="text-danger small">{{ form.mother.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 💵 Montants rapides -->
+                <div class="form-block mb-4">
+                    <label class="form-label fw-bold">{% trans "Choisissez un montant rapide" %}</label>
+                    <div class="preset-amount-grid d-flex flex-wrap gap-2">
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="1000">1 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="5000">5 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="10000">10 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="50000">50 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="100000">100 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-secondary amount-btn" data-amount="">{% trans "Autre" %}</button>
+                    </div>
+                </div>
+
+                <!-- 💰 Montant libre -->
+                <div class="form-block mb-3">
+                    <label class="form-label" for="id_amount">{% trans "Montant en FCFA (XOF)" %}</label>
+                    {{ form.amount }}
+                    {% if form.amount.errors %}
+                    <div class="text-danger small">{{ form.amount.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 🔁 Ponctuel / Mensuel -->
+                <div class="form-block mb-4">
+                    <label class="fw-bold">{% trans "Fréquence du don" %}</label>
+                    <div class="donation-frequency-group">
+                        <label class="donation-frequency">
+                            <input type="radio" name="monthly" value="False" {% if not form.monthly.value %}checked{% endif %}>
+                            <span class="tick"></span>
+                            <span class="label-text">{% trans "Ponctuel" %}</span>
+                        </label>
+
+                        <label class="donation-frequency">
+                            <input type="radio" name="monthly" value="True" {% if form.monthly.value %}checked{% endif %}>
+                            <span class="tick"></span>
+                            <span class="label-text">{% trans "Mensuel" %}</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 👤 Nom -->
+                <div class="form-block mb-3">
+                    <label class="form-label" for="id_donor_name">{% trans "Nom complet" %}</label>
+                    {{ form.donor_name }}
+                </div>
+
+                <!-- 📧 Email -->
+                <div class="form-block mb-3">
+                    <label class="form-label" for="id_email">{% trans "Adresse email" %}</label>
+                    {{ form.email }}
+                </div>
+
+                <!-- 📝 Message -->
+                <div class="form-block mb-3">
+                    <label class="form-label" for="id_message">{% trans "Message (optionnel)" %}</label>
+                    {{ form.message }}
+                </div>
+
+                {% if target_type and target_id %}
+                <input type="hidden" name="target_type" value="{{ target_type }}">
+                <input type="hidden" name="target_id" value="{{ target_id }}">
+                {% endif %}
+
+                <button class="btn btn-success btn-lg w-100 mt-3">
+                    {% trans "Continuer vers le paiement" %}
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'social/js/_donation_form.js' %}"></script>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# social/donation_form.html #}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Faire un Don" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'social/css/_donation_form.css' %}">
+
+<style>
+/* 🔹 Carte de sélection de fréquence */
+.donation-frequency-group {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.donation-frequency {
+    flex: 1;
+    padding: 15px;
+    border: 2px solid #0d6efd;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s, border-color 0.3s;
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.donation-frequency:hover {
+    background-color: #0d6efd1a;
+}
+
+.donation-frequency input[type="radio"] {
+    display: none; /* cache le radio réel */
+}
+
+.donation-frequency .tick {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #0d6efd;
+    border-radius: 50%;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: white;
+    background-color: transparent;
+    transition: background 0.3s;
+}
+
+.donation-frequency input[type="radio"]:checked + .tick {
+    background-color: #0d6efd;
+}
+
+.donation-frequency .label-text {
+    font-weight: 500;
+}
+
+/* 🔹 Preview enfant sélectionné */
+.selected-child-preview {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px dashed #0d6efd;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+}
+
+.selected-child-preview img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 1px solid #0d6efd;
+}
+
+.selected-child-info {
+    font-size: 0.9rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="donation-wrapper container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+
+            <h2 class="text-center mb-4 fw-bold">{% trans "Soutenir SOGENTIS" %}</h2>
+
+            <div class="donation-info alert alert-info text-center mb-4">
+                {% trans "Merci de soutenir nos actions !" %}<br>
+                <small>💱 {% trans "Taux de change approximatif" %} : 
+                    <strong>1 $ ≈ 0.91 € ≈ 610 FCFA</strong>
+                </small>
+            </div>
+
+            {% if target %}
+            <div class="alert alert-secondary text-center mb-4">
+                {% trans "Vous soutenez :" %} <strong>{{ target }}</strong>
+            </div>
+            {% endif %}
+
+            <form method="POST" novalidate class="donation-form">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                {% endif %}
+
+                <!-- 🎯 Projet -->
+                <div class="form-block mb-3">
+                    <label class="form-label fw-bold" for="id_project">{% trans "Choisissez un projet à soutenir" %}</label>
+                    {{ form.project }}
+                    {% if form.project.errors %}
+                    <div class="text-danger small">{{ form.project.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 👶 Enfant -->
+                <div class="form-block mb-3">
+                    <label class="form-label fw-bold" for="id_child">{% trans "Choisissez un enfant à soutenir" %}</label>
+                    {{ form.child }}
+                    {% if form.child.errors %}
+                    <div class="text-danger small">{{ form.child.errors }}</div>
+                    {% endif %}
+
+                    <!-- Aperçu enfant sélectionné -->
+                    <div id="child-preview" class="selected-child-preview" style="display:none;">
+                        <img id="child-preview-img" src="" alt="{% trans 'Enfant sélectionné' %}">
+                        <div class="selected-child-info">
+                            <strong id="child-preview-name"></strong><br>
+                            <span id="child-preview-id"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 👩 Mère -->
+                <div class="form-block mb-3">
+                    <label class="form-label fw-bold" for="id_mother">{% trans "Choisissez une mère à soutenir" %}</label>
+                    {{ form.mother }}
+                    {% if form.mother.errors %}
+                    <div class="text-danger small">{{ form.mother.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 💵 Montants rapides -->
+                <div class="form-block mb-4">
+                    <label class="form-label fw-bold">{% trans "Choisissez un montant rapide" %}</label>
+                    <div class="preset-amount-grid d-flex flex-wrap gap-2">
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="1000">1 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="5000">5 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="10000">10 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="50000">50 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="100000">100 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-secondary amount-btn" data-amount="">{% trans "Autre" %}</button>
+                    </div>
+                </div>
+
+                <!-- 💰 Montant libre -->
+                <div class="form-block mb-3">
+                    <label class="form-label" for="id_amount">{% trans "Montant en FCFA (XOF)" %}</label>
+                    {{ form.amount }}
+                    {% if form.amount.errors %}
+                    <div class="text-danger small">{{ form.amount.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 🔁 Sélection Ponctuel / Mensuel -->
+                <div class="form-block mb-4">
+                    <label class="fw-bold">{% trans "Fréquence du don" %}</label>
+                    <div class="donation-frequency-group">
+                        <label class="donation-frequency">
+                            <input type="radio" name="monthly" value="False" {% if not form.monthly.value %}checked{% endif %}>
+                            <span class="tick"></span>
+                            <span class="label-text">{% trans "Ponctuel" %}</span>
+                        </label>
+                        <label class="donation-frequency">
+                            <input type="radio" name="monthly" value="True" {% if form.monthly.value %}checked{% endif %}>
+                            <span class="tick"></span>
+                            <span class="label-text">{% trans "Mensuel" %}</span>
+                        </label>
+                    </div>
+                    {% if form.monthly.errors %}
+                    <div class="text-danger small">{{ form.monthly.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 👤 Nom -->
+                <div class="form-block mb-3">
+                    <label class="form-label" for="id_donor_name">{% trans "Nom complet" %}</label>
+                    {{ form.donor_name }}
+                    {% if form.donor_name.errors %}
+                    <div class="text-danger small">{{ form.donor_name.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 📧 Email -->
+                <div class="form-block mb-3">
+                    <label class="form-label" for="id_email">{% trans "Adresse email" %}</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                    <div class="text-danger small">{{ form.email.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 📝 Message -->
+                <div class="form-block mb-3">
+                    <label class="form-label" for="id_message">{% trans "Message (optionnel)" %}</label>
+                    {{ form.message }}
+                    {% if form.message.errors %}
+                    <div class="text-danger small">{{ form.message.errors }}</div>
+                    {% endif %}
+                </div>
+
+                {% if target_type and target_id %}
+                <input type="hidden" name="target_type" value="{{ target_type }}">
+                <input type="hidden" name="target_id" value="{{ target_id }}">
+                {% endif %}
+
+                <button class="btn btn-success btn-lg w-100 mt-3">{% trans "Continuer vers le paiement" %}</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'social/js/_donation_form.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Montants rapides
+    document.querySelectorAll('.amount-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const amountField = document.getElementById('id_amount');
+            const val = btn.dataset.amount;
+            amountField.value = val || '';
+            if (!val) amountField.focus();
+        });
+    });
+
+    // Aperçu enfant sélectionné
+    const childSelect = document.getElementById('id_child');
+    const previewWrapper = document.getElementById('child-preview');
+    const previewImg = document.getElementById('child-preview-img');
+    const previewName = document.getElementById('child-preview-name');
+    const previewID = document.getElementById('child-preview-id');
+
+    childSelect.addEventListener('change', function() {
+        const selectedOption = childSelect.selectedOptions[0];
+        if (!selectedOption || !selectedOption.dataset.img || !selectedOption.value) {
+            previewWrapper.style.display = 'none';
+            return;
+        }
+        previewImg.src = selectedOption.dataset.img;
+        previewName.textContent = selectedOption.text;
+        previewID.textContent = "ID: " + selectedOption.value;
+        previewWrapper.style.display = 'flex';
+    });
+
+    // Initial load preview
+    if (childSelect.value) {
+        const event = new Event('change');
+        childSelect.dispatchEvent(event);
+    }
+});
+</script>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+{% comment %} {# social/donation_form.html #}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Faire un Don" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'social/css/_donation_form.css' %}">
+
+<style>
+/* 🔹 Carte de sélection de fréquence */
+.donation-frequency-group {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.donation-frequency {
+    flex: 1;
+    padding: 15px;
+    border: 2px solid #0d6efd;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s, border-color 0.3s;
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.donation-frequency:hover {
+    background-color: #0d6efd1a;
+}
+
+.donation-frequency input[type="radio"] {
+    display: none; /* cache le radio réel */
+}
+
+.donation-frequency .tick {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #0d6efd;
+    border-radius: 50%;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: white;
+    background-color: transparent;
+    transition: background 0.3s;
+}
+
+.donation-frequency input[type="radio"]:checked + .tick {
+    background-color: #0d6efd;
+}
+
+.donation-frequency .label-text {
+    font-weight: 500;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="donation-wrapper container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+
+            <h2 class="text-center mb-4 fw-bold">{% trans "Soutenir SOGENTIS" %}</h2>
+
+            <div class="donation-info alert alert-info text-center mb-4">
+                {% trans "Merci de soutenir nos actions !" %}<br>
+                <small>💱 {% trans "Taux de change approximatif" %} : <strong>1 $ ≈ 0.91 € ≈ 610 FCFA</strong></small>
+            </div>
+
+            {% if target %}
+            <div class="alert alert-secondary text-center mb-4">
+                {% trans "Vous soutenez :" %} <strong>{{ target }}</strong>
+            </div>
+            {% endif %}
+
+            <form method="POST" novalidate class="donation-form">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                {% endif %}
+
+                <!-- 🎯 Projet -->
+                <div class="form-block mb-3">
+                    <label class="form-label fw-bold" for="id_project">{% trans "Choisissez un projet à soutenir" %}</label>
+                    {{ form.project }}
+                    {% if form.project.errors %}
+                    <div class="text-danger small">{{ form.project.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 👶 Enfant -->
+                <div class="form-block mb-3">
+                    <label class="form-label fw-bold" for="id_child">{% trans "Choisissez un enfant à soutenir" %}</label>
+                    {{ form.child }}
+                    {% if form.child.errors %}
+                    <div class="text-danger small">{{ form.child.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 👩 Mère -->
+                <div class="form-block mb-3">
+                    <label class="form-label fw-bold" for="id_mother">{% trans "Choisissez une mère à soutenir" %}</label>
+                    {{ form.mother }}
+                    {% if form.mother.errors %}
+                    <div class="text-danger small">{{ form.mother.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 💵 Montants rapides -->
+                <div class="form-block mb-4">
+                    <label class="form-label fw-bold">{% trans "Choisissez un montant rapide" %}</label>
+                    <div class="preset-amount-grid d-flex flex-wrap gap-2">
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="1000">1 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="5000">5 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="10000">10 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="50000">50 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="100000">100 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-secondary amount-btn" data-amount="">{% trans "Autre" %}</button>
+                    </div>
+                </div>
+
+                <!-- 💰 Montant libre -->
+                <div class="form-block mb-3">
+                    <label class="form-label" for="id_amount">{% trans "Montant en FCFA (XOF)" %}</label>
+                    {{ form.amount }}
+                    {% if form.amount.errors %}
+                    <div class="text-danger small">{{ form.amount.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 🔁 Sélection Ponctuel / Mensuel -->
+                <div class="form-block mb-4">
+                    <label class="fw-bold">{% trans "Fréquence du don" %}</label>
+                    <div class="donation-frequency-group">
+                        <!-- Ponctuel -->
+                        <label class="donation-frequency">
+                            <input type="radio" name="monthly" value="False" {% if not form.monthly.value %}checked{% endif %}>
+                            <span class="tick"></span>
+                            <span class="label-text">{% trans "Ponctuel" %}</span>
+                        </label>
+                        <!-- Mensuel -->
+                        <label class="donation-frequency">
+                            <input type="radio" name="monthly" value="True" {% if form.monthly.value %}checked{% endif %}>
+                            <span class="tick"></span>
+                            <span class="label-text">{% trans "Mensuel" %}</span>
+                        </label>
+                    </div>
+                    {% if form.monthly.errors %}
+                    <div class="text-danger small">{{ form.monthly.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 👤 Nom -->
+                <div class="form-block mb-3">
+                    <label class="form-label" for="id_donor_name">{% trans "Nom complet" %}</label>
+                    {{ form.donor_name }}
+                    {% if form.donor_name.errors %}
+                    <div class="text-danger small">{{ form.donor_name.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 📧 Email -->
+                <div class="form-block mb-3">
+                    <label class="form-label" for="id_email">{% trans "Adresse email" %}</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                    <div class="text-danger small">{{ form.email.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 📝 Message -->
+                <div class="form-block mb-3">
+                    <label class="form-label" for="id_message">{% trans "Message (optionnel)" %}</label>
+                    {{ form.message }}
+                    {% if form.message.errors %}
+                    <div class="text-danger small">{{ form.message.errors }}</div>
+                    {% endif %}
+                </div>
+
+                {% if target_type and target_id %}
+                <input type="hidden" name="target_type" value="{{ target_type }}">
+                <input type="hidden" name="target_id" value="{{ target_id }}">
+                {% endif %}
+
+                <button class="btn btn-success btn-lg w-100 mt-3">{% trans "Continuer vers le paiement" %}</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'social/js/_donation_form.js' %}"></script>
+<script>
+document.querySelectorAll('.amount-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const amountField = document.getElementById('id_amount');
+        const val = btn.dataset.amount;
+        amountField.value = val || '';
+        if (!val) amountField.focus();
+    });
+});
+</script>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+
+
+
+{% comment %} {# social/donation_form.html #}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Faire un Don" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'social/css/_donation_form.css' %}">
+
+<style>
+/* 🔹 Carte de sélection de fréquence */
+.donation-frequency-group {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.donation-frequency {
+    flex: 1;
+    padding: 15px;
+    border: 2px solid #0d6efd;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s, border-color 0.3s;
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.donation-frequency:hover {
+    background-color: #0d6efd1a;
+}
+
+.donation-frequency input[type="radio"] {
+    display: none; /* cache le radio réel */
+}
+
+.donation-frequency .tick {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #0d6efd;
+    border-radius: 50%;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: white;
+    background-color: transparent;
+    transition: background 0.3s;
+}
+
+.donation-frequency input[type="radio"]:checked + .tick {
+    background-color: #0d6efd;
+}
+
+.donation-frequency .label-text {
+    font-weight: 500;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="donation-wrapper container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+
+            <h2 class="text-center mb-4 fw-bold">{% trans "Soutenir SOGENTIS" %}</h2>
+
+            <div class="donation-info alert alert-info text-center mb-4">
+                {% trans "Merci de soutenir nos actions !" %}<br>
+                <small>💱 {% trans "Taux de change approximatif" %} : <strong>1 $ ≈ 0.91 € ≈ 610 FCFA</strong></small>
+            </div>
+
+            {% if target %}
+            <div class="alert alert-secondary text-center mb-4">
+                {% trans "Vous soutenez :" %} <strong>{{ target }}</strong>
+            </div>
+            {% endif %}
+
+            <form method="POST" novalidate class="donation-form">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                {% endif %}
+
+                <!-- 🎯 Projet -->
+                <div class="form-block mb-4">
+                    <label class="form-label fw-bold" for="id_project">{% trans "Choisissez un projet à soutenir" %}</label>
+                    {{ form.project }}
+                    {% if form.project.errors %}
+                    <div class="text-danger small">{{ form.project.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 💵 Montants rapides -->
+                <div class="form-block mb-4">
+                    <label class="form-label fw-bold">{% trans "Choisissez un montant rapide" %}</label>
+                    <div class="preset-amount-grid d-flex flex-wrap gap-2">
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="1000">1 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="5000">5 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="10000">10 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="50000">50 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="100000">100 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-secondary amount-btn" data-amount="">{% trans "Autre" %}</button>
+                    </div>
+                </div>
+
+                <!-- 💰 Montant libre -->
+                <div class="form-block mb-3">
+                    <label class="form-label" for="id_amount">{% trans "Montant en FCFA (XOF)" %}</label>
+                    {{ form.amount }}
+                    {% if form.amount.errors %}
+                    <div class="text-danger small">{{ form.amount.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 🔁 Sélection Ponctuel / Mensuel -->
+                <div class="form-block mb-4">
+                    <label class="fw-bold">{% trans "Fréquence du don" %}</label>
+                    <div class="donation-frequency-group">
+                        <!-- Ponctuel -->
+                        <label class="donation-frequency">
+                            <input type="radio" name="monthly" value="False" {% if not form.monthly.value %}checked{% endif %}>
+                            <span class="tick"></span>
+                            <span class="label-text">{% trans "Ponctuel" %}</span>
+                        </label>
+                        <!-- Mensuel -->
+                        <label class="donation-frequency">
+                            <input type="radio" name="monthly" value="True" {% if form.monthly.value %}checked{% endif %}>
+                            <span class="tick"></span>
+                            <span class="label-text">{% trans "Mensuel" %}</span>
+                        </label>
+                    </div>
+                    {% if form.monthly.errors %}
+                    <div class="text-danger small">{{ form.monthly.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 👤 Nom -->
+                <div class="form-block mb-3">
+                    <label class="form-label" for="id_donor_name">{% trans "Nom complet" %}</label>
+                    {{ form.donor_name }}
+                    {% if form.donor_name.errors %}
+                    <div class="text-danger small">{{ form.donor_name.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 📧 Email -->
+                <div class="form-block mb-3">
+                    <label class="form-label" for="id_email">{% trans "Adresse email" %}</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                    <div class="text-danger small">{{ form.email.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 📝 Message -->
+                <div class="form-block mb-3">
+                    <label class="form-label" for="id_message">{% trans "Message (optionnel)" %}</label>
+                    {{ form.message }}
+                    {% if form.message.errors %}
+                    <div class="text-danger small">{{ form.message.errors }}</div>
+                    {% endif %}
+                </div>
+
+                {% if target_type and target_id %}
+                <input type="hidden" name="target_type" value="{{ target_type }}">
+                <input type="hidden" name="target_id" value="{{ target_id }}">
+                {% endif %}
+
+                <button class="btn btn-success btn-lg w-100 mt-3">{% trans "Continuer vers le paiement" %}</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'social/js/_donation_form.js' %}"></script>
+<script>
+document.querySelectorAll('.amount-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const amountField = document.getElementById('id_amount');
+        const val = btn.dataset.amount;
+        amountField.value = val || '';
+        if (!val) amountField.focus();
+    });
+});
+</script>
+{% endblock %}
+ {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# social/donation_form.html #}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Faire un Don" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'social/css/_donation_form.css' %}">
+
+<style>
+/* 🔹 Case à cocher stylisée en carte */
+.donation-frequency {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 15px;
+    border: 2px solid #0d6efd;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s;
+    user-select: none;
+    margin-bottom: 15px;
+}
+
+.donation-frequency:hover {
+    background: #0d6efd1a; /* léger fond bleu au hover */
+}
+
+.donation-frequency input[type="checkbox"] {
+    display: none; /* on cache la checkbox réelle */
+}
+
+.donation-frequency .tick {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #0d6efd;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: white;
+    background-color: transparent;
+    transition: background 0.3s;
+}
+
+.donation-frequency input[type="checkbox"]:checked + .tick {
+    background-color: #0d6efd;
+}
+
+.donation-frequency .label-text {
+    font-weight: 500;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="donation-wrapper container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+
+            <h2 class="text-center mb-4 fw-bold">{% trans "Soutenir SOGENTIS" %}</h2>
+
+            <div class="donation-info alert alert-info text-center mb-4">
+                {% trans "Merci de soutenir nos actions !" %}<br>
+                <small>💱 {% trans "Taux de change approximatif" %} : <strong>1 $ ≈ 0.91 € ≈ 610 FCFA</strong></small>
+            </div>
+
+            {% if target %}
+            <div class="alert alert-secondary text-center mb-4">
+                {% trans "Vous soutenez :" %} <strong>{{ target }}</strong>
+            </div>
+            {% endif %}
+
+            <form method="POST" novalidate class="donation-form">
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                {% endif %}
+
+                <!-- 🎯 Projet -->
+                <div class="form-block mb-4">
+                    <label class="form-label fw-bold" for="id_project">{% trans "Choisissez un projet à soutenir" %}</label>
+                    {{ form.project }}
+                    {% if form.project.errors %}
+                    <div class="text-danger small">{{ form.project.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 💵 Montants rapides -->
+                <div class="form-block mb-4">
+                    <label class="form-label fw-bold">{% trans "Choisissez un montant rapide" %}</label>
+                    <div class="preset-amount-grid d-flex flex-wrap gap-2">
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="1000">1 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="5000">5 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="10000">10 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="50000">50 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="100000">100 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-secondary amount-btn" data-amount="">{% trans "Autre" %}</button>
+                    </div>
+                </div>
+
+                <!-- 💰 Montant libre -->
+                <div class="form-block mb-3">
+                    <label class="form-label" for="id_amount">{% trans "Montant en FCFA (XOF)" %}</label>
+                    {{ form.amount }}
+                    {% if form.amount.errors %}
+                    <div class="text-danger small">{{ form.amount.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 🔁 Don récurrent stylisé -->
+                <div class="form-block mb-4">
+                    <label>{% trans "Fréquence du don" %}</label>
+                    <label class="donation-frequency">
+                        {{ form.monthly }}
+                        <span class="tick"></span>
+                        <span class="label-text">{% trans "Mensuel" %}</span>
+                    </label>
+                    {% if form.monthly.errors %}
+                    <div class="text-danger small">{{ form.monthly.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 👤 Nom -->
+                <div class="form-block mb-3">
+                    <label class="form-label" for="id_donor_name">{% trans "Nom complet" %}</label>
+                    {{ form.donor_name }}
+                    {% if form.donor_name.errors %}
+                    <div class="text-danger small">{{ form.donor_name.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 📧 Email -->
+                <div class="form-block mb-3">
+                    <label class="form-label" for="id_email">{% trans "Adresse email" %}</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                    <div class="text-danger small">{{ form.email.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 📝 Message -->
+                <div class="form-block mb-3">
+                    <label class="form-label" for="id_message">{% trans "Message (optionnel)" %}</label>
+                    {{ form.message }}
+                    {% if form.message.errors %}
+                    <div class="text-danger small">{{ form.message.errors }}</div>
+                    {% endif %}
+                </div>
+
+                {% if target_type and target_id %}
+                <input type="hidden" name="target_type" value="{{ target_type }}">
+                <input type="hidden" name="target_id" value="{{ target_id }}">
+                {% endif %}
+
+                <button class="btn btn-success btn-lg w-100 mt-3">{% trans "Continuer vers le paiement" %}</button>
+
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'social/js/_donation_form.js' %}"></script>
+<script>
+document.querySelectorAll('.amount-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const amountField = document.getElementById('id_amount');
+        const val = btn.dataset.amount;
+        amountField.value = val || '';
+        if (!val) amountField.focus();
+    });
+});
+</script>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+{% comment %} {% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Faire un Don" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'social/css/_donation_form.css' %}">
+<style>
+/* 🔹 Case à cocher don mensuel visible */
+.form-check input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: #0d6efd; /* couleur bleue pour le tick */
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.form-check label {
+    font-weight: 500;
+    cursor: pointer;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="donation-wrapper container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+
+            <!-- 🔹 Titre -->
+            <h2 class="text-center mb-4 fw-bold">{% trans "Soutenir SOGENTIS" %}</h2>
+
+            <!-- 🔹 Message informatif -->
+            <div class="donation-info alert alert-info text-center mb-4">
+                {% trans "Merci de soutenir nos actions !" %}<br>
+                <small>💱 {% trans "Taux de change approximatif" %} : <strong>1 $ ≈ 0.91 € ≈ 610 FCFA</strong></small>
+            </div>
+
+            <!-- 🔹 Affichage du target -->
+            {% if target %}
+            <div class="alert alert-secondary text-center mb-4">
+                {% trans "Vous soutenez :" %} <strong>{{ target }}</strong>
+            </div>
+            {% endif %}
+
+            <!-- 🔹 Formulaire -->
+            <form method="POST" novalidate class="donation-form">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                {% endif %}
+
+                <!-- 🎯 Projet -->
+                <div class="form-block mb-4">
+                    <label class="form-label fw-bold" for="id_project">{% trans "Choisissez un projet à soutenir" %}</label>
+                    {{ form.project }}
+                    {% if form.project.errors %}
+                    <div class="text-danger small">{{ form.project.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 💵 Montants rapides -->
+                <div class="form-block mb-4">
+                    <label class="form-label fw-bold">{% trans "Choisissez un montant rapide" %}</label>
+                    <div class="preset-amount-grid d-flex flex-wrap gap-2">
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="1000">1 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="5000">5 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="10000">10 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="50000">50 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="100000">100 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-secondary amount-btn" data-amount="">{% trans "Autre" %}</button>
+                    </div>
+                </div>
+
+                <!-- 💰 Montant libre -->
+                <div class="form-block mb-3">
+                    <label class="form-label" for="id_amount">{% trans "Montant en FCFA (XOF)" %}</label>
+                    {{ form.amount }}
+                    {% if form.amount.errors %}
+                    <div class="text-danger small">{{ form.amount.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 🔁 Don récurrent : case à cocher -->
+                <div class="form-block form-check mb-4">
+                    <label class="form-check-label fw-semibold" for="id_monthly">
+                        {{ form.monthly }} {% trans "Faire ce don chaque mois" %}
+                    </label>
+                    {% if form.monthly.errors %}
+                    <div class="text-danger small">{{ form.monthly.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 👤 Nom -->
+                <div class="form-block mb-3">
+                    <label class="form-label" for="id_donor_name">{% trans "Nom complet" %}</label>
+                    {{ form.donor_name }}
+                    {% if form.donor_name.errors %}
+                    <div class="text-danger small">{{ form.donor_name.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 📧 Email -->
+                <div class="form-block mb-3">
+                    <label class="form-label" for="id_email">{% trans "Adresse email" %}</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                    <div class="text-danger small">{{ form.email.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 📝 Message -->
+                <div class="form-block mb-3">
+                    <label class="form-label" for="id_message">{% trans "Message (optionnel)" %}</label>
+                    {{ form.message }}
+                    {% if form.message.errors %}
+                    <div class="text-danger small">{{ form.message.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 🔹 Hidden target_type / target_id -->
+                {% if target_type and target_id %}
+                <input type="hidden" name="target_type" value="{{ target_type }}">
+                <input type="hidden" name="target_id" value="{{ target_id }}">
+                {% endif %}
+
+                <!-- ▶️ Soumission -->
+                <button class="btn btn-success btn-lg w-100 mt-3">{% trans "Continuer vers le paiement" %}</button>
+
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'social/js/_donation_form.js' %}"></script>
+<script>
+document.querySelectorAll('.amount-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const amountField = document.getElementById('id_amount');
+        const val = btn.dataset.amount;
+        amountField.value = val || '';
+        if (!val) amountField.focus();
+    });
+});
+</script>
+{% endblock %} {% endcomment %}
+
+
+
+
+{% comment %} {% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Faire un Don" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'social/css/_donation_form.css' %}">
+<style>
+/* 🔹 Type de don : Ponctuel / Mensuel */
+.donation-type-options {
+    display: flex;
+    gap: 10px;
+    margin-top: 0.5rem;
+}
+
+.option-btn {
+    flex: 1;
+    text-align: center;
+    padding: 10px 0;
+    border-radius: 6px;
+    border: 2px solid #ced4da;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+    background-color: #f8f9fa;
+    color: #495057;
+    user-select: none;
+}
+
+.option-btn input[type="radio"] {
+    display: none;
+}
+
+.option-btn.active {
+    background-color: #0d6efd;
+    color: #fff;
+    border-color: #0d6efd;
+}
+
+.option-btn:hover {
+    border-color: #0d6efd;
+    background-color: #e7f1ff;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="donation-wrapper container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+
+            <!-- 🔹 Titre -->
+            <h2 class="text-center mb-4 fw-bold">{% trans "Soutenir SOGENTIS" %}</h2>
+
+            <!-- 🔹 Message informatif -->
+            <div class="donation-info alert alert-info text-center mb-4">
+                {% trans "Merci de soutenir nos actions !" %}<br>
+                <small>💱 {% trans "Taux de change approximatif" %} : <strong>1 $ ≈ 0.91 € ≈ 610 FCFA</strong></small>
+            </div>
+
+            <!-- 🔹 Affichage du target -->
+            {% if target %}
+            <div class="alert alert-secondary text-center mb-4">
+                {% trans "Vous soutenez :" %} <strong>{{ target }}</strong>
+            </div>
+            {% endif %}
+
+            <!-- 🔹 Formulaire -->
+            <form method="POST" novalidate class="donation-form">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                {% endif %}
+
+                <!-- 🎯 Projet -->
+                <div class="form-block mb-4">
+                    <label class="form-label fw-bold" for="id_project">{% trans "Choisissez un projet à soutenir" %}</label>
+                    {{ form.project }}
+                    {% if form.project.errors %}
+                    <div class="text-danger small">{{ form.project.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 💵 Montants rapides -->
+                <div class="form-block mb-4">
+                    <label class="form-label fw-bold">{% trans "Choisissez un montant rapide" %}</label>
+                    <div class="preset-amount-grid d-flex flex-wrap gap-2">
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="1000">1 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="5000">5 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="10000">10 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="50000">50 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="100000">100 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-secondary amount-btn" data-amount="">{% trans "Autre" %}</button>
+                    </div>
+                </div>
+
+                <!-- 💰 Montant libre -->
+                <div class="form-block mb-3">
+                    <label class="form-label" for="id_amount">{% trans "Montant en FCFA (XOF)" %}</label>
+                    {{ form.amount }}
+                    {% if form.amount.errors %}
+                    <div class="text-danger small">{{ form.amount.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 🔁 Don récurrent : Ponctuel / Mensuel -->
+                <div class="form-block mb-4">
+                    <label class="form-label fw-bold">{% trans "Type de don" %}</label>
+                    <div class="donation-type-options">
+                        <label class="option-btn {% if not form.monthly.value %}active{% endif %}">
+                            <input type="radio" name="monthly" value="False" {% if not form.monthly.value %}checked{% endif %}>
+                            {% trans "Ponctuel" %}
+                        </label>
+                        <label class="option-btn {% if form.monthly.value %}active{% endif %}">
+                            <input type="radio" name="monthly" value="True" {% if form.monthly.value %}checked{% endif %}>
+                            {% trans "Mensuel" %}
+                        </label>
+                    </div>
+                    {% if form.monthly.errors %}
+                    <div class="text-danger small">{{ form.monthly.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 👤 Nom -->
+                <div class="form-block mb-3">
+                    <label class="form-label" for="id_donor_name">{% trans "Nom complet" %}</label>
+                    {{ form.donor_name }}
+                    {% if form.donor_name.errors %}
+                    <div class="text-danger small">{{ form.donor_name.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 📧 Email -->
+                <div class="form-block mb-3">
+                    <label class="form-label" for="id_email">{% trans "Adresse email" %}</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                    <div class="text-danger small">{{ form.email.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 📝 Message -->
+                <div class="form-block mb-3">
+                    <label class="form-label" for="id_message">{% trans "Message (optionnel)" %}</label>
+                    {{ form.message }}
+                    {% if form.message.errors %}
+                    <div class="text-danger small">{{ form.message.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 🔹 Hidden target_type / target_id -->
+                {% if target_type and target_id %}
+                <input type="hidden" name="target_type" value="{{ target_type }}">
+                <input type="hidden" name="target_id" value="{{ target_id }}">
+                {% endif %}
+
+                <!-- ▶️ Soumission -->
+                <button class="btn btn-success btn-lg w-100 mt-3">{% trans "Continuer vers le paiement" %}</button>
+
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'social/js/_donation_form.js' %}"></script>
+<script>
+document.querySelectorAll('.amount-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const amountField = document.getElementById('id_amount');
+        const val = btn.dataset.amount;
+        amountField.value = val || '';
+        if (!val) amountField.focus();
+    });
+});
+
+// Gestion visuelle du type de don
+document.querySelectorAll('.option-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        btn.querySelector('input[type="radio"]').checked = true;
+        document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    });
+});
+</script>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+{% comment %} {# social/donation_form.html #}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Faire un Don" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'social/css/donation_form.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="donation-wrapper container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+
+            <!-- 🔹 Titre -->
+            <h2 class="text-center mb-4 fw-bold">
+                {% trans "Soutenir SOGENTIS" %}
+            </h2>
+
+            <!-- 🔹 Message informatif -->
+            <div class="donation-info alert alert-info text-center mb-4">
+                {% trans "Merci de soutenir nos actions !" %}<br>
+                <small>
+                    💱 {% trans "Taux de change approximatif" %} :
+                    <strong>1 $ ≈ 0.91 € ≈ 610 FCFA</strong>
+                </small>
+            </div>
+
+            <!-- 🔹 Formulaire -->
+            <form method="POST" novalidate class="donation-form">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {{ form.non_field_errors }}
+                </div>
+                {% endif %}
+
+                <!-- 🎯 Projet -->
+                <div class="form-block mb-4">
+                    <label class="form-label fw-bold" for="id_project">
+                        {% trans "Choisissez un projet à soutenir" %}
+                    </label>
+                    {{ form.project }}
+                    {% if form.project.errors %}
+                    <div class="text-danger small">{{ form.project.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 💵 Montants rapides -->
+                <div class="form-block mb-4">
+                    <label class="form-label fw-bold">
+                        {% trans "Choisissez un montant rapide" %}
+                    </label>
+
+                    <div class="preset-amount-grid d-flex flex-wrap gap-2">
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="1000">1 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="5000">5 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="10000">10 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="50000">50 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-primary amount-btn" data-amount="100000">100 000 FCFA</button>
+                        <button type="button" class="btn btn-outline-secondary amount-btn" data-amount="">
+                            {% trans "Autre" %}
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 💰 Montant libre -->
+                <div class="form-block mb-3">
+                    <label class="form-label" for="id_amount">
+                        {% trans "Montant en FCFA (XOF)" %}
+                    </label>
+                    {{ form.amount }}
+                    {% if form.amount.errors %}
+                    <div class="text-danger small">{{ form.amount.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 🔁 Don récurrent -->
+                <div class="form-block form-check mb-4">
+                    <label class="form-check-label fw-semibold" for="id_monthly">
+                        {{ form.monthly }} {% trans "Faire ce don chaque mois" %}
+                    </label>
+                    {% if form.monthly.errors %}
+                    <div class="text-danger small">{{ form.monthly.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 👤 Nom -->
+                <div class="form-block mb-3">
+                    <label class="form-label" for="id_donor_name">
+                        {% trans "Nom complet" %}
+                    </label>
+                    {{ form.donor_name }}
+                    {% if form.donor_name.errors %}
+                    <div class="text-danger small">{{ form.donor_name.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 📧 Email -->
+                <div class="form-block mb-3">
+                    <label class="form-label" for="id_email">
+                        {% trans "Adresse email" %}
+                    </label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                    <div class="text-danger small">{{ form.email.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 📝 Message -->
+                <div class="form-block mb-3">
+                    <label class="form-label" for="id_message">
+                        {% trans "Message (optionnel)" %}
+                    </label>
+                    {{ form.message }}
+                    {% if form.message.errors %}
+                    <div class="text-danger small">{{ form.message.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- ▶️ Soumission -->
+                <button class="btn btn-success btn-lg w-100 mt-3">
+                    {% trans "Continuer vers le paiement" %}
+                </button>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'social/js/donation_form.js' %}"></script>
+{% endblock %} {% endcomment %}
+
+
+
+
+{% comment %} {# social/donation_form.html #}
 {% extends "main.html" %}
 {% load static i18n %}
 
@@ -119,7 +1798,7 @@
     });
   });
 </script>
-{% endblock %}
+{% endblock %} {% endcomment %}
 
 
 

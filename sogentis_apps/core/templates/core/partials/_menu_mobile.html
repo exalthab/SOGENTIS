@@ -1,0 +1,162 @@
+{# core/partials/_menu_mobile.html #}
+{% load static i18n %}
+
+<div class="offcanvas offcanvas-end bg-dark text-white" tabindex="-1" id="mobileMenu">
+  <div class="offcanvas-header border-bottom border-secondary">
+    <h5 class="offcanvas-title">
+      <i class="fas fa-bars me-1"></i> {% trans "Menu" %}
+    </h5>
+    <button type="button"
+            class="btn-close btn-close-white"
+            data-bs-dismiss="offcanvas"
+            aria-label="{% trans 'Fermer' %}"></button>
+  </div>
+
+  <div class="offcanvas-body d-flex flex-column gap-3">
+
+    {# --- NAVIGATION PRINCIPALE --- #}
+    <nav class="mb-2">
+      <a href="{% url 'core:home' %}" class="mobile-nav-link">
+        <i class="fas fa-home me-2"></i> {% trans "Accueil" %}
+      </a>
+
+      <a href="{% url 'about:about_index' %}" class="mobile-nav-link">
+        <i class="fas fa-info-circle me-2"></i> {% trans "À propos de SOGENTIS" %}
+      </a>
+
+      <a href="{% url 'social:index' %}" class="mobile-nav-link">
+        <i class="fas fa-hand-holding-heart me-2"></i> {% trans "Pôle Social" %}
+      </a>
+
+      <a href="{% url 'econ:index' %}" class="mobile-nav-link">
+        <i class="fas fa-briefcase me-2"></i> {% trans "Pôle Économique" %}
+      </a>
+
+      <a href="{% url 'social:donation' %}" class="mobile-nav-link text-warning fw-semibold">
+        <i class="fas fa-donate me-2"></i> {% trans "Faire un don" %}
+      </a>
+
+      <a href="{% url 'core:contact' %}" class="mobile-nav-link">
+        <i class="fas fa-envelope me-2"></i> {% trans "Contact" %}
+      </a>
+    </nav>
+
+    {# --- CONTACT RAPIDE --- #}
+    <div class="mobile-contact small">
+      {% if CONTACT_PHONE %}
+      <div class="mb-1">
+        <a href="tel:{{ CONTACT_PHONE|cut:' ' }}" class="mobile-info-link">
+          <i class="fas fa-phone-alt me-2"></i>{{ CONTACT_PHONE }}
+        </a>
+      </div>
+      {% endif %}
+
+      <div>
+        <a href="https://www.google.com/maps/place/Dakar,+Sénégal"
+           target="_blank"
+           class="mobile-info-link">
+          <i class="fas fa-map-marker-alt me-2"></i> Dakar, Sénégal
+        </a>
+      </div>
+    </div>
+
+    <hr class="border-secondary my-2">
+
+    {# --- RÉSEAUX SOCIAUX --- #}
+    <div>
+      <p class="text-uppercase small text-muted mb-2">
+        {% trans "Réseaux sociaux" %}
+      </p>
+      <div class="d-flex flex-wrap gap-2">
+        {% if FACEBOOK_URL %}
+        <a href="{{ FACEBOOK_URL }}" target="_blank" class="mobile-social-btn">
+          <i class="fab fa-facebook-f me-1"></i> Facebook
+        </a>
+        {% endif %}
+
+        {% if TWITTER_URL %}
+        <a href="{{ TWITTER_URL }}" target="_blank" class="mobile-social-btn">
+          <i class="fab fa-x-twitter me-1"></i> Twitter
+        </a>
+        {% endif %}
+
+        {% if LINKEDIN_URL %}
+        <a href="{{ LINKEDIN_URL }}" target="_blank" class="mobile-social-btn">
+          <i class="fab fa-linkedin-in me-1"></i> LinkedIn
+        </a>
+        {% endif %}
+
+        {% if YOUTUBE_URL %}
+        <a href="{{ YOUTUBE_URL }}" target="_blank" class="mobile-social-btn">
+          <i class="fab fa-youtube me-1"></i> YouTube
+        </a>
+        {% endif %}
+      </div>
+    </div>
+
+    <hr class="border-secondary my-2">
+
+    {# --- LANGUE & THÈME --- #}
+    <div class="d-flex flex-column gap-2">
+
+      {# LANGUE #}
+      <form action="{% url 'switch_language' %}" method="get">
+        {% get_current_language as CUR_LANG %}
+        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+
+        <label class="small text-muted mb-1">{% trans "Langue" %}</label>
+
+        <div class="btn-group w-100 lang-switcher" role="group">
+          <button type="submit"
+                  name="language"
+                  value="fr"
+                  class="btn btn-sm btn-light {% if CUR_LANG == 'fr' %}active{% endif %}">
+            🇫🇷 FR
+          </button>
+
+          <button type="submit"
+                  name="language"
+                  value="en"
+                  class="btn btn-sm btn-light {% if CUR_LANG == 'en' %}active{% endif %}">
+            🇬🇧 EN
+          </button>
+        </div>
+      </form>
+
+      {# THEME #}
+      <div>
+        <label class="small text-muted mb-1">{% trans "Thème" %}</label>
+        <button id="themeToggleMobile" class="btn btn-sm btn-outline-light w-100">
+          🌙 {% trans "Basculer le thème" %}
+        </button>
+      </div>
+    </div>
+
+    <hr class="border-secondary my-2">
+
+    {# --- AUTH UTILISATEUR --- #}
+    <div class="mt-auto">
+
+      {% if user.is_authenticated %}
+      <a href="{% url 'dashboard:home' %}"
+         class="btn btn-sm btn-outline-light w-100 mb-2">
+        <i class="fas fa-chart-line me-1"></i> {% trans "Tableau de bord" %}
+      </a>
+
+      <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button class="btn btn-sm btn-outline-danger w-100">
+          <i class="fas fa-power-off me-1"></i> {% trans "Se déconnecter" %}
+        </button>
+      </form>
+
+      {% else %}
+      <a href="{% url 'accounts_users_web:login' %}?next={{ request.get_full_path|urlencode }}"
+         class="btn btn-sm btn-primary w-100">
+        <i class="fas fa-sign-in-alt me-1"></i> {% trans "Se connecter" %}
+      </a>
+      {% endif %}
+    </div>
+
+  </div>
+</div>

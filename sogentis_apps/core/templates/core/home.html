@@ -1,41 +1,77 @@
+{# /core/home.html #}
 {% extends "main.html" %}
 {% load static i18n %}
 
-{% block title %}Accueil - SOGENTIS{% endblock %}
+{# ========================================================== #}
+{#                     SEO SPÉCIFIQUE HOMEPAGE               #}
+{# ========================================================== #}
+{% block seo_title %}{% trans "Accueil - SOGENTIS" %}{% endblock %}
 
-{% block extra_css %}
-  <!-- CSS spécifique à la page d'accueil. -->
-  <link rel="stylesheet" href="{% static 'core/css/home.css' %}" />
+{% block seo_description %}
+  {% blocktrans %}
+    ONG SOGENTIS : deux pôles complémentaires – le Pôle Social
+    (éducation, environnement, infrastructures, aide humanitaire)
+    et le Pôle Économique (vente en ligne, services, formations).
+    100 % des revenus économiques soutiennent nos actions sociales.
+  {% endblocktrans %}
 {% endblock %}
 
+{% block seo_og_title %}{% trans "Accueil - SOGENTIS" %}{% endblock %}
+{% block seo_og_description %}
+  {% blocktrans %}
+    ONG SOGENTIS : actions sociales et activités économiques solidaires
+    pour financer l’aide aux enfants, femmes et familles vulnérables.
+  {% endblocktrans %}
+{% endblock %}
+
+{% block seo_twitter_title %}{% trans "Accueil - SOGENTIS" %}{% endblock %}
+{% block seo_twitter_description %}
+  {% blocktrans %}
+    Rejoignez SOGENTIS : deux pôles, social et économique, unis pour un avenir durable.
+  {% endblocktrans %}
+{% endblock %}
+
+{# ========================================================== #}
+{#                      CSS SPÉCIFIQUE                       #}
+{# ========================================================== #}
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'core/css/home.css' %}">
+{% endblock %}
+
+{# ========================================================== #}
+{#                         CONTENU                           #}
+{# ========================================================== #}
 {% block content %}
-<div
-  class="home-container"
-  style="background-image: url('{% static 'core/images/kids2.jpg' %}')"
->
+
+<div class="home-container"
+     style="background-image: url('{% static 'core/images/kids2.jpg' %}')">
+
   <div class="background-overlay text-center text-white">
-    <h1>
-      <span class="highlight-white">Bienvenue sur</span>
+
+    <!-- TITRE PRINCIPAL -->
+    <h1 class="home-title">
+      <span class="highlight-white">{% trans "Bienvenue sur" %}</span>
       <span class="highlight-yellow">SOGENTIS</span>
     </h1>
 
     <p class="subtitle">
-      <span class="color1">Unir l’économie</span>,
-      <span class="color2">le social</span>,
-      <span class="color3">pour un avenir durable.</span>
+      {% trans "Unir l'humain et l'économie pour un avenir durable." %}
     </p>
 
-    <img
-      src="{% static 'core/images/flag.svg' %}"
-      alt="Drapeau du Sénégal"
-      class="flag"
-    />
+    <img src="{% static 'core/images/flag.svg' %}"
+         alt="{% trans 'Drapeau du Sénégal' %}"
+         class="flag">
 
-    <div class="main-layout d-flex justify-content-center align-items-center gap-4 flex-wrap mt-4">
-      <a href="{% url 'econ:index' %}" class="btn btn-business btn-lg">
-        💼 Pôle Économique
+    <!-- DEUX GRANDS PÔLES -->
+    <div class="main-layout d-flex justify-content-center align-items-center
+                gap-4 flex-wrap mt-4">
+
+      <!-- Pôle Social -->
+      <a href="{% url 'social:index' %}" class="btn btn-social btn-lg">
+        🌍 {% trans "Pôle Social" %}
       </a>
 
+      <!-- Globe 3D -->
       <div id="globe-container" class="my-3">
         <div class="pulse-ring"></div>
         <div id="globe-wrapper">
@@ -43,31 +79,184 @@
         </div>
       </div>
 
-      <a href="{% url 'soci:index' %}" class="btn btn-social btn-lg">
-        🌍 Pôle Social
+      <!-- Pôle Économique -->
+      <a href="{% url 'econ:index' %}" class="btn btn-business btn-lg">
+        💼 {% trans "Pôle Économique" %}
       </a>
     </div>
 
+    <!-- MESSAGE D'IMPACT -->
     <p class="impact-message mt-5">
       <span class="highlight-primary">
-        100 % de vos paiements — achats, services ou dons —
-      </span><br />
+        {% trans "100 % des revenus du Pôle Économique financent le Pôle Social." %}
+      </span><br>
       <span class="highlight-secondary">
-        contribuent à nos actions sociales.
-      </span><br />
+        {% trans "Enfants, femmes, familles, environnement : chaque contribution compte." %}
+      </span><br>
       <span class="highlight-accent">
-        <i class="fas fa-hand-holding-heart" style="color: #e63946"></i>
-        Chaque geste compte.
+        <i class="fas fa-hand-holding-heart" style="color:#e63946;"></i>
+        {% trans "Merci de soutenir notre vision." %}
       </span>
     </p>
+
+    <!-- ACTIONS PRINCIPALES -->
+    <div class="mt-5 d-flex justify-content-center gap-3 flex-wrap">
+      <a href="{% url 'social:donation' %}" class="btn btn-primary btn-lg">
+        ❤️ {% trans "Faire un don maintenant" %}
+      </a>
+
+      <a href="{% url 'about:about_index' %}" class="btn btn-outline-light btn-lg">
+        ℹ️ {% trans "À propos de nous" %}
+      </a>
+    </div>
+
   </div>
 </div>
+
 {% endblock %}
 
+{# ========================================================== #}
+{#                      JS SPÉCIFIQUE                        #}
+{# ========================================================== #}
 {% block extra_js %}
+
+  {# Django i18n JS catalogue (optionnel pour JS gettext) #}
+  <script src="{% url 'javascript-catalog' %}"></script>
+
+  <!-- Module ES6 pour ThreeJS + Globe -->
+  <script type="module">
+    import * as THREE from "https://unpkg.com/three@0.159.0/build/three.module.js";
+    import { initGlobe } from "{% static 'core/js/globe.js' %}";
+
+    initGlobe(THREE);
+  </script>
+
+{% endblock %}
+
+
+
+
+
+
+
+{% comment %} {# /core/home.html #}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{# === SEO SPÉCIFIQUE PAGE ACCUEIL === #}
+{% block seo_title %}{% trans "Accueil - SOGENTIS" %}{% endblock %}
+
+{% block seo_description %}
+  {% blocktrans %}
+    ONG SOGENTIS : deux pôles complémentaires – le Pôle Social (éducation,
+    environnement, infrastructures, aide humanitaire) et le Pôle Économique
+    (vente en ligne, services, formations). 100 % des revenus économiques
+    soutiennent nos actions sociales.
+  {% endblocktrans %}
+{% endblock %}
+
+{% block seo_og_title %}{% trans "Accueil - SOGENTIS" %}{% endblock %}
+{% block seo_og_description %}
+  {% blocktrans %}
+    ONG SOGENTIS : actions sociales et activités économiques solidaires pour
+    financer l’aide aux enfants, femmes et familles vulnérables.
+  {% endblocktrans %}
+{% endblock %}
+
+{% block seo_twitter_title %}{% trans "Accueil - SOGENTIS" %}{% endblock %}
+{% block seo_twitter_description %}
+  {% blocktrans %}
+    Rejoignez SOGENTIS : deux pôles, social et économique, unis pour un avenir durable.
+  {% endblocktrans %}
+{% endblock %}
+
+{# === CSS SPÉCIFIQUE ACCUEIL === #}
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'core/css/home.css' %}">
+{% endblock %}
+
+
+{% block content %}
+
+<div class="home-container"
+     style="background-image: url('{% static 'core/images/kids2.jpg' %}')">
+
+  <div class="background-overlay text-center text-white">
+
+    <!-- TITRE PRINCIPAL -->
+    <h1 class="home-title">
+      <span class="highlight-white">{% trans "Bienvenue sur" %}</span>
+      <span class="highlight-yellow">SOGENTIS</span>
+    </h1>
+
+    <p class="subtitle">
+      {% trans "Unir l'humain et l'économie pour un avenir durable." %}
+    </p>
+
+    <img src="{% static 'core/images/flag.svg' %}"
+         alt="{% trans 'Drapeau du Sénégal' %}" class="flag">
+
+    <!-- DEUX GRANDS PÔLES -->
+    <div class="main-layout d-flex justify-content-center align-items-center gap-4 flex-wrap mt-4">
+
+      <!-- Pôle Social -->
+      <a href="{% url 'social:index' %}" class="btn btn-social btn-lg">
+        🌍 {% trans "Pôle Social" %}
+      </a>
+
+      <!-- Globe 3D -->
+      <div id="globe-container" class="my-3">
+        <div class="pulse-ring"></div>
+        <div id="globe-wrapper">
+          <canvas id="globe-canvas"></canvas>
+        </div>
+      </div>
+
+      <!-- Pôle Économique -->
+      <a href="{% url 'econ:index' %}" class="btn btn-business btn-lg">
+        💼 {% trans "Pôle Économique" %}
+      </a>
+
+    </div>
+
+    <!-- MESSAGE D'IMPACT -->
+    <p class="impact-message mt-5">
+      <span class="highlight-primary">
+        {% trans "100 % des revenus du Pôle Économique financent le Pôle Social." %}
+      </span><br>
+      <span class="highlight-secondary">
+        {% trans "Enfants, femmes, familles, environnement : chaque contribution compte." %}
+      </span><br>
+      <span class="highlight-accent">
+        <i class="fas fa-hand-holding-heart" style="color: #e63946"></i>
+        {% trans "Merci de soutenir notre vision." %}
+      </span>
+    </p>
+
+    <!-- ACTIONS PRINCIPALES -->
+    <div class="mt-5 d-flex justify-content-center gap-3 flex-wrap">
+      <a href="{% url 'social:donation' %}" class="btn btn-primary btn-lg">
+        ❤️ {% trans "Faire un don maintenant" %}
+      </a>
+
+      <a href="{% url 'about:about_index' %}" class="btn btn-outline-light btn-lg">
+        ℹ️ {% trans "À propos de nous" %}
+      </a>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+  {# JS i18n pour gettext en JavaScript si tu en as besoin #}
+  <script src="{% url 'javascript-catalog' %}"></script>
+
   <script type="module">
     import * as THREE from "https://unpkg.com/three@0.159.0/build/three.module.js";
     import { initGlobe } from "{% static 'core/js/globe.js' %}";
     initGlobe(THREE);
   </script>
-{% endblock %}
+{% endblock %} {% endcomment %}

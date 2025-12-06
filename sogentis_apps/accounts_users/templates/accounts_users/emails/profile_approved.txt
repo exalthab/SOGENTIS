@@ -1,0 +1,5 @@
+Bonjour {{ user.get_full_name|default:user.username }},
+
+Votre profil SOGENTIS a été validé ! Vous pouvez désormais accéder à toutes les fonctionnalités du site.
+
+Merci et à bientôt sur SOGENTIS !

@@ -5,6 +5,8 @@ from django.core.paginator import Paginator
 from django.utils.translation import gettext_lazy as _
 from django.db.models import Sum
 
+from dashboard.models import UserActivityLog
+
 from social.models import Don, Engagement
 
 def home(request):
@@ -70,6 +72,17 @@ def dons_list_view(request):
     return render(request, "dashboard/dons_list.html", {
         "dons": dons_page,
         "page_title": _("Mes dons"),
+    })
+
+@login_required
+def recent_activity_logs_view(request):
+    """
+    Affiche les dernières activités de l'utilisateur connecté.
+    """
+    logs = UserActivityLog.objects.filter(user=request.user)[:10]
+    return render(request, "dashboard/recent_logs.html", {
+        "logs": logs,
+        "page_title": _("Activités récentes"),
     })
 
 

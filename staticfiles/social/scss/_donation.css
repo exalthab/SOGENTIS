@@ -1,0 +1,63 @@
+/* ------------------------------- */
+/* Boutons de paiement et montants */
+/* ------------------------------- */
+.btn-outline-primary,
+.btn-outline-info,
+.btn-outline-warning,
+.btn-outline-success,
+.btn-outline-dark {
+    font-weight: 600;
+    border-width: 2px;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-info:hover,
+.btn-outline-warning:hover,
+.btn-outline-success:hover,
+.btn-outline-dark:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+/* ------------------------------- */
+/* Alertes de formulaire */
+/* ------------------------------- */
+.alert {
+    font-size: 0.95rem;
+    border-radius: 0.35rem;
+}
+
+/* ------------------------------- */
+/* Grille des montants rapides */
+/* ------------------------------- */
+.preset-amount-grid .amount-btn {
+    flex: 1 1 40%;
+    min-width: 120px;
+    cursor: pointer;
+}
+
+.preset-amount-grid .amount-btn.active {
+    background-color: #0d6efd !important;
+    color: #fff !important;
+}
+
+/* ------------------------------- */
+/* Aperçu enfant sélectionné */
+/* ------------------------------- */
+.selected-child-preview {
+    display: flex;
+    align-items: center;
+    margin-top: 0.5rem;
+    border: 1px solid #dee2e6;
+    padding: 0.5rem;
+    border-radius: 0.35rem;
+}
+
+.selected-child-preview img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    margin-right: 0.75rem;
+    border-radius: 0.35rem;
+}

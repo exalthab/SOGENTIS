@@ -25,7 +25,7 @@ def send_activation_email(request, user):
     send_mail(
         subject,
         message,
-        "noreply@sogentis.org",  # Adresse expéditrice
+        "contact@sogentis.org",  # Adresse expéditrice
         [user.email],
         fail_silently=False,
     )

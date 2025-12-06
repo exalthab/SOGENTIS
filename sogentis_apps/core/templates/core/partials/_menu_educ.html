@@ -1,0 +1,159 @@
+{# core/partials/_menu_educ.html #}
+{% load i18n %}
+
+{# Pré-chargement silencieux des URLs #}
+{% url 'academy:courses' as edu_courses_url %}
+{% url 'academy:paths' as edu_paths_url %}
+{% url 'academy:calendar' as edu_calendar_url %}
+{% url 'academy:certs' as edu_certs_url %}
+{% url 'academy:instructors' as edu_instructors_url %}
+{% url 'academy:pricing' as edu_pricing_url %}
+{% url 'academy:faq' as edu_faq_url %}
+{% url 'academy:contact' as edu_contact_url %}
+{% url 'academy:student_portal' as edu_portal_url %}
+{% url 'academy:apply' as edu_apply_url %}
+
+<nav class="navbar navbar-expand-lg bg-light border-bottom shadow-sm sticky-top"
+     aria-label="{% trans 'Menu éducation & formations' %}">
+
+  <div class="container-fluid">
+
+    <!-- Branding -->
+    <a class="navbar-brand fw-semibold d-flex align-items-center"
+       href="{{ edu_courses_url|default:'#' }}">
+      <i class="fa-solid fa-graduation-cap me-2"></i>
+      {% trans "Éducation & Formations" %}
+    </a>
+
+    <!-- Toggle mobile -->
+    <button class="navbar-toggler" type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#educSubnav"
+            aria-controls="educSubnav"
+            aria-expanded="false"
+            aria-label="{% trans 'Basculer la navigation' %}">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Menu -->
+    <div class="collapse navbar-collapse" id="educSubnav">
+
+      <!-- Liens principaux -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+        <li class="nav-item">
+          <a class="nav-link {% if request.path == edu_courses_url %}active{% endif %}"
+             href="{{ edu_courses_url|default:'#' }}">
+            <i class="fa-solid fa-book-open me-1"></i>
+            {% trans "Catalogue" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link {% if request.path == edu_paths_url %}active{% endif %}"
+             href="{{ edu_paths_url|default:'#' }}">
+            <i class="fa-solid fa-route me-1"></i>
+            {% trans "Parcours" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link {% if request.path == edu_calendar_url %}active{% endif %}"
+             href="{{ edu_calendar_url|default:'#' }}">
+            <i class="fa-regular fa-calendar-days me-1"></i>
+            {% trans "Calendrier" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link {% if request.path == edu_certs_url %}active{% endif %}"
+             href="{{ edu_certs_url|default:'#' }}">
+            <i class="fa-solid fa-certificate me-1"></i>
+            {% trans "Certifications" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link {% if request.path == edu_instructors_url %}active{% endif %}"
+             href="{{ edu_instructors_url|default:'#' }}">
+            <i class="fa-regular fa-user me-1"></i>
+            {% trans "Formateurs" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link {% if request.path == edu_pricing_url %}active{% endif %}"
+             href="{{ edu_pricing_url|default:'#' }}">
+            <i class="fa-solid fa-tags me-1"></i>
+            {% trans "Tarifs" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link {% if request.path == edu_faq_url %}active{% endif %}"
+             href="{{ edu_faq_url|default:'#' }}">
+            <i class="fa-regular fa-circle-question me-1"></i>
+            {% trans "FAQ" %}
+          </a>
+        </li>
+
+      </ul>
+
+      <!-- Recherche -->
+      <form class="d-flex me-3"
+            method="get"
+            action="{{ edu_courses_url|default:'#' }}"
+            role="search">
+        <input class="form-control"
+               type="search"
+               name="q"
+               placeholder="{% trans 'Rechercher une formation…' %}"
+               aria-label="{% trans 'Rechercher' %}">
+      </form>
+
+      <!-- Actions -->
+      <div class="d-flex gap-2">
+        <a class="btn btn-outline-primary"
+           href="{{ edu_portal_url|default:'#' }}">
+          <i class="fa-solid fa-user-graduate me-1"></i>
+          {% trans "Espace apprenant" %}
+        </a>
+
+        <a class="btn btn-primary"
+           href="{{ edu_apply_url|default:'#' }}">
+          <i class="fa-solid fa-pen-to-square me-1"></i>
+          {% trans "S’inscrire" %}
+        </a>
+      </div>
+
+    </div>
+  </div>
+</nav>
+
+<!-- Bandeau informations -->
+<div class="bg-white border-bottom">
+  <div class="container-fluid py-2 d-flex flex-wrap gap-3 align-items-center">
+
+    <span>
+      <i class="fa-regular fa-circle-check me-1 text-success"></i>
+      {% trans "Certifications reconnues" %}
+    </span>
+
+    <span>
+      <i class="fa-solid fa-laptop-file me-1 text-primary"></i>
+      {% trans "Cours en présentiel & en ligne" %}
+    </span>
+
+    <span>
+      <i class="fa-solid fa-hand-holding-dollar me-1 text-warning"></i>
+      {% trans "Financements possibles" %}
+    </span>
+
+    <a href="{{ edu_contact_url|default:'#' }}"
+       class="ms-auto text-decoration-none">
+      <i class="fa-regular fa-envelope me-1"></i>
+      {% trans "Contact pédagogique" %}
+    </a>
+
+  </div>
+</div>

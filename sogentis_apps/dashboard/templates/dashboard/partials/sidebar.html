@@ -1,26 +1,93 @@
 <nav class="sidebar">
-  <div class="sidebar-header">
-    <h3>SOGENTIS</h3>
+  <div class="sidebar-header mb-4">
+    <h3 class="fw-bold">SOGENTIS</h3>
   </div>
-  <ul class="sidebar-nav">
-    {% comment %} <li><a href="{% url 'dashboard:home' %}"><i class="fa fa-home"></i> Accueil</a></li> {% endcomment %}
-    <li><a href="{% url 'dashboard:index' %}"><i class="fa fa-home"></i> Accueil</a></li>
-    <li><a href="{% url 'dashboard:notes_list' %}">Mes notes</a></li>
-
-    <li><a href="{% url 'dashboard:index' %}"><i class="fa fa-chart-line"></i> Tableau de bord</a></li>
-    <li><a href="{% url 'dashboard:profile' %}"><i class="fa fa-user"></i> Profil</a></li>
-    <li><a href="{% url 'dashboard:engagements_list' %}"><i class="fa fa-handshake"></i> Engagements</a></li>
-    <li><a href="{% url 'dashboard:stats' %}"><i class="fa fa-chart-pie"></i> Statistiques</a></li>
-    <li><a href="{% url 'accounts_users_web:logout' %}"><i class="fa fa-sign-out-alt"></i> Déconnexion</a></li>
+  <ul class="sidebar-nav nav flex-column gap-1">
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'dashboard:index' %}">
+        <i class="bi bi-house me-2"></i> Accueil
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'dashboard:notes_list' %}">
+        <i class="bi bi-journal-text me-2"></i> Mes notes
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'dashboard:index' %}">
+        <i class="bi bi-graph-up me-2"></i> Tableau de bord
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'dashboard:profile' %}">
+        <i class="bi bi-person me-2"></i> Profil
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'dashboard:engagements_list' %}">
+        <i class="bi bi-people me-2"></i> Engagements
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'dashboard:stats' %}">
+        <i class="bi bi-bar-chart me-2"></i> Statistiques
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'accounts_users_web:logout' %}">
+        <i class="bi bi-box-arrow-right me-2"></i> Déconnexion
+      </a>
+    </li>
   </ul>
 </nav>
-{% comment %} 
-<nav class="sidebar">
-  <ul>
-    <li><a href="{% url 'dashboard:index' %}">Accueil</a></li>
-    <li><a href="{% url 'dashboard:notes_list' %}">Mes notes</a></li>
-    <li><a href="{% url 'dashboard:stats' %}">Statistiques</a></li>
-    <li><a href="{% url 'dashboard:profile' %}">Profil</a></li>
-    <!-- Ajoute les liens vers dons, engagements, etc. -->
+
+
+
+
+
+
+
+
+
+{% comment %} <nav class="sidebar">
+  <div class="sidebar-header mb-4">
+    <h3 class="fw-bold">SOGENTIS</h3>
+  </div>
+  <ul class="sidebar-nav nav flex-column gap-1">
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'dashboard:index' %}">
+        <i class="bi bi-house me-2"></i> Accueil
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'dashboard:notes_list' %}">
+        <i class="bi bi-journal-text me-2"></i> Mes notes
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'dashboard:index' %}">
+        <i class="bi bi-graph-up me-2"></i> Tableau de bord
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'dashboard:profile' %}">
+        <i class="bi bi-person me-2"></i> Profil
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'dashboard:engagements_list' %}">
+        <i class="bi bi-people me-2"></i> Engagements
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'dashboard:stats' %}">
+        <i class="bi bi-bar-chart me-2"></i> Statistiques
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'accounts_users_web:logout' %}">
+        <i class="bi bi-box-arrow-right me-2"></i> Déconnexion
+      </a>
+    </li>
   </ul>
 </nav> {% endcomment %}

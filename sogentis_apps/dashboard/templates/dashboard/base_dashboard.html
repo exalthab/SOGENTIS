@@ -1,0 +1,76 @@
+{% load static i18n %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Dashboard{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap (en local ou CDN selon ta config) -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <!-- Dashboard CSS principaux -->
+    <link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/css/cards.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/css/charts.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/css/sidebar.css' %}">
+    {% block extra_css %}{% endblock %}
+    <style>
+        body { background: #f4f6fa; }
+        .main-content { margin-left: 230px; min-height: 100vh; transition: margin-left .2s; }
+        @media (max-width: 900px) {
+            .main-content { margin-left: 0; }
+            .sidebar { position: static; width: 100%; min-height: auto; }
+        }
+    </style>
+</head>
+<body>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="brand mb-4 text-center">
+            <a href="{% url 'dashboard:index' %}" class="navbar-brand text-white fw-bold fs-4" style="letter-spacing:2px;">
+                <img src="{% static 'dashboard/img/logo-mini.png' %}" alt="Logo" style="width:32px;vertical-align:middle;margin-right:7px;"> SOGENTIS
+            </a>
+        </div>
+        <div class="user-profile text-center mb-4">
+            <img src="{% static 'dashboard/img/user.png' %}" alt="User" class="rounded-circle mb-2" width="64" height="64">
+            <div class="fw-semibold">{{ user.get_full_name|default:user.username }}</div>
+            <div class="small text-info">{{ user.email }}</div>
+        </div>
+        <nav class="flex-grow-1">
+            <ul class="nav flex-column gap-2">
+                <li class="nav-item"><a class="nav-link text-white" href="{% url 'dashboard:index' %}"><i class="fas fa-home"></i> Tableau de bord</a></li>
+                <li class="nav-item"><a class="nav-link text-white" href="{% url 'dashboard:profile' %}"><i class="fas fa-user"></i> Mon profil</a></li>
+                <li class="nav-item"><a class="nav-link text-white" href="{% url 'dashboard:notes_list' %}"><i class="fas fa-sticky-note"></i> Mes notes</a></li>
+                <!-- Ajoute d'autres liens -->
+            </ul>
+        </nav>
+        <div class="mt-4 text-center">
+            <a href="{% url 'accounts_users_web:logout' %}" class="btn btn-sm btn-outline-light"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <!-- TOPBAR -->
+        <nav class="navbar navbar-light bg-white shadow-sm py-2 px-4 mb-4">
+            <span class="navbar-text fs-5 fw-semibold">{% block dashboard_title %}Tableau de bord{% endblock %}</span>
+            <div class="d-flex align-items-center gap-3">
+                <!-- Ajoute ici des notifications, settings, etc. -->
+                <span class="text-muted">{{ user.last_login|date:"d/m/Y H:i" }}</span>
+            </div>
+        </nav>
+
+        <div class="container-fluid">
+            {% block dashboard_content %}
+            <!-- ICI TU PLACES TES WIDGETS (cards, graphes, stats, etc.) -->
+            {% endblock %}
+        </div>
+    </main>
+
+    <!-- SCRIPTS -->
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'dashboard/js/chart.js' %}"></script>
+    <script src="{% static 'dashboard/js/dashboard.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

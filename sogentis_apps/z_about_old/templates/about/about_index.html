@@ -1,0 +1,822 @@
+{% extends "main.html" %}
+{% load static i18n %}
+{% load about_tags %}
+
+{% block title %}
+  {{ about_page.title|default:_("À propos de nous") }}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'about/css/about.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<section class="about-hero fade-in-up">
+    <div class="hero-bg" style="background-image: url('{% if about_page.hero_image %}{{ about_page.hero_image.url }}{% else %}{% static 'about/img/logo.png' %}{% endif %}');"></div>
+    <div class="hero-content">
+        <h1 class="hero-title display-4 fw-bold">🎯 {% trans "À PROPOS DE NOUS" %}</h1>
+        <p class="hero-subtitle lead mt-3">{{ about_page.intro_text|default:_("Découvrez notre mission, vision, valeurs et objectifs.") }}</p>
+    </div>
+    <img src="{% static 'about/img/logo.png' %}" alt="Logo" class="hero-logo" loading="lazy">
+</section>
+
+<div class="container section-cards-container fade-in-up">
+    {% for section in get_about_sections %}
+        {% section_card section section.section_type %}
+    {% endfor %}
+</div>
+
+<h2 class="text-center mb-4">👥 {% trans "Notre équipe" %}</h2>
+<div class="container people-cards fade-in-up">
+    {% for member in get_team_members %}
+        {% include "about/components/people_card.html" with item=member type="team" %}
+    {% endfor %}
+</div>
+
+<h2 class="text-center mb-4 mt-5">🧒 {% trans "Aider un enfant" %}</h2>
+<div class="container people-cards fade-in-up">
+    {% for child in get_about_sections|get_about_section:"children".children %}
+        {% include "about/components/people_card.html" with item=child type="child" %}
+    {% endfor %}
+</div>
+
+<h2 class="text-center mb-4 mt-5">🤱 {% trans "Aider une maman" %}</h2>
+<div class="container people-cards fade-in-up">
+    {% for mom in get_about_sections|get_about_section:"mothers".mothers %}
+        {% include "about/components/people_card.html" with item=mom type="mother" %}
+    {% endfor %}
+</div>
+
+<h2 class="text-center mb-4 mt-5">🤝 {% trans "Nos partenaires" %}</h2>
+<div class="container partner-logos fade-in-up">
+    {% for partner in get_partners %}
+        {% include "about/components/partner_card.html" with item=partner %}
+    {% endfor %}
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'about/js/about.js' %}"></script>
+{% endblock %}
+
+
+
+
+
+
+
+{% comment %} {% extends "main.html" %}
+{% load static i18n %}
+{% load about_tags %}
+
+{% block title %}{{ about_page.title|default:"À propos de nous" }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'about/css/about.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="about-hero fade-in-up">
+    <div class="hero-bg" style="background-image: url('{% if about_page.hero_image %}{{ about_page.hero_image.url }}{% else %}{% static 'about/img/logo.png' %}{% endif %}');"></div>
+    <div class="hero-content">
+        <h1 class="hero-title">🎯 {% trans "À PROPOS DE NOUS" %}</h1>
+        <p class="hero-subtitle">{{ about_page.intro_text|default:_("Découvrez notre mission, notre vision, nos valeurs et nos objectifs.") }}</p>
+    </div>
+    <img src="{% static 'about/img/logo.png' %}" alt="Logo SOGENTIS" class="hero-logo">
+</section>
+
+<!-- SECTIONS -->
+<div class="container section-cards-container fade-in-up">
+    {% for item in missions %}
+    <article class="section-card mission-card" onclick="toggleDetail('mission-{{ item.id }}')">
+        <img src="{% static 'about/img/default_section.jpg' %}" alt="{{ item.title }}" class="section-card-img">
+        <div class="section-card-header">
+            <h3 class="section-card-title">{{ item.title }} <span class="toggle-indicator">+</span></h3>
+        </div>
+        <div id="mission-{{ item.id }}" class="section-card-body">
+            <div class="section-card-content">{{ item.description|safe }}</div>
+        </div>
+    </article>
+    {% endfor %}
+
+    {% for item in visions %}
+    <article class="section-card vision-card" onclick="toggleDetail('vision-{{ item.id }}')">
+        <img src="{% static 'about/img/default_section.jpg' %}" alt="{{ item.title }}" class="section-card-img">
+        <div class="section-card-header">
+            <h3 class="section-card-title">{{ item.title }} <span class="toggle-indicator">+</span></h3>
+        </div>
+        <div id="vision-{{ item.id }}" class="section-card-body">
+            <div class="section-card-content">{{ item.description|safe }}</div>
+        </div>
+    </article>
+    {% endfor %}
+
+    {% for item in values %}
+    <article class="section-card value-card" onclick="toggleDetail('value-{{ item.id }}')">
+        <img src="{% static 'about/img/default_section.jpg' %}" alt="{{ item.title }}" class="section-card-img">
+        <div class="section-card-header">
+            <h3 class="section-card-title">{{ item.title }} <span class="toggle-indicator">+</span></h3>
+        </div>
+        <div id="value-{{ item.id }}" class="section-card-body">
+            <div class="section-card-content">{{ item.description|safe }}</div>
+        </div>
+    </article>
+    {% endfor %}
+
+    {% for item in objectives %}
+    <article class="section-card objective-card" onclick="toggleDetail('objective-{{ item.id }}')">
+        <img src="{% static 'about/img/default_section.jpg' %}" alt="{{ item.title }}" class="section-card-img">
+        <div class="section-card-header">
+            <h3 class="section-card-title">{{ item.title }} <span class="toggle-indicator">+</span></h3>
+        </div>
+        <div id="objective-{{ item.id }}" class="section-card-body">
+            <div class="section-card-content">{{ item.description|safe }}</div>
+        </div>
+    </article>
+    {% endfor %}
+</div>
+
+<!-- TEAM -->
+<section aria-label="{% trans 'Notre équipe' %}">
+    <h2 class="text-center mb-4">👥 {% trans "Notre équipe" %}</h2>
+    <div class="container people-cards fade-in-up">
+        {% for member in team %}
+        <div class="people-card">
+            <img src="{{ member.photo_url }}" alt="{{ member.name }}">
+            <h3>{{ member.name }}</h3>
+            <p>{{ member.role }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- CHILDREN -->
+<section aria-label="{% trans 'Aider un enfant' %}">
+    <h2 class="text-center mb-4 mt-5">🧒 {% trans "Aider un enfant" %}</h2>
+    <div class="container people-cards fade-in-up">
+        {% for child in children %}
+        <div class="people-card">
+            <img src="{{ child.photo_url }}" alt="{{ child.name }}">
+            <h3>{{ child.name }}</h3>
+            <p>{% trans "Financé :" %} {{ child.funded_pct }}%</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- MOTHERS -->
+<section aria-label="{% trans 'Aider une maman' %}">
+    <h2 class="text-center mb-4 mt-5">🤱 {% trans "Aider une maman" %}</h2>
+    <div class="container people-cards fade-in-up">
+        {% for mom in mothers %}
+        <div class="people-card">
+            <img src="{{ mom.photo_url }}" alt="{{ mom.name }}">
+            <h3>{{ mom.name }}</h3>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- PARTNERS -->
+<section aria-label="{% trans 'Nos partenaires' %}">
+    <h2 class="text-center mb-4 mt-5">🤝 {% trans "Nos partenaires" %}</h2>
+    <div class="container partner-logos fade-in-up">
+        {% for partner in partners %}
+        <div class="partner-card">
+            <img src="{{ partner.logo_url }}" alt="{{ partner.name }}">
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'about/js/about.js' %}"></script>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+{% comment %} {% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}
+  {{ about_page.title|default:"À propos de nous" }}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'about/css/about.css' %}">
+<style>
+  /* 💅 Style moderne des cartes */
+  .about-hero {
+    position: relative;
+    text-align: center;
+    color: white;
+    overflow: hidden;
+  }
+  .hero-bg {
+    background-size: cover;
+    background-position: center;
+    filter: brightness(0.4);
+    height: 60vh;
+  }
+  .hero-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+  }
+  .hero-logo {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+  }
+
+  .about-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+  }
+
+  .about-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    overflow: hidden;
+    width: 300px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+  .about-card:hover {
+    transform: translateY(-5px);
+  }
+  .about-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+  }
+  .about-card-body {
+    padding: 1rem;
+  }
+  .about-card-body h3 {
+    font-size: 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .toggle-indicator {
+    font-weight: bold;
+    color: #007bff;
+  }
+  .section-detail {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+    padding: 0 1rem;
+  }
+  .section-detail.open {
+    padding-top: 0.5rem;
+    max-height: 500px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- 🏠 Bouton retour -->
+<div class="container mb-4 text-start fade-in-up">
+  <a href="{% url 'core:home' %}" class="btn btn-outline-primary rounded-pill px-4 shadow-sm">
+    ← {% trans "Retour à la page d'accueil" %}
+  </a>
+</div>
+
+<!-- 🌍 HERO -->
+<section class="about-hero fade-in-up">
+  <div class="hero-bg"
+       style="background-image: url('{% if about_page.cover_photo %}{{ about_page.cover_photo.url }}{% else %}{% static 'about/img/logo.png' %}{% endif %}');">
+  </div>
+
+  <div class="hero-content">
+    <h1 class="fw-bold display-5">🎯 {% trans "À PROPOS DE NOUS" %}</h1>
+    <p class="lead mt-2 px-3">
+      {{ about_page.content|default:_("Découvrez notre mission, notre vision, nos valeurs et les personnes qui incarnent SOGENTIS.") }}
+    </p>
+  </div>
+
+  <img src="{% static 'about/img/logo.png' %}" alt="SOGENTIS Logo" class="hero-logo shadow-lg">
+</section>
+
+
+<!-- 🌱 SECTIONS DYNAMIQUES -->
+<div class="container about-grid fade-in-up">
+
+  <!-- MISSION -->
+  {% if missions %}
+    {% for item in missions %}
+      <div class="about-card" onclick="toggleDetail('mission-{{ forloop.counter }}')">
+        <img src="{% static 'about/img/default_section.jpg' %}" alt="{{ item.title }}">
+
+        <div class="about-card-body">
+          <h3>🎯 {{ item.title }} <span class="toggle-indicator">+</span></h3>
+          <p>{{ item.description|truncatechars:100 }}</p>
+        </div>
+        <div id="mission-{{ forloop.counter }}" class="section-detail">
+          {{ item.description|linebreaks }}
+        </div>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <!-- VISION -->
+  {% if visions %}
+    {% for item in visions %}
+      <div class="about-card" onclick="toggleDetail('vision-{{ forloop.counter }}')">
+        <img src="{% static 'about/img/default_section.jpg' %}" alt="{{ item.title }}">
+
+        <div class="about-card-body">
+          <h3>👁️ {{ item.title }} <span class="toggle-indicator">+</span></h3>
+          <p>{{ item.description|truncatechars:100 }}</p>
+        </div>
+        <div id="vision-{{ forloop.counter }}" class="section-detail">
+          {{ item.description|linebreaks }}
+        </div>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <!-- VALEURS -->
+  {% if values %}
+    {% for item in values %}
+      <div class="about-card" onclick="toggleDetail('value-{{ forloop.counter }}')">
+        <img src="{% static 'about/img/default_section.jpg' %}" alt="{{ item.title }}">
+
+        <div class="about-card-body">
+          <h3>💎 {{ item.title }} <span class="toggle-indicator">+</span></h3>
+          <p>{{ item.description|truncatechars:100 }}</p>
+        </div>
+        <div id="value-{{ forloop.counter }}" class="section-detail">
+          {{ item.description|linebreaks }}
+        </div>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <!-- OBJECTIFS -->
+  {% if objectives %}
+    {% for item in objectives %}
+      <div class="about-card" onclick="toggleDetail('objective-{{ forloop.counter }}')">
+        <img src="{% static 'about/img/default_section.jpg' %}" alt="{{ item.title }}">
+
+        <div class="about-card-body">
+          <h3>🚀 {{ item.title }} <span class="toggle-indicator">+</span></h3>
+          <p>{{ item.description|truncatechars:100 }}</p>
+        </div>
+        <div id="objective-{{ forloop.counter }}" class="section-detail">
+          {{ item.description|linebreaks }}
+        </div>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  {% if not missions and not visions and not values and not objectives %}
+    <p class="text-center text-muted w-100">{% trans "Aucune section disponible." %}</p>
+  {% endif %}
+
+</div>
+
+
+<!-- 👥 ÉQUIPE / PARTENAIRES / AUTRES BLOCS -->
+{% include "about/partials/team_section.html" %}
+{% include "about/partials/partners_section.html" %}
+{% include "about/partials/children_section.html" %}
+{% include "about/partials/mothers_section.html" %}
+
+
+<!-- 🔚 Bas de page -->
+<div class="container text-center mt-5 fade-in-up">
+  <a href="{% url 'core:home' %}" class="btn btn-outline-secondary rounded-pill px-4 mb-3">
+    ← {% trans "Retour à la page d'accueil" %}
+  </a>
+  {% if latest_update %}
+  <p class="text-muted small mb-0">
+    🕓 {% trans "Dernière mise à jour :" %} {{ latest_update|date:"d F Y à H:i" }}
+  </p>
+  {% endif %}
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'about/js/about.js' %}"></script>
+<script>
+/**
+ * Gère l’ouverture/fermeture des cartes avec fermeture automatique des autres.
+ */
+function toggleDetail(id) {
+  const section = document.getElementById(id);
+  if (!section) return;
+
+  const allDetails = document.querySelectorAll('.section-detail');
+  const allIndicators = document.querySelectorAll('.toggle-indicator');
+
+  allDetails.forEach(d => {
+    if (d.id !== id) {
+      d.classList.remove('open');
+      d.style.maxHeight = null;
+    }
+  });
+  allIndicators.forEach(i => i.textContent = '+');
+
+  const card = section.closest('.about-card');
+  const indicator = card.querySelector('.toggle-indicator');
+  const isOpen = section.classList.toggle('open');
+  
+  if (isOpen) {
+    section.style.maxHeight = section.scrollHeight + "px";
+    indicator.textContent = "−";
+  } else {
+    section.style.maxHeight = null;
+    indicator.textContent = "+";
+  }
+}
+</script>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+{% comment %} {% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}
+  {{ about_page.title|default:"À propos de nous" }}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'about/css/about.css' %}">
+<style>
+/* Cartes dynamiques */
+.about-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.about-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+.about-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.about-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.about-card-body {
+  padding: 1rem;
+  flex-grow: 1;
+}
+
+.about-card-body h3 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.toggle-indicator {
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.section-detail {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  padding: 0 1rem;
+}
+
+.section-detail.open {
+  padding: 0.5rem 1rem;
+}
+
+.hero-logo {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- 🏠 Bouton retour -->
+<div class="container mb-4 text-start fade-in-up">
+  <a href="{% url 'core:home' %}" class="btn btn-outline-primary rounded-pill px-4 shadow-sm">
+    ← {% trans "Retour à la page d'accueil" %}
+  </a>
+</div>
+
+<!-- 🌍 HERO -->
+<section class="about-hero text-center position-relative overflow-hidden mb-5 fade-in-up">
+  <div class="hero-bg"
+       style="background-image: url('{% if about_page.hero_image %}{{ about_page.hero_image.url }}{% else %}{% static 'about/img/logo.png' %}{% endif %}');">
+  </div>
+
+  <div class="hero-content text-white">
+    <h1 class="hero-title fw-bold display-5">🎯 {% trans "À PROPOS DE NOUS" %}</h1>
+    <p class="hero-subtitle mt-2 lead px-3">
+      {{ about_page.intro_text|default:_("Découvrez notre mission, notre vision, nos valeurs et les personnes qui incarnent SOGENTIS.") }}
+    </p>
+  </div>
+
+  <img src="{% static 'about/img/logo.png' %}" alt="SOGENTIS Logo" class="hero-logo rounded-circle shadow-lg">
+</section>
+
+<!-- =============================
+     SECTIONS MISSION / VISION / VALEURS / OBJECTIFS
+============================= -->
+<div class="container mb-5 about-grid fade-in-up">
+
+  {% for item in missions %}
+    <div class="about-card" onclick="toggleDetail('mission-{{ forloop.counter }}')">
+      {% if item.image %}
+        <img src="{{ item.image.url }}" alt="{{ item.title }}">
+      {% else %}
+        <img src="{% static 'about/img/default_section.jpg' %}" alt="{{ item.title }}">
+      {% endif %}
+      <div class="about-card-body">
+        <h3>{{ item.title }} <span class="toggle-indicator">+</span></h3>
+        <p>{{ item.description|truncatechars:80 }}</p>
+      </div>
+      <div id="mission-{{ forloop.counter }}" class="section-detail">
+        {{ item.description|safe }}
+      </div>
+    </div>
+  {% endfor %}
+
+  {% for item in visions %}
+    <div class="about-card" onclick="toggleDetail('vision-{{ forloop.counter }}')">
+      {% if item.image %}
+        <img src="{{ item.image.url }}" alt="{{ item.title }}">
+      {% else %}
+        <img src="{% static 'about/img/default_section.jpg' %}" alt="{{ item.title }}">
+      {% endif %}
+      <div class="about-card-body">
+        <h3>{{ item.title }} <span class="toggle-indicator">+</span></h3>
+        <p>{{ item.description|truncatechars:80 }}</p>
+      </div>
+      <div id="vision-{{ forloop.counter }}" class="section-detail">
+        {{ item.description|safe }}
+      </div>
+    </div>
+  {% endfor %}
+
+  {% for item in values %}
+    <div class="about-card" onclick="toggleDetail('value-{{ forloop.counter }}')">
+      {% if item.image %}
+        <img src="{{ item.image.url }}" alt="{{ item.title }}">
+      {% else %}
+        <img src="{% static 'about/img/default_section.jpg' %}" alt="{{ item.title }}">
+      {% endif %}
+      <div class="about-card-body">
+        <h3>{{ item.title }} <span class="toggle-indicator">+</span></h3>
+        <p>{{ item.description|truncatechars:80 }}</p>
+      </div>
+      <div id="value-{{ forloop.counter }}" class="section-detail">
+        {{ item.description|safe }}
+      </div>
+    </div>
+  {% endfor %}
+
+  {% for item in objectives %}
+    <div class="about-card" onclick="toggleDetail('objective-{{ forloop.counter }}')">
+      {% if item.image %}
+        <img src="{{ item.image.url }}" alt="{{ item.title }}">
+      {% else %}
+        <img src="{% static 'about/img/default_section.jpg' %}" alt="{{ item.title }}">
+      {% endif %}
+      <div class="about-card-body">
+        <h3>{{ item.title }} <span class="toggle-indicator">+</span></h3>
+        <p>{{ item.description|truncatechars:80 }}</p>
+      </div>
+      <div id="objective-{{ forloop.counter }}" class="section-detail">
+        {{ item.description|safe }}
+      </div>
+    </div>
+  {% endfor %}
+
+</div>
+
+<!-- 🧒 Aider un enfant -->
+{% include "about/partials/children_section.html" %}
+
+<!-- 🤱 Aider une maman -->
+{% include "about/partials/mothers_section.html" %}
+
+<!-- 👥 Notre équipe -->
+{% include "about/partials/team_section.html" %}
+
+<!-- 🤝 Nos partenaires -->
+{% include "about/partials/partners_section.html" %}
+
+<!-- 🔚 Bas de page -->
+<div class="container text-center mt-5 fade-in-up">
+  <a href="{% url 'core:home' %}" class="btn btn-outline-secondary rounded-pill px-4 mb-3">
+    ← {% trans "Retour à la page d'accueil" %}
+  </a>
+  {% if latest_update %}
+  <p class="text-muted small mb-0">
+    🕓 {% trans "Dernière mise à jour :" %} {{ latest_update|date:"d F Y à H:i" }}
+  </p>
+  {% endif %}
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'about/js/about.js' %}"></script>
+<script>
+function toggleDetail(id) {
+  const section = document.getElementById(id);
+  if (!section) return;
+
+  const card = section.closest('.about-card');
+  const indicator = card.querySelector('.toggle-indicator');
+
+  // Fermer toutes les autres sections ouvertes
+  document.querySelectorAll('.section-detail.open').forEach(s => {
+    if(s !== section) {
+      s.classList.remove('open');
+      s.style.maxHeight = null;
+      s.closest('.about-card').querySelector('.toggle-indicator').textContent = '+';
+    }
+  });
+
+  // Ouvrir/fermer la section cliquée
+  const isOpen = section.classList.toggle('open');
+  if (isOpen) {
+    section.style.maxHeight = section.scrollHeight + "px";
+    indicator.textContent = "−";
+  } else {
+    section.style.maxHeight = null;
+    indicator.textContent = "+";
+  }
+}
+</script>
+{% endblock %}
+
+
+
+
+
+ {% endcomment %}
+
+
+
+
+
+
+
+
+{% comment %} {% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}
+  {{ about_page.title|default:"À propos de nous" }}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'about/css/about.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- 🏠 Bouton retour -->
+<div class="container mb-4 text-start fade-in-up">
+  <a href="{% url 'core:home' %}" class="btn btn-outline-primary rounded-pill px-4 shadow-sm">
+    ← {% trans "Retour à la page d'accueil" %}
+  </a>
+</div>
+
+<!-- 🌍 HERO -->
+<section class="about-hero text-center position-relative overflow-hidden mb-5 fade-in-up">
+  <div class="hero-bg"
+       style="background-image: url('{% if about_page.hero_image %}{{ about_page.hero_image.url }}{% else %}{% static 'about/img/logo.png' %}{% endif %}');">
+  </div>
+
+  <div class="hero-content text-white">
+    <h1 class="hero-title fw-bold display-5">🎯 {% trans "À PROPOS DE NOUS" %}</h1>
+    <p class="hero-subtitle mt-2 lead px-3">
+      {{ about_page.intro_text|default:_("Découvrez notre mission, notre vision, nos valeurs et les personnes qui incarnent SOGENTIS.") }}
+    </p>
+  </div>
+
+  <img src="{% static 'about/img/logo.png' %}" alt="SOGENTIS Logo" class="hero-logo rounded-circle shadow-lg">
+</section>
+
+<!-- =============================
+     SECTIONS MISSION / VISION / VALEURS / OBJECTIFS (dynamiques)
+============================= -->
+<div class="container mb-5 about-grid fade-in-up">
+
+  {% for section in sections %}
+    <div class="about-card {{ section.section_type }}-card" onclick="toggleDetail('{{ section.section_type }}-detail')">
+      {% if section.image %}
+        <img src="{{ section.image.url }}" alt="{{ section.title }}">
+      {% else %}
+        <img src="{% static 'about/img/default_section.jpg' %}" alt="{{ section.title }}">
+      {% endif %}
+      <div class="about-card-body">
+        <h3>
+          {{ section.title }}
+          <span class="toggle-indicator">+</span>
+        </h3>
+        <p>{{ section.short_description }}</p>
+      </div>
+      <div id="{{ section.section_type }}-detail" class="section-detail {{ section.section_type }}-detail">
+        {{ section.detailed_content|safe }}
+      </div>
+    </div>
+  {% empty %}
+    <p class="text-center text-muted">{% trans "Aucune section n'est encore disponible." %}</p>
+  {% endfor %}
+
+</div>
+
+<!-- 🧒 Aider un enfant -->
+{% include "about/partials/children_section.html" %}
+
+<!-- 🤱 Aider une maman -->
+{% include "about/partials/mothers_section.html" %}
+
+<!-- 👥 Notre équipe -->
+{% include "about/partials/team_section.html" %}
+
+<!-- 🤝 Nos partenaires -->
+{% include "about/partials/partners_section.html" %}
+
+<!-- 🔚 Bas de page -->
+<div class="container text-center mt-5 fade-in-up">
+  <a href="{% url 'core:home' %}" class="btn btn-outline-secondary rounded-pill px-4 mb-3">
+    ← {% trans "Retour à la page d'accueil" %}
+  </a>
+  {% if latest_update %}
+  <p class="text-muted small mb-0">
+    🕓 {% trans "Dernière mise à jour :" %} {{ latest_update|date:"d F Y à H:i" }}
+  </p>
+  {% endif %}
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'about/js/about.js' %}"></script>
+<script>
+function toggleDetail(id) {
+  const section = document.getElementById(id);
+  if (!section) return;
+  
+  const card = section.closest('.about-card');
+  const indicator = card.querySelector('.toggle-indicator');
+  
+  const isOpen = section.classList.toggle('open');
+  if (isOpen) {
+    section.style.maxHeight = section.scrollHeight + "px";
+    indicator.textContent = "−";
+  } else {
+    section.style.maxHeight = null;
+    indicator.textContent = "+";
+  }
+}
+</script>
+{% endblock %} {% endcomment %}

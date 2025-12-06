@@ -1,0 +1,42 @@
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{{ mother.name }} - Détails{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'about/css/about.css' %}">
+<style>
+.detail-hero {
+    background: #f5f5f5;
+    padding: 2rem 0;
+    text-align: center;
+}
+.detail-hero img {
+    max-width: 200px;
+    border-radius: 50%;
+    margin-bottom: 1rem;
+}
+.detail-content {
+    max-width: 800px;
+    margin: 2rem auto;
+    font-size: 1.1rem;
+}
+.back-btn {
+    margin-top: 1rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="detail-hero">
+    <img src="{{ mother.photo.url }}" alt="{{ mother.name }}">
+    <h1>{{ mother.name }}</h1>
+    <p><strong>Numéro d’inscription :</strong> {{ mother.registration_number }}</p>
+</div>
+
+<div class="detail-content">
+    <h2>Histoire</h2>
+    <p>{{ mother.story }}</p>
+    <a href="{% url 'about:index' %}" class="btn btn-outline-primary back-btn">⬅ Retour à la liste</a>
+</div>
+{% endblock %}

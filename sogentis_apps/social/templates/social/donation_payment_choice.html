@@ -1,4 +1,287 @@
+{# social/templates/social/donation_payment_choice.html #}
 {% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Choisir le mode de paiement" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'social/css/_donation.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+
+            <!-- 🔹 Titre -->
+            <h2 class="text-center mb-5 fw-bold">{% trans "Choisissez un moyen de paiement" %}</h2>
+
+            <!-- 🔹 Récapitulatif du don -->
+            {% if donation %}
+            <div class="alert alert-secondary text-center mb-4">
+                {% trans "Montant à payer :" %} <strong>{{ donation.amount|floatformat:0 }} FCFA</strong><br>
+                {% if donation.target %}
+                    {% trans "Vous soutenez :" %} <strong>{{ donation.target }}</strong>
+                {% elif donation.project %}
+                    {% trans "Projet :" %} <strong>{{ donation.project.title }}</strong>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- 🔹 Messages -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show text-center mb-3" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{% trans 'Fermer' %}"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- 🔹 Formulaire de paiement -->
+            <form method="post" autocomplete="off">
+                {% csrf_token %}
+                <input type="hidden" name="step" value="2">
+                {% if target_type and target_id %}
+                    <input type="hidden" name="target_type" value="{{ target_type }}">
+                    <input type="hidden" name="target_id" value="{{ target_id }}">
+                {% endif %}
+
+                <div class="row justify-content-center g-3">
+
+                    <!-- Stripe -->
+                    <div class="col-12 col-md-4">
+                        <button name="payment_method" value="stripe" class="btn btn-outline-primary w-100 py-3">
+                            <span class="fs-5">💳</span> Stripe<br>
+                            <span class="small">{% trans "Carte bancaire" %}</span>
+                        </button>
+                    </div>
+
+                    <!-- PayPal -->
+                    <div class="col-12 col-md-4">
+                        <button name="payment_method" value="paypal" class="btn btn-outline-info w-100 py-3">
+                            <span class="fs-5">🅿️</span> PayPal
+                        </button>
+                    </div>
+
+                    <!-- Orange Money -->
+                    <div class="col-12 col-md-4">
+                        <button name="payment_method" value="orange_money" class="btn btn-outline-warning w-100 py-3">
+                            <span class="fs-5">🟧</span> Orange Money
+                        </button>
+                    </div>
+
+                    <!-- Wave -->
+                    <div class="col-12 col-md-4">
+                        <button name="payment_method" value="wave" class="btn btn-outline-success w-100 py-3">
+                            <span class="fs-5">🌊</span> Wave
+                        </button>
+                    </div>
+
+                    <!-- Visa -->
+                    <div class="col-12 col-md-4">
+                        <button name="payment_method" value="visa" class="btn btn-outline-dark w-100 py-3">
+                            <span class="fs-5">💳</span> VISA
+                        </button>
+                    </div>
+
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'social/js/_donation.js' %}"></script>
+{% endblock %}
+
+
+
+
+
+
+
+
+{% comment %} {# social/templates/social/donation_payment_choice.html #}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Choisir le mode de paiement" %}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+  {# -------------------------------------------------- #}
+  {# 🔹 Titre principal #}
+  {# -------------------------------------------------- #}
+  <h2 class="mb-5 text-center">{% trans "Choisissez un moyen de paiement" %}</h2>
+
+  {# -------------------------------------------------- #}
+  {# 🔹 Récapitulatif du don #}
+  {# -------------------------------------------------- #}
+  {% if donation %}
+    <div class="alert alert-secondary text-center mb-4">
+      {% trans "Montant à payer :" %} <strong>{{ donation.amount|floatformat:0 }} FCFA</strong><br>
+      {% if donation.target %}
+        {% trans "Vous soutenez :" %} <strong>{{ donation.target }}</strong>
+      {% elif donation.project %}
+        {% trans "Projet :" %} <strong>{{ donation.project.title }}</strong>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  {# -------------------------------------------------- #}
+  {# 🔹 Messages d'erreur / info #}
+  {# -------------------------------------------------- #}
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show text-center" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{% trans 'Fermer' %}"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  {# -------------------------------------------------- #}
+  {# 🔹 Formulaire choix du mode de paiement #}
+  {# -------------------------------------------------- #}
+  <form method="post" autocomplete="off">
+    {% csrf_token %}
+    <input type="hidden" name="step" value="2">
+
+    {% if target_type and target_id %}
+      <input type="hidden" name="target_type" value="{{ target_type }}">
+      <input type="hidden" name="target_id" value="{{ target_id }}">
+    {% endif %}
+
+    <div class="row justify-content-center g-3">
+      {# Stripe #}
+      <div class="col-12 col-md-4">
+        <button name="payment_method" value="stripe" class="btn btn-outline-primary w-100 py-3" type="submit" aria-label="Stripe">
+          <span class="fs-5">💳</span> Stripe<br>
+          <span class="small">{% trans "Carte bancaire" %}</span>
+        </button>
+      </div>
+
+      {# PayPal #}
+      <div class="col-12 col-md-4">
+        <button name="payment_method" value="paypal" class="btn btn-outline-info w-100 py-3" type="submit" aria-label="PayPal">
+          <span class="fs-5">🅿️</span> PayPal
+        </button>
+      </div>
+
+      {# Orange Money #}
+      <div class="col-12 col-md-4">
+        <button name="payment_method" value="orange_money" class="btn btn-outline-warning w-100 py-3" type="submit" aria-label="Orange Money">
+          <span class="fs-5">🟧</span> Orange Money
+        </button>
+      </div>
+
+      {# Wave #}
+      <div class="col-12 col-md-4">
+        <button name="payment_method" value="wave" class="btn btn-outline-success w-100 py-3" type="submit" aria-label="Wave">
+          <span class="fs-5">🌊</span> Wave
+        </button>
+      </div>
+
+      {# Visa #}
+      <div class="col-12 col-md-4">
+        <button name="payment_method" value="visa" class="btn btn-outline-dark w-100 py-3" type="submit" aria-label="VISA">
+          <span class="fs-5">💳</span> VISA
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+{% comment %} {# social/templates/social/donation_payment_choice.html #}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Choisir le mode de paiement" %}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+  <!-- 🔹 Titre -->
+  <h2 class="mb-4 text-center">{% trans "Choisissez un moyen de paiement" %}</h2>
+
+  <!-- 🔹 Récapitulatif du don -->
+  {% if donation %}
+    <div class="alert alert-secondary text-center mb-4">
+      {% trans "Montant à payer :" %} <strong>{{ donation.amount|floatformat:0 }} FCFA</strong><br>
+      {% if donation.target %}
+        {% trans "Vous soutenez :" %} <strong>{{ donation.target }}</strong>
+      {% elif donation.project %}
+        {% trans "Projet :" %} <strong>{{ donation.project.title }}</strong>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <!-- 🔹 Messages d'erreur ou infos -->
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show text-center" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{% trans 'Fermer' %}"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <!-- 🔹 Formulaire de choix du mode de paiement -->
+  <form method="post" autocomplete="off">
+    {% csrf_token %}
+    <input type="hidden" name="step" value="2">
+
+    {% if target_type and target_id %}
+      <input type="hidden" name="target_type" value="{{ target_type }}">
+      <input type="hidden" name="target_id" value="{{ target_id }}">
+    {% endif %}
+
+    <div class="row justify-content-center g-3">
+      <div class="col-12 col-md-4">
+        <button name="payment_method" value="stripe" class="btn btn-outline-primary w-100 py-3" type="submit">
+          <span class="fs-5">💳</span> Stripe<br>
+          <span class="small">{% trans "Carte bancaire" %}</span>
+        </button>
+      </div>
+      <div class="col-12 col-md-4">
+        <button name="payment_method" value="paypal" class="btn btn-outline-info w-100 py-3" type="submit">
+          <span class="fs-5">🅿️</span> PayPal
+        </button>
+      </div>
+      <div class="col-12 col-md-4">
+        <button name="payment_method" value="orange_money" class="btn btn-outline-warning w-100 py-3" type="submit">
+          <span class="fs-5">🟧</span> Orange Money
+        </button>
+      </div>
+      <div class="col-12 col-md-4">
+        <button name="payment_method" value="wave" class="btn btn-outline-success w-100 py-3" type="submit">
+          <span class="fs-5">🌊</span> Wave
+        </button>
+      </div>
+      <div class="col-12 col-md-4">
+        <button name="payment_method" value="visa" class="btn btn-outline-dark w-100 py-3" type="submit">
+          <span class="fs-5">💳</span> VISA
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+{% comment %} {% extends "main.html" %}
 {% load static i18n %}
 
 {% block title %}{% trans "Choisir le mode de paiement" %}{% endblock %}
@@ -50,6 +333,6 @@
     </div>
   </form>
 </div>
-{% endblock %}
+{% endblock %} {% endcomment %}
 
 

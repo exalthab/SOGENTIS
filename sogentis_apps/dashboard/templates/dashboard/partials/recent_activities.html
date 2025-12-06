@@ -1,0 +1,16 @@
+<div class="widget shadow-sm p-3 mb-4">
+    <div class="fw-bold mb-3 fs-6">Activités récentes</div>
+    <ul class="list-group list-group-flush">
+        {% for act in recent_activities %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>
+                    <i class="fas fa-dot-circle text-success me-2" aria-hidden="true"></i>
+                    {{ act.title }} <span class="text-muted small">par {{ act.author }}</span>
+                </span>
+                <span class="text-muted small">{{ act.time }}</span>
+            </li>
+        {% empty %}
+            <li class="list-group-item text-muted">Aucune activité récente.</li>
+        {% endfor %}
+    </ul>
+</div>

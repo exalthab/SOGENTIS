@@ -1,44 +1,63 @@
+{# core/partials/_navbar.html #}
 {% load static i18n %}
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
   <div class="container">
-    <!-- Logo / Marque -->
-    <a class="navbar-brand fw-bold" href="{% url 'core:home' %}"
-      >🌍 {{ PROJECT_NAME }}</a
-    >
 
-    <!-- Bouton burger responsive -->
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-bs-toggle="collapse"
-      data-bs-target="#mainNavbar"
-      aria-controls="mainNavbar"
-      aria-expanded="false"
-      aria-label="{% trans 'Ouvrir la navigation' %}"
-    >
+    <!-- Logo / Marque -->
+    <a class="navbar-brand fw-bold d-flex align-items-center"
+       href="{% url 'core:home' %}">
+      <img src="{% static 'global/image/Sogentis3.png' %}"
+           alt="{{ PROJECT_NAME }}"
+           class="me-2"
+           style="height: 40px;">
+      <span>{{ PROJECT_NAME }}</span>
+    </a>
+
+    <!-- Toggle mobile -->
+    <button class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#mainNavbar"
+            aria-controls="mainNavbar"
+            aria-expanded="false"
+            aria-label="{% trans 'Basculer la navigation' %}">
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <!-- Liens de navigation -->
+    <!-- Menu -->
     <div class="collapse navbar-collapse" id="mainNavbar">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+
+        <!-- Économie -->
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'econ:index' %}"
-            >{% trans "Pôle Économique" %}</a
-          >
+          <a class="nav-link {% if request.resolver_match.app_name == 'economic' %}active text-warning{% endif %}"
+             href="{% url 'econ:index' %}">
+            <i class="fa-solid fa-store me-1"></i>
+            {% trans "Pôle Économique" %}
+          </a>
         </li>
+
+        <!-- Social -->
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'social:index' %}"
-            >{% trans "Pôle Social" %}</a
-          >
+          <a class="nav-link {% if request.resolver_match.app_name == 'social' %}active text-warning{% endif %}"
+             href="{% url 'social:index' %}">
+            <i class="fa-solid fa-hand-holding-heart me-1"></i>
+            {% trans "Pôle Social" %}
+          </a>
         </li>
+
+        <!-- Administration -->
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'admin:index' %}"
-            >{% trans "Administration" %}</a
-          >
+          <a class="nav-link"
+             href="{% url 'admin:index' %}">
+            <i class="fa-solid fa-tools me-1"></i>
+            {% trans "Administration" %}
+          </a>
         </li>
+
       </ul>
     </div>
+
   </div>
 </nav>

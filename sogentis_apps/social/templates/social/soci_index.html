@@ -4,8 +4,8 @@
 {% block title %}SOGENTIS | Impact Social{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'social/css/new_social_index.css' %}">
-<link rel="stylesheet" href="{% static 'social/css/vision_mission.css' %}">
+{% comment %} <link rel="stylesheet" href="{% static 'social/css/new_social_index.css' %}">
+<link rel="stylesheet" href="{% static 'social/css/vision_mission.css' %}"> {% endcomment %}
 
 {% endblock %}
 
@@ -245,7 +245,7 @@
               </a>
               {% else %}
               <a href="{% url 'social:publication_pay_and_request' doc.pk %}" class="btn btn-warning w-100 mt-2 z-3 position-relative">
-                <i class="fas fa-lock me-2"></i> {% trans "Obtenir ce document (payant)" %}
+                <i class="fas fa-lock me-2"></i> {% trans "Obtenir ce document" %}
               </a>
               {% endif %}
             </div>
@@ -306,7 +306,7 @@
   </div>
 </section>
 
-
+{% comment %} 
 <!-- 🔹 MISSION -->
 <section class="py-5 bg-mission-gradient text-center text-md-start mission-section">
   <div class="container">
@@ -330,6 +330,13 @@
         <p class="mission-desc-modern fw-semibold mb-0">
           {% trans "Chaque jour, nous œuvrons pour l’éducation, la santé, l’environnement et l’autonomisation des communautés." %}
         </p>
+        <!-- ✅ Bouton Lire la suite -->
+        <!-- Le 1 correspond à l’ID de ta section “Mission” dans la base de données AboutSection.
+        Tu peux changer ce chiffre selon les IDs réels de tes sections -->
+        <a href="{% url 'about:section_detail' 1 %}" class="btn btn-outline-primary mt-2">
+          {% trans "Lire la suite" %}
+        </a>
+
       </div>
     </div>
   </div>
@@ -352,6 +359,12 @@
         <p class="vision-desc-modern fw-semibold mb-0">
           {% trans "Nous croyons en une société forte, innovante et humaine, guidée par la solidarité et le progrès social." %}
         </p>
+
+        <!-- ✅ Bouton Lire la suite -->
+        <a href="{% url 'about:section_detail' 2 %}" class="btn btn-outline-primary mt-2">
+          {% trans "Lire la suite" %}
+        </a>
+
       </div>
       <!-- Image à droite -->
       <div class="col-md-5 text-center mb-4 mb-md-0">
@@ -379,21 +392,40 @@
       {% endfor %}
     </div>
   </div>
-</section>
+</section> {% endcomment %}
 
-
-  <!-- 🔹 BOUTON FLOTTANT -->
+  {% comment %} <!-- 🔹 BOUTON FLOTTANT -->
   <a href="{% url 'social:donation' %}"
     class="btn btn-danger btn-donation-floating shadow-lg"
     aria-label="{% trans 'Faire un don' %}">
     ❤️ {% trans "Faire un Don" %}
   </a>
 
+  <a href="{% url 'about:about_index' %}" class="btn btn-outline-primary mt-2">
+  {% trans "Retour à propos" %}
+</a> {% endcomment %}
+
+<!-- Conteneur des boutons -->
+<div class="d-flex flex-column flex-md-row gap-2 justify-content-end position-relative">
+  
+  <!-- Bouton Retour à propos -->
+  <a href="{% url 'about:about_index' %}" 
+     class="btn btn-outline-primary mt-2 mt-md-0">
+     {% trans "Retour à propos" %}
+  </a>
+
+  <!-- Bouton Faire un don (flottant ou standard selon ton design) -->
+  <a href="{% url 'social:donation' %}" 
+     class="btn btn-danger shadow-lg mt-2 mt-md-0">
+     ❤️ {% trans "Faire un Don" %}
+  </a>
+
+</div>
 
 </main>
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'social/js/bootstrap.bundle.min.js' %}"></script>
-<script src="{% static 'social/js/voirplus.js' %}"></script>
+{% comment %} <script src="{% static 'social/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'social/js/voirplus.js' %}"></script> {% endcomment %}
 {% endblock %}

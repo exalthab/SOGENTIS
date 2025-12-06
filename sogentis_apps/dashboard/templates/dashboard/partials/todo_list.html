@@ -1,0 +1,85 @@
+{% load humanize i18n %}
+
+
+<div class="widget shadow-sm p-3 mb-4">
+  <div class="fw-bold mb-3 fs-6 d-flex justify-content-between align-items-center">
+    <span>Liste de tâches</span>
+    <i class="bi bi-list-task text-secondary"></i>
+  </div>
+  <ul class="list-group list-group-flush">
+    {% for item in todo_list %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
+          <input type="checkbox" class="form-check-input me-2" {% if item.done %}checked{% endif %} disabled>
+          <span class="{% if item.done %}text-muted text-decoration-line-through{% endif %}">
+            {{ item.task }}
+          </span>
+        </div>
+        {% if item.badge %}
+          <span class="badge 
+            {% if item.badge == 'Aujourd\'hui' %}bg-primary
+            {% elif item.badge == 'Demain' %}bg-warning text-dark
+            {% elif item.badge == 'Terminé' %}bg-success
+            {% elif item.badge == 'À faire' %}bg-secondary
+            {% else %}bg-light text-dark
+            {% endif %}">
+            {{ item.badge }}
+          </span>
+        {% endif %}
+      </li>
+    {% empty %}
+      <li class="list-group-item text-muted">Aucune tâche.</li>
+    {% endfor %}
+  </ul>
+</div>
+
+<div class="widget shadow-sm p-3 mb-4">
+  <div class="fw-bold mb-3 fs-6 d-flex justify-content-between align-items-center">
+    <span>Dons récents</span>
+    <i class="bi bi-cash-coin text-success"></i>
+  </div>
+  <ul class="list-group list-group-flush">
+    {% for don in derniers_dons %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
+          <strong>{{ don.montant|floatformat:0 }} FCFA</strong>
+          <span class="text-muted small">par {{ don.user.get_full_name|default:don.user.username }}</span>
+        </div>
+        <span class="text-muted small">{{ don.created_at|naturaltime }}</span>
+      </li>
+    {% empty %}
+      <li class="list-group-item text-muted">Aucun don récent.</li>
+    {% endfor %}
+  </ul>
+</div>
+
+<div class="widget shadow-sm p-3 mb-4">
+  <div class="fw-bold mb-3 fs-6 d-flex justify-content-between align-items-center">
+    <span>Prochain événement</span>
+    <i class="bi bi-calendar-event text-primary"></i>
+  </div>
+  {% if prochain_evenement %}
+    <div>
+      <h6 class="mb-1">{{ prochain_evenement.titre }}</h6>
+      <p class="text-muted mb-0">
+        Le {{ prochain_evenement.date|date:"d F Y" }} à {{ prochain_evenement.lieu }}
+      </p>
+    </div>
+  {% else %}
+    <p class="text-muted mb-0">Aucun événement à venir.</p>
+  {% endif %}
+</div>
+
+<div class="widget shadow-sm p-3 mb-4">
+  <div class="fw-bold mb-3 fs-6">Visiteurs par pays</div>
+  <ul class="list-group list-group-flush">
+    {% for country in visitors_countries %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        {{ country.country }}
+        <span class="badge bg-light text-dark">{{ country.percent }}%</span>
+      </li>
+    {% empty %}
+      <li class="list-group-item text-muted">Aucune donnée disponible.</li>
+    {% endfor %}
+  </ul>
+</div>

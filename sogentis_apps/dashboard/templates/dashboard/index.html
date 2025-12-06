@@ -1,205 +1,253 @@
 {% extends "dashboard/base.html" %}
-{% load static i18n dashboard_tags %}
+{% load static i18n %}
 
-{% block title %}{% trans "Dashboard – Accueil" %}{% endblock %}
+{% block title %}Dashboard E-commerce & Social | SOGENTIS{% endblock %}
 
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
-{% endblock %}
+{% block content %}
 
-{% block dashboard_content %}
-<div class="container py-4">
-  <h1 class="mb-4">{% trans "Tableau de bord" %}</h1>
-
-  <!-- 🔹 Cartes Résumées -->
-  <div class="row g-4 mb-5">
-    {% for label, value, icon, color in cards %}
-      <div class="col-md-6 col-xl-4">
-        <div class="card border-start border-{{ color }} shadow-sm h-100">
-          <div class="card-body d-flex align-items-center">
-            <i class="bi {{ icon }} fs-2 text-{{ color }} me-3"></i>
-            <div>
-              <h6 class="card-title mb-1">{{ label }}</h6>
-              <p class="fs-4 fw-bold mb-0">{{ value }}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    {% endfor %}
-  </div>
-
-  <!-- 🔹 Statistiques personnelles -->
-  <div class="row g-4 my-4">
-    <div class="col-md-4">
-      <div class="card shadow-sm text-center h-100">
-        <div class="card-body">
-          <i class="fas fa-hands-helping fa-2x text-primary mb-3"></i>
-          <h5 class="card-title">{% trans "Engagements" %}</h5>
-          <p class="fs-4">{{ nb_engagements|default:"0" }}</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card shadow-sm text-center h-100">
-        <div class="card-body">
-          <i class="fas fa-donate fa-2x text-success mb-3"></i>
-          <h5 class="card-title">{% trans "Dons effectués" %}</h5>
-          <p class="fs-4">{{ total_dons|default:0|floatformat:0 }} FCFA</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card shadow-sm text-center h-100">
-        <div class="card-body">
-          <i class="fas fa-calendar-check fa-2x text-warning mb-3"></i>
-          <h5 class="card-title">{% trans "Prochain événement" %}</h5>
-          <p class="fs-6">
-            {% if prochain_evenement %}
-              {{ prochain_evenement.titre }} – {{ prochain_evenement.lieu }} – {{ prochain_evenement.date|date:"d F Y" }}
-            {% else %}
-              {% trans "Aucun événement à venir" %}
-            {% endif %}
-          </p>
-        </div>
-      </div>
+<!-- === Ligne 1 : Statistiques E-commerce === -->
+<div class="row g-3 mb-2">
+  <div class="col-6 col-md-3">
+    <div class="card stats-card text-center shadow-sm py-3">
+      <div class="mb-1 fs-3"><i class="fas fa-credit-card text-primary"></i></div>
+      <h6 class="mb-1">Chiffre d'affaires (mois)</h6>
+      <h2 class="fw-bold text-primary">{{ stats_commerce.turnover|default:"0" }} FCFA</h2>
     </div>
   </div>
-
-  <!-- 🔹 Derniers engagements -->
-  <h3 class="mt-5">{% trans "Vos derniers engagements" %}</h3>
-  {% if derniers_engagements %}
-    <ul class="list-group mb-4">
-      {% for e in derniers_engagements %}
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          {{ e.description }}
-          <span class="badge bg-secondary">
-            {{ e.created_at|default:e.date|date:"d F Y" }}
-          </span>
-        </li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p class="text-muted">{% trans "Aucun engagement récemment." %}</p>
-  {% endif %}
-
-  <!-- 🔹 Derniers dons -->
-  <h3 class="mt-4">{% trans "Vos derniers dons" %}</h3>
-  {% if derniers_dons %}
-    <ul class="list-group mb-4">
-      {% for d in derniers_dons %}
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          {{ d.amount|floatformat:0 }} FCFA
-          <span class="badge bg-secondary">
-            {{ d.created_at|default:d.date|date:"d F Y" }}
-          </span>
-        </li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p class="text-muted">{% trans "Aucun don récemment." %}</p>
-  {% endif %}
-
-  <!-- 🔹 Validation du compte utilisateur -->
-  {% with profile=request.user.userprofile %}
-    {% if profile %}
-      {% if profile.validated is False %}
-        <div class="alert alert-warning mt-4">
-          {% trans "Votre compte est en attente de validation par un administrateur." %}
-        </div>
-      {% elif profile.validated is None %}
-        <div class="alert alert-secondary mt-4">
-          {% trans "Votre statut d'adhésion n’a pas encore été défini." %}
-        </div>
-      {% elif profile.validated == False %}
-        <div class="alert alert-danger mt-4">
-          {% trans "Votre compte a été refusé." %}
-        </div>
-      {% endif %}
-    {% endif %}
-  {% endwith %}
-
-  <!-- 🔹 Actions rapides -->
-  <div class="row mt-4 text-center">
-    <div class="col-md-6 mb-3">
-      <a href="{% url 'dashboard:profile' %}" class="btn btn-outline-primary w-75">
-        <i class="fas fa-user me-2"></i>{% trans "Modifier mon profil" %}
-      </a>
-    </div>
-    <div class="col-md-6 mb-3">
-      <a href="{% url 'social:donation' %}" class="btn btn-outline-success w-75">
-        <i class="fas fa-hand-holding-heart me-2"></i>{% trans "Faire un don maintenant" %}
-      </a>
+  <div class="col-6 col-md-3">
+    <div class="card stats-card text-center shadow-sm py-3">
+      <div class="mb-1 fs-3"><i class="fas fa-shopping-cart text-success"></i></div>
+      <h6 class="mb-1">Commandes en cours</h6>
+      <h2 class="fw-bold text-success">{{ stats_commerce.orders|default:"0" }}</h2>
     </div>
   </div>
-
-  <!-- 🔹 Liens supplémentaires -->
-  <div class="mt-3 text-end">
-    <a href="{% url 'dashboard:engagements_list' %}" class="btn btn-sm btn-outline-primary">{% trans "Voir tous les engagements" %}</a>
-    <a href="{% url 'dashboard:dons_list' %}" class="btn btn-sm btn-outline-success">{% trans "Voir tous les dons" %}</a>
-  </div>
-
-  <!-- 🔹 Graphiques -->
-  <div class="row mt-5">
-    <div class="col-md-6">
-      <h5>{% trans "Dons par projet" %}</h5>
-      <canvas id="donationsByProjectChart" height="200"></canvas>
+  <div class="col-6 col-md-3">
+    <div class="card stats-card text-center shadow-sm py-3">
+      <div class="mb-1 fs-3"><i class="fas fa-cubes text-warning"></i></div>
+      <h6 class="mb-1">Produits en stock</h6>
+      <h2 class="fw-bold text-warning">{{ stats_commerce.products|default:"0" }}</h2>
     </div>
-    <div class="col-md-6">
-      <h5>{% trans "Engagements par année" %}</h5>
-      <canvas id="engagementsByYearChart" height="200"></canvas>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card stats-card text-center shadow-sm py-3">
+      <div class="mb-1 fs-3"><i class="fas fa-user-plus text-info"></i></div>
+      <h6 class="mb-1">Nouveaux clients</h6>
+      <h2 class="fw-bold text-info">{{ stats_commerce.new_customers|default:"0" }}</h2>
     </div>
   </div>
 </div>
+
+<!-- === Ligne 2 : Statistiques Sociales === -->
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3">
+    <div class="card stats-card text-center shadow-sm py-3">
+      <div class="mb-1 fs-3"><i class="fas fa-donate text-success"></i></div>
+      <h6 class="mb-1">Dons reçus</h6>
+      <h2 class="fw-bold text-success">{{ stats_social.donations|default:"0" }} FCFA</h2>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card stats-card text-center shadow-sm py-3">
+      <div class="mb-1 fs-3"><i class="fas fa-project-diagram text-primary"></i></div>
+      <h6 class="mb-1">Projets sociaux actifs</h6>
+      <h2 class="fw-bold text-primary">{{ stats_social.projects|default:"0" }}</h2>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card stats-card text-center shadow-sm py-3">
+      <div class="mb-1 fs-3"><i class="fas fa-users text-warning"></i></div>
+      <h6 class="mb-1">Nouveaux membres/bénévoles</h6>
+      <h2 class="fw-bold text-warning">{{ stats_social.new_members|default:"0" }}</h2>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card stats-card text-center shadow-sm py-3">
+      <div class="mb-1 fs-3"><i class="fas fa-bullseye text-info"></i></div>
+      <h6 class="mb-1">Progrès campagnes sociales</h6>
+      <h2 class="fw-bold text-info">{{ stats_social.progress|default:"0" }}%</h2>
+      <div class="progress mt-2" style="height: 6px;">
+        <div class="progress-bar bg-info" style="width: {{ stats_social.progress|default:"0" }}%;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- === Graphiques centraux === -->
+<div class="row g-4 mb-4">
+  <div class="col-lg-8">
+    <div class="card p-4 shadow-sm h-100">
+      <h6 class="mb-3">Ventes & Dons (période)</h6>
+      <canvas id="mixedChart" height="80"></canvas>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card p-4 shadow-sm h-100">
+      <h6 class="mb-3">Top produits vendus</h6>
+      <canvas id="topProductsChart" height="120"></canvas>
+      <div class="mt-3 small text-muted">Classement du mois</div>
+    </div>
+  </div>
+</div>
+
+<!-- === 3 Colonnes : commandes, dons, carte/todo === -->
+<div class="row g-4">
+  <!-- Commandes récentes + nouveaux clients -->
+  <div class="col-lg-4">
+    <div class="card p-3 h-100 shadow-sm mb-3">
+      <h6 class="mb-3">Dernières commandes</h6>
+      <ul class="list-group list-group-flush mb-3">
+        {% for order in last_orders %}
+          <li class="list-group-item small">
+            <span class="fw-bold">{{ order.client }}</span> — {{ order.amount }} FCFA<br>
+            <span class="text-muted">{{ order.date }}</span>
+          </li>
+        {% empty %}
+          <li class="list-group-item small">Aucune commande récente.</li>
+        {% endfor %}
+      </ul>
+      <h6 class="mb-2 mt-4">Nouveaux clients</h6>
+      <ul class="list-group list-group-flush">
+        {% for client in new_customers %}
+          <li class="list-group-item small">{{ client }}</li>
+        {% empty %}
+          <li class="list-group-item small">Aucun nouveau client.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <!-- Dons récents + nouveaux membres -->
+  <div class="col-lg-4">
+    <div class="card p-3 h-100 shadow-sm mb-3">
+      <h6 class="mb-3">Derniers dons</h6>
+      <ul class="list-group list-group-flush mb-3">
+        {% for don in last_donations %}
+          <li class="list-group-item small">
+            <span class="fw-bold">{{ don.donor }}</span> — {{ don.amount }} FCFA<br>
+            <span class="text-muted">{{ don.date }}</span>
+          </li>
+        {% empty %}
+          <li class="list-group-item small">Aucun don récent.</li>
+        {% endfor %}
+      </ul>
+      <h6 class="mb-2 mt-4">Nouveaux membres/bénévoles</h6>
+      <ul class="list-group list-group-flush">
+        {% for member in new_members %}
+          <li class="list-group-item small">{{ member }}</li>
+        {% empty %}
+          <li class="list-group-item small">Aucun nouveau membre.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <!-- Carte interactive + tâches -->
+  <div class="col-lg-4">
+    <div class="card p-3 h-100 shadow-sm mb-3">
+      <h6 class="mb-3">Carte clients / donateurs / projets</h6>
+      <div id="mapid" style="width: 100%; height: 180px; border-radius:14px;"></div>
+      <div class="small text-muted">Cercle = activité</div>
+      <hr>
+      <h6 class="mb-3">À faire</h6>
+      <ul class="list-group list-group-flush mb-3">
+        {% for todo in todo_list %}
+          <li class="list-group-item small">
+            <input type="checkbox" {% if todo.done %}checked{% endif %} disabled> {{ todo.label }}
+          </li>
+        {% empty %}
+          <li class="list-group-item small">Aucune tâche à faire.</li>
+        {% endfor %}
+      </ul>
+      <h6 class="mb-2 mt-4">Météo</h6>
+      <div class="d-flex align-items-center">
+        <i class="fas fa-cloud-sun fa-2x me-2 text-info"></i>
+        <div>
+          <span class="d-block">{{ weather.location|default:"Dakar" }}</span>
+          <small class="text-muted">{{ weather.time|default:"Aujourd'hui" }} | {{ weather.status|default:"Soleil voilé" }}</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'dashboard/js/chart.min.js' %}"></script>
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-  // Pour utiliser le filtre custom 'pluck', il faut un templatetag correspondant, sinon fallback.
-  const donationsData = {
-    labels: {{ detailed_stats.donations_by_project|pluck:"project__title"|safe }},
-    datasets: [{
-      label: "{% trans 'Montant total (FCFA)' %}",
-      data: {{ detailed_stats.donations_by_project|pluck:"total"|safe }},
-      backgroundColor: "rgba(0,123,255,0.5)",
-      borderColor: "rgba(0,123,255,1)",
-      borderWidth: 1
-    }]
-  };
-
-  const engagementsData = {
-    labels: {{ detailed_stats.engagements_by_year|pluck:"year"|safe }},
-    datasets: [{
-      label: "{% trans 'Engagements' %}",
-      data: {{ detailed_stats.engagements_by_year|pluck:"count"|safe }},
-      backgroundColor: "rgba(40,167,69,0.3)",
-      borderColor: "rgba(40,167,69,1)",
-      borderWidth: 2,
-      tension: 0.3
-    }]
-  };
-
-  if (window.Chart) {
-    new Chart(document.getElementById("donationsByProjectChart"), {
-      type: "bar",
-      data: donationsData,
-      options: {
-        responsive: true,
-        plugins: { legend: { display: false } }
+  // Graphique mixte (ventes + dons)
+  new Chart(document.getElementById('mixedChart').getContext('2d'), {
+    type: 'line',
+    data: {
+      labels: {{ chart_sales_labels|safe }},
+      datasets: [
+        {
+          label: 'Ventes',
+          data: {{ chart_sales_data|safe }},
+          yAxisID: 'y1',
+          fill: false,
+          borderColor: '#0db7ed',
+          backgroundColor: 'rgba(13,183,237,0.07)',
+          tension: 0.4,
+          pointRadius: 3
+        },
+        {
+          label: 'Dons',
+          data: {{ chart_donations_data|safe }},
+          yAxisID: 'y2',
+          fill: false,
+          borderColor: '#36d399',
+          backgroundColor: 'rgba(54,211,153,0.07)',
+          tension: 0.4,
+          pointRadius: 3
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { position: 'top' } },
+      scales: {
+        y1: { type: 'linear', display: true, position: 'left', beginAtZero: true },
+        y2: { type: 'linear', display: true, position: 'right', beginAtZero: true, grid: { drawOnChartArea: false } }
       }
-    });
+    }
+  });
 
-    new Chart(document.getElementById("engagementsByYearChart"), {
-      type: "line",
-      data: engagementsData,
-      options: {
-        responsive: true,
-        plugins: { legend: { display: true } }
-      }
-    });
-  }
-});
+  // Top produits vendus (bar chart)
+  new Chart(document.getElementById('topProductsChart').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: {{ top_products_labels|safe }},
+      datasets: [{
+        label: "Ventes",
+        data: {{ top_products_data|safe }},
+        backgroundColor: '#0db7ed'
+      }]
+    },
+    options: { responsive: true, plugins: { legend: { display: false } } }
+  });
+
+  // Carte Leaflet (clients, donateurs, projets)
+  var map = L.map('mapid').setView([20, 0], 2);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 10,
+    attribution: '© OpenStreetMap'
+  }).addTo(map);
+  var points = [
+    {% for pt in map_points %}
+      { label: "{{ pt.label }}", type: "{{ pt.type }}", lat: {{ pt.lat }}, lon: {{ pt.lon }} },
+    {% endfor %}
+  ];
+  points.forEach(function(pt) {
+    var color = pt.type === 'client' ? '#0db7ed' : pt.type === 'donateur' ? '#36d399' : '#ffd071';
+    L.circleMarker([pt.lat, pt.lon], {
+      radius: 8,
+      color: color,
+      fillColor: color,
+      fillOpacity: 0.6
+    })
+    .bindPopup("<b>" + pt.label + "</b> (" + pt.type + ")")
+    .addTo(map);
+  });
 </script>
 {% endblock %}
 
@@ -207,202 +255,205 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 {% comment %} {% extends "dashboard/base.html" %}
-{% load static i18n dashboard_tags %}
+{% load static i18n %}
 
-{% block title %}{% trans "Dashboard – Accueil" %}{% endblock %}
+{% block title %}Tableau de bord | SOGENTIS{% endblock %}
 
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
-{% endblock %}
+{% block content %}
+<!-- ========= 6 Statistiques en grille ========== -->
+<div class="row g-3 mb-4">
+  {% for card in cards %}
+    <div class="col-6 col-md-2">
+      <div class="card shadow-sm py-3 text-center border-{{ card.color }}">
+        <div class="mb-1 fs-4"><i class="bi {{ card.icon }} text-{{ card.color }}"></i></div>
+        <h6 class="mb-0">{{ card.label }}</h6>
+        <h2 class="fw-bold text-{{ card.color }}">{{ card.value }}</h2>
+      </div>
+    </div>
+  {% endfor %}
+</div>
 
-{% block dashboard_content %}
-<div class="container py-4">
-  <h1 class="mb-4">{% trans "Tableau de bord" %}</h1>
+<!-- ====== Graph réseau + Campagnes ====== -->
+<div class="row g-3 mb-4">
+  <div class="col-lg-8">
+    <div class="card p-4 h-100 shadow-sm">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h6 class="mb-0">Activité du réseau</h6>
+        <small class="text-muted">Du {{ period_start }} au {{ period_end }}</small>
+      </div>
+      <canvas id="networkChart" height="80"></canvas>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card p-4 h-100 shadow-sm">
+      <h6 class="mb-3">Top campagnes</h6>
+      {% for camp in top_campaigns %}
+        <div class="d-flex align-items-center mb-2">
+          <span class="me-2">{{ camp.name }}</span>
+          <div class="progress flex-grow-1" style="height:7px;">
+            <div class="progress-bar bg-info" style="width:{{ camp.progress }}%;"></div>
+          </div>
+          <span class="ms-2 small">{{ camp.progress }}%</span>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
 
-  <!-- 🔹 Cartes Résumées -->
-  <div class="row g-4 mb-5">
-    {% for label, value, icon, color in cards %}
-      <div class="col-md-6 col-xl-4">
-        <div class="card border-start border-{{ color }} shadow-sm h-100">
-          <div class="card-body d-flex align-items-center">
-            <i class="bi {{ icon }} fs-2 text-{{ color }} me-3"></i>
-            <div>
-              <h6 class="card-title mb-1">{{ label }}</h6>
-              <p class="fs-4 fw-bold mb-0">{{ value }}</p>
-            </div>
+<!-- ====== Widgets secondaires ====== -->
+<div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <div class="card p-3 h-100 shadow-sm">
+      <h6 class="mb-3">Versions de l'application</h6>
+      <canvas id="appVersionChart" height="120"></canvas>
+      <div class="mt-3 small text-muted">Usage par version</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card p-3 h-100 shadow-sm">
+      <h6 class="mb-3">Répartition appareils</h6>
+      <canvas id="deviceChart" height="120"></canvas>
+      <div class="mt-3 small text-muted">Top 5 appareils</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card p-3 h-100 shadow-sm">
+      <h6 class="mb-2">Paramètres rapides</h6>
+      <ul class="list-unstyled small mb-2">
+        <li><i class="fas fa-check-circle text-success"></i> Abonnement actif</li>
+        <li><i class="fas fa-sync-alt text-warning"></i> Renouvellement auto</li>
+        <li><i class="fas fa-trophy text-info"></i> Succès</li>
+        <li><i class="fas fa-sign-out-alt text-danger"></i> Déconnexion</li>
+      </ul>
+      <div class="mt-4">
+        <h6 class="mb-1">Profil complété</h6>
+        <div class="progress" style="height: 22px;">
+          <div class="progress-bar progress-bar-striped bg-success" style="width: {{ profile_completion|default:64 }}%;">
+            {{ profile_completion|default:"64" }}%
           </div>
         </div>
       </div>
-    {% endfor %}
+    </div>
   </div>
+</div>
 
-  <!-- 🔹 Statistiques personnelles -->
-  <div class="row g-4 my-4">
-    <div class="col-md-4">
-      <div class="card shadow-sm text-center h-100">
-        <div class="card-body">
-          <i class="fas fa-hands-helping fa-2x text-primary mb-3"></i>
-          <h5 class="card-title">{% trans "Engagements" %}</h5>
-          <p class="fs-4">{{ nb_engagements }}</p>
+<!-- ===== Bas de page : activités, carte, todo, météo ===== -->
+<div class="row g-3">
+  <div class="col-lg-4">
+    <div class="card p-3 h-100 shadow-sm">
+      <h6 class="mb-3">Activités récentes</h6>
+      <ul class="list-group list-group-flush">
+        {% for activity in recent_activities %}
+          <li class="list-group-item small">{{ activity }}</li>
+        {% empty %}
+          <li class="list-group-item small">Aucune activité récente.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card p-3 h-100 shadow-sm">
+      <h6 class="mb-3">Carte interactive des visiteurs</h6>
+      <div id="mapid" style="width: 100%; height: 200px; border-radius:14px;"></div>
+      <div class="small text-muted">Les cercles indiquent la répartition des visiteurs</div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card p-3 h-100 shadow-sm">
+      <h6 class="mb-3">À faire</h6>
+      <ul class="list-group list-group-flush mb-3">
+        {% for todo in todos %}
+          <li class="list-group-item small">
+            <input type="checkbox" {% if todo.done %}checked{% endif %} disabled> {{ todo.label }}
+          </li>
+        {% empty %}
+          <li class="list-group-item small">Aucune tâche à faire.</li>
+        {% endfor %}
+      </ul>
+      <h6 class="mb-2 mt-4">Météo du jour</h6>
+      <div class="d-flex align-items-center">
+        <i class="fas fa-cloud-sun fa-2x me-2 text-info"></i>
+        <div>
+          <span class="d-block">{{ weather.location|default:"Dakar" }}</span>
+          <small class="text-muted">{{ weather.time|default:"Aujourd'hui" }} | {{ weather.status|default:"Soleil voilé" }}</small>
         </div>
       </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card shadow-sm text-center h-100">
-        <div class="card-body">
-          <i class="fas fa-donate fa-2x text-success mb-3"></i>
-          <h5 class="card-title">{% trans "Dons effectués" %}</h5>
-          <p class="fs-4">{{ total_dons|floatformat:0 }} FCFA</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card shadow-sm text-center h-100">
-        <div class="card-body">
-          <i class="fas fa-calendar-check fa-2x text-warning mb-3"></i>
-          <h5 class="card-title">{% trans "Prochain événement" %}</h5>
-          <p class="fs-6">
-            {% if prochain_evenement %}
-              {{ prochain_evenement.titre }} – {{ prochain_evenement.lieu }} – {{ prochain_evenement.date|date:"d F Y" }}
-            {% else %}
-              {% trans "Aucun événement à venir" %}
-            {% endif %}
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 🔹 Derniers engagements -->
-  <h3 class="mt-5">{% trans "Vos derniers engagements" %}</h3>
-  {% if derniers_engagements %}
-    <ul class="list-group mb-4">
-      {% for e in derniers_engagements %}
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          {{ e.description }}
-          <span class="badge bg-secondary">{{ e.created_at|date:"d F Y" }}</span>
-        </li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p class="text-muted">{% trans "Aucun engagement récemment." %}</p>
-  {% endif %}
-
-  <!-- 🔹 Derniers dons -->
-  <h3 class="mt-4">{% trans "Vos derniers dons" %}</h3>
-  {% if derniers_dons %}
-    <ul class="list-group mb-4">
-      {% for d in derniers_dons %}
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          {{ d.amount|floatformat:0 }} FCFA
-          <span class="badge bg-secondary">{{ d.date|date:"d F Y" }}</span>
-        </li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p class="text-muted">{% trans "Aucun don récemment." %}</p>
-  {% endif %}
-
-  <!-- 🔹 Validation du compte utilisateur -->
-  {% with profile=request.user.userprofile %}
-    {% if profile %}
-      {% if profile.validated is False %}
-        <div class="alert alert-warning mt-4">
-          {% trans "Votre compte est en attente de validation par un administrateur." %}
-        </div>
-      {% elif profile.validated is None %}
-        <div class="alert alert-secondary mt-4">
-          {% trans "Votre statut d'adhésion n’a pas encore été défini." %}
-        </div>
-      {% elif profile.validated == False %}
-        <div class="alert alert-danger mt-4">
-          {% trans "Votre compte a été refusé." %}
-        </div>
-      {% endif %}
-    {% endif %}
-  {% endwith %}
-
-  <!-- 🔹 Actions rapides -->
-  <div class="row mt-4 text-center">
-    <div class="col-md-6 mb-3">
-      <a href="{% url 'dashboard:profile' %}" class="btn btn-outline-primary w-75">
-        <i class="fas fa-user me-2"></i>{% trans "Modifier mon profil" %}
-      </a>
-    </div>
-    <div class="col-md-6 mb-3">
-      <a href="{% url 'social:donation' %}" class="btn btn-outline-success w-75">
-        <i class="fas fa-hand-holding-heart me-2"></i>{% trans "Faire un don maintenant" %}
-      </a>
-    </div>
-  </div>
-
-  <!-- 🔹 Liens supplémentaires -->
-  <div class="mt-3 text-end">
-    <a href="{% url 'dashboard:engagements_list' %}" class="btn btn-sm btn-outline-primary">{% trans "Voir tous les engagements" %}</a>
-    <a href="{% url 'dashboard:dons_list' %}" class="btn btn-sm btn-outline-success">{% trans "Voir tous les dons" %}</a>
-  </div>
-
-  <!-- 🔹 Graphiques -->
-  <div class="row mt-5">
-    <div class="col-md-6">
-      <h5>{% trans "Dons par projet" %}</h5>
-      <canvas id="donationsByProjectChart" height="200"></canvas>
-    </div>
-    <div class="col-md-6">
-      <h5>{% trans "Engagements par année" %}</h5>
-      <canvas id="engagementsByYearChart" height="200"></canvas>
     </div>
   </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'dashboard/js/chart.min.js' %}"></script>
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-  const donationsData = {
-    labels: {{ detailed_stats.donations_by_project|pluck:"project__title"|safe }},
-    datasets: [{
-      label: "{% trans 'Montant total (FCFA)' %}",
-      data: {{ detailed_stats.donations_by_project|pluck:"total"|safe }},
-      backgroundColor: "rgba(0,123,255,0.5)",
-      borderColor: "rgba(0,123,255,1)",
-      borderWidth: 1
-    }]
-  };
-
-  const engagementsData = {
-    labels: {{ detailed_stats.engagements_by_year|pluck:"year"|safe }},
-    datasets: [{
-      label: "{% trans 'Engagements' %}",
-      data: {{ detailed_stats.engagements_by_year|pluck:"count"|safe }},
-      backgroundColor: "rgba(40,167,69,0.3)",
-      borderColor: "rgba(40,167,69,1)",
-      borderWidth: 2,
-      tension: 0.3
-    }]
-  };
-
-  new Chart(document.getElementById("donationsByProjectChart"), {
-    type: "bar",
-    data: donationsData,
-    options: {
-      responsive: true,
-      plugins: { legend: { display: false } }
-    }
+  // Charts
+  new Chart(document.getElementById('networkChart').getContext('2d'), {
+    type: 'line',
+    data: {
+      labels: {{ network_labels|safe }},
+      datasets: [{
+        label: 'Activité réseau',
+        data: {{ network_data|safe }},
+        fill: true,
+        backgroundColor: 'rgba(13,183,237,0.15)',
+        borderColor: '#0db7ed',
+        tension: 0.4,
+        pointRadius: 3
+      }]
+    },
+    options: { responsive: true, plugins: { legend: { display: false } } }
+  });
+  new Chart(document.getElementById('appVersionChart').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: {{ app_versions_labels|safe }},
+      datasets: [{
+        data: {{ app_versions_data|safe }},
+        backgroundColor: ['#0db7ed', '#7fd7c4', '#ffd071', '#ff7c7c']
+      }]
+    },
+    options: { responsive: true, plugins: { legend: { display: false } } }
+  });
+  new Chart(document.getElementById('deviceChart').getContext('2d'), {
+    type: 'doughnut',
+    data: {
+      labels: {{ device_labels|safe }},
+      datasets: [{
+        data: {{ device_data|safe }},
+        backgroundColor: ['#0db7ed', '#7fd7c4', '#ffd071', '#ff7c7c', '#bbb']
+      }]
+    },
+    options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
   });
 
-  new Chart(document.getElementById("engagementsByYearChart"), {
-    type: "line",
-    data: engagementsData,
-    options: {
-      responsive: true,
-      plugins: { legend: { display: true } }
-    }
+  // Carte Leaflet interactive
+  var map = L.map('mapid').setView([20, 0], 2);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 10,
+    attribution: '© OpenStreetMap'
+  }).addTo(map);
+  var locations = [
+    {% for loc in visitors_locations %}
+      { country: "{{ loc.country }}", percent: {{ loc.percent }}, lat: {{ loc.lat }}, lon: {{ loc.lon }} },
+    {% endfor %}
+  ];
+  locations.forEach(function(loc) {
+    L.circleMarker([loc.lat, loc.lon], {
+      radius: Math.max(8, loc.percent / 2),
+      color: '#0078FF',
+      fillColor: '#3ba5f9',
+      fillOpacity: 0.5
+    })
+    .bindPopup("<b>" + loc.country + "</b><br>" + loc.percent + " % des visites")
+    .addTo(map);
   });
-});
 </script>
 {% endblock %} {% endcomment %}
+
+
+
+
+
+
 
 
 
@@ -414,70 +465,385 @@ document.addEventListener("DOMContentLoaded", () => {
 
 {% block title %}Tableau de bord | SOGENTIS{% endblock %}
 
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
-{% endblock %}
-
 {% block content %}
-<div class="container-fluid px-4">
-  <h1 class="mt-4">{% trans "Bienvenue sur votre tableau de bord" %}</h1>
-  <ol class="breadcrumb mb-4">
-    <li class="breadcrumb-item active">{% trans "Vue générale" %}</li>
-  </ol>
 
-  <!-- 📊 Widgets -->
-  <div class="row g-4 mb-4">
-    <div class="col-xl-3 col-md-6">
-      <div class="card bg-primary text-white h-100">
-        <div class="card-body">
-          <i class="fas fa-users fa-2x float-end"></i>
-          <h5>{% trans "Membres" %}</h5>
-          <p class="fs-4">{{ total_members }}</p>
+<!-- ========= Bandeau de Statistiques (6 cartes) ========= -->
+<div class="row g-3 mb-4">
+  {% for card in cards %}
+    <div class="col-6 col-md-2">
+      <div class="card shadow-sm py-3 text-center border-{{ card.color }}">
+        <div class="mb-1 fs-4">
+          <i class="bi {{ card.icon }} text-{{ card.color }}"></i>
         </div>
+        <h6 class="mb-0">{{ card.label }}</h6>
+        <h2 class="fw-bold text-{{ card.color }}">{{ card.value }}</h2>
       </div>
     </div>
-    <div class="col-xl-3 col-md-6">
-      <div class="card bg-success text-white h-100">
-        <div class="card-body">
-          <i class="fas fa-donate fa-2x float-end"></i>
-          <h5>{% trans "Dons collectés" %}</h5>
-          <p class="fs-4">{{ total_donations|floatformat:0 }} FCFA</p>
-        </div>
+  {% endfor %}
+</div>
+
+<!-- ========= Courbe Activité Réseau + Top Campagnes ========= -->
+<div class="row g-3 mb-4">
+  <div class="col-lg-8">
+    <div class="card p-4 h-100 shadow-sm">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h6 class="mb-0">Activité du réseau</h6>
+        <small class="text-muted">Du {{ period_start }} au {{ period_end }}</small>
       </div>
+      <canvas id="networkChart" height="80"></canvas>
     </div>
-    <div class="col-xl-3 col-md-6">
-      <div class="card bg-warning text-white h-100">
-        <div class="card-body">
-          <i class="fas fa-hands-helping fa-2x float-end"></i>
-          <h5>{% trans "Volontaires" %}</h5>
-          <p class="fs-4">{{ total_volunteers }}</p>
+  </div>
+  <div class="col-lg-4">
+    <div class="card p-4 h-100 shadow-sm">
+      <h6 class="mb-3">Top campagnes</h6>
+      {% for camp in top_campaigns %}
+        <div class="d-flex align-items-center mb-2">
+          <span class="me-2">{{ camp.name }}</span>
+          <div class="progress flex-grow-1" style="height:7px;">
+            <div class="progress-bar bg-info" style="width:{{ camp.progress }}%;"></div>
+          </div>
+          <span class="ms-2 small">{{ camp.progress }}%</span>
         </div>
-      </div>
+      {% endfor %}
     </div>
-    <div class="col-xl-3 col-md-6">
-      <div class="card bg-danger text-white h-100">
-        <div class="card-body">
-          <i class="fas fa-project-diagram fa-2x float-end"></i>
-          <h5>{% trans "Projets actifs" %}</h5>
-          <p class="fs-4">{{ total_projects }}</p>
+  </div>
+</div>
+
+<!-- ========= Widgets secondaires ========== -->
+<div class="row g-3 mb-4">
+  <!-- Versions de l'app -->
+  <div class="col-md-4">
+    <div class="card p-3 h-100 shadow-sm">
+      <h6 class="mb-3">Versions de l'application</h6>
+      <canvas id="appVersionChart" height="120"></canvas>
+      <div class="mt-3 small text-muted">Usage par version</div>
+    </div>
+  </div>
+  <!-- Appareils -->
+  <div class="col-md-4">
+    <div class="card p-3 h-100 shadow-sm">
+      <h6 class="mb-3">Répartition appareils</h6>
+      <canvas id="deviceChart" height="120"></canvas>
+      <div class="mt-3 small text-muted">Top 5 appareils</div>
+    </div>
+  </div>
+  <!-- Paramètres rapides & Profil -->
+  <div class="col-md-4">
+    <div class="card p-3 h-100 shadow-sm">
+      <h6 class="mb-2">Paramètres rapides</h6>
+      <ul class="list-unstyled small mb-2">
+        <li><i class="fas fa-check-circle text-success"></i> Abonnement actif</li>
+        <li><i class="fas fa-sync-alt text-warning"></i> Renouvellement auto</li>
+        <li><i class="fas fa-trophy text-info"></i> Succès</li>
+        <li><i class="fas fa-sign-out-alt text-danger"></i> Déconnexion</li>
+      </ul>
+      <div class="mt-4">
+        <h6 class="mb-1">Profil complété</h6>
+        <div class="progress" style="height: 22px;">
+          <div class="progress-bar progress-bar-striped bg-success" style="width: {{ profile_completion|default:64 }}%;">
+            {{ profile_completion|default:"64" }}%
+          </div>
         </div>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- 📈 Graphique -->
-  <div class="card mb-4">
-    <div class="card-header">
-      <i class="fas fa-chart-line me-1"></i> {% trans "Évolution des dons" %}
+<!-- ========= Bas de page : activités récentes, géoloc, todo, météo ========= -->
+<div class="row g-3">
+  <!-- Activités récentes -->
+  <div class="col-lg-4">
+    <div class="card p-3 h-100 shadow-sm">
+      <h6 class="mb-3">Activités récentes</h6>
+      <ul class="list-group list-group-flush">
+        {% for activity in recent_activities %}
+          <li class="list-group-item small">{{ activity }}</li>
+        {% empty %}
+          <li class="list-group-item small">Aucune activité récente.</li>
+        {% endfor %}
+      </ul>
     </div>
-    <div class="card-body">
-      <canvas id="donationChart" width="100%" height="40"></canvas>
+  </div>
+  <!-- Carte interactive visiteurs -->
+  <div class="col-lg-4">
+    <div class="card p-3 h-100 shadow-sm">
+      <h6 class="mb-3">Carte interactive des visiteurs</h6>
+      <div id="mapid" style="width: 100%; height: 200px; border-radius:14px;"></div>
+      <div class="small text-muted">Les cercles indiquent la répartition des visiteurs</div>
+    </div>
+  </div>
+  <!-- À faire + Météo -->
+  <div class="col-lg-4">
+    <div class="card p-3 h-100 shadow-sm">
+      <h6 class="mb-3">À faire</h6>
+      <ul class="list-group list-group-flush mb-3">
+        {% for todo in todos %}
+          <li class="list-group-item small">
+            <input type="checkbox" {% if todo.done %}checked{% endif %} disabled> {{ todo.label }}
+          </li>
+        {% empty %}
+          <li class="list-group-item small">Aucune tâche à faire.</li>
+        {% endfor %}
+      </ul>
+      <h6 class="mb-2 mt-4">Météo du jour</h6>
+      <div class="d-flex align-items-center">
+        <i class="fas fa-cloud-sun fa-2x me-2 text-info"></i>
+        <div>
+          <span class="d-block">{{ weather.location|default:"Dakar" }}</span>
+          <small class="text-muted">{{ weather.time|default:"Aujourd'hui" }} | {{ weather.status|default:"Soleil voilé" }}</small>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'js/chart.min.js' %}"></script>
-<script src="{% static 'dashboard/js/dashboard_charts.js' %}"></script>
+<!-- Chart.js -->
+<script src="{% static 'dashboard/js/chart.min.js' %}"></script>
+<script>
+  // Graphiques stats principales (demo - adapte avec tes données)
+  new Chart(document.getElementById('networkChart').getContext('2d'), {
+    type: 'line',
+    data: {
+      labels: {{ network_labels|safe }},
+      datasets: [{
+        label: 'Activité réseau',
+        data: {{ network_data|safe }},
+        fill: true,
+        backgroundColor: 'rgba(13,183,237,0.15)',
+        borderColor: '#0db7ed',
+        tension: 0.4,
+        pointRadius: 3
+      }]
+    },
+    options: { responsive: true, plugins: { legend: { display: false } } }
+  });
+
+  new Chart(document.getElementById('appVersionChart').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: {{ app_versions_labels|safe }},
+      datasets: [{
+        data: {{ app_versions_data|safe }},
+        backgroundColor: ['#0db7ed', '#7fd7c4', '#ffd071', '#ff7c7c']
+      }]
+    },
+    options: { responsive: true, plugins: { legend: { display: false } } }
+  });
+
+  new Chart(document.getElementById('deviceChart').getContext('2d'), {
+    type: 'doughnut',
+    data: {
+      labels: {{ device_labels|safe }},
+      datasets: [{
+        data: {{ device_data|safe }},
+        backgroundColor: ['#0db7ed', '#7fd7c4', '#ffd071', '#ff7c7c', '#bbb']
+      }]
+    },
+    options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+  });
+
+  // Leaflet map
+  var map = L.map('mapid').setView([20, 0], 2);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 10,
+    attribution: '© OpenStreetMap'
+  }).addTo(map);
+  var locations = [
+    {% for loc in visitors_locations %}
+      { country: "{{ loc.country }}", percent: {{ loc.percent }}, lat: {{ loc.lat }}, lon: {{ loc.lon }} },
+    {% endfor %}
+  ];
+  locations.forEach(function(loc) {
+    L.circleMarker([loc.lat, loc.lon], {
+      radius: Math.max(8, loc.percent / 2),
+      color: '#0078FF',
+      fillColor: '#3ba5f9',
+      fillOpacity: 0.5
+    })
+    .bindPopup("<b>" + loc.country + "</b><br>" + loc.percent + " % des visites")
+    .addTo(map);
+  });
+</script>
+{% endblock %}
+
+ {% endcomment %}
+
+
+
+{% comment %} {% extends "dashboard/base.html" %}
+{% load static i18n %}
+{% block title %}Tableau de bord | SOGENTIS{% endblock %}
+
+{% block content %}
+<div class="row g-4 mb-4">
+  {% for card in cards %}
+  <div class="col-6 col-md-2">
+    <div class="card stats-card text-center border-{{ card.color }}">
+      <h6 class="mb-1">{{ card.label }}</h6>
+      <h2 class="fw-bold text-{{ card.color }}">{{ card.value }}</h2>
+      <span class="icon"><i class="bi {{ card.icon }}"></i></span>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Graphique des activités réseau -->
+<div class="card mb-4 p-4">
+  <h6 class="mb-3">Activité du réseau</h6>
+  <canvas id="networkChart" height="80"></canvas>
+</div>
+
+<div class="row g-4">
+  <!-- Versions de l'application -->
+  <div class="col-md-4">
+    <div class="card p-3">
+      <h6 class="mb-3">Versions de l'application</h6>
+      <canvas id="appVersionChart" height="120"></canvas>
+    </div>
+  </div>
+  <!-- Utilisation des appareils -->
+  <div class="col-md-4">
+    <div class="card p-3">
+      <h6 class="mb-3">Répartition appareils</h6>
+      <canvas id="deviceChart" height="120"></canvas>
+    </div>
+  </div>
+  <!-- Paramètres rapides -->
+  <div class="col-md-4">
+    <div class="card p-3">
+      <h6>Paramètres rapides</h6>
+      <ul class="list-unstyled mb-2">
+        <li><i class="fas fa-check-circle text-success"></i> Abonnement actif</li>
+        <li><i class="fas fa-sync-alt text-warning"></i> Renouvellement auto</li>
+        <li><i class="fas fa-trophy text-info"></i> Succès</li>
+        <li><i class="fas fa-sign-out-alt text-danger"></i> Déconnexion</li>
+      </ul>
+      <div class="mt-4">
+        <h6 class="mb-1">Profil complété</h6>
+        <div class="progress" style="height: 22px;">
+          <div class="progress-bar progress-bar-striped bg-success" style="width: {{ profile_completion|default:64 }}%;">
+            {{ profile_completion|default:"64" }}%
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4 mt-1">
+  <!-- Activités récentes -->
+  <div class="col-lg-4">
+    <div class="card p-3 h-100">
+      <h6 class="mb-3">Activités récentes</h6>
+      <ul class="list-group list-group-flush">
+        {% for activity in recent_activities %}
+          <li class="list-group-item">{{ activity }}</li>
+        {% empty %}
+          <li class="list-group-item">Aucune activité récente.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <!-- Carte interactive Leaflet (remplace la mini-map image !) -->
+  <div class="col-lg-4">
+    <div class="card p-3 h-100">
+      <h6 class="mb-3">Carte interactive des visiteurs</h6>
+      <div id="mapid" style="width: 100%; height: 240px; border-radius:16px;"></div>
+      <div class="small text-muted">Les cercles indiquent la répartition des visiteurs</div>
+    </div>
+  </div>
+  <!-- À faire + Météo -->
+  <div class="col-lg-4">
+    <div class="card p-3 h-100">
+      <h6 class="mb-3">À faire</h6>
+      <ul class="list-group list-group-flush mb-3">
+        {% for todo in todos %}
+          <li class="list-group-item">
+            <input type="checkbox" {% if todo.done %}checked{% endif %}> {{ todo.label }}
+          </li>
+        {% empty %}
+          <li class="list-group-item">Aucune tâche à faire.</li>
+        {% endfor %}
+      </ul>
+      <h6 class="mb-1 mt-4">Utilisateurs actifs du jour</h6>
+      <div class="d-flex align-items-center">
+        <i class="fas fa-cloud-sun fa-2x me-2 text-info"></i>
+        <div>
+          <span class="d-block">{{ weather.location|default:"Dakar" }}</span>
+          <small class="text-muted">{{ weather.time|default:"Jeudi, 14:30" }} | {{ weather.status|default:"Soleil voilé" }}</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'dashboard/chartjs/chart.min.js' %}"></script>
+<script>
+  // Graphiques (Chart.js)
+  new Chart(document.getElementById('networkChart').getContext('2d'), {
+    type: 'line',
+    data: {
+      labels: {{ network_labels|safe }},
+      datasets: [{
+        label: 'Activité réseau',
+        data: {{ network_data|safe }},
+        fill: true,
+        backgroundColor: 'rgba(13, 183, 237, 0.15)',
+        borderColor: '#0db7ed',
+        tension: 0.4,
+        pointRadius: 3
+      }]
+    },
+    options: { responsive: true, plugins: { legend: { display: false } } }
+  });
+  new Chart(document.getElementById('appVersionChart').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: {{ app_versions_labels|safe }},
+      datasets: [{
+        data: {{ app_versions_data|safe }},
+        backgroundColor: ['#0db7ed', '#7fd7c4', '#ffd071', '#ff7c7c']
+      }]
+    },
+    options: { responsive: true, plugins: { legend: { display: false } } }
+  });
+  new Chart(document.getElementById('deviceChart').getContext('2d'), {
+    type: 'doughnut',
+    data: {
+      labels: {{ device_labels|safe }},
+      datasets: [{
+        data: {{ device_data|safe }},
+        backgroundColor: ['#0db7ed', '#7fd7c4', '#ffd071', '#ff7c7c', '#bbb']
+      }]
+    },
+    options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+  });
+
+  // Carte Leaflet interactive
+  var map = L.map('mapid').setView([20, 0], 2);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 10,
+      attribution: '© OpenStreetMap'
+  }).addTo(map);
+
+  var locations = [
+    {% for loc in visitors_locations %}
+      { country: "{{ loc.country }}", percent: {{ loc.percent }}, lat: {{ loc.lat }}, lon: {{ loc.lon }} },
+    {% endfor %}
+  ];
+  locations.forEach(function(loc) {
+    L.circleMarker([loc.lat, loc.lon], {
+      radius: Math.max(8, loc.percent / 2),
+      color: '#0078FF',
+      fillColor: '#3ba5f9',
+      fillOpacity: 0.5
+    })
+    .bindPopup("<b>" + loc.country + "</b><br>" + loc.percent + " % des visites")
+    .addTo(map);
+  });
+</script>
 {% endblock %} {% endcomment %}

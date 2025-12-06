@@ -36,7 +36,7 @@ class UserProfileForm(forms.ModelForm):
             if file.content_type != "application/pdf":
                 raise forms.ValidationError(_("Le fichier doit être au format PDF."))
             if file.size > 2 * 1024 * 1024:
-                raise forms.ValidationError(_("Le fichier ne doit pas dépasser 2 Mo."))
+                raise forms.ValidationError(_("Le fichier ne doit pas dépasser 2 Mo"))
         return file
 
 

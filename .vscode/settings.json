@@ -1,5 +1,5 @@
 {
-  "python.pythonPath": "venv/bin/python", 
+  "python.pythonPath": "venv/bin/python",
   "python.formatting.provider": "none",
   // "python.formatting.provider": "black",
   "editor.formatOnSave": false,
@@ -9,6 +9,7 @@
   "python.linting.pylintEnabled": false,
   // "python.linting.pylintEnabled": true,
   "python.linting.flake8Enabled": true,
+
   "sqltools.connections": [
     {
       "previewLimit": 50,
@@ -22,4 +23,37 @@
     }
   ],
 
+  "python.analysis.extraPaths": [
+    "./core",
+    "./sogentis_apps"
+  ]
 }
+
+
+
+
+// {
+//   "python.pythonPath": "venv/bin/python", 
+//   "python.formatting.provider": "none",
+//   // "python.formatting.provider": "black",
+//   "editor.formatOnSave": false,
+//   // "editor.formatOnSave": true,
+
+//   "python.linting.enabled": true,
+//   "python.linting.pylintEnabled": false,
+//   // "python.linting.pylintEnabled": true,
+//   "python.linting.flake8Enabled": true,
+//   "sqltools.connections": [
+//     {
+//       "previewLimit": 50,
+//       "server": "localhost",
+//       "port": 5432,
+//       "driver": "PostgreSQL",
+//       "name": "sogentis",
+//       "group": "servers",
+//       "database": "sogentis_dbse",
+//       "username": "sogentis"
+//     }
+//   ],
+
+// }

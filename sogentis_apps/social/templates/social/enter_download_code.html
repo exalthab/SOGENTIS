@@ -1,0 +1,31 @@
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block content %}
+<div class="container py-5" style="max-width:600px;">
+  <div class="card shadow-sm border-0">
+    <div class="card-body">
+      <h3 class="mb-3">{% trans "Entrer votre code de téléchargement" %}</h3>
+      <form method="post">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <div class="mb-3">
+          {{ form.code.label_tag }}
+          {{ form.code }}
+          {{ form.code.errors }}
+        </div>
+        <button type="submit" class="btn btn-primary">
+          {% trans "Valider" %}
+        </button>
+      </form>
+
+      <!-- 🔹 Bouton retour à l'accueil -->
+      <div class="mt-4 text-center">
+        <a href="{% url 'social:index' %}" class="btn btn-outline-secondary">
+          <i class="fas fa-home"></i> {% trans "Retour à l'accueil" %}
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

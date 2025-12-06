@@ -8,3 +8,6 @@ from .don import Don
 from .evenement import Evenement
 from .publication import *
 from .document_access import *
+from .download_token import DownloadToken
+from .purchase_counter import PublicationPurchaseCounter
+from .publication_purchase import PublicationPurchase

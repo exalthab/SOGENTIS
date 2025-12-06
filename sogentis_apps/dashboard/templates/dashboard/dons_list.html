@@ -1,15 +1,40 @@
 {% extends 'dashboard/base.html' %}
-{% load i18n %}
+{% load static i18n %}
 
 {% block title %}{% trans "Mes Dons" %} | SOGENTIS{% endblock %}
 
 {% block content %}
 <div class="container-fluid py-4">
+
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="h4 mb-0">{% trans "Mes Dons" %}</h2>
-    {# Tu peux ajouter ici un bouton vers un don rapide, ex : #}
-    {# <a href="{% url 'social:donation' %}" class="btn btn-outline-success btn-sm">Faire un don</a> #}
   </div>
+
+  <!-- Filtres -->
+  <form method="get" class="mb-3">
+    <div class="row g-2 align-items-end">
+      <div class="col-md-4">
+        <label for="project" class="form-label">{% trans "Projet" %}</label>
+        <select name="project" id="project" class="form-select">
+          <option value="">{% trans "Tous les projets" %}</option>
+          {% for project in projects %}
+            <option value="{{ project.id }}" {% if project.id|stringformat:"s" == project_filter %}selected{% endif %}>
+              {{ project.title }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label for="date" class="form-label">{% trans "À partir de la date" %}</label>
+        <input type="date" name="date" id="date" value="{{ date_filter }}" class="form-control" />
+      </div>
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-primary w-100">{% trans "Filtrer" %}</button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Tableau des dons -->
   <div class="card shadow-sm">
     <div class="card-header bg-light">
       <strong>{% trans "Historique de mes dons" %}</strong>
@@ -22,16 +47,22 @@
               <th>{% trans "Montant" %}</th>
               <th>{% trans "Date" %}</th>
               <th>{% trans "Projet" %}</th>
+              <th>{% trans "Méthode de paiement" %}</th>
+              <th>{% trans "Statut" %}</th>
+              <th>{% trans "Reçu" %}</th>
             </tr>
           </thead>
           <tbody>
             {% for don in dons %}
             <tr>
-              <td><strong>{{ don.montant|floatformat:0 }} FCFA</strong></td>
+              <td><strong>{{ don.amount|floatformat:0 }} {{ don.currency }}</strong></td>
               <td>{{ don.date|date:"d/m/Y" }}</td>
+              <td>{% if don.project %}{{ don.project.title }}{% else %}—{% endif %}</td>
+              <td>{{ don.payment_method }}</td>
+              <td>{{ don.status }}</td>
               <td>
-                {% if don.project %}
-                  {{ don.project.title }}
+                {% if don.pdf_receipt %}
+                  <a href="{{ don.pdf_receipt.url }}" class="btn btn-sm btn-success">{% trans "Reçu PDF" %}</a>
                 {% else %}
                   <span class="text-muted">—</span>
                 {% endif %}
@@ -39,7 +70,7 @@
             </tr>
             {% empty %}
             <tr>
-              <td colspan="3" class="text-center text-muted py-4">{% trans "Aucun don enregistré." %}</td>
+              <td colspan="6" class="text-center text-muted py-4">{% trans "Aucun don enregistré." %}</td>
             </tr>
             {% endfor %}
           </tbody>
@@ -47,35 +78,43 @@
       </div>
     </div>
   </div>
+
+  <!-- Pagination -->
+  {% if dons.has_other_pages %}
+  <nav class="mt-3">
+    <ul class="pagination justify-content-center">
+      {% if dons.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ dons.previous_page_number }}&project={{ project_filter }}&date={{ date_filter }}" aria-label="Précédent">
+            &laquo;
+          </a>
+        </li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+      {% endif %}
+
+      {% for i in dons.paginator.page_range %}
+        {% if dons.number == i %}
+          <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+        {% else %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ i }}&project={{ project_filter }}&date={{ date_filter }}">{{ i }}</a>
+          </li>
+        {% endif %}
+      {% endfor %}
+
+      {% if dons.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ dons.next_page_number }}&project={{ project_filter }}&date={{ date_filter }}" aria-label="Suivant">
+            &raquo;
+          </a>
+        </li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+      {% endif %}
+    </ul>
+  </nav>
+  {% endif %}
+
 </div>
 {% endblock %}
-
-
-
-
-
-{% comment %} {% extends 'dashboard/base.html' %}
-
-{% block content %}
-<h3>Mes Dons</h3>
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th>Montant</th>
-      <th>Date</th>
-      <th>Projet</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for don in dons %}
-    <tr>
-      <td>{{ don.amount }} €</td>
-      <td>{{ don.created_at|date:"d/m/Y" }}</td>
-      <td>{{ don.project.title }}</td>
-    </tr>
-    {% empty %}
-    <tr><td colspan="3">Aucun don enregistré.</td></tr>
-    {% endfor %}
-  </tbody>
-</table>
-{% endblock %} {% endcomment %}

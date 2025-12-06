@@ -1,0 +1,20 @@
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Activité récente" %}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h2 class="mb-4">{% trans "Activité récente" %}</h2>
+  <ul class="list-group">
+    {% for action in activities %}
+      <li class="list-group-item">
+        <span>{{ action.description }}</span>
+        <span class="text-muted float-end">{{ action.timestamp|date:"d M Y H:i" }}</span>
+      </li>
+    {% empty %}
+      <li class="list-group-item">{% trans "Aucune activité récente." %}</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

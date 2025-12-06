@@ -4,9 +4,9 @@
 {% block title %}SOGENTIS | Marketplace Sociale{% endblock %}
 
 {% block extra_css %}
-  <link rel="stylesheet" href="{% static 'economic/css/ecom_menubar.css' %}">
+  {% comment %} <link rel="stylesheet" href="{% static 'economic/css/ecom_menubar.css' %}">
   <link rel="stylesheet" href="{% static 'economic/css/econ.css' %}">
-  <link rel="stylesheet" href="{% static 'economic/css/econ_catalog.css' %}">
+  <link rel="stylesheet" href="{% static 'economic/css/econ_catalog.css' %}"> {% endcomment %}
 {% endblock %}
 
 {% block section_menu %}
@@ -140,33 +140,28 @@
         <h2 class="econ-section-title-modern">Notre Impact</h2>
         <p class="lead text-muted">Chaque achat soutient directement nos bénéficiaires :</p>
         <ul class="impact-list list-unstyled mb-4">
-          <li>👧 124 enfants scolarisés</li>
-          <li>💼 48 femmes formées à l’entrepreneuriat</li>
-          <li>🌱 12 projets agricoles accompagnés</li>
-          <li>💸 78 familles bénéficient du micro-crédit</li>
+          <li>👧 1000 enfants seront scolarisés</li>
+          <li>💼 500 femmes seront formées à l’entrepreneuriat</li>
+          <li>🌱 12 projets agricoles seront accompagnés</li>
+          <li>💸 500 familles bénéficieront du micro-crédit</li>
         </ul>
-        <a href="{% url 'soci:index' %}" class="btn btn-success rounded-pill shadow">Voir nos projets sociaux</a>
+        <a href="{% url 'social:index' %}" class="btn btn-success rounded-pill shadow">Voir nos projets sociaux</a>
       </div>
       <div class="col-md-6">
         <div class="impact-cards-grid d-flex flex-wrap gap-3 justify-content-center">
           <div class="impact-card-modern shadow-sm">
             <i class="fas fa-child fa-2x text-warning mb-2"></i>
-            <div class="fw-bold fs-5">124</div>
+            <div class="fw-bold fs-5">5</div>
             <div class="small text-muted">Enfants aidés</div>
           </div>
           <div class="impact-card-modern shadow-sm">
             <i class="fas fa-briefcase fa-2x text-success mb-2"></i>
-            <div class="fw-bold fs-5">48</div>
+            <div class="fw-bold fs-5">1</div>
             <div class="small text-muted">Femmes autonomisées</div>
           </div>
           <div class="impact-card-modern shadow-sm">
-            <i class="fas fa-leaf fa-2x text-success mb-2"></i>
-            <div class="fw-bold fs-5">12</div>
-            <div class="small text-muted">Projets agricoles</div>
-          </div>
-          <div class="impact-card-modern shadow-sm">
             <i class="fas fa-coins fa-2x text-info mb-2"></i>
-            <div class="fw-bold fs-5">78</div>
+            <div class="fw-bold fs-5">2</div>
             <div class="small text-muted">Familles soutenues</div>
           </div>
         </div>
@@ -188,7 +183,7 @@
 
   <!-- CTA -->
   <div class="cta-modern text-center mt-5 mb-5">
-    <a href="{% url 'soci:index' %}" class="btn btn-gradient-market btn-lg rounded-pill px-5 shadow">
+    <a href="{% url 'social:index' %}" class="btn btn-gradient-market btn-lg rounded-pill px-5 shadow">
       Rejoindre l’aventure solidaire 🚀
     </a>
   </div>
@@ -197,6 +192,6 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'economic/js/bootstrap.bundle.min.js' %}"></script>
+{% comment %} <script src="{% static 'economic/js/bootstrap.bundle.min.js' %}"></script> {% endcomment %}
 {% comment %} <script src="{% static 'economic/js/voirplus.js' %}"></script> {% endcomment %}
 {% endblock %}

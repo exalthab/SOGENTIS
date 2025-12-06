@@ -1,0 +1,43 @@
+{% comment %} {% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Documents" %}{% endblock %}
+
+{% block section_menu %}
+  {% include "core/partials/_menu_soci.html" %}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h2>{% trans "Documents disponibles" %}</h2>
+  <ul class="list-group">
+    {% for doc in documents %}
+      <li class="list-group-item">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <a href="{{ doc.get_absolute_url }}">{{ doc.title }}</a>
+            {% if not doc.is_public %}
+              <span class="badge bg-warning text-dark ms-2">{% trans "Privé" %}</span>
+            {% endif %}
+            <p class="mb-0">{{ doc.description|truncatewords:15 }}</p>
+          </div>
+          {% if request.user.is_authenticated and doc.author == request.user %}
+            <form method="post" action="{% url 'documents:toggle_visibility' doc.pk %}" class="ms-3">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm {% if doc.is_public %}btn-outline-secondary{% else %}btn-outline-warning{% endif %}">
+                {% if doc.is_public %}
+                  🔒 {% trans "Rendre privé" %}
+                {% else %}
+                  🌐 {% trans "Rendre public" %}
+                {% endif %}
+              </button>
+            </form>
+          {% endif %}
+        </div>
+      </li>
+    {% empty %}
+      <li class="list-group-item text-muted">{% trans "Aucun document." %}</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %} {% endcomment %}
