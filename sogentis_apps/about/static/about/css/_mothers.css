@@ -1,54 +1,58 @@
 /* ============================= */
-/* _mother.css - Styles des mères */
+/* _mothers.css - Styles des mères */
 /* ============================= */
 
 /* -----------------------------
-   Grille générale des mères
+   Grille générale
 ------------------------------ */
 .mothers-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-    padding: 2rem;
-    background-color: #f5f7fa;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.8rem;
+    padding: 2rem 1rem;
 }
 
 /* -----------------------------
    Carte mère
 ------------------------------ */
 .mother-card {
-    background-color: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-    overflow: hidden;
+    background: #fff;
+    border-radius: 14px;
+    padding: 1.6rem 1.3rem;
+    text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
-    text-align: center;
-    padding: 1.5rem;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.6s ease, transform 0.6s ease;
-    
-    opacity: 0;         /* départ invisible */
-    transform: translateY(30px); /* décalé vers le bas */
+
+    /* Ombres et animation */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: transform .25s ease, box-shadow .25s ease;
+
+    /* Animation apparition */
+    opacity: 0;
+    transform: translateY(25px);
+    animation: fadeUpCard .55s ease forwards;
 }
 
-.mother-card.visible {
-    opacity: 1;
-    transform: translateY(0);
+@keyframes fadeUpCard {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Hover */
 .mother-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+    transform: translateY(-6px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
 /* -----------------------------
-   Photo mère (cercle)
+   Photo ronde
 ------------------------------ */
 .mother-photo {
-    width: 120px;
-    height: 120px;
+    width: 135px;
+    height: 135px;
     border-radius: 50%;
     overflow: hidden;
     border: 4px solid #e63946;
@@ -59,17 +63,16 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    display: block;
 }
 
 /* -----------------------------
-   Nom et infos
+   Nom & métadonnées
 ------------------------------ */
 .mother-name {
     font-size: 1.25rem;
-    margin-bottom: 0.5rem;
-    color: #1f2937;
     font-weight: 600;
+    color: #1f2937;
+    margin-bottom: .4rem;
 }
 
 .mother-meta {
@@ -77,9 +80,9 @@
 }
 
 .mother-info-line {
-    font-size: 0.9rem;
+    margin: .3rem 0;
     color: #555;
-    margin: 0.3rem 0;
+    font-size: .92rem;
 }
 
 /* -----------------------------
@@ -88,105 +91,110 @@
 .mother-actions {
     margin-top: 1rem;
     display: flex;
-    gap: 0.5rem;
+    gap: .6rem;
     justify-content: center;
+    flex-wrap: wrap;
 }
 
 .btn-support {
-    background-color: #e63946;
-    border: none;
-    padding: 0.45rem 1rem;
-    border-radius: 6px;
+    background: #e63946;
     color: #fff;
+    border: none;
+    padding: .48rem 1.1rem;
+    border-radius: 6px;
     font-weight: 500;
-    transition: background-color 0.2s ease;
     cursor: pointer;
+    transition: background .2s ease;
 }
 
 .btn-support:hover {
-    background-color: #c71f30;
+    background: #c71f30;
 }
 
 .btn-outline {
-    background-color: transparent;
+    background: transparent;
     border: 1px solid #e63946;
     color: #e63946;
-    padding: 0.45rem 1rem;
+    padding: .46rem 1.1rem;
     border-radius: 6px;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all .2s ease;
 }
 
 .btn-outline:hover {
-    background-color: #e63946;
+    background: #e63946;
     color: #fff;
 }
 
 /* -----------------------------
-   Modal mère
+   Modal des mères
 ------------------------------ */
 .mother-modal {
     display: none;
     position: fixed;
-    z-index: 1000;
     inset: 0;
-    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 1200;
+    background: rgba(0, 0, 0, .55);
+    padding: 1.8rem;
     overflow-y: auto;
-    padding: 2rem;
-    box-sizing: border-box;
 }
 
 .mother-modal-content {
-    background-color: #ffffff;
+    background: #fff;
     margin: auto;
-    padding: 2rem;
-    border-radius: 12px;
-    max-width: 520px;
+    padding: 1.8rem;
+    max-width: 540px;
+    border-radius: 14px;
     position: relative;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    text-align: left;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, .2);
+    animation: modalIn .35s ease;
 }
 
-/* Fermer modal */
-.mother-modal-content .close-modal {
+@keyframes modalIn {
+    from {
+        opacity: 0;
+        transform: translateY(25px) scale(.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Bouton fermer */
+.close-modal {
     position: absolute;
-    top: 15px;
-    right: 20px;
-    font-size: 1.5rem;
+    top: 12px;
+    right: 16px;
+    font-size: 1.6rem;
     font-weight: bold;
-    color: #555;
+    color: #666;
     cursor: pointer;
-    transition: color 0.2s ease;
+    transition: color .2s;
 }
 
-.mother-modal-content .close-modal:hover {
+.close-modal:hover {
     color: #000;
 }
 
-/* Titres modal */
+/* Titres */
 .modal-name {
-    font-size: 1.4rem;
+    font-size: 1.35rem;
     color: #e63946;
-    margin-bottom: 0.5rem;
-}
-
-.modal-activity {
-    font-size: 1rem;
-    color: #555;
+    margin-bottom: .5rem;
 }
 
 /* Texte modal */
 .modal-body p,
 .modal-story {
-    margin: 0.4rem 0;
-    font-size: 0.95rem;
+    margin: .45rem 0;
     color: #333;
+    font-size: .96rem;
 }
 
 /* Footer modal */
-.mother-modal-content .modal-footer .btn-support {
-    display: inline-block;
+.modal-footer .btn-support {
     margin-top: 1rem;
 }
 
@@ -195,11 +203,11 @@
 ------------------------------ */
 @media (max-width: 600px) {
     .mother-modal-content {
-        padding: 1rem;
+        padding: 1.2rem;
     }
 
     .mother-photo {
-        width: 100px;
-        height: 100px;
+        width: 110px;
+        height: 110px;
     }
 }

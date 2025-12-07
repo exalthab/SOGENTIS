@@ -1,6 +1,63 @@
 {# about/components/team_member_card.html #}
 {% load static i18n about_tags %}
 
+{% static 'about/img/default_user.png' as default_avatar %}
+
+<div class="team-card fade-in-up">
+
+  <!-- Photo -->
+  <div class="team-photo-wrapper">
+    <img
+      src="{% firstof t.photo_url default_avatar %}"
+      alt="{{ t|translate:'name' }}"
+      class="team-photo"
+      loading="lazy"
+      decoding="async"
+      referrerpolicy="no-referrer"
+      width="320" height="320"
+    >
+  </div>
+
+  <!-- Nom -->
+  <h3 class="team-name">
+    {{ t|translate:"name" }}
+  </h3>
+
+  <!-- Rôle (affiché seulement si présent) -->
+  {% with role_txt=t|translate:"role" %}
+    {% if role_txt %}
+      <p class="team-role">{{ role_txt }}</p>
+    {% endif %}
+  {% endwith %}
+
+  <!-- Bio (HTML autorisé si présent) -->
+  {% with bio_txt=t|translate:"bio" %}
+    {% if bio_txt %}
+      <p class="team-bio">{{ bio_txt|safe }}</p>
+    {% endif %}
+  {% endwith %}
+
+</div>
+
+{% comment %} <style>
+.team-card{border:1px solid #e0e0e0;border-radius:12px;padding:12px;background:#fff;text-align:center;transition:transform .2s,box-shadow .2s}
+.team-card:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.1)}
+.team-photo-wrapper{margin-bottom:12px}
+.team-photo{width:100%;max-width:200px;height:200px;object-fit:cover;border-radius:50%}
+.team-name{font-size:1.1rem;margin:8px 0 4px}
+.team-role{font-size:.9rem;color:#555;margin:0 0 8px}
+.team-bio{font-size:.85rem;color:#666;line-height:1.3;margin:0}
+.fade-in-up{opacity:0;transform:translateY(10px);animation:fadeInUp .5s forwards;animation-delay:.1s}
+@keyframes fadeInUp{to{opacity:1;transform:translateY(0)}}
+</style>
+ {% endcomment %}
+
+
+
+
+{% comment %} {# about/components/team_member_card.html #}
+{% load static i18n about_tags %}
+
 <div class="team-card fade-in-up">
 
     <!-- Photo -->
@@ -31,4 +88,4 @@
         </p>
     {% endif %}
 
-</div>
+</div> {% endcomment %}

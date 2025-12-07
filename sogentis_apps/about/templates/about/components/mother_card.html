@@ -1,4 +1,147 @@
+{# about/components/mother_card.html #}
 {% load static i18n about_tags %}
+
+{% static 'about/img/default_mother.png' as default_mother_img %}
+
+<div class="mothers-grid">
+
+  {% for m in mothers %}
+  <!-- ===== Mother Card ===== -->
+  <div class="mother-card fade-in">
+
+    <!-- Photo ronde -->
+    <div class="mother-photo">
+      <img
+        src="{% if m.photo %}{{ m.photo.url }}{% else %}{{ default_mother_img }}{% endif %}"
+        alt="{{ m|translate:'name' }}"
+        loading="lazy"
+        decoding="async"
+        width="240" height="240"
+      >
+    </div>
+
+    <!-- Nom (i18n) -->
+    <h3 class="mother-name">{{ m|translate:"name" }}</h3>
+
+    <!-- Infos principales -->
+    <div class="mother-meta">
+
+      {% if m.age %}
+        <p class="mother-info-line"><strong>{% trans "Âge" %} :</strong> {{ m.age }} {% trans "ans" %}</p>
+      {% endif %}
+
+      {% if m.country %}
+        <p class="mother-info-line"><strong>{% trans "Pays" %} :</strong> {{ m.country }}</p>
+      {% endif %}
+
+      {% with act=m|translate:"activity" %}
+        {% if act %}
+          <p class="mother-info-line"><strong>{% trans "Activité" %} :</strong> {{ act }}</p>
+        {% endif %}
+      {% endwith %}
+
+      {% if m.monthly_income %}
+        <p class="mother-info-line">
+          <strong>{% trans "Revenu mensuel" %} :</strong>
+          {{ m.monthly_income }} {{ m.currency|default:"XOF" }}
+        </p>
+      {% endif %}
+
+      {% if m.capital_amount %}
+        <p class="mother-info-line">
+          <strong>{% trans "Capital nécessaire" %} :</strong>
+          {{ m.capital_amount }} {{ m.currency|default:"XOF" }}
+        </p>
+      {% endif %}
+
+    </div>
+
+    <!-- Actions -->
+    <div class="mother-actions">
+      <a href="{% url 'social:donation_mother' m.id %}" class="btn-support">
+        {% trans "Soutenir cette mère" %}
+      </a>
+
+      {% with story_txt=m|translate:"story" %}
+        {% if story_txt %}
+          <button class="btn btn-outline open-mother-modal" data-target="#mother-modal-{{ m.id }}">
+            {% trans "Voir description" %}
+          </button>
+        {% endif %}
+      {% endwith %}
+    </div>
+
+  </div>
+
+  {# ===== Modal (affiché seulement si story existe) ===== #}
+  {% with story_txt=m|translate:"story" %}
+    {% if story_txt %}
+      <div class="mother-modal" id="mother-modal-{{ m.id }}" aria-hidden="true">
+        <div class="mother-modal-content">
+
+          <button class="close-modal" aria-label="{% trans 'Fermer' %}">&times;</button>
+
+          <h3 class="modal-name">{{ m|translate:"name" }}</h3>
+
+          <div class="modal-body">
+
+            {% if m.birth_date %}
+              <p><strong>{% trans "Date de naissance" %} :</strong> {{ m.birth_date }}</p>
+            {% endif %}
+
+            {% if m.country %}
+              <p><strong>{% trans "Pays" %} :</strong> {{ m.country }}</p>
+            {% endif %}
+
+            {% if m.identification_number %}
+              <p><strong>{% trans "Numéro d'identification" %} :</strong> {{ m.identification_number }}</p>
+            {% endif %}
+
+            {% with act=m|translate:"activity" %}
+              {% if act %}
+                <p><strong>{% trans "Activité" %} :</strong> {{ act }}</p>
+              {% endif %}
+            {% endwith %}
+
+            {% if m.capital_amount %}
+              <p><strong>{% trans "Capital nécessaire" %} :</strong> {{ m.capital_amount }} {{ m.currency|default:"XOF" }}</p>
+            {% endif %}
+
+            {% if m.monthly_income %}
+              <p><strong>{% trans "Revenu mensuel" %} :</strong> {{ m.monthly_income }} {{ m.currency|default:"XOF" }}</p>
+            {% endif %}
+
+            <div class="modal-story">{{ story_txt|safe }}</div>
+
+          </div>
+
+          <div class="modal-footer">
+            <a href="{% url 'social:donation_mother' m.id %}" class="btn-support">
+              {% trans "Soutenir cette mère" %}
+            </a>
+          </div>
+
+        </div>
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  {% empty %}
+    <p class="text-center">{% trans "Aucune mère disponible pour le moment." %}</p>
+  {% endfor %}
+
+</div>
+
+{# Assets #}
+<link rel="stylesheet" href="{% static 'about/css/_mothers.css' %}">
+<script src="{% static 'about/js/_mothers.js' %}"></script>
+
+
+
+
+
+
+{% comment %} {% load static i18n about_tags %}
 
 <div class="mothers-grid">
 
@@ -113,4 +256,4 @@
 <!-- CSS et JS -->
 <link rel="stylesheet" href="{% static 'about/css/_mothers.css' %}">
 <script src="{% static 'about/js/_mothers.js' %}"></script>
-
+ {% endcomment %}

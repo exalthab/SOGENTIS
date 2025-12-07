@@ -1,3 +1,60 @@
+{# about/components/partner_card.html #}
+{% load static i18n about_tags %}
+
+{% static 'about/img/default_partner.png' as default_partner_logo %}
+
+<div class="partners-grid">
+
+  {% for p in partners %}
+  <div class="partner-card fade-in">
+
+    <!-- Logo -->
+    <div class="partner-logo">
+      <img
+        src="{% if p.logo %}{{ p.logo.url }}{% else %}{{ default_partner_logo }}{% endif %}"
+        alt="{{ p|translate:'name' }}"
+        loading="lazy"
+        decoding="async"
+        width="240" height="120"
+      >
+    </div>
+
+    <!-- Nom -->
+    <h3 class="partner-name">{{ p|translate:"name" }}</h3>
+
+    <!-- Description -->
+    {% with desc=p|translate:"description" %}
+      {% if desc %}
+        <p class="partner-description">{{ desc|safe }}</p>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Website -->
+    {% if p.website %}
+      {% with url=p.website %}
+      <a href="{{ url }}" class="partner-link"
+         {% if url|slice:":4" == "http" %}target="_blank" rel="noopener noreferrer"{% endif %}>
+        {% trans "Visiter le site" %}
+      </a>
+      {% endwith %}
+    {% endif %}
+
+  </div>
+
+  {% empty %}
+    <p class="text-center">{% trans "Aucun partenaire pour le moment." %}</p>
+  {% endfor %}
+
+</div>
+
+<link rel="stylesheet" href="{% static 'about/css/_partners.css' %}">
+<script src="{% static 'about/js/_partners.js' %}"></script>
+
+
+
+
+
+{% comment %} {# about/components/partner_card.html #}
 {% load static i18n about_tags %}
 
 <div class="partners-grid">
@@ -36,4 +93,4 @@
         <p class="text-center">{% trans "Aucun partenaire pour le moment." %}</p>
     {% endfor %}
 
-</div>
+</div> {% endcomment %}

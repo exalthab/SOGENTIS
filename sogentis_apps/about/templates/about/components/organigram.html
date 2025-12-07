@@ -1,3 +1,81 @@
+{# about/components/organigram.html #}
+
+{% load static i18n %}
+
+<section class="organigram-section" aria-labelledby="org-title">
+
+  <details class="organigram-disclosure" id="organigram">
+    <summary class="organigram-toggle-btn">
+      <span class="icon" aria-hidden="true">📊</span>
+      <span id="org-title">{% trans "Structure organisationnelle" %}</span>
+      <span class="arrow" aria-hidden="true">▼</span>
+    </summary>
+
+    <div class="organigram-wrapper" role="region" aria-label="{% trans 'Organigramme' %}">
+      <!-- Niveau 1 -->
+      <div class="org-level level-1" role="group" aria-label="{% trans 'Niveau 1' %}">
+        <div class="org-card main" tabindex="0">
+          <h3 class="org-title">{% trans "Assemblée Générale" %}</h3>
+          <p class="org-desc">{% trans "Pilotage global de l'organisation" %}</p>
+        </div>
+      </div>
+
+      <div class="org-connector vertical" aria-hidden="true"></div>
+
+      <!-- Niveau 2A -->
+      <div class="org-level level-2" role="group" aria-label="{% trans 'Niveau 2 — CA' %}">
+        <div class="org-card board" tabindex="0">
+          <h4 class="org-title">{% trans "Conseil d'Administration" %}</h4>
+          <p class="org-desc">{% trans "Supervision stratégique" %}</p>
+        </div>
+      </div>
+
+      <div class="org-connector vertical" aria-hidden="true"></div>
+      <div class="org-connector horizontal" aria-hidden="true"></div>
+
+      <!-- Niveau 2B -->
+      <div class="org-level level-2" role="group" aria-label="{% trans 'Niveau 2 — Direction' %}">
+        <div class="org-card executive" tabindex="0">
+          <h4 class="org-title">{% trans "Direction Exécutive" %}</h4>
+          <p class="org-desc">{% trans "Fonctionnement & gestion" %}</p>
+        </div>
+      </div>
+
+      <div class="org-connector vertical" aria-hidden="true"></div>
+      <div class="org-connector horizontal" aria-hidden="true"></div>
+
+      <!-- Niveau 3 -->
+      <div class="org-level level-3" role="group" aria-label="{% trans 'Niveau 3 — Départements' %}">
+        <div class="org-card department" tabindex="0">
+          <h5 class="org-title">{% trans "Ressources Humaines" %}</h5>
+          <p class="org-desc">{% trans "Recrutement & Gestion du personnel" %}</p>
+        </div>
+        <div class="org-card department" tabindex="0">
+          <h5 class="org-title">{% trans "Finance" %}</h5>
+          <p class="org-desc">{% trans "Gestion budgétaire & comptable" %}</p>
+        </div>
+        <div class="org-card department" tabindex="0">
+          <h5 class="org-title">{% trans "Programmes" %}</h5>
+          <p class="org-desc">{% trans "Coordination & suivi des projets" %}</p>
+        </div>
+        <div class="org-card department" tabindex="0">
+          <h5 class="org-title">{% trans "Communication" %}</h5>
+          <p class="org-desc">{% trans "Relations publiques & médias" %}</p>
+        </div>
+      </div>
+    </div>
+  </details>
+
+</section>
+
+<link rel="stylesheet" href="{% static 'about/css/_organigram.css' %}">
+
+
+
+
+
+
+{% comment %} {# about/components/organigram.html #}
 {% load static i18n about_tags %}
 
 <section class="organigram-section">
@@ -74,4 +152,4 @@
 <link rel="stylesheet" href="{% static 'css/organigram.css' %}">
 <!-- Link JS -->
 <script src="{% static 'js/organigram.js' %}"></script>
-
+ {% endcomment %}

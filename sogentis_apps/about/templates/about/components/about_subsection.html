@@ -1,4 +1,85 @@
-{# about/templates/about/components/about_subsection.html #}
+{# about/components/about_subsection.html #}
+{% load static i18n about_tags %}
+
+<link rel="stylesheet" href="{% static 'about/css/about_tabs.css' %}">
+
+<div class="about-tabs-container" data-tabs>
+
+  {# ───────── NAVIGATION (Tabs) ───────── #}
+  <ul class="about-tabs-nav"
+      role="tablist"
+      aria-label="{% trans 'Sections À propos' %}">
+    {% for item in subsections %}
+      {% with tab_id="tab-"|add:item.key panel_id="panel-"|add:item.key %}
+      <li
+        id="{{ tab_id }}"
+        class="tab-link {% if forloop.first %}active{% endif %}"
+        role="tab"
+        tabindex="{% if forloop.first %}0{% else %}-1{% endif %}"
+        aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+        aria-controls="{{ panel_id }}"
+        data-tab="{{ panel_id }}"
+      >
+        {{ item|translate:"title" }}
+      </li>
+      {% endwith %}
+    {% empty %}
+      <li class="tab-link active" role="tab" aria-selected="true" tabindex="0">
+        {% trans "Aucune section disponible" %}
+      </li>
+    {% endfor %}
+  </ul>
+
+  {# ───────── CONTENU (Tabpanels) ───────── #}
+  <div class="about-tabs-content">
+    {% for item in subsections %}
+      {% with panel_id="panel-"|add:item.key %}
+      <section
+        id="{{ panel_id }}"
+        class="tab-content {% if forloop.first %}active{% endif %}"
+        role="tabpanel"
+        aria-labelledby="tab-{{ item.key }}"
+        tabindex="0"
+      >
+        <h2 class="tab-title">
+          {{ item|translate:"title" }}
+        </h2>
+
+        {% with subtitle=item|translate:"subtitle" %}
+          {% if subtitle %}
+            <p class="tab-subtitle">{{ subtitle|safe }}</p>
+          {% endif %}
+        {% endwith %}
+
+        <div class="tab-body">
+          {{ item|translate:"content"|safe }}
+        </div>
+
+        {% if item.image %}
+          <figure class="tab-figure">
+            <img
+              src="{{ item.image.url }}"
+              alt="{{ item|translate:'title' }}"
+              class="tab-image"
+              loading="lazy"
+              decoding="async"
+            >
+          </figure>
+        {% endif %}
+      </section>
+      {% endwith %}
+    {% endfor %}
+  </div>
+
+</div>
+
+<script src="{% static 'about/js/about_tabs.js' %}"></script>
+
+
+
+
+
+{% comment %} {# about/templates/about/components/about_subsection.html #}
 {% load static i18n about_tags %}
 
 <link rel="stylesheet" href="{% static 'about/css/about_tabs.css' %}">
@@ -46,5 +127,5 @@
 
 </div>
 
-<script src="{% static 'about/js/about_tabs.js' %}"></script>
+<script src="{% static 'about/js/about_tabs.js' %}"></script> {% endcomment %}
 

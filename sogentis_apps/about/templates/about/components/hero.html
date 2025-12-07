@@ -1,3 +1,77 @@
+{# about/components/hero.html #}
+{% load static i18n about_tags %}
+
+<link rel="stylesheet" href="{% static 'about/css/_hero.css' %}">
+{% static 'about/img/hero_default.jpg' as default_hero_img %}
+
+<section class="about-hero{% if not hero %} hero-fallback{% endif %}"
+         id="about-hero"
+         role="banner"
+         aria-label="{% trans 'En-tête À propos' %}">
+
+  <a href="{% url 'core:home' %}" class="hero-back-btn" aria-label="{% trans 'Retour à l’accueil' %}">
+    <span class="arrow" aria-hidden="true">←</span> {% trans "Accueil" %}
+  </a>
+
+  <div class="hero-bg"
+       style="background-image: url('{% if hero and hero.background_image %}{{ hero.background_image.url }}{% else %}{{ default_hero_img }}{% endif %}');">
+  </div>
+
+  <div class="hero-overlay" aria-hidden="true"></div>
+
+  <div class="hero-content">
+    <div class="hero-line-wrapper" aria-hidden="true">
+      <div class="hero-line"></div>
+      <div class="hero-dot"></div>
+    </div>
+
+    <h1 class="hero-title">
+      {% if hero and hero.title %}
+        {{ hero|translate:"title" }}
+      {% else %}
+        {% trans "À propos de SOGENTIS" %}
+      {% endif %}
+    </h1>
+
+    <p class="hero-subtitle">
+      {% if hero and hero.subtitle %}
+        {{ hero|translate:"subtitle"|safe }}
+      {% else %}
+        {% trans "Une plateforme sociale et économique dédiée à l'humain, à l'enfance et aux communautés." %}
+      {% endif %}
+    </p>
+
+    {% if hero and hero.button_text and hero.button_link %}
+      {% with link=hero.button_link %}
+      <div class="hero-actions fade-up">
+        <a href="{{ link }}" class="hero-btn-primary"
+           {% if link|slice:":4" == "http" %}target="_blank" rel="noopener noreferrer"{% endif %}>
+          <span class="hero-btn-icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 6H4M4 6L6.5 14H18.5L21 8H7M4 6L3 3H1"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="9" cy="19" r="2" fill="currentColor"/>
+              <circle cx="17" cy="19" r="2" fill="currentColor"/>
+            </svg>
+          </span>
+          {{ hero.button_text }}
+        </a>
+      </div>
+      {% endwith %}
+    {% endif %}
+  </div>
+
+  <noscript><style>.hero-overlay{display:none}</style></noscript>
+</section>
+
+
+
+
+
+
+
+
+{% comment %} {# about/components/hero.html #}
 {% load static i18n %}
 
 {# CSS spécifique du hero #}
@@ -90,4 +164,4 @@
         </p>
     </div>
 </section>
-{% endif %}
+{% endif %} {% endcomment %}
