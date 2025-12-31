@@ -1,0 +1,124 @@
+{# templates/services/tickets.html #}
+{% extends "economic/services/base_services.html" %}
+{% load static i18n widget_tweaks %}
+
+{% block title %}{% trans "Mes demandes de services" %} | SOGENTIS{% endblock %}
+
+{% block content %}
+<div class="container py-4 service-request-page">
+
+  <nav class="mb-3 small">
+    <a href="{% url 'economic:services:index' %}" class="text-decoration-none">
+      ← {% trans "Retour au catalogue des services" %}
+    </a>
+  </nav>
+
+  <div class="row g-4">
+    <!-- FORMULAIRE NOUVELLE DEMANDE -->
+    <div class="col-lg-6">
+      <div class="card service-request-card">
+        <div class="card-body">
+          <h1 class="h5 mb-2">
+            {% trans "Ouvrir une nouvelle demande" %}
+          </h1>
+          <p class="text-muted small mb-3">
+            {% trans "Expliquez votre besoin, notre équipe reviendra vers vous avec des précisions ou un devis." %}
+          </p>
+
+          <form method="post" novalidate>
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger">
+                {% for error in form.non_field_errors %}
+                  <div>{{ error }}</div>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            {% for hidden in form.hidden_fields %}
+              {{ hidden }}
+            {% endfor %}
+
+            {% for field in form.visible_fields %}
+              <div class="mb-3">
+                <label for="{{ field.id_for_label }}" class="form-label">
+                  {{ field.label }}
+                  {% if field.field.required %}
+                    <span class="text-danger">*</span>
+                  {% endif %}
+                </label>
+
+                {% if field.errors %}
+                  {% render_field field class="form-control is-invalid" %}
+                  <div class="invalid-feedback">
+                    {% for error in field.errors %}
+                      <div>{{ error }}</div>
+                    {% endfor %}
+                  </div>
+                {% else %}
+                  {% render_field field class="form-control" %}
+                  {% if field.help_text %}
+                    <div class="form-text">{{ field.help_text|safe }}</div>
+                  {% endif %}
+                {% endif %}
+              </div>
+            {% endfor %}
+
+            <div class="d-flex justify-content-end mt-3">
+              <button type="submit" class="btn btn-primary">
+                {% trans "Envoyer la demande" %}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- LISTE DES DEMANDES DE L'UTILISATEUR -->
+    <div class="col-lg-6">
+      <div class="service-info-card">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h2 class="h6 mb-0">
+            {% trans "Mes demandes récentes" %}
+          </h2>
+        </div>
+
+        {% if tickets %}
+          <div class="list-group list-group-flush">
+            {% for ticket in tickets %}
+              <div class="list-group-item px-0">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <div class="fw-semibold small mb-1">
+                      {{ ticket.subject|default:_("Demande sans titre") }}
+                    </div>
+                    <div class="small text-muted">
+                      {% if ticket.service %}
+                        {{ ticket.service }} ·
+                      {% endif %}
+                      {% if ticket.created_at %}
+                        {% trans "Créée le" %} {{ ticket.created_at|date:"d/m/Y H:i" }}
+                      {% endif %}
+                    </div>
+                  </div>
+                  <div class="text-end">
+                    <span class="badge bg-light text-dark border small">
+                      {{ ticket.get_status_display }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="small text-muted mb-0">
+            {% trans "Vous n’avez encore ouvert aucune demande de service." %}
+          </p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
 from accounts_users.forms.signup_forms import UserSignupForm 
-from accounts_users.forms.profile_forms import UserProfileForm
+from accounts_users.forms.social.social_signup_forms import UserSignupForm
 
 class RegisterAPIView(APIView):
     permission_classes = [permissions.AllowAny]
@@ -13,7 +13,7 @@ class RegisterAPIView(APIView):
 
         # Création des formulaires
         user_form = UserSignupForm(data)
-        profile_form = UserProfileForm(data, files)
+        profile_form = UserSignupForm(data, files)
 
         if user_form.is_valid() and profile_form.is_valid():
             # Création de l'utilisateur

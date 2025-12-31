@@ -1,0 +1,414 @@
+/* =====================================================
+   ECONOMIC HUB — SOGENTIS
+   Fichier: static/economic/css/economic_index.css
+   ===================================================== */
+
+/* =====================================================
+   HERO
+   ===================================================== */
+
+.eco-hero {
+    position: relative;
+    height: 60vh;
+    min-height: 420px;
+    background: url("/static/global/image/eco-bg.jpg") center / cover no-repeat;
+    display: flex;
+    align-items: center;
+    color: #ffffff;
+    overflow: hidden;
+}
+
+.eco-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        120deg,
+        rgba(20, 0, 40, 0.88),
+        rgba(76, 29, 149, 0.78)
+    );
+}
+
+/* subtle glow */
+.eco-hero::before {
+    content: "";
+    position: absolute;
+    inset: -20%;
+    background: radial-gradient(800px 420px at 20% 20%, rgba(111, 66, 193, .35), transparent 60%),
+                radial-gradient(700px 380px at 80% 30%, rgba(13, 110, 253, .22), transparent 55%);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.eco-hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 0 1rem;
+}
+
+.eco-kicker{
+    display:inline-flex;
+    align-items:center;
+    gap:.5rem;
+    padding:.45rem .8rem;
+    border-radius:999px;
+    font-weight:600;
+    letter-spacing:.02em;
+    background: rgba(255,255,255,.10);
+    border: 1px solid rgba(255,255,255,.18);
+}
+
+.eco-title {
+    margin-top: .9rem;
+    font-size: clamp(2.3rem, 4vw, 3.6rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.eco-subtitle {
+    max-width: 760px;
+    margin: 1rem auto 0;
+    font-size: 1.15rem;
+    opacity: 0.95;
+}
+
+.eco-hero-actions{
+    margin-top: 1.5rem;
+    display:flex;
+    justify-content:center;
+    gap: .75rem;
+    flex-wrap:wrap;
+}
+
+/* =====================================================
+   SECTIONS / CARDS
+   ===================================================== */
+
+.eco-sections{
+    padding-bottom: 1rem;
+}
+
+.eco-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 2rem;
+    border-radius: 1.4rem;
+    background: #ffffff;
+    text-decoration: none;
+    color: #212529;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+    border: 1px solid rgba(0,0,0,.04);
+}
+
+.eco-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.14);
+}
+
+/* Icon */
+.eco-card-icon {
+    width: 54px;
+    height: 54px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    font-size: 1.8rem;
+    color: #6f42c1;
+    background: rgba(111,66,193,.10);
+    border: 1px solid rgba(111,66,193,.15);
+    margin-bottom: 1.1rem;
+}
+
+/* Content */
+.eco-card-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+}
+
+.eco-card-text {
+    flex-grow: 1;
+    font-size: 0.98rem;
+    color: #555555;
+    line-height: 1.5;
+}
+
+/* Footer */
+.eco-card-footer {
+    margin-top: 1.4rem;
+}
+
+.eco-link {
+    font-weight: 700;
+    color: #6f42c1;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+/* =====================================================
+   LOCKED STATE
+   ===================================================== */
+
+.eco-card-locked {
+    cursor: not-allowed;
+    overflow: hidden;
+}
+
+.eco-card-locked::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(30, 18, 60, 0.65);
+    z-index: 2;
+}
+
+/* (Tu avais déjà un after texte fixe; on le garde mais plus lisible) */
+.eco-card-locked::after {
+    content: "🔒 Accès réservé";
+    position: absolute;
+    bottom: 1.1rem;
+    right: 1.1rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #f3e8ff;
+    background: rgba(0,0,0,.25);
+    border: 1px solid rgba(255,255,255,.14);
+    padding: .35rem .6rem;
+    border-radius: 999px;
+    z-index: 3;
+}
+
+/* Désaturation du contenu */
+.eco-card-locked .eco-card-icon,
+.eco-card-locked .eco-card-body,
+.eco-card-locked .eco-card-footer {
+    opacity: 0.35;
+    filter: grayscale(100%);
+}
+
+/* Désactive le hover */
+.eco-card-locked:hover {
+    transform: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* =====================================================
+   CTA B2B
+   ===================================================== */
+
+.eco-cta {
+    background: linear-gradient(120deg, #4c1d95, #6f42c1);
+    color: #ffffff;
+    padding: 4rem 1rem;
+}
+
+.eco-cta h2 {
+    font-weight: 800;
+    margin-bottom: 0.8rem;
+    letter-spacing: -0.01em;
+}
+
+.eco-cta p {
+    opacity: 0.95;
+    margin-bottom: 1.8rem;
+}
+
+/* =====================================================
+   YOUTUBE — Support via views/subscriptions
+   (Compatible avec la section ajoutée dans economic/index.html)
+   ===================================================== */
+
+.eco-youtube{
+    background: linear-gradient(180deg, rgba(220,53,69,.10), rgba(255,255,255,0));
+}
+
+.eco-youtube-card{
+    border-radius: 1.25rem;
+    overflow: hidden;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(0,0,0,.06);
+    box-shadow: 0 18px 55px rgba(0,0,0,.10);
+    display: grid;
+    grid-template-columns: 1.2fr .8fr;
+    gap: 0;
+}
+
+.eco-youtube-left{
+    padding: clamp(1.25rem, 1rem + 1vw, 2.25rem);
+    background: #ffffff;
+}
+
+.eco-youtube-right{
+    padding: clamp(1.25rem, 1rem + 1vw, 2.25rem);
+    background: linear-gradient(180deg, rgba(220,53,69,.06), rgba(111,66,193,.06));
+    border-left: 1px solid rgba(0,0,0,.06);
+}
+
+.eco-badge{
+    display: inline-flex;
+    gap: .5rem;
+    align-items: center;
+    padding: .45rem .75rem;
+    border-radius: 999px;
+    background: rgba(220,53,69,.10);
+    border: 1px solid rgba(220,53,69,.22);
+    color: #b02a37;
+    font-weight: 800;
+    margin-bottom: .85rem;
+}
+
+.eco-badge i{
+    font-size: 1.05rem;
+}
+
+.eco-youtube-title{
+    font-weight: 900;
+    letter-spacing: -.02em;
+    margin: 0 0 .75rem;
+    color: #151515;
+}
+
+.eco-youtube-text{
+    margin: 0 0 1rem;
+    color: #3b3b3b;
+    line-height: 1.55;
+}
+
+.eco-youtube-points{
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.25rem;
+    display: grid;
+    gap: .55rem;
+}
+
+.eco-youtube-points li{
+    display: flex;
+    gap: .65rem;
+    align-items: flex-start;
+    color: #2e2e2e;
+}
+
+.eco-youtube-points i{
+    color: #dc3545;
+    margin-top: .1rem;
+}
+
+.eco-youtube-actions{
+    display: flex;
+    flex-wrap: wrap;
+    gap: .75rem;
+    margin-bottom: 1rem;
+}
+
+.eco-youtube-note{
+    padding: .9rem 1rem;
+    border-radius: 1rem;
+    background: rgba(0,0,0,.03);
+    border: 1px solid rgba(0,0,0,.06);
+    color: #3b3b3b;
+    font-size: .95rem;
+}
+
+.eco-youtube-preview{
+    border-radius: 1.15rem;
+    border: 1px solid rgba(0,0,0,.08);
+    background: radial-gradient(600px 280px at 20% 20%, rgba(220,53,69,.18), rgba(111,66,193,.12));
+    padding: 1.25rem;
+    position: relative;
+    min-height: 160px;
+    display: grid;
+    align-content: end;
+    overflow:hidden;
+}
+
+.eco-youtube-preview::after{
+    content:"";
+    position:absolute;
+    inset:-10%;
+    background: radial-gradient(450px 220px at 70% 25%, rgba(220,53,69,.22), transparent 60%);
+    pointer-events:none;
+}
+
+.eco-youtube-play{
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    opacity: .95;
+    z-index: 1;
+}
+
+.eco-youtube-play i{
+    width: 74px;
+    height: 74px;
+    display: grid;
+    place-items: center;
+    font-size: 2.1rem;
+    border-radius: 50%;
+    color: #fff;
+    background: rgba(220,53,69,.95);
+    box-shadow: 0 12px 30px rgba(220,53,69,.25);
+}
+
+.eco-youtube-meta{
+    position: relative;
+    z-index: 2;
+}
+
+.eco-youtube-channel strong{
+    display: block;
+    color: #111;
+    font-size: 1.05rem;
+}
+
+.eco-youtube-channel .muted{
+    display: block;
+    color: rgba(0,0,0,.62);
+    margin-top: .15rem;
+    font-size: .95rem;
+}
+
+.eco-youtube-embed{
+    margin-top: 1rem;
+    border-radius: 1.15rem;
+    overflow: hidden;
+    border: 1px solid rgba(0,0,0,.08);
+    background: rgba(0,0,0,.02);
+    aspect-ratio: 16 / 9;
+}
+
+.eco-youtube-embed iframe{
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 992px){
+    .eco-youtube-card{
+        grid-template-columns: 1fr;
+    }
+    .eco-youtube-right{
+        border-left: 0;
+        border-top: 1px solid rgba(0,0,0,.06);
+    }
+}
+
+@media (max-width: 768px){
+    .eco-hero{
+        height: auto;
+        padding: 4rem 0 3.5rem;
+    }
+    .eco-title{
+        font-size: clamp(2rem, 5vw, 3rem);
+    }
+}

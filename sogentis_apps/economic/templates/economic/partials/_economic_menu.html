@@ -1,0 +1,32 @@
+{% load i18n %}
+
+<nav class="eco-hub-menu border-bottom bg-white">
+  <div class="container d-flex align-items-center gap-4 py-2">
+
+    <a href="{% url 'economic:index' %}" class="eco-hub-link">
+      💼 {% trans "Pôle Économique" %}
+    </a>
+
+    <a href="{% url 'economic:ecommerce:index' %}" class="eco-hub-link">
+      🛒 {% trans "E-commerce" %}
+    </a>
+
+    <a href="{% url 'economic:services:index' %}" class="eco-hub-link">
+      🧰 {% trans "Services" %}
+    </a>
+
+    <a href="{% url 'economic:formations:index' %}" class="eco-hub-link">
+      🎓 {% trans "Formations" %}
+    </a>
+
+    <a href="{% url 'economic:b2b:index' %}" class="eco-hub-link">
+      🏢 {% trans "B2B" %}
+    </a>
+
+    <div class="ms-auto">
+      {% include "economic/partials/_user_menu_economic.html" %}
+    </div>
+
+  </div>
+</nav>
+

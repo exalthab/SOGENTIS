@@ -1,0 +1,10 @@
+{% extends "main.html" %}
+{% load static i18n %}
+
+<h1>{% trans "Utilisateur B2B" %}</h1>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">{% trans "Enregistrer" %}</button>
+</form>

@@ -1,0 +1,52 @@
+{% load i18n %}
+
+<ul class="nav flex-column dashboard-menu">
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'dashboard:social:home' %}">
+            🤝 {% trans "Tableau de bord" %}
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" href="#">
+            ❤️ {% trans "Mes dons" %}
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" href="#">
+            📄 {% trans "Mes engagements" %}
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" href="#">
+            📥 {% trans "Reçus & documents" %}
+        </a>
+    </li>
+</ul>
+
+
+
+
+
+
+{% comment %} {% load i18n %}
+
+<ul class="nav flex-column">
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'dashboard:social:home' %}">
+            🤝 {% trans "Tableau de bord" %}
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">
+            ❤️ {% trans "Mes dons" %}
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">
+            📄 {% trans "Mes engagements" %}
+        </a>
+    </li>
+</ul> {% endcomment %}

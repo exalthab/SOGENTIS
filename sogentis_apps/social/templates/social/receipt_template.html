@@ -1,3 +1,115 @@
+{# templates/social/receipt_template.html #}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { font-family: Helvetica, Arial, sans-serif; padding: 30px; font-size: 13px; color:#333; }
+    h2, h3 { margin:0; padding:0; font-weight:bold; }
+    .header { text-align:center; margin-bottom:25px; }
+    .logo { width:120px; margin-bottom:10px; }
+    .section { margin-top:25px; line-height:1.6; }
+    .block { margin-bottom:8px; }
+    hr { border:none; border-top:1px solid #bbb; margin:25px 0; }
+    .footer { margin-top:40px; font-size:12px; text-align:center; color:#555; }
+    .signature-img { width:170px; margin:10px 0; }
+    .stamp-img { width:110px; opacity:0.9; margin-top:5px; }
+    .qr-block { text-align:center; margin-top:25px; }
+    .qr-img { width:130px; height:130px; margin-top:10px; border:1px solid #ddd; padding:5px; }
+    .thanks { text-align:center; font-size:13px; margin:15px 0; }
+    .muted { color:#666; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    {% if logo_path %}
+      <img src="{{ logo_path }}" class="logo" alt="SOGENTIS">
+    {% endif %}
+    <h2>{% trans "Reçu Officiel de Don" %}</h2>
+    <p style="margin-top:5px;">
+      {% trans "Date" %} : {{ donation.created_at|date:"d/m/Y" }}
+    </p>
+  </div>
+
+  <div class="section">
+    <h3>{% trans "Détails du Don" %}</h3>
+
+    <p class="block"><strong>{% trans "Numéro de reçu / UID" %} :</strong> {{ receipt_uid|default:"—" }}</p>
+    <p class="block"><strong>{% trans "Nom" %} :</strong> {{ donation.donor_name|default:"—" }}</p>
+    <p class="block"><strong>{% trans "Email" %} :</strong> {{ donation.email|default:"—" }}</p>
+    <p class="block"><strong>{% trans "Montant" %} :</strong> {{ donation.amount|floatformat:0 }} FCFA</p>
+
+    <p class="block">
+      <strong>{% trans "Projet soutenu" %} :</strong>
+      {% if donation.project %}{{ donation.project.title }}{% else %}—{% endif %}
+    </p>
+
+    {% if donation.target %}
+      <p class="block"><strong>{% trans "Bénéficiaire" %} :</strong> {{ donation.target }}</p>
+    {% endif %}
+
+    <p class="block">
+      <strong>{% trans "Type" %} :</strong>
+      {% if donation.monthly %}{% trans "Don mensuel" %}{% else %}{% trans "Don ponctuel" %}{% endif %}
+    </p>
+
+    <p class="block"><strong>{% trans "Message" %} :</strong> {{ donation.message|default:"—" }}</p>
+
+    <p class="block muted">
+      <strong>{% trans "Statut" %} :</strong> {{ donation.get_status_display }}
+      — <strong>{% trans "Paiement" %} :</strong> {{ donation.get_payment_method_display }}
+    </p>
+  </div>
+
+  <hr>
+
+  <p class="thanks">🙏 {% trans "Merci pour votre générosité et votre soutien." %}</p>
+
+  {% if qr_code_path %}
+    <div class="qr-block">
+      <p><strong>{% trans "Scanner pour vérifier l’authenticité du reçu" %}</strong></p>
+      <img src="{{ qr_code_path }}" class="qr-img" alt="QR Code">
+    </div>
+    <hr>
+  {% endif %}
+
+  <div class="footer">
+    {% if signature_path %}
+      <p><strong>{% trans "Signature" %} :</strong></p>
+      <img src="{{ signature_path }}" class="signature-img" alt="{% trans 'Signature' %}">
+    {% endif %}
+
+    {% if stamp_path %}
+      <p style="margin-top:15px;"><strong>{% trans "Cachet officiel" %} :</strong></p>
+      <img src="{{ stamp_path }}" class="stamp-img" alt="{% trans 'Cachet' %}">
+    {% endif %}
+
+    <p style="margin-top:30px;">
+      <strong>SOGENTIS</strong><br>
+      {% trans "Association à but non lucratif" %}<br>
+      KM 19, Rufisque – Dakar, Sénégal<br>
+      Tél : +221 77 000 00 00<br>
+      Email : contact@sogentis.org
+    </p>
+  </div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+{% comment %} {# templates/social/receipt_template.html #}
+
 {% load static i18n %}
 <!DOCTYPE html>
 <html lang="fr">
@@ -160,7 +272,7 @@
 </html>
 
 
-
+ {% endcomment %}
 
 
 

@@ -1,0 +1,75 @@
+{% extends "dashboard/base_dashboard.html" %}
+{% load i18n static widget_tweaks %}
+
+{% block title %}
+    {% trans "Modifier mon profil" %}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-1">
+                <i class="fas fa-user-edit me-2"></i>
+                {% trans "Modifier mon profil" %}
+            </h1>
+            <p class="text-muted mb-0">
+                {% trans "Mettez à jour vos informations personnelles." %}
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 col-xl-7">
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+
+                        <!-- USER -->
+                        <h6 class="fw-bold mb-3">{% trans "Compte utilisateur" %}</h6>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">{% trans "Prénom" %}</label>
+                                {{ form.first_name|add_class:"form-control" }}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">{% trans "Nom" %}</label>
+                                {{ form.last_name|add_class:"form-control" }}
+                            </div>
+
+                            <div class="col-md-12">
+                                <label class="form-label">{% trans "Email" %}</label>
+                                {{ form.email|add_class:"form-control" }}
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <!-- ACTIONS -->
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i>
+                                {% trans "Enregistrer" %}
+                            </button>
+
+                            <a href="{% url 'accounts_users:profile' %}" class="btn btn-outline-secondary">
+                                {% trans "Annuler" %}
+                            </a>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}

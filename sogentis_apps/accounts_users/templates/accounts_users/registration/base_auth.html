@@ -1,4 +1,110 @@
-{% load static i18n %}
+{# accounts_users/registration/base_auth.html  #}
+{% load static i18n widget_tweaks user_form_tags %}
+{% get_current_language as CUR_LANG %}
+{% get_current_language_bidi as CUR_BIDI %}
+
+<!DOCTYPE html>
+<html lang="{{ CUR_LANG|default:'fr' }}" {% if CUR_BIDI %}dir="rtl"{% endif %}>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>{% block title %}SOGENTIS{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}SOGENTIS — Auth{% endblock %}">
+  <meta http-equiv="Cache-Control" content="no-store">
+  <meta http-equiv="Pragma" content="no-cache">
+
+  <!-- Vendors / Core CSS -->
+  <link rel="stylesheet" href="{% static 'accounts_users/css/vendors/bootstrap/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'accounts_users/css/vendors/fontawesome/css/all.min.css' %}">
+  <link rel="stylesheet" href="{% static 'accounts_users/css/users_menu.css' %}">
+
+  <!-- Auth layout CSS -->
+  <link rel="stylesheet" href="{% static 'accounts_users/css/auth_base.css' %}">
+
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body class="{% block body_class %}bg-light{% endblock %}">
+  
+  <!-- BACKGROUND -->
+  <div class="auth-bg"
+       style="--auth-bg-image: url('{% block auth_bg_image %}{% static 'accounts_users/img/auth_bg.jpg' %}{% endblock %}');"
+       aria-hidden="true"></div>
+
+  <div class="auth-overlay" aria-hidden="true"></div>
+
+  <!-- LANGUAGE SWITCH (FLOAT RIGHT, OUT OF FLOW) -->
+  <div class="auth-lang-switch position-absolute" style="top:1rem; right:1.5rem; z-index:50;">
+    <form action="{% url 'switch_language' %}" method="get"
+          class="d-inline-flex align-items-center gap-2">
+      <input type="hidden" name="next" value="{{ request.get_full_path }}">
+      <label class="text-muted small" for="auth-lang-select">{% trans "Langue" %}</label>
+      <select id="auth-lang-select"
+              name="language"
+              class="form-select form-select-sm"
+              onchange="this.form.submit()">
+        <option value="fr" {% if CUR_LANG == 'fr' %}selected{% endif %}>🇫🇷 Français</option>
+        <option value="en" {% if CUR_LANG == 'en' %}selected{% endif %}>🇬🇧 English</option>
+      </select>
+    </form>
+  </div>
+
+  <!-- AUTH SHELL (CENTRAGE PARFAIT) -->
+  <div class="auth-shell">
+
+    <!-- CENTRAL CARD WRAPPER (sans Bootstrap container!) -->
+    <div class="auth-wrapper mx-auto">
+
+      <div class="card auth-card">
+        <div class="card-body p-4 p-md-5">
+
+          <!-- Brand -->
+          <div class="auth-brand text-center mb-3">
+            <a href="{% url 'core:home' %}" aria-label="SOGENTIS">
+              <img src="{% static 'global/image/Sogentis3.png' %}" alt="SOGENTIS">
+            </a>
+          </div>
+
+          <!-- Title -->
+          <h1 class="h3 text-center mb-2">
+            {% block auth_title %}{% trans "Connexion" %}{% endblock %}
+          </h1>
+
+          <!-- Subtitle -->
+          <p class="text-center text-muted mb-4 small">
+            {% block auth_subtitle %}{% trans "Accédez à votre compte SOGENTIS" %}{% endblock %}
+          </p>
+
+          <!-- Messages -->
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags|default:'info' }} mb-3" role="alert">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+
+          <!-- PAGE CONTENT (login form, signup form, etc.) -->
+          {% block content %}{% endblock %}
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- JS -->
+  <script src="{% static 'accounts_users/js/vendors/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>
+
+
+
+
+
+{% comment %} {% load static i18n %}
 {% get_current_language as LANGUAGE_CODE %}
 <!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE }}">
@@ -19,7 +125,7 @@
   <script src="{% static 'accounts_users/js/vendors/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
   {% block extra_js %}{% endblock %}
 </body>
-</html>
+</html> {% endcomment %}
 
 
 

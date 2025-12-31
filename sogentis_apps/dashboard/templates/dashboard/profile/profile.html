@@ -1,0 +1,905 @@
+{# dashboard/profile/profile.html #}
+{% extends "dashboard/base.html" %}
+{% load static i18n widget_tweaks humanize %}
+
+{% block title %}{% trans "Profil utilisateur" %} | {{ PROJECT_NAME }}{% endblock %}
+
+{% block dashboard_header %}
+<h1 class="fw-bold mb-2">
+  <i class="fas fa-user-circle me-2 text-primary"></i>
+  {% trans "Mon profil" %}
+</h1>
+<p class="text-muted mb-4">
+  {% trans "Gérez vos informations personnelles et le statut de votre compte." %}
+</p>
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="row g-4">
+
+  {# =========================
+     COLONNE PRINCIPALE : PROFIL
+     ========================= #}
+  <div class="col-lg-8">
+    <div class="card shadow-sm border-0 h-100">
+      <div class="card-header bg-light fw-semibold py-3">
+        <i class="fas fa-id-card me-2"></i>
+        {% trans "Informations du compte" %}
+      </div>
+
+      <div class="card-body p-4">
+
+        <div class="row g-4 align-items-center mb-4">
+
+          <div class="col-md-3 text-center">
+            {% if profile and profile.profile_picture %}
+              <img src="{{ profile.profile_picture.url }}"
+                   class="img-thumbnail rounded-circle shadow-sm"
+                   alt="{% trans 'Photo de profil' %}"
+                   style="width:130px;height:130px;object-fit:cover;">
+            {% else %}
+              <div class="rounded-circle bg-light shadow-sm d-flex align-items-center justify-content-center"
+                   style="width:130px;height:130px;">
+                <i class="fas fa-user text-muted" style="font-size:3rem;"></i>
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="col-md-9">
+            <dl class="row mb-0 small">
+
+              <dt class="col-sm-4 text-muted">{% trans "Nom complet" %}</dt>
+              <dd class="col-sm-8">
+                {% if profile and profile.full_name %}
+                  {{ profile.full_name }}
+                {% else %}
+                  {{ user.get_full_name|default:user.username|default:"—" }}
+                {% endif %}
+              </dd>
+
+              <dt class="col-sm-4 text-muted">Email</dt>
+              <dd class="col-sm-8">
+                {{ user.email|default:"—" }}
+              </dd>
+
+              <dt class="col-sm-4 text-muted">{% trans "Téléphone" %}</dt>
+              <dd class="col-sm-8">
+                {% if profile and profile.phone %}
+                  {{ profile.phone }}
+                {% else %}
+                  <span class="text-muted">—</span>
+                {% endif %}
+              </dd>
+
+              <dt class="col-sm-4 text-muted">{% trans "Pays" %}</dt>
+              <dd class="col-sm-8">
+                {% if profile and profile.country %}
+                  {{ profile.country }}
+                {% else %}
+                  <span class="text-muted">—</span>
+                {% endif %}
+              </dd>
+
+              <dt class="col-sm-4 text-muted">{% trans "Type d’adhésion" %}</dt>
+              <dd class="col-sm-8">
+                {% if profile and profile.membership_role %}
+                  {{ profile.membership_role.label|default:profile.membership_role }}
+                {% else %}
+                  <span class="text-muted">—</span>
+                {% endif %}
+              </dd>
+
+              <dt class="col-sm-4 text-muted">{% trans "Message personnel" %}</dt>
+              <dd class="col-sm-8">
+                {% if profile and profile.message %}
+                  <span class="text-muted">{{ profile.message }}</span>
+                {% else %}
+                  <span class="text-muted">—</span>
+                {% endif %}
+              </dd>
+
+              <dt class="col-sm-4 text-muted">{% trans "Casier judiciaire" %}</dt>
+              <dd class="col-sm-8">
+                {% if profile and profile.judicial_record %}
+                  <a href="{{ profile.judicial_record.url }}"
+                     class="text-primary"
+                     target="_blank" rel="noopener noreferrer">
+                    <i class="fas fa-file-pdf me-1"></i>
+                    {% trans "Voir le document" %}
+                  </a>
+                {% else %}
+                  <span class="text-muted">—</span>
+                {% endif %}
+              </dd>
+
+              <dt class="col-sm-4 text-muted">{% trans "Statut du profil" %}</dt>
+              <dd class="col-sm-8">
+                {% if profile %}
+                  {% if profile.status == "approved" %}
+                    <span class="badge bg-success">
+                      {% trans "Validé" %}
+                    </span>
+                  {% elif profile.status == "pending" %}
+                    <span class="badge bg-warning text-dark">
+                      {% trans "En attente de validation" %}
+                    </span>
+                  {% elif profile.status == "rejected" %}
+                    <span class="badge bg-danger">
+                      {% trans "Refusé" %}
+                    </span>
+                  {% else %}
+                    <span class="badge bg-secondary">
+                      {{ profile.status|default:_("Inconnu") }}
+                    </span>
+                  {% endif %}
+                {% else %}
+                  <span class="badge bg-secondary">
+                    {% trans "Profil incomplet" %}
+                  </span>
+                {% endif %}
+              </dd>
+
+            </dl>
+          </div>
+
+        </div>
+
+        <div class="d-flex flex-wrap gap-2">
+          <a href="{% url 'dashboard:profile_edit' %}" class="btn btn-primary px-4">
+            <i class="fas fa-edit me-1"></i>
+            {% trans "Mettre à jour mes informations" %}
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  {# =========================
+     COLONNE LATÉRALE : COMPTE & SÉCURITÉ
+     ========================= #}
+  <div class="col-lg-4">
+
+    <div class="card shadow-sm border-0 mb-4">
+      <div class="card-header bg-light fw-semibold py-3">
+        <i class="fas fa-shield-alt me-2"></i>
+        {% trans "Compte & sécurité" %}
+      </div>
+      <div class="card-body p-4 small">
+        <p class="mb-2">
+          <strong>{% trans "Nom d’utilisateur" %} :</strong><br>
+          {{ user.username|default:"—" }}
+        </p>
+
+        <p class="mb-2">
+          <strong>{% trans "Date de création du compte" %} :</strong><br>
+          {% if user.date_joined %}
+            {{ user.date_joined|date:"d/m/Y H:i" }}
+            <span class="text-muted">({{ user.date_joined|naturaltime }})</span>
+          {% else %}
+            —
+          {% endif %}
+        </p>
+
+        <p class="mb-2">
+          <strong>{% trans "Dernière connexion" %} :</strong><br>
+          {% if user.last_login %}
+            {{ user.last_login|date:"d/m/Y H:i" }}
+            <span class="text-muted">({{ user.last_login|naturaltime }})</span>
+          {% else %}
+            <span class="text-muted">
+              {% trans "Aucune connexion enregistrée." %}
+            </span>
+          {% endif %}
+        </p>
+
+        <hr>
+
+        <p class="text-muted mb-2">
+          {% trans "Pour toute activité suspecte ou pour modifier vos paramètres de sécurité, contactez l’équipe SOGENTIS." %}
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+{% comment %} {# dashboard/profile/profile.html #}
+{% extends "dashboard/base.html" %}
+{% load static i18n widget_tweaks %}
+
+{% block title %}{% trans "Profil utilisateur" %} — SOGENTIS{% endblock %}
+
+{% block dashboard_header %}
+<h1 class="fw-bold mb-2">
+  <i class="fas fa-user-circle me-2 text-primary"></i>
+  {% trans "Mon Profil" %}
+</h1>
+<p class="text-muted mb-4">
+  {% trans "Informations personnelles de votre compte." %}
+</p>
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="card shadow-sm border-0 mb-4">
+  <div class="card-header bg-light fw-semibold py-3">
+    <i class="fas fa-id-card me-2"></i> {% trans "Informations du compte" %}
+  </div>
+
+  <div class="card-body p-4">
+
+    <div class="row g-4 align-items-center">
+
+      <div class="col-md-3 text-center">
+        {% if profile.profile_picture %}
+          <img src="{{ profile.profile_picture.url }}" class="img-thumbnail rounded-circle shadow-sm"
+               style="width:130px;height:130px;object-fit:cover;">
+        {% else %}
+          <div class="rounded-circle bg-light shadow-sm d-flex align-items-center justify-content-center"
+               style="width:130px;height:130px;">
+            <i class="fas fa-user text-muted" style="font-size:3rem;"></i>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="col-md-9">
+
+        <p><strong>{% trans "Nom complet" %} :</strong> {{ profile.full_name|default:"—" }}</p>
+        <p><strong>Email :</strong> {{ user.email }}</p>
+        <p><strong>{% trans "Téléphone" %} :</strong> {{ profile.phone|default:"—" }}</p>
+        <p><strong>{% trans "Pays" %} :</strong> {{ profile.country|default:"—" }}</p>
+
+        <p>
+          <strong>{% trans "Type d’adhésion" %} :</strong>
+          {{ profile.membership_role.label|default:"—" }}
+        </p>
+
+        <p>
+          <strong>{% trans "Message personnel" %} :</strong><br>
+          <span class="text-muted">{{ profile.message|default:"—" }}</span>
+        </p>
+
+        <p>
+          <strong>{% trans "Casier judiciaire" %} :</strong>
+          {% if profile.judicial_record %}
+            <a href="{{ profile.judicial_record.url }}" class="text-primary" target="_blank">
+              <i class="fas fa-file-pdf"></i> {% trans "Voir le document" %}
+            </a>
+          {% else %}
+            <span class="text-muted">—</span>
+          {% endif %}
+        </p>
+
+        <p>
+          <strong>{% trans "Statut du profil" %} :</strong>
+          {% if profile.status == "approved" %}
+            <span class="badge bg-success">{% trans "Validé" %}</span>
+          {% elif profile.status == "pending" %}
+            <span class="badge bg-warning text-dark">{% trans "En attente de validation" %}</span>
+          {% else %}
+            <span class="badge bg-danger">{% trans "Refusé" %}</span>
+          {% endif %}
+        </p>
+
+      </div>
+
+    </div>
+
+    <div class="mt-4">
+      <a href="{% url 'dashboard:profile_edit' %}" class="btn btn-primary px-4">
+        <i class="fas fa-edit me-1"></i> {% trans "Mettre à jour mes informations" %}
+      </a>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}
+ {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# dashboard/profile/profile.html #}
+{% extends "dashboard/base.html" %}
+{% load static widget_tweaks i18n %}
+
+{% block title %}{% trans "Profil utilisateur" %} — SOGENTIS{% endblock %}
+
+{% block dashboard_header %}
+  <h1 class="fw-bold mb-2">
+    <i class="fas fa-user-circle me-2 text-primary"></i>
+    {% trans "Mon Profil" %}
+  </h1>
+  <p class="text-muted mb-4">
+    {% trans "Consultez vos informations personnelles et mettez-les à jour." %}
+  </p>
+{% endblock %}
+
+{% block dashboard_content %}
+
+{# ===================== MESSAGES ===================== #}
+{% for message in messages %}
+  <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-3" role="alert">
+    <i class="fas fa-info-circle me-1"></i> {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+{% endfor %}
+
+{# ===================== SECTION INFOS ACTUELLES ===================== #}
+<div class="card shadow-sm border-0 mb-4">
+  <div class="card-header bg-light fw-semibold py-3">
+    <i class="fas fa-id-card me-2"></i>
+    {% trans "Informations actuelles du compte" %}
+  </div>
+
+  <div class="card-body p-4">
+
+    <div class="row g-4">
+
+      <!-- Photo -->
+      <div class="col-md-3 text-center">
+        {% if profile.profile_picture %}
+          <img src="{{ profile.profile_picture.url }}"
+               class="img-thumbnail rounded-circle shadow-sm"
+               style="width:130px; height:130px; object-fit:cover;"
+               alt="{% trans 'Photo de profil' %}">
+        {% else %}
+          <div class="rounded-circle bg-light shadow-sm d-flex align-items-center justify-content-center"
+               style="width:130px; height:130px;">
+            <i class="fas fa-user text-muted" style="font-size:3rem;"></i>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Infos texte -->
+      <div class="col-md-9">
+
+        <p class="mb-2">
+          <strong>{% trans "Nom complet" %} :</strong>
+          {{ profile.full_name|default:"—" }}
+        </p>
+
+        <p class="mb-2">
+          <strong>Email :</strong> {{ user.email|default:"—" }}
+        </p>
+
+        <p class="mb-2">
+          <strong>{% trans "Téléphone" %} :</strong>
+          {{ profile.phone|default:"—" }}
+        </p>
+
+        <p class="mb-2">
+          <strong>{% trans "Pays" %} :</strong>
+          {{ profile.country|default:"—" }}
+        </p>
+
+        <p class="mb-2">
+          <strong>{% trans "Type d’adhésion" %} :</strong>
+          {% if profile.membership_role %}
+            {{ profile.membership_role.label }}
+          {% else %}
+            —
+          {% endif %}
+        </p>
+
+        <p class="mb-2">
+          <strong>{% trans "Message personnel" %} :</strong><br>
+          <span class="text-muted">{{ profile.message|default:"—" }}</span>
+        </p>
+
+        <p class="mb-2">
+          <strong>{% trans "Casier judiciaire" %} :</strong>
+          {% if profile.judicial_record %}
+            <a href="{{ profile.judicial_record.url }}" target="_blank" class="text-primary">
+              <i class="fas fa-file-pdf"></i> {% trans "Voir le document" %}
+            </a>
+          {% else %}
+            <span class="text-muted">—</span>
+          {% endif %}
+        </p>
+
+        <p class="mb-0">
+          <strong>{% trans "Statut du profil" %} :</strong>
+          {% if profile.status == "approved" %}
+            <span class="badge bg-success">{% trans "Validé" %}</span>
+          {% elif profile.status == "pending" %}
+            <span class="badge bg-warning text-dark">{% trans "En attente de validation" %}</span>
+          {% elif profile.status == "rejected" %}
+            <span class="badge bg-danger">{% trans "Refusé" %}</span>
+          {% else %}
+            <span class="badge bg-secondary">{% trans "Inconnu" %}</span>
+          {% endif %}
+        </p>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+{# ===================== FORMULAIRE DE MISE À JOUR ===================== #}
+<div class="card shadow-sm border-0">
+  <div class="card-header bg-light fw-semibold py-3">
+    <i class="fas fa-edit me-2"></i>
+    {% trans "Mettre à jour mes informations" %}
+  </div>
+
+  <div class="card-body p-4">
+
+    <form method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+
+      <div class="row g-3">
+
+        {# Photo de profil #}
+        <div class="col-12">
+          <label class="form-label fw-semibold" for="{{ form.profile_picture.id_for_label }}">
+            {{ form.profile_picture.label }}
+          </label>
+
+          {% if profile.profile_picture %}
+            <img src="{{ profile.profile_picture.url }}"
+                 class="img-thumbnail rounded mb-2"
+                 style="width:120px; height:120px; object-fit:cover;">
+          {% endif %}
+
+          {% render_field form.profile_picture class="form-control" %}
+          {% if form.profile_picture.errors %}
+            <div class="text-danger small">{{ form.profile_picture.errors|striptags }}</div>
+          {% endif %}
+        </div>
+
+        {# Champs standard #}
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">{{ form.full_name.label }} *</label>
+          {% render_field form.full_name class="form-control" %}
+          {% if form.full_name.errors %}
+            <div class="text-danger small">{{ form.full_name.errors|striptags }}</div>
+          {% endif %}
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">{{ form.phone.label }}</label>
+          {% render_field form.phone class="form-control" %}
+          {% if form.phone.errors %}
+            <div class="text-danger small">{{ form.phone.errors|striptags }}</div>
+          {% endif %}
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">{{ form.country.label }}</label>
+          {% render_field form.country class="form-control" %}
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">{{ form.membership_role.label }}</label>
+          {% render_field form.membership_role class="form-select" %}
+        </div>
+
+        <div class="col-12">
+          <label class="form-label fw-semibold">{{ form.message.label }}</label>
+          {% render_field form.message class="form-control" %}
+        </div>
+
+        <div class="col-12">
+          <label class="form-label fw-semibold">{{ form.judicial_record.label }}</label>
+          {% render_field form.judicial_record class="form-control" %}
+          <small class="text-muted">
+            {% trans "Format PDF — Maximum 2 Mo" %}
+          </small>
+        </div>
+
+      </div>
+
+      <div class="mt-4">
+        <button type="submit" class="btn btn-success px-4">
+          <i class="fas fa-save me-1"></i>
+          {% trans "Mettre à jour" %}
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+</div>
+
+{% endblock %}
+
+ {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# dashboard/profile/profile.html #}
+{% extends "dashboard/base.html" %}
+{% load static widget_tweaks i18n %}
+
+{% block title %}{% trans "Profil utilisateur" %}{% endblock %}
+
+{% block dashboard_header %}
+  <h1 class="fw-bold mb-2">
+    <i class="fas fa-user-circle me-2 text-primary"></i>
+    {% trans "Mon Profil" %}
+  </h1>
+  <p class="text-muted mb-4">
+    {% trans "Consultez et mettez à jour vos informations personnelles." %}
+  </p>
+{% endblock %}
+
+{% block dashboard_content %}
+
+{# ===================== MESSAGES ===================== #}
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-3" role="alert">
+      <i class="fas fa-info-circle me-1"></i> {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{% trans 'Fermer' %}"></button>
+    </div>
+  {% endfor %}
+{% endif %}
+
+{# ===================== SECTION INFO ===================== #}
+<div class="card shadow-sm border-0 mb-4">
+  <div class="card-header bg-light fw-semibold py-3">
+    <i class="fas fa-id-card me-2"></i>
+    {% trans "Informations actuelles" %}
+  </div>
+
+  <div class="card-body p-4">
+
+    <div class="row g-4 align-items-center">
+
+      <div class="col-md-3 text-center">
+        {% if request.user.userprofile.profile_picture %}
+          <img src="{{ request.user.userprofile.profile_picture.url }}"
+               class="img-thumbnail rounded-circle shadow-sm"
+               style="width: 130px; height:130px; object-fit: cover;"
+               alt="{% trans 'Photo de profil' %}">
+        {% else %}
+          <div class="rounded-circle bg-light shadow-sm d-flex align-items-center justify-content-center"
+               style="width:130px; height:130px;">
+            <i class="fas fa-user text-muted" style="font-size: 3rem;"></i>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="col-md-9">
+        <p class="mb-2"><strong>{% trans "Nom" %} :</strong> {{ request.user.get_full_name|default:"—" }}</p>
+        <p class="mb-2"><strong>Email :</strong> {{ request.user.email }}</p>
+
+        {% if request.user.userprofile %}
+          <p class="mb-2">
+            <strong>{% trans "Rôle" %} :</strong>
+            {{ request.user.userprofile.membership_role.label|default:"—" }}
+          </p>
+          <p class="mb-2"><strong>{% trans "Téléphone" %} :</strong> {{ request.user.userprofile.phone|default:"—" }}</p>
+          <p class="mb-2"><strong>{% trans "Pays" %} :</strong> {{ request.user.userprofile.country|default:"—" }}</p>
+        {% else %}
+          <p class="text-muted">{% trans "Aucun profil utilisateur associé." %}</p>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{# ===================== FORMULAIRE ===================== #}
+<div class="card shadow-sm border-0">
+  <div class="card-header bg-light fw-semibold py-3">
+    <i class="fas fa-edit me-2"></i>
+    {% trans "Mettre à jour mes informations" %}
+  </div>
+
+  <div class="card-body p-4">
+    <form method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+
+      <div class="row g-3">
+
+        {% for field in form %}
+
+          {% if field.name == "profile_picture" %}
+
+            <div class="col-12">
+              <label class="form-label fw-semibold" for="{{ field.id_for_label }}">
+                {{ field.label }}
+              </label>
+
+              {% if request.user.userprofile.profile_picture %}
+                <img src="{{ request.user.userprofile.profile_picture.url }}"
+                     class="img-thumbnail rounded mb-2"
+                     style="width:120px; height:120px; object-fit:cover;" alt="preview">
+              {% endif %}
+
+              {% render_field field class="form-control" %}
+              {% if field.errors %}
+                <div class="text-danger small mt-1">{{ field.errors|striptags }}</div>
+              {% endif %}
+            </div>
+
+          {% else %}
+            <div class="col-md-6">
+              <label class="form-label fw-semibold" for="{{ field.id_for_label }}">
+                {{ field.label }}{% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+              </label>
+
+              {% render_field field class="form-control" %}
+
+              {% if field.help_text %}
+                <div class="form-text">{{ field.help_text }}</div>
+              {% endif %}
+
+              {% if field.errors %}
+                <div class="text-danger small">{{ field.errors|striptags }}</div>
+              {% endif %}
+            </div>
+          {% endif %}
+
+        {% endfor %}
+      </div>
+
+      <div class="mt-4">
+        <button type="submit" class="btn btn-success px-4">
+          <i class="fas fa-save me-1"></i>
+          {% trans "Mettre à jour" %}
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# dashboard/profile/profile.html #}
+{% extends "dashboard/base.html" %}
+{% load static widget_tweaks i18n %}
+
+{% block title %}{% trans "Profil Utilisateur" %}{% endblock %}
+
+{% block dashboard_content %}
+<div class="container py-4">
+  <h2 class="mb-4">{% trans "Mon Profil" %}</h2>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{% trans 'Fermer' %}"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <!-- 🔹 Informations utilisateur -->
+  <div class="card mb-4 shadow-sm">
+    <div class="card-header bg-light fw-bold">{% trans "Informations actuelles" %}</div>
+    <div class="card-body">
+      <div class="row g-4 align-items-center">
+        <div class="col-md-3 text-center">
+          {% if request.user.userprofile.profile_picture %}
+            <img src="{{ request.user.userprofile.profile_picture.url }}" alt="Photo de profil"
+                 class="img-thumbnail mb-2 rounded-circle shadow-sm" style="width:120px; height:120px; object-fit:cover;">
+          {% else %}
+            <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center shadow-sm" style="width:120px; height:120px;">
+              <i class="bi bi-person fs-1 text-muted"></i>
+            </div>
+          {% endif %}
+        </div>
+        <div class="col-md-9">
+          <div class="mb-2"><strong>{% trans "Nom" %} :</strong> {{ request.user.get_full_name|default:"—" }}</div>
+          <div class="mb-2"><strong>Email :</strong> {{ request.user.email }}</div>
+          {% if request.user.userprofile %}
+            <div class="mb-2"><strong>{% trans "Rôle" %} :</strong> {{ request.user.userprofile.membership_role.label|default:"—" }}</div>
+            <div class="mb-2"><strong>{% trans "Téléphone" %} :</strong> {{ request.user.userprofile.phone|default:"—" }}</div>
+            <div class="mb-2"><strong>{% trans "Pays" %} :</strong> {{ request.user.userprofile.country|default:"—" }}</div>
+          {% else %}
+            <div class="text-muted">{% trans "Aucun profil utilisateur associé." %}</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🔹 Formulaire de mise à jour -->
+  <div class="card shadow-sm">
+    <div class="card-header bg-light fw-bold">{% trans "Mettre à jour mes informations" %}</div>
+    <div class="card-body">
+      <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+        {% csrf_token %}
+        <div class="row g-3">
+          {% for field in form %}
+            <div class="col-md-{% if field.name in 'message profile_picture judicial_record' %}12{% else %}6{% endif %}">
+              <label for="{{ field.id_for_label }}" class="form-label">
+                {{ field.label }}{% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+              </label>
+              {% render_field field class="form-control" %}
+              {% if field.help_text %}
+                <div class="form-text">{{ field.help_text }}</div>
+              {% endif %}
+              {% if field.errors %}
+                <div class="text-danger small">{{ field.errors|striptags }}</div>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+        <div class="mt-4">
+          <button type="submit" class="btn btn-success">
+            <i class="bi bi-save"></i> {% trans "Mettre à jour" %}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+ {% endcomment %}
+
+
+
+
+
+
+{% comment %} {% extends "dashboard/base.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Profil Utilisateur" %}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h2 class="mb-4">{% trans "Mon Profil" %}</h2>
+
+  <!-- 🔹 Informations utilisateur -->
+  <div class="card mb-4 shadow-sm">
+    <div class="card-header bg-light">
+      <strong>{% trans "Informations actuelles" %}</strong>
+    </div>
+    <div class="card-body">
+      <p><strong>{% trans "Nom" %} :</strong> {{ request.user.get_full_name|default:"—" }}</p>
+      <p><strong>Email :</strong> {{ request.user.email }}</p>
+      {% if request.user.userprofile %}
+        <p><strong>{% trans "Rôle" %} :</strong> {{ request.user.userprofile.membership_role.name }}</p>
+        <p><strong>{% trans "Téléphone" %} :</strong> {{ request.user.userprofile.phone }}</p>
+        <p><strong>{% trans "Pays" %} :</strong> {{ request.user.userprofile.country }}</p>
+      {% else %}
+        <p class="text-muted">{% trans "Aucun profil utilisateur associé." %}</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- 🔹 Formulaire de mise à jour -->
+  <div class="card shadow-sm">
+    <div class="card-header bg-light">
+      <strong>{% trans "Mettre à jour mes informations" %}</strong>
+    </div>
+    <div class="card-body">
+      <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+        {% csrf_token %}
+        <div class="row g-3">
+          <div class="col-md-6">
+            {{ form.full_name.label_tag }} {{ form.full_name }}
+          </div>
+          <div class="col-md-6">
+            {{ form.phone.label_tag }} {{ form.phone }}
+          </div>
+          <div class="col-md-6">
+            {{ form.country.label_tag }} {{ form.country }}
+          </div>
+          <div class="col-md-6">
+            {{ form.membership_role.label_tag }} {{ form.membership_role }}
+          </div>
+          <div class="col-md-12">
+            {{ form.message.label_tag }} {{ form.message }}
+          </div>
+          <div class="col-md-6">
+            {{ form.profile_picture.label_tag }} {{ form.profile_picture }}
+          </div>
+          <div class="col-md-6">
+            {{ form.judicial_record.label_tag }} {{ form.judicial_record }}
+          </div>
+        </div>
+        <div class="mt-4">
+          <button type="submit" class="btn btn-success">
+            <i class="bi bi-save"></i> {% trans "Mettre à jour" %}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {% extends "dashboard/base.html" %}
+{% load static i18n %}
+
+{% block title %}Profil utilisateur | SOGENTIS{% endblock %}
+
+{% block dashboard_header %}
+<h2>Mon profil</h2>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="profile-section">
+  <p><strong>Nom :</strong> {{ user.get_full_name }}</p>
+  <p><strong>Email :</strong> {{ user.email }}</p>
+  <p><strong>Rôle :</strong> {{ user.role_profile.get_role_display }}</p>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+  <h1 class="mt-4">{% trans "Mon Profil" %}</h1>
+  <div class="row g-4 mt-3">
+
+    <div class="col-md-4">
+      <div class="card shadow-sm">
+        <div class="card-body text-center">
+          {% if user.userprofile.profile_picture %}
+            <img src="{{ user.userprofile.profile_picture.url }}" class="rounded-circle img-fluid mb-2" width="120">
+          {% else %}
+            <img src="{% static 'dashboard/img/default_user.png' %}" class="rounded-circle img-fluid mb-2" width="120">
+          {% endif %}
+          <h5 class="mb-0">{{ user.userprofile.full_name }}</h5>
+          <p class="text-muted">{{ user.email }}</p>
+          <span class="badge bg-info">{{ user.userprofile.role.name }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-8">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">{% trans "Informations personnelles" %}</h5>
+          <dl class="row">
+            <dt class="col-sm-4">{% trans "Nom complet" %}</dt>
+            <dd class="col-sm-8">{{ user.userprofile.full_name }}</dd>
+
+            <dt class="col-sm-4">{% trans "Téléphone" %}</dt>
+            <dd class="col-sm-8">{{ user.userprofile.phone }}</dd>
+
+            <dt class="col-sm-4">{% trans "Pays" %}</dt>
+            <dd class="col-sm-8">{{ user.userprofile.country }}</dd>
+
+            <dt class="col-sm-4">{% trans "Message" %}</dt>
+            <dd class="col-sm-8">{{ user.userprofile.message }}</dd>
+
+            <dt class="col-sm-4">{% trans "Rôle" %}</dt>
+            <dd class="col-sm-8">{{ user.userprofile.membership_role.name }}</dd>
+          </dl>
+          <a href="{% url 'dashboard:profile_edit' %}" class="btn btn-primary mt-3">
+            <i class="fas fa-edit"></i> {% trans "Modifier le profil" %}
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %} {% endcomment %}

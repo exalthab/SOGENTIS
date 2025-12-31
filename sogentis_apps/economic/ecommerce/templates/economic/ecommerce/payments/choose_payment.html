@@ -1,0 +1,59 @@
+{# templates/economic/ecommerce/payments/choose_payment.html #}
+{% extends "main.html" %}
+{% load i18n money %}
+
+{% block title %}
+{% trans "Choisir un moyen de paiement" %} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block section_menu %}
+  {% include "economic/ecommerce/partials/_ecommerce_navbar.html" %}
+{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+
+  <h1 class="mb-4">💳 {% trans "Choisir un moyen de paiement" %}</h1>
+
+  <div class="card">
+    <div class="card-body">
+
+      <p class="mb-4">
+        <strong>{% trans "Commande" %} :</strong> {{ order.uuid }}<br>
+        <strong>{% trans "Total" %} :</strong>
+        {{ order.total_amount|money:ECOMMERCE_CURRENCY }}
+      </p>
+
+      <div class="d-grid gap-3">
+
+        <a href="{% url 'economic:ecommerce:payment_checkout' 'stripe' order.uuid %}"
+           class="btn btn-outline-primary">
+          💳 {% trans "Payer par carte (Stripe)" %}
+        </a>
+
+        <a href="{% url 'economic:ecommerce:payment_checkout' 'paypal' order.uuid %}"
+           class="btn btn-outline-secondary">
+          🅿️ {% trans "Payer avec PayPal" %}
+        </a>
+
+        <a href="{% url 'economic:ecommerce:payment_checkout' 'wave' order.uuid %}"
+           class="btn btn-outline-success">
+          📱 {% trans "Payer avec Wave" %}
+        </a>
+
+        <a href="{% url 'economic:ecommerce:payment_checkout' 'orange_money' order.uuid %}"
+           class="btn btn-outline-warning">
+          📲 {% trans "Payer avec Orange Money" %}
+        </a>
+
+      </div>
+
+      <div class="text-muted small mt-4">
+        {% trans "Après le paiement, vous serez redirigé automatiquement." %}
+      </div>
+
+    </div>
+  </div>
+
+</section>
+{% endblock %}

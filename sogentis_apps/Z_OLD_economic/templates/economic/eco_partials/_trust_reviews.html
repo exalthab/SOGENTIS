@@ -1,0 +1,71 @@
+{% load static i18n %}
+
+<section id="trust-reviews" class="trust-reviews-section py-4 bg-light">
+  <div class="container">
+
+    <div class="text-center mb-4">
+      <h5 class="fw-bold">
+        <i class="fas fa-star me-2 text-warning"></i>
+        {% trans "Confiance & Avis Clients" %}
+      </h5>
+      <p class="small text-muted">
+        {% trans "Des milliers d'entrepreneurs et organisations nous font confiance." %}
+      </p>
+    </div>
+
+    <div class="row g-3 g-md-4 align-items-center">
+
+      {# Statistiques de confiance #}
+      <div class="col-12 col-md-4">
+        <div class="card border-0 shadow-sm p-3 text-center h-100">
+          <div class="fw-bold fs-2 text-primary">{{ stats.total_reviews|default:"0" }}</div>
+          <div class="small text-muted">{% trans "Avis clients" %}</div>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-4">
+        <div class="card border-0 shadow-sm p-3 text-center h-100">
+          <div class="fw-bold fs-2 text-warning">{{ stats.avg_rating|default:"5.0" }} ★</div>
+          <div class="small text-muted">{% trans "Note moyenne" %}</div>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-4">
+        <div class="card border-0 shadow-sm p-3 text-center h-100">
+          <div class="fw-bold fs-2 text-success">{{ stats.satisfied_clients|default:"0" }}+</div>
+          <div class="small text-muted">{% trans "Clients satisfaits" %}</div>
+        </div>
+      </div>
+
+    </div>
+
+    {# Avis récents / témoignages #}
+    <div class="reviews-slider mt-4">
+      <div class="row g-3 g-md-4">
+
+        {% for review in latest_reviews %}
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="card review-card h-100 shadow-sm border-0 p-3">
+            <div class="d-flex align-items-center mb-2">
+              <img src="{{ review.user.avatar.url }}" alt="{{ review.user.name }}" class="rounded-circle me-2" width="40" height="40">
+              <div class="fw-semibold">{{ review.user.name }}</div>
+            </div>
+            <div class="rating mb-2">
+              {% for i in "12345"|make_list %}
+                {% if review.rating|floatformat:0 >= i %}
+                  <span class="text-warning">★</span>
+                {% else %}
+                  <span class="text-muted">★</span>
+                {% endif %}
+              {% endfor %}
+            </div>
+            <p class="small text-muted mb-0">“{{ review.comment|truncatechars:120 }}”</p>
+          </div>
+        </div>
+        {% endfor %}
+
+      </div>
+    </div>
+
+  </div>
+</section>

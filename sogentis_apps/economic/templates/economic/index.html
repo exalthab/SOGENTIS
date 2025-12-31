@@ -1,0 +1,602 @@
+{# templates/economic/index.html #}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{{ page_title }} | {{ PROJECT_NAME }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'economic/css/economic_index.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- ===================================================== -->
+<!-- HERO – PÔLE ÉCONOMIQUE -->
+<!-- ===================================================== -->
+<section class="eco-hero position-relative">
+  <div class="eco-hero-overlay"></div>
+
+  <div class="container eco-hero-content text-center">
+    <span class="eco-kicker">{% trans "Pôle économique" %}</span>
+
+    <h1 class="eco-title">
+      {% trans "Acheter, apprendre et développer son activité" %}
+    </h1>
+
+    <p class="eco-subtitle">
+      {% trans "Un écosystème de solutions économiques : e-commerce, services numériques, formations et partenariats B2B." %}
+    </p>
+
+    <div class="eco-hero-actions">
+      <a href="{% url 'economic:ecommerce:index' %}" class="btn btn-primary btn-lg">
+        🛒 {% trans "Accéder à la boutique" %}
+      </a>
+
+      <a href="{% url 'economic:services:index' %}" class="btn btn-outline-light btn-lg">
+        ⚙️ {% trans "Voir les services" %}
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================== -->
+<!-- HUB ÉCONOMIQUE – SECTIONS -->
+<!-- ===================================================== -->
+<section class="eco-sections container my-5">
+  <div class="row g-4">
+
+    {% for section in sections %}
+      {% if section.visible %}
+        <div class="col-12 col-md-6 col-lg-4">
+
+          <a
+            href="{% if section.locked %}{% url 'accounts_users:login' %}{% else %}{{ section.url }}{% endif %}"
+            class="eco-card h-100 {% if section.locked %}eco-card-locked{% endif %}"
+            aria-label="{{ section.title }}"
+            {% if not section.locked and section.url and "http" in section.url %}target="_blank" rel="noopener"{% endif %}
+          >
+            <div class="eco-card-header">
+              <div class="eco-card-icon">
+                <i class="bi {{ section.icon }}"></i>
+              </div>
+            </div>
+
+            <div class="eco-card-body">
+              <h3 class="eco-card-title">{{ section.title }}</h3>
+              <p class="eco-card-text">{{ section.description }}</p>
+            </div>
+
+            <div class="eco-card-footer">
+              <span class="eco-link">
+                {% trans "Découvrir" %}
+                <i class="bi bi-arrow-right"></i>
+              </span>
+            </div>
+
+            {% if section.locked %}
+              <div class="eco-card-lock">
+                🔒 {% trans "Accès réservé" %}
+              </div>
+            {% endif %}
+          </a>
+
+        </div>
+      {% endif %}
+    {% endfor %}
+
+  </div>
+</section>
+
+<!-- ===================================================== -->
+<!-- CTA B2B -->
+<!-- ===================================================== -->
+<section class="eco-cta bg-primary text-white py-5">
+  <div class="container text-center">
+    <h2 class="mb-3">
+      {% trans "Vous êtes une entreprise ou un porteur de projet ?" %}
+    </h2>
+
+    <p class="mb-4">
+      {% trans "Découvrez nos solutions professionnelles, partenariats et accompagnements sur mesure." %}
+    </p>
+
+    <a href="{% url 'economic:b2b:index' %}" class="btn btn-outline-light btn-lg">
+      <i class="bi bi-building me-2"></i>
+      {% trans "Accéder à l’espace B2B" %}
+    </a>
+  </div>
+</section>
+
+<!-- ===================================================== -->
+<!-- YOUTUBE – SOUTENIR PAR LES VUES & ABONNEMENTS -->
+<!-- ===================================================== -->
+<section class="eco-youtube py-5">
+  <div class="container">
+
+    <div class="eco-youtube-card">
+      <div class="eco-youtube-left">
+        <span class="eco-badge">
+          <i class="bi bi-youtube"></i> {% trans "Chaîne YouTube" %}
+        </span>
+
+        <h2 class="eco-youtube-title">
+          {% trans "Regarder & s’abonner pour soutenir nos actions sociales" %}
+        </h2>
+
+        <p class="eco-youtube-text">
+          {% trans "Chaque abonnement, vue et partage aide à financer nos activités d’aide aux personnes démunies. Rejoignez la communauté et participez à l’impact." %}
+        </p>
+
+        {# ===== BADGES STATS (facultatifs) ===== #}
+        <div class="eco-youtube-stats" aria-label="{% trans 'Statistiques YouTube' %}">
+          <div class="eco-stat">
+            <div class="eco-stat-value">{{ YT_SUBSCRIBERS_LABEL|default:"—" }}</div>
+            <div class="eco-stat-label">{% trans "Abonnés" %}</div>
+          </div>
+
+          <div class="eco-stat">
+            <div class="eco-stat-value">{{ YT_VIEWS_LABEL|default:"—" }}</div>
+            <div class="eco-stat-label">{% trans "Vues" %}</div>
+          </div>
+
+          <div class="eco-stat">
+            <div class="eco-stat-value">{{ YT_VIDEOS_LABEL|default:"—" }}</div>
+            <div class="eco-stat-label">{% trans "Vidéos" %}</div>
+          </div>
+        </div>
+
+        <ul class="eco-youtube-points">
+          <li><i class="bi bi-check2-circle"></i> {% trans "Abonnez-vous pour ne rien manquer" %}</li>
+          <li><i class="bi bi-check2-circle"></i> {% trans "Regardez et partagez les vidéos" %}</li>
+          <li><i class="bi bi-check2-circle"></i> {% trans "Activez la cloche pour soutenir la portée" %}</li>
+        </ul>
+
+        <div class="eco-youtube-actions">
+          <a class="btn btn-danger btn-lg" href="{{ YOUTUBE_CHANNEL_URL|default:'#' }}" target="_blank" rel="noopener">
+            <i class="bi bi-youtube me-2"></i> {% trans "S’abonner sur YouTube" %}
+          </a>
+
+          <a class="btn btn-outline-light btn-lg" href="{{ YOUTUBE_VIDEOS_URL|default:'#' }}" target="_blank" rel="noopener">
+            <i class="bi bi-play-circle me-2"></i> {% trans "Voir les vidéos" %}
+          </a>
+        </div>
+
+        <div class="eco-youtube-note">
+          <i class="bi bi-info-circle me-2"></i>
+          {% trans "Vous pouvez aussi soutenir en aimant 👍, commentant 💬 et partageant 🔁 — cela augmente la visibilité et l’impact." %}
+        </div>
+      </div>
+
+      <div class="eco-youtube-right">
+        <div class="eco-youtube-preview">
+          <div class="eco-youtube-play">
+            <i class="bi bi-play-fill"></i>
+          </div>
+
+          <div class="eco-youtube-meta">
+            <div class="eco-youtube-channel">
+              <strong>{{ YOUTUBE_CHANNEL_NAME|default:"SOGENTIS" }}</strong>
+              <span class="muted">{% trans "Développement & impact social" %}</span>
+            </div>
+          </div>
+        </div>
+
+        {# ✅ Option embed (facultatif). Remplace YOUTUBE_FEATURED_VIDEO_ID par une vidéo phare #}
+        {% if YOUTUBE_FEATURED_VIDEO_ID %}
+          <div class="eco-youtube-embed">
+            <iframe
+              src="https://www.youtube.com/embed/{{ YOUTUBE_FEATURED_VIDEO_ID }}"
+              title="{% trans 'Vidéo YouTube' %}"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen>
+            </iframe>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+</section>
+
+{% endblock %}
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/index.html #}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{{ page_title }} | {{ PROJECT_NAME }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'economic/css/economic_index.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- ===================================================== -->
+<!-- HERO – PÔLE ÉCONOMIQUE -->
+<!-- ===================================================== -->
+<section class="eco-hero position-relative">
+    <div class="eco-hero-overlay"></div>
+
+    <div class="container eco-hero-content text-center">
+        <span class="eco-kicker">{% trans "Pôle économique" %}</span>
+
+        <h1 class="eco-title">
+            {% trans "Acheter, apprendre et développer son activité" %}
+        </h1>
+
+        <p class="eco-subtitle">
+            {% trans "Un écosystème de solutions économiques : e-commerce, services numériques, formations et partenariats B2B." %}
+        </p>
+
+        <div class="eco-hero-actions">
+            <a href="{% url 'economic:ecommerce:index' %}" class="btn btn-primary btn-lg">
+                🛒 {% trans "Accéder à la boutique" %}
+            </a>
+
+            <a href="{% url 'economic:services:index' %}" class="btn btn-outline-light btn-lg">
+                ⚙️ {% trans "Voir les services" %}
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ===================================================== -->
+<!-- HUB ÉCONOMIQUE – SECTIONS -->
+<!-- ===================================================== -->
+<section class="eco-sections container my-5">
+    <div class="row g-4">
+
+        {% for section in sections %}
+            {% if section.visible %}
+                <div class="col-12 col-md-6 col-lg-4">
+
+                    <a
+                        href="{% if section.locked %}{% url 'accounts_users:login' %}{% else %}{{ section.url }}{% endif %}"
+                        class="eco-card h-100 {% if section.locked %}eco-card-locked{% endif %}"
+                        aria-label="{{ section.title }}"
+                    >
+                        <div class="eco-card-header">
+                            <div class="eco-card-icon">
+                                <i class="bi {{ section.icon }}"></i>
+                            </div>
+                        </div>
+
+                        <div class="eco-card-body">
+                            <h3 class="eco-card-title">
+                                {{ section.title }}
+                            </h3>
+
+                            <p class="eco-card-text">
+                                {{ section.description }}
+                            </p>
+                        </div>
+
+                        <div class="eco-card-footer">
+                            <span class="eco-link">
+                                {% trans "Découvrir" %}
+                                <i class="bi bi-arrow-right"></i>
+                            </span>
+                        </div>
+
+                        {% if section.locked %}
+                            <div class="eco-card-lock">
+                                🔒 {% trans "Accès réservé" %}
+                            </div>
+                        {% endif %}
+                    </a>
+
+                </div>
+            {% endif %}
+        {% endfor %}
+
+    </div>
+</section>
+
+<!-- ===================================================== -->
+<!-- CTA B2B -->
+<!-- ===================================================== -->
+<section class="eco-cta bg-primary text-white py-5">
+    <div class="container text-center">
+        <h2 class="mb-3">
+            {% trans "Vous êtes une entreprise ou un porteur de projet ?" %}
+        </h2>
+
+        <p class="mb-4">
+            {% trans "Découvrez nos solutions professionnelles, partenariats et accompagnements sur mesure." %}
+        </p>
+
+        <a href="{% url 'economic:b2b:index' %}" class="btn btn-outline-light btn-lg">
+            <i class="bi bi-building me-2"></i>
+            {% trans "Accéder à l’espace B2B" %}
+        </a>
+    </div>
+</section>
+
+{% endblock %}
+ {% endcomment %}
+
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/index.html #}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{{ page_title }} | {{ PROJECT_NAME }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'economic/css/economic_index.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- ===================================================== -->
+<!-- HERO – PÔLE ÉCONOMIQUE -->
+<!-- ===================================================== -->
+<section class="eco-hero position-relative">
+    <div class="eco-hero-overlay"></div>
+    <div class="container eco-hero-content text-center">
+        <h1 class="eco-title">{% trans "Pôle Économique" %}</h1>
+        <p class="eco-subtitle">{% trans "Un écosystème de solutions pour entreprendre, apprendre et grandir durablement." %}</p>
+    </div>
+</section>
+
+<!-- ===================================================== -->
+<!-- SECTIONS – HUB ÉCONOMIQUE -->
+<!-- ===================================================== -->
+<section class="eco-sections container my-5">
+    <div class="row g-4">
+        {% for section in sections %}
+            {% if section.visible %}
+                <div class="col-12 col-md-6 col-lg-4">
+                    <a
+                        href="{% if section.locked %}{% url 'accounts_users:login' %}{% else %}{{ section.url }}{% endif %}"
+                        class="eco-card {% if section.locked %}eco-card-locked{% endif %} h-100"
+                        aria-label="{{ section.title }}"
+                    >
+                        <div class="eco-card-icon">
+                            <i class="bi {{ section.icon }}"></i>
+                        </div>
+
+                        <div class="eco-card-body">
+                            <h3 class="eco-card-title">{{ section.title }}</h3>
+                            <p class="eco-card-text">{{ section.description }}</p>
+                        </div>
+
+                        <div class="eco-card-footer">
+                            <span class="eco-link">
+                                {% trans "Découvrir" %}
+                                <i class="bi bi-arrow-right"></i>
+                            </span>
+                        </div>
+
+                        {% if section.locked %}
+                            <div class="eco-card-lock">
+                                🔒 {% trans "Accès réservé" %}
+                            </div>
+                        {% endif %}
+                    </a>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</section>
+
+<!-- ===================================================== -->
+<!-- CTA GLOBAL – ESPACE B2B -->
+<!-- ===================================================== -->
+<section class="eco-cta bg-primary text-white py-5">
+    <div class="container text-center">
+        <h2 class="mb-3">{% trans "Vous êtes une entreprise ou un porteur de projet ?" %}</h2>
+        <p class="mb-4">{% trans "Découvrez nos solutions professionnelles et notre accompagnement sur mesure." %}</p>
+
+        <a href="{% url 'economic:b2b:index' %}" class="btn btn-outline-light btn-lg">
+            <i class="bi bi-building me-2"></i>
+            {% trans "Accéder à l’espace B2B" %}
+        </a>
+    </div>
+</section>
+
+{% endblock %}
+ {% endcomment %}
+
+
+
+
+{% comment %} {% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{{ page_title }} | {{ PROJECT_NAME }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'economic/css/economic_index.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- ===================================================== -->
+<!-- HERO – PÔLE ÉCONOMIQUE -->
+<!-- ===================================================== -->
+<section class="eco-hero">
+    <div class="eco-hero-overlay"></div>
+
+    <div class="container eco-hero-content text-center">
+        <h1 class="eco-title">{% trans "Pôle Économique" %}</h1>
+        <p class="eco-subtitle">{% trans "Un écosystème de solutions pour entreprendre, apprendre et grandir durablement." %}</p>
+    </div>
+</section>
+
+<!-- ===================================================== -->
+<!-- SECTIONS – HUB ECONOMIC -->
+<!-- ===================================================== -->
+<section class="eco-sections container my-5">
+    <div class="row g-4">
+        {% for section in sections %}
+            {% if section.visible %}
+                <div class="col-12 col-md-6 col-lg-4">
+                    <a
+                        {% if section.locked %}
+                            href="{% url 'accounts_users:login' %}"
+                            class="eco-card eco-card-locked h-100"
+                        {% else %}
+                            href="{{ section.url }}"
+                            class="eco-card h-100"
+                        {% endif %}
+                    >
+                        <div class="eco-card-icon">
+                            <i class="bi {{ section.icon }}"></i>
+                        </div>
+
+                        <div class="eco-card-body">
+                            <h3 class="eco-card-title">{{ section.title }}</h3>
+                            <p class="eco-card-text">{{ section.description }}</p>
+                        </div>
+
+                        <div class="eco-card-footer">
+                            <span class="eco-link">
+                                {% trans "Découvrir" %}
+                                <i class="bi bi-arrow-right"></i>
+                            </span>
+                        </div>
+
+                        {% if section.locked %}
+                            <div class="eco-card-lock">
+                                🔒 {% trans "Accès réservé" %}
+                            </div>
+                        {% endif %}
+
+                    </a>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</section>
+
+<!-- ===================================================== -->
+<!-- CTA GLOBAL -->
+<!-- ===================================================== -->
+<section class="eco-cta">
+    <div class="container text-center">
+        <h2>{% trans "Vous êtes une entreprise ou un porteur de projet ?" %}</h2>
+        <p>{% trans "Découvrez nos solutions professionnelles et notre accompagnement sur mesure." %}</p>
+
+        <a href="{% url 'economic:b2b:index' %}" class="btn btn-outline-light btn-lg">
+            <i class="bi bi-building"></i>
+            {% trans "Accéder à l’espace B2B" %}
+        </a>
+    </div>
+</section>
+
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+
+{% comment %} {# economic/index.html#}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{{ page_title }} | {{ PROJECT_NAME }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'economic/css/economic_index.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- ===================================================== -->
+<!-- HERO – PÔLE ÉCONOMIQUE -->
+<!-- ===================================================== -->
+<section class="eco-hero">
+    <div class="eco-hero-overlay"></div>
+
+    <div class="container eco-hero-content text-center">
+        <h1 class="eco-title">
+            {% trans "Pôle Économique" %}
+        </h1>
+        <p class="eco-subtitle">
+            {% trans "Un écosystème de solutions pour entreprendre, apprendre et grandir durablement." %}
+        </p>
+    </div>
+</section>
+
+<!-- ===================================================== -->
+<!-- SECTIONS – HUB ECONOMIC -->
+<!-- ===================================================== -->
+<section class="eco-sections container my-5">
+
+    <div class="row g-4">
+        {% for section in sections %}
+            {% if section.visible %}
+                <div class="col-12 col-md-6 col-lg-4">
+                    <a
+                        {% if section.locked %}
+                            href="{% url 'accounts_users:login' %}"
+                            class="eco-card eco-card-locked h-100"
+                        {% else %}
+                            href="{{ section.url }}"
+                            class="eco-card h-100"
+                        {% endif %}
+                    >
+
+                        <div class="eco-card-icon">
+                            <i class="bi {{ section.icon }}"></i>
+                        </div>
+
+                        <div class="eco-card-body">
+                            <h3 class="eco-card-title">
+                                {{ section.title }}
+                            </h3>
+
+                            <p class="eco-card-text">
+                                {{ section.description }}
+                            </p>
+                        </div>
+
+                        <div class="eco-card-footer">
+                            <span class="eco-link">
+                                {% trans "Découvrir" %}
+                                <i class="bi bi-arrow-right"></i>
+                            </span>
+                        </div>
+
+                    </a>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+</section>
+
+<!-- ===================================================== -->
+<!-- CTA GLOBAL -->
+<!-- ===================================================== -->
+<section class="eco-cta">
+    <div class="container text-center">
+        <h2>{% trans "Vous êtes une entreprise ou un porteur de projet ?" %}</h2>
+        <p>{% trans "Découvrez nos solutions professionnelles et notre accompagnement sur mesure." %}</p>
+
+        <a href="{% url 'economic:b2b:index' %}" class="btn btn-outline-light btn-lg">
+            <i class="bi bi-building"></i>
+            {% trans "Accéder à l’espace B2B" %}
+        </a>
+    </div>
+</section>
+
+{% endblock %} {% endcomment %}

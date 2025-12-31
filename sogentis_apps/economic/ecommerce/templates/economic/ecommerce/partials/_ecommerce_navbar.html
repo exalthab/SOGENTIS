@@ -1,0 +1,548 @@
+{# templates/economic/ecommerce/partials/_ecommerce_navbar.html #}
+{% load static i18n %}
+
+{# ===================================================== #}
+{# MODE SWITCH (B2C / B2B) #}
+{# ===================================================== #}
+{% include "economic/ecommerce/partials/_commerce_mode_switch.html" %}
+
+{# ===================================================== #}
+{# TOP UTILITY BAR #}
+{# ===================================================== #}
+<div class="eco-topbar">
+  <div class="container d-flex justify-content-between align-items-center">
+
+    <div class="topbar-left d-flex gap-3">
+      <a href="#" class="topbar-link">
+        <i class="bi bi-phone"></i>
+        {% trans "Télécharger l’app" %}
+      </a>
+      <a href="#" class="topbar-link">
+        {% trans "Business" %}
+      </a>
+    </div>
+
+    <div class="topbar-right d-flex gap-4 align-items-center">
+
+      {# LANGUE (i18n Django) #}
+      <div class="dropdown">
+        <a class="topbar-link dropdown-toggle" data-bs-toggle="dropdown">
+          🌍 {{ request.LANGUAGE_CODE|upper }}
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li>
+            <a class="dropdown-item" href="{% url 'switch_language' %}?language=fr&next={{ request.path }}">
+              Français
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="{% url 'switch_language' %}?language=en&next={{ request.path }}">
+              English
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      {# AUTHENTIFICATION #}
+      {% if user.is_authenticated %}
+        <span class="topbar-link">
+          {% trans "Bienvenue" %}, 
+          <strong>{{ user.first_name|default:user.username }}</strong>
+        </span>
+      {% else %}
+        <a href="{% url 'accounts_users_web:login' %}" class="topbar-link">
+          {% trans "Connexion / Inscription" %}
+        </a>
+      {% endif %}
+
+      {# PANIER #}
+      <a href="{% url 'economic:ecommerce:cart' %}" class="topbar-cart position-relative">
+        <i class="bi bi-cart3"></i>
+        {% if cart_items_count|default:0 > 0 %}
+          <span class="cart-badge position-absolute top-0 start-100 translate-middle rounded-circle bg-danger text-white">
+            {{ cart_items_count }}
+          </span>
+        {% endif %}
+      </a>
+
+    </div>
+  </div>
+</div>
+
+{# ===================================================== #}
+{# MAIN NAV BAR #}
+{# ===================================================== #}
+<nav class="eco-main-nav">
+  <div class="container d-flex align-items-center gap-3">
+
+    {# LOGO #}
+    <a href="{% url 'economic:ecommerce:index' %}" class="eco-logo">
+      <img src="{% static 'global/image/Sogentis3.png' %}" alt="{{ PROJECT_NAME }}">
+    </a>
+
+    {# SEARCH #}
+    <form class="eco-search" method="get" action="{% url 'economic:ecommerce:search' %}">
+      <input type="search"
+             name="q"
+             placeholder="{% trans 'Rechercher produits, marques, services…' %}"
+             value="{{ request.GET.q|default:'' }}">
+      <button type="submit" aria-label="{% trans 'Rechercher' %}">
+        <i class="bi bi-search"></i>
+      </button>
+    </form>
+
+    {# QUICK ACTIONS #}
+    <div class="eco-actions ms-auto d-flex gap-3">
+
+      {% if user.is_authenticated %}
+        <a href="{% url 'dashboard:vendor:home' %}" class="eco-action">
+          <i class="bi bi-speedometer2"></i>
+          <span>{% trans "Dashboard" %}</span>
+        </a>
+      {% endif %}
+
+      <a href="{% url 'economic:ecommerce:orders' %}" class="eco-action">
+        <i class="bi bi-bag-check"></i>
+        <span>{% trans "Commandes" %}</span>
+      </a>
+
+    </div>
+  </div>
+</nav>
+
+{# ===================================================== #}
+{# CATEGORY BAR (B2C / B2B dynamique) #}
+{# ===================================================== #}
+<div class="eco-category-bar">
+  <div class="container d-flex align-items-center gap-4">
+
+    {% if commerce_mode|default:"B2C" == "B2C" %}
+      <a class="eco-link highlight">{% trans "Super Deals" %}</a>
+      <a class="eco-link">{% trans "Nouveautés" %}</a>
+      <a class="eco-link">{% trans "Meilleures ventes" %}</a>
+      <a class="eco-link">{% trans "Livraison rapide" %}</a>
+    {% else %}
+      <a class="eco-link highlight">{% trans "Commandes en gros" %}</a>
+      <a class="eco-link">{% trans "Devis personnalisés" %}</a>
+      <a class="eco-link">{% trans "Contrats & abonnements" %}</a>
+      <a class="eco-link">{% trans "Support dédié" %}</a>
+    {% endif %}
+
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+{% comment %} {% load static i18n %}
+
+{# ===================================================== #}
+{# MODE SWITCH (B2C / B2B) #}
+{# ===================================================== #}
+{% include "economic/ecommerce/partials/_commerce_mode_switch.html" %}
+
+{# ===================================================== #}
+{# TOP UTILITY BAR #}
+{# ===================================================== #}
+<div class="eco-topbar">
+  <div class="container d-flex justify-content-between align-items-center">
+
+    <div class="topbar-left d-flex gap-3">
+      <a href="#" class="topbar-link">
+        <i class="bi bi-phone"></i>
+        {% trans "Télécharger l’app" %}
+      </a>
+      <a href="#" class="topbar-link">
+        {% trans "Business" %}
+      </a>
+    </div>
+
+    <div class="topbar-right d-flex gap-4 align-items-center">
+
+      {# LANGUE (i18n Django) #}
+      <div class="dropdown">
+        <a class="topbar-link dropdown-toggle" data-bs-toggle="dropdown">
+          🌍 {{ CUR_LANG|upper }}
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li>
+            <a class="dropdown-item" href="{% url 'switch_language' %}?language=fr&next={{ request.path }}">
+              Français
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="{% url 'switch_language' %}?language=en&next={{ request.path }}">
+              English
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      {# AUTH #}
+      {% if user.is_authenticated %}
+        <span class="topbar-link">
+          {% trans "Bienvenue" %},
+          <strong>{{ user.first_name|default:user.username }}</strong>
+        </span>
+      {% else %}
+        <a href="{% url 'accounts_users:login' %}" class="topbar-link">
+          {% trans "Connexion / Inscription" %}
+        </a>
+      {% endif %}
+
+      {# PANIER #}
+      <a href="{% url 'economic:ecommerce:cart' %}" class="topbar-cart">
+        <i class="bi bi-cart3"></i>
+        <span class="cart-badge">
+          {{ cart_items_count|default:0 }}
+        </span>
+      </a>
+
+    </div>
+  </div>
+</div>
+
+{# ===================================================== #}
+{# MAIN NAV BAR #}
+{# ===================================================== #}
+<nav class="eco-main-nav">
+  <div class="container d-flex align-items-center gap-3">
+
+    {# LOGO #}
+    <a href="{% url 'economic:ecommerce:index' %}" class="eco-logo">
+      <img src="{% static 'global/image/Sogentis3.png' %}" alt="{{ PROJECT_NAME }}">
+    </a>
+
+    {# SEARCH #}
+    <form class="eco-search" method="get" action="{% url 'economic:ecommerce:search' %}">
+      <input type="search"
+             name="q"
+             placeholder="{% trans 'Rechercher produits, marques, services…' %}"
+             value="{{ request.GET.q|default:'' }}">
+      <button type="submit" aria-label="{% trans 'Rechercher' %}">
+        <i class="bi bi-search"></i>
+      </button>
+    </form>
+
+    {# QUICK ACTIONS #}
+    <div class="eco-actions ms-auto d-flex gap-3">
+
+      {% if user.is_authenticated %}
+      <a href="{% url 'dashboard:vendor:vendor_index' %}" class="eco-action">
+        <i class="bi bi-speedometer2"></i>
+        <span>{% trans "Dashboard" %}</span>
+      </a>
+      {% endif %}
+
+      <a href="{% url 'economic:ecommerce:orders' %}" class="eco-action">
+        <i class="bi bi-bag-check"></i>
+        <span>{% trans "Commandes" %}</span>
+      </a>
+
+    </div>
+  </div>
+</nav>
+
+{# ===================================================== #}
+{# CATEGORY BAR (UNIQUE – PAS DE DOUBLON) #}
+{# ===================================================== #}
+<div class="eco-category-bar">
+  <div class="container d-flex align-items-center gap-4">
+
+    {# MODE-SENSITIVE LINKS #}
+    {% if commerce_mode|default:"B2C" == "B2C" %}
+      <a class="eco-link highlight">{% trans "Super Deals" %}</a>
+      <a class="eco-link">{% trans "Nouveautés" %}</a>
+      <a class="eco-link">{% trans "Meilleures ventes" %}</a>
+      <a class="eco-link">{% trans "Livraison rapide" %}</a>
+    {% else %}
+      <a class="eco-link highlight">{% trans "Commandes en gros" %}</a>
+      <a class="eco-link">{% trans "Devis personnalisés" %}</a>
+      <a class="eco-link">{% trans "Contrats & abonnements" %}</a>
+      <a class="eco-link">{% trans "Support dédié" %}</a>
+    {% endif %}
+
+  </div>
+</div>
+ {% endcomment %}
+
+
+
+
+
+
+
+
+{% comment %} {% load static i18n %}
+{% include "economic/ecommerce/partials/_commerce_mode_switch.html" %}
+
+<!-- MENU PRINCIPAL -->
+<div class="eco-category-bar">
+
+  {% if commerce_mode == "B2C" %}
+    <!-- ================= B2C ================= -->
+    <a class="eco-link">{% trans "Super Deals" %}</a>
+    <a class="eco-link">{% trans "Nouveautés" %}</a>
+    <a class="eco-link">{% trans "Meilleures ventes" %}</a>
+    <a class="eco-link">{% trans "Livraison rapide" %}</a>
+
+  {% else %}
+    <!-- ================= B2B ================= -->
+    <a class="eco-link highlight">{% trans "Commandes en gros" %}</a>
+    <a class="eco-link">{% trans "Devis personnalisés" %}</a>
+    <a class="eco-link">{% trans "Contrats & abonnements" %}</a>
+    <a class="eco-link">{% trans "Support dédié" %}</a>
+
+  {% endif %}
+
+</div>
+<!-- ===================================================== -->
+<!-- TOP UTILITY BAR -->
+<!-- ===================================================== -->
+<div class="eco-topbar">
+  <div class="container d-flex justify-content-between align-items-center">
+
+    <div class="topbar-left d-flex gap-3">
+      <a href="#" class="topbar-link">
+        <i class="bi bi-phone"></i>
+        {% trans "Télécharger l’app" %}
+      </a>
+      <a href="#" class="topbar-link">
+        {% trans "Business" %}
+      </a>
+    </div>
+
+    <div class="topbar-right d-flex gap-4 align-items-center">
+
+      <!-- LANGUAGE -->
+      <div class="dropdown">
+        <a class="topbar-link dropdown-toggle" data-bs-toggle="dropdown">
+          🌍 {{ LANGUAGE_CODE|upper }}
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li><a class="dropdown-item" href="/fr/">Français</a></li>
+          <li><a class="dropdown-item" href="/en/">English</a></li>
+        </ul>
+      </div>
+
+      <!-- AUTH -->
+      {% if user.is_authenticated %}
+        <span class="topbar-link">
+          {% trans "Bienvenue" %}, <strong>{{ user.first_name|default:user.username }}</strong>
+        </span>
+      {% else %}
+        <a href="{% url 'accounts_users_web:login' %}" class="topbar-link">
+          {% trans "Connexion / Inscription" %}
+        </a>
+      {% endif %}
+
+      <!-- CART -->
+      <a href="{% url 'economic:ecommerce:cart' %}" class="topbar-cart">
+        <i class="bi bi-cart3"></i>
+        <span class="cart-badge">{{ cart_items_count|default:"0" }}</span>
+      </a>
+
+    </div>
+  </div>
+</div>
+
+<!-- ===================================================== -->
+<!-- MAIN NAV BAR -->
+<!-- ===================================================== -->
+<nav class="eco-main-nav">
+  <div class="container d-flex align-items-center gap-3">
+
+    <!-- LOGO -->
+    <a href="{% url 'economic:ecommerce:index' %}" class="eco-logo">
+      <img src="{% static 'global/image/Sogentis3.png' %}" alt="{{ PROJECT_NAME }}">
+    </a>
+
+    <!-- SEARCH -->
+    <form class="eco-search" method="get" action="{% url 'economic:ecommerce:search' %}">
+      <input type="search"
+             name="q"
+             placeholder="{% trans 'Rechercher produits, marques, services…' %}"
+             value="{{ request.GET.q }}">
+      <button type="submit">
+        <i class="bi bi-search"></i>
+      </button>
+    </form>
+
+    <!-- QUICK ACTIONS -->
+    <div class="eco-actions ms-auto d-flex gap-3">
+
+      {% if user.is_authenticated %}
+      <a href="{% url 'dashboard:index' %}" class="eco-action">
+        <i class="bi bi-speedometer2"></i>
+        <span>{% trans "Dashboard" %}</span>
+      </a>
+      {% endif %}
+
+      <a href="{% url 'economic:ecommerce:orders' %}" class="eco-action">
+        <i class="bi bi-bag-check"></i>
+        <span>{% trans "Commandes" %}</span>
+      </a>
+
+    </div>
+  </div>
+</nav>
+
+<!-- ===================================================== -->
+<!-- CATEGORY BAR -->
+<!-- ===================================================== -->
+<div class="eco-category-bar">
+  <div class="container d-flex align-items-center gap-4">
+
+    <!-- ALL CATEGORIES -->
+    <div class="eco-categories dropdown">
+      <button class="btn-category dropdown-toggle" data-bs-toggle="dropdown">
+        <i class="bi bi-list"></i>
+        {% trans "Toutes les catégories" %}
+      </button>
+
+      <!-- MEGA MENU -->
+      <div class="dropdown-menu mega-menu">
+        <div class="row">
+
+          <div class="col-md-3">
+            <h6>{% trans "Électronique" %}</h6>
+            <a href="#">Téléphones</a>
+            <a href="#">Ordinateurs</a>
+            <a href="#">Accessoires</a>
+          </div>
+
+          <div class="col-md-3">
+            <h6>{% trans "Maison & Bureau" %}</h6>
+            <a href="#">Éclairage</a>
+            <a href="#">Mobilier</a>
+            <a href="#">Sécurité</a>
+          </div>
+
+          <div class="col-md-3">
+            <h6>{% trans "Formations" %}</h6>
+            <a href="#">IT</a>
+            <a href="#">Business</a>
+            <a href="#">Design</a>
+          </div>
+
+          <div class="col-md-3">
+            <h6>{% trans "Services" %}</h6>
+            <a href="#">Développement</a>
+            <a href="#">Consulting</a>
+            <a href="#">Maintenance</a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- SHORTCUT LINKS -->
+    <a href="#" class="eco-link highlight">{% trans "Super Deals" %}</a>
+    <a href="#" class="eco-link">{% trans "Business" %}</a>
+    <a href="#" class="eco-link">{% trans "Maison & Bureau" %}</a>
+    <a href="#" class="eco-link">{% trans "Formations" %}</a>
+    <a href="#" class="eco-link">{% trans "Plus" %} ▾</a>
+
+  </div>
+</div> {% endcomment %}
+
+
+
+
+
+
+
+{% comment %} {% load static i18n %}
+
+<nav class="ecommerce-navbar">
+
+  <div class="container-fluid">
+    <div class="container d-flex align-items-center justify-content-between gap-3">
+
+      <!-- ================= LOGO ================= -->
+      <a href="{% url 'economic:ecommerce:index' %}" class="ecommerce-logo">
+        <img src="{% static 'global/image/Sogentis3.png' %}" alt="{{ PROJECT_NAME }}">
+      </a>
+
+      <!-- ================= CATEGORIES ================= -->
+      <div class="ecommerce-categories d-none d-lg-flex">
+        <button class="btn btn-light btn-sm">
+          <i class="bi bi-list"></i>
+          {% trans "Catégories" %}
+        </button>
+      </div>
+
+      <!-- ================= SEARCH ================= -->
+      <form class="ecommerce-search flex-grow-1 mx-3" method="get"
+            action="{% url 'economic:ecommerce:search' %}">
+        <input
+          type="search"
+          name="q"
+          class="form-control"
+          placeholder="{% trans 'Rechercher un produit, une marque…' %}"
+          value="{{ request.GET.q }}">
+        <button type="submit" class="btn btn-warning">
+          <i class="bi bi-search"></i>
+        </button>
+      </form>
+
+      <!-- ================= RIGHT ACTIONS ================= -->
+      <div class="ecommerce-actions d-flex align-items-center gap-3">
+
+        <!-- PANIER -->
+        <a href="{% url 'economic:ecommerce:cart' %}" class="ecommerce-cart">
+          <i class="bi bi-cart3"></i>
+          <span class="cart-count">
+            {{ cart_items_count|default:"0" }}
+          </span>
+        </a>
+
+        <!-- USER -->
+        {% if user.is_authenticated %}
+        <div class="dropdown">
+          <a class="dropdown-toggle user-menu" data-bs-toggle="dropdown">
+            <i class="bi bi-person-circle"></i>
+            {{ user.first_name|default:user.username }}
+          </a>
+
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li>
+              <a class="dropdown-item" href="{% url 'dashboard:index' %}">
+                <i class="bi bi-speedometer2"></i> {% trans "Dashboard" %}
+              </a>
+            </li>
+
+            <li>
+              <a class="dropdown-item" href="{% url 'economic:ecommerce:orders' %}">
+                <i class="bi bi-bag-check"></i> {% trans "Mes commandes" %}
+              </a>
+            </li>
+
+            <li><hr class="dropdown-divider"></li>
+
+            <li>
+              <a class="dropdown-item text-danger"
+                 href="{% url 'accounts_users:logout' %}">
+                <i class="bi bi-box-arrow-right"></i> {% trans "Déconnexion" %}
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        {% else %}
+        <a href="{% url 'accounts_users_web:login' %}" class="btn btn-outline-light btn-sm">
+          {% trans "Connexion" %}
+        </a>
+        {% endif %}
+
+      </div>
+
+    </div>
+  </div>
+
+</nav> {% endcomment %}

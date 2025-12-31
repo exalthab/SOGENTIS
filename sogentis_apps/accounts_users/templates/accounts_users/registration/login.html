@@ -1,13 +1,892 @@
+{# accounts_users/registration/login.html #}
 {% extends "accounts_users/registration/base_auth.html" %}
-{% load static i18n %}
-{% comment %}
-Template de connexion utilisateur - SOGENTIS
-{% endcomment %}
+{% load static i18n widget_tweaks %}
+
+{% block title %}{% trans "Connexion | SOGENTIS" %}{% endblock %}
+
+{% block auth_title %}{% trans "Connexion" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Accédez à votre compte SOGENTIS" %}{% endblock %}
+
+{# IMAGE SELON LE PÔLE #}
+{% block auth_bg_image %}
+    {% if auth_pole == "economic" %}
+        {% static "economic/img/business.jpg" as bg_image %}
+    {% elif auth_pole == "social" %}
+        {% static "social/img/kids1.jpg" as bg_image %}
+    {% else %}
+        {% static "global/img/auth-default.jpg" as bg_image %}
+    {% endif %}
+    {{ bg_image }}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/login.css' %}">
+{% endblock %}
+
+{% block content %}
+
+{% if auth_pole == "social" %}
+    <p class="text-muted text-center mb-3">
+        {% trans "Connexion au pôle engagement social" %}
+    </p>
+{% elif auth_pole == "economic" %}
+    <p class="text-muted text-center mb-3">
+        {% trans "Connexion au pôle économique" %}
+    </p>
+{% else %}
+    <p class="text-muted text-center mb-3">
+        {% trans "Connexion à votre espace personnel" %}
+    </p>
+{% endif %}
+
+<form method="post"
+      action="{% url 'accounts_users_web:login' %}{% if next %}?next={{ next|urlencode }}{% endif %}"
+      novalidate>
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+        <div class="alert alert-danger">
+            {{ form.non_field_errors.0 }}
+        </div>
+    {% endif %}
+
+    <div class="mb-3">
+        <label class="form-label">{{ form.username.label }}</label>
+        {% render_field form.username class="form-control" %}
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">{{ form.password.label }}</label>
+        {% render_field form.password class="form-control" %}
+    </div>
+
+    {% if next %}
+        <input type="hidden" name="next" value="{{ next }}">
+    {% endif %}
+
+    <button class="btn btn-primary w-100">
+        {% trans "Se connecter" %}
+    </button>
+</form>
+
+<div class="text-center mt-4 small">
+    <p>
+        {% trans "Pas encore de compte ?" %}
+        <a href="{% url 'accounts_users_web:register_choice' %}">
+            {% trans "Créer un compte" %}
+        </a>
+    </p>
+</div>
+
+{% endblock %}
+
+
+
+
+
+
+{% comment %} {# accounts_users/registration/login.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks %}
+
+{# -------------------------------------------------------------- #}
+{#                           SEO / TITRE                          #}
+{# -------------------------------------------------------------- #}
+{% block title %}{% trans "Connexion | SOGENTIS" %}{% endblock %}
+
+{% block auth_title %}{% trans "Connexion" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Accédez à votre compte SOGENTIS" %}{% endblock %}
+
+{# -------------------------------------------------------------- #}
+{#                     IMAGE SELON LE PÔLE                        #}
+{# -------------------------------------------------------------- #}
+{% block auth_bg_image %}
+    {% if auth_pole == "economic" %}
+        {% static "economic/img/business.jpg" %}
+    {% elif auth_pole == "social" %}
+        {% static "social/img/kids1.jpg" %}
+    {% else %}
+        {% static "global/img/auth-default.jpg" %}
+    {% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/login.css' %}">
+{% endblock %}
+
+{# -------------------------------------------------------------- #}
+{#                           CONTENU                              #}
+{# -------------------------------------------------------------- #}
+{% block content %}
+
+{# -------- TEXTE CONTEXTUEL -------- #}
+{% if auth_pole == "social" %}
+    <p class="text-muted text-center mb-3">
+        {% trans "Connexion au pôle engagement social" %}
+    </p>
+{% elif auth_pole == "economic" %}
+    <p class="text-muted text-center mb-3">
+        {% trans "Connexion au pôle économique" %}
+    </p>
+{% else %}
+    <p class="text-muted text-center mb-3">
+        {% trans "Connexion à votre espace personnel" %}
+    </p>
+{% endif %}
+
+<form method="post"
+      action="{% url 'accounts_users_web:login' %}{% if next %}?next={{ next|urlencode }}{% endif %}"
+      novalidate>
+
+    {% csrf_token %}
+
+    {# ---- Erreurs globales ---- #}
+    {% if form.non_field_errors %}
+        <div class="alert alert-danger" role="alert">
+            {{ form.non_field_errors.0 }}
+        </div>
+    {% endif %}
+
+    {# ---------------- IDENTIFIANT ---------------- #}
+    <div class="mb-3">
+        <label for="{{ form.username.id_for_label }}" class="form-label">
+            {{ form.username.label|default:_("Identifiant ou e-mail") }}
+        </label>
+
+        {% render_field form.username class="form-control" autocomplete="username" %}
+
+        {% if form.username.errors %}
+            <div class="invalid-feedback d-block">
+                {{ form.username.errors.0 }}
+            </div>
+        {% endif %}
+    </div>
+
+    {# ---------------- MOT DE PASSE ---------------- #}
+    <div class="mb-2">
+        <label for="{{ form.password.id_for_label }}" class="form-label">
+            {{ form.password.label|default:_("Mot de passe") }}
+        </label>
+
+        <div class="input-group">
+            {% render_field form.password class="form-control" autocomplete="current-password" %}
+            <button type="button"
+                    class="btn btn-outline-secondary"
+                    id="togglePassword"
+                    aria-label="{% trans 'Afficher ou masquer le mot de passe' %}">
+                <span id="togglePasswordIcon">👁️</span>
+            </button>
+        </div>
+
+        <div id="capsLockHint" class="form-text text-warning d-none mt-1">
+            {% trans "Verr. Maj activé — attention aux majuscules." %}
+        </div>
+
+        {% if form.password.errors %}
+            <div class="invalid-feedback d-block">
+                {{ form.password.errors.0 }}
+            </div>
+        {% endif %}
+    </div>
+
+    {# ---- Paramètre next ---- #}
+    {% if next %}
+        <input type="hidden" name="next" value="{{ next }}">
+    {% endif %}
+
+    {# ---- Bouton connexion ---- #}
+    <div class="d-grid mt-3">
+        <button type="submit" class="btn btn-primary w-100 py-2">
+            {% trans "Se connecter" %}
+        </button>
+    </div>
+
+</form>
+
+{# -------------------------------------------------------------- #}
+{#                       LIENS SECONDAIRES                       #}
+{# -------------------------------------------------------------- #}
+<div class="text-center mt-4 small">
+    <p class="mb-1">
+        {% trans "Pas encore de compte ?" %}
+        <a href="{% url 'accounts_users_web:register_choice' %}">
+            {% trans "Créer un compte" %}
+        </a>
+    </p>
+
+    <p class="mb-0">
+        <a href="{% url 'accounts_users_web:password_reset' %}">
+            {% trans "Mot de passe oublié ?" %}
+        </a>
+    </p>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/login.js' %}"></script>
+{% endblock %}
+
+
+
+ {% endcomment %}
+
+
+
+
+{% comment %} {# accounts_users/registration/login.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks %}
+
+{# -------------------------------------------------------------- #}
+{#                           SEO / TITRE                          #}
+{# -------------------------------------------------------------- #}
+{% block title %}{% trans "Connexion | SOGENTIS" %}{% endblock %}
+
+{% block auth_title %}{% trans "Connexion" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Accédez à votre compte SOGENTIS" %}{% endblock %}
+{% block auth_bg_image %}{% static 'social/img/kids1.jpg' %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/login.css' %}">
+{% endblock %}
+
+{# -------------------------------------------------------------- #}
+{#                           CONTENU                              #}
+{# -------------------------------------------------------------- #}
+{% block content %}
+
+<form method="post"
+      action="{% url 'accounts_users_web:login' %}{% if next %}?next={{ next|urlencode }}{% endif %}"
+      novalidate>
+
+    {% csrf_token %}
+
+    {# ---- Erreurs globales ---- #}
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger" role="alert">
+        {{ form.non_field_errors.0 }}
+      </div>
+    {% endif %}
+
+    {# ---------------------------------------------------------- #}
+    {#                       IDENTIFIANT                         #}
+    {# ---------------------------------------------------------- #}
+    <div class="mb-3">
+        <label for="{{ form.username.id_for_label }}" class="form-label">
+            {{ form.username.label|default:_("Identifiant ou e-mail") }}
+        </label>
+
+        {% render_field form.username class="form-control" autocomplete="username" %}
+
+        {% if form.username.errors %}
+            <div class="invalid-feedback d-block">
+                {{ form.username.errors.0 }}
+            </div>
+        {% endif %}
+    </div>
+
+    {# ---------------------------------------------------------- #}
+    {#                      MOT DE PASSE                         #}
+    {# ---------------------------------------------------------- #}
+    <div class="mb-2 position-relative">
+        <label for="{{ form.password.id_for_label }}" class="form-label">
+            {{ form.password.label|default:_("Mot de passe") }}
+        </label>
+
+        <div class="input-group">
+            {% render_field form.password class="form-control" autocomplete="current-password" %}
+            <button type="button"
+                    class="btn btn-outline-secondary"
+                    id="togglePassword"
+                    aria-label="{% trans 'Afficher/masquer le mot de passe' %}">
+                <span id="togglePasswordIcon">👁️</span>
+            </button>
+        </div>
+
+        <div id="capsLockHint" class="form-text text-warning d-none mt-1">
+            {% trans "Verr. Maj activé — attention aux majuscules." %}
+        </div>
+
+        {% if form.password.errors %}
+            <div class="invalid-feedback d-block">
+                {{ form.password.errors.0 }}
+            </div>
+        {% endif %}
+    </div>
+
+    {# ---- Paramètre next ---- #}
+    {% if next %}
+        <input type="hidden" name="next" value="{{ next }}">
+    {% endif %}
+
+    {# ---- Bouton connexion ---- #}
+    <div class="d-grid mt-3">
+        <button type="submit" class="btn btn-primary w-100 py-2">
+            {% trans "Se connecter" %}
+        </button>
+    </div>
+
+</form>
+
+{# -------------------------------------------------------------- #}
+{#                       LIENS SECONDAIRES                       #}
+{# -------------------------------------------------------------- #}
+<div class="text-center mt-4 small">
+    <p class="mb-1">
+        {% trans "Pas encore inscrit ?" %}
+        <a href="{% url 'accounts_users_web:signup' %}">
+            {% trans "Créer un compte" %}
+        </a>
+    </p>
+
+    <p class="mb-0">
+        <a href="{% url 'accounts_users_web:password_reset' %}">
+            {% trans "Mot de passe oublié ?" %}
+        </a>
+    </p>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/login.js' %}"></script>
+{% endblock %}
+
+ {% endcomment %}
+
+
+
+
+{% comment %} {# accounts_users/registration/login.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks %}
+
+{# --- SEO / Titre --- #}
+{% block title %}{% trans "Connexion | SOGENTIS" %}{% endblock %}
+
+{# --- Titre principal --- #}
+{% block auth_title %}{% trans "Connexion" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Accédez à votre compte SOGENTIS" %}{% endblock %}
+{% block auth_bg_image %}{% static 'social/img/kids1.jpg' %}{% endblock %}
+
+{# --- CSS spécifique à la page --- #}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/login.css' %}">
+{% endblock %}
+
+{# ------------------------------------------------------------------ #}
+{#                            CONTENU                                 #}
+{# ------------------------------------------------------------------ #}
+{% block content %}
+
+<form method="post"
+      action="{% url 'accounts_users_web:login' %}{% if next %}?next={{ next|urlencode }}{% endif %}"
+      novalidate>
+  {% csrf_token %}
+
+  {# ---- Erreurs non liées à un champ ---- #}
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger" role="alert">
+      {{ form.non_field_errors.0 }}
+    </div>
+  {% endif %}
+
+  {# ---- Champ identifiant ---- #}
+  <div class="mb-3">
+    <label for="{{ form.username.id_for_label }}" class="form-label">
+      {{ form.username.label|default:_("Identifiant ou e-mail") }}
+    </label>
+
+    {% render_field form.username class="form-control" autocomplete="username" %}
+
+    {% if form.username.errors %}
+      <div class="invalid-feedback d-block">{{ form.username.errors.0 }}</div>
+    {% endif %}
+  </div>
+
+  {# ---- Mot de passe + bouton toggle ---- #}
+  <div class="mb-2 position-relative">
+    <label for="{{ form.password.id_for_label }}" class="form-label">
+      {{ form.password.label|default:_("Mot de passe") }}
+    </label>
+
+    <div class="input-group">
+      {% render_field form.password class="form-control" autocomplete="current-password" %}
+      <button type="button"
+              class="btn btn-outline-secondary"
+              id="togglePassword"
+              aria-label="{% trans 'Afficher/masquer le mot de passe' %}">
+        <span id="togglePasswordIcon">👁️</span>
+      </button>
+    </div>
+
+    <div id="capsLockHint" class="form-text text-warning d-none mt-1">
+      {% trans "Verr. Maj activé — attention aux majuscules." %}
+    </div>
+
+    {% if form.password.errors %}
+      <div class="invalid-feedback d-block">{{ form.password.errors.0 }}</div>
+    {% endif %}
+  </div>
+
+  {# ---- Gestion du redirect (next) ---- #}
+  {% if next %}
+    <input type="hidden" name="next" value="{{ next }}">
+  {% endif %}
+
+  {# ---- Bouton connexion ---- #}
+  <div class="d-grid mt-3">
+    <button type="submit" class="btn btn-primary w-100 py-2">
+      {% trans "Se connecter" %}
+    </button>
+  </div>
+</form>
+
+{# ---- Liens secondaires ---- #}
+<div class="text-center mt-4 small">
+  <p class="mb-1">
+    {% trans "Pas encore inscrit ?" %}
+    <a href="{% url 'accounts_users_web:signup' %}">{% trans "Créer un compte" %}</a>
+  </p>
+  <p class="mb-0">
+    <a href="{% url 'accounts_users_web:password_reset' %}">
+      {% trans "Mot de passe oublié ?" %}
+    </a>
+  </p>
+</div>
+
+{% endblock %}
+
+{# --- JS spécifique --- #}
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/login.js' %}"></script>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks %}
 
 {% block title %}{% trans "Connexion | SOGENTIS" %}{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'accounts_users/css/login.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="login-container container py-4">
+  <div class="mx-auto" style="max-width: 440px;">
+
+    <div class="card shadow border-0 login-card">
+      <div class="card-body p-4">
+
+        <h3 class="text-center mb-2">{% trans "Connexion" %}</h3>
+        <p class="text-center text-muted small mb-4">
+          {% trans "Accédez à votre compte SOGENTIS" %}
+        </p>
+
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'info' }} text-center mb-3" role="status">
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+
+        <form method="post"
+              action="{% url 'accounts_users_web:login' %}{% if next %}?next={{ next|urlencode }}{% endif %}"
+              novalidate>
+          {% csrf_token %}
+
+          {% if form.non_field_errors %}
+            <div class="alert alert-danger" role="alert">
+              {{ form.non_field_errors.0 }}
+            </div>
+          {% endif %}
+
+          <!-- Username -->
+          <div class="mb-3">
+            <label class="form-label" for="{{ form.username.id_for_label }}">
+              {{ form.username.label|default:_("Identifiant ou e-mail") }}
+            </label>
+            {% render_field form.username class="form-control" autocomplete="username" %}
+            {% if form.username.help_text %}
+              <div class="form-text">{{ form.username.help_text|safe }}</div>
+            {% endif %}
+            {% if form.username.errors %}
+              <div class="invalid-feedback d-block">
+                {{ form.username.errors.0 }}
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Password -->
+          <div class="mb-2 position-relative">
+            <label class="form-label" for="{{ form.password.id_for_label }}">
+              {{ form.password.label|default:_("Mot de passe") }}
+            </label>
+
+            <div class="input-group">
+              {% render_field form.password class="form-control" autocomplete="current-password" id="id_password" %}
+              <button type="button"
+                      class="btn btn-outline-secondary"
+                      id="togglePassword"
+                      aria-label="{% trans 'Afficher/masquer le mot de passe' %}">
+                <span id="togglePasswordIcon">👁️</span>
+              </button>
+            </div>
+
+            <div id="capsLockHint" class="form-text text-warning d-none mt-1">
+              {% trans "Verr. Maj activé — attention aux majuscules." %}
+            </div>
+
+            {% if form.password.errors %}
+              <div class="invalid-feedback d-block">
+                {{ form.password.errors.0 }}
+              </div>
+            {% endif %}
+          </div>
+
+          {% if next %}
+            <input type="hidden" name="next" value="{{ next }}">
+          {% endif %}
+
+          <div class="d-grid mt-3">
+            <button type="submit" class="btn btn-primary w-100 py-2">
+              {% trans "Se connecter" %}
+            </button>
+          </div>
+        </form>
+
+        <div class="text-center mt-4 small">
+          <p class="mb-1">
+            {% trans "Pas encore inscrit ?" %}
+            <a href="{% url 'accounts_users_web:signup' %}">{% trans "Créer un compte" %}</a>
+          </p>
+          <p class="mb-0">
+            <a href="{% url 'accounts_users_web:password_reset' %}">
+              {% trans "Mot de passe oublié ?" %}
+            </a>
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/login.js' %}"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Focus
+    const u = document.getElementById("id_username");
+    if (u) u.focus();
+
+    // CapsLock hint
+    const pwd = document.getElementById("id_password");
+    const caps = document.getElementById("capsLockHint");
+    if (pwd && caps) {
+      const onKey = (e) => {
+        if (e.getModifierState && e.getModifierState("CapsLock")) {
+          caps.classList.remove("d-none");
+        } else {
+          caps.classList.add("d-none");
+        }
+      };
+      ["keyup","keydown","focus"].forEach(evt => pwd.addEventListener(evt, onKey));
+      pwd.addEventListener("blur", () => caps.classList.add("d-none"));
+    }
+
+    // Toggle password visibility
+    const toggleBtn = document.getElementById("togglePassword");
+    const icon = document.getElementById("togglePasswordIcon");
+    if (toggleBtn && pwd) {
+      toggleBtn.addEventListener("click", () => {
+        const isText = pwd.getAttribute("type") === "text";
+        pwd.setAttribute("type", isText ? "password" : "text");
+        icon.textContent = isText ? "👁️" : "🙈";
+      });
+    }
+  });
+</script>
+{% endblock %}
+
+
+ {% endcomment %}
+
+
+
+{% comment %} {% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Connexion | SOGENTIS" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/login.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="login-container container py-4">
+  <div class="mx-auto" style="max-width: 440px;">
+
+    <div class="card shadow border-0 login-card">
+      <div class="card-body p-4">
+
+        <!-- Title -->
+        <h3 class="text-center mb-2">{% trans "Connexion" %}</h3>
+        <p class="text-center text-muted small mb-4">
+          {% trans "Accédez à votre compte SOGENTIS" %}
+        </p>
+
+        <!-- Django messages -->
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'info' }} text-center mb-3" role="status">
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+
+        <!-- FORM -->
+        <form method="post"
+              action="{% url 'accounts_users_web:login' %}{% if next %}?next={{ next|urlencode }}{% endif %}"
+              novalidate>
+          {% csrf_token %}
+
+          {% if form.non_field_errors %}
+            <div class="alert alert-danger" role="alert">
+              {{ form.non_field_errors.0 }}
+            </div>
+          {% endif %}
+
+          <!-- Username -->
+          <div class="mb-3">
+            <label class="form-label" for="{{ form.username.id_for_label }}">
+              {{ form.username.label|default:_("Identifiant ou e-mail") }}
+            </label>
+            {# On garde le widget tel que défini dans le form, mais on garantit l’accessibilité #}
+            {{ form.username }}
+            {% if form.username.help_text %}
+              <div class="form-text">{{ form.username.help_text|safe }}</div>
+            {% endif %}
+            {% if form.username.errors %}
+              <div class="invalid-feedback d-block">
+                {{ form.username.errors.0 }}
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Password -->
+          <div class="mb-2 position-relative">
+            <label class="form-label" for="{{ form.password.id_for_label }}">
+              {{ form.password.label|default:_("Mot de passe") }}
+            </label>
+
+            <div class="input-group">
+              {{ form.password }}
+              <button type="button"
+                      class="btn btn-outline-secondary"
+                      id="togglePassword"
+                      aria-label="{% trans 'Afficher/masquer le mot de passe' %}">
+                <span id="togglePasswordIcon">👁️</span>
+              </button>
+            </div>
+
+            <div id="capsLockHint" class="form-text text-warning d-none mt-1">
+              {% trans "Verr. Maj activé — attention aux majuscules." %}
+            </div>
+
+            {% if form.password.errors %}
+              <div class="invalid-feedback d-block">
+                {{ form.password.errors.0 }}
+              </div>
+            {% endif %}
+          </div>
+
+          {% if next %}
+            <input type="hidden" name="next" value="{{ next }}">
+          {% endif %}
+
+          <!-- Submit -->
+          <div class="d-grid mt-3">
+            <button type="submit" class="btn btn-primary w-100 py-2">
+              {% trans "Se connecter" %}
+            </button>
+          </div>
+        </form>
+
+        <!-- LINKS -->
+        <div class="text-center mt-4 small">
+          <p class="mb-1">
+            {% trans "Pas encore inscrit ?" %}
+            <a href="{% url 'accounts_users_web:signup' %}">{% trans "Créer un compte" %}</a>
+          </p>
+          <p class="mb-0">
+            <a href="{% url 'accounts_users_web:password_reset' %}">
+              {% trans "Mot de passe oublié ?" %}
+            </a>
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/login.js' %}"></script>
+<script>
+  // Focus sur l’identifiant (si présent)
+  document.addEventListener("DOMContentLoaded", function () {
+    const u = document.getElementById("id_username");
+    if (u) u.focus();
+
+    // CapsLock hint
+    const pwd = document.getElementById("id_password");
+    const caps = document.getElementById("capsLockHint");
+    if (pwd && caps) {
+      const toggleCaps = (e) => {
+        if (e.getModifierState && e.getModifierState("CapsLock")) {
+          caps.classList.remove("d-none");
+        } else {
+          caps.classList.add("d-none");
+        }
+      };
+      ["keyup","keydown","focus"].forEach(evt => pwd.addEventListener(evt, toggleCaps));
+      pwd.addEventListener("blur", () => caps.classList.add("d-none"));
+    }
+
+    // Toggle password visibility
+    const toggleBtn = document.getElementById("togglePassword");
+    const icon = document.getElementById("togglePasswordIcon");
+    if (toggleBtn && pwd) {
+      toggleBtn.addEventListener("click", () => {
+        const isText = pwd.getAttribute("type") === "text";
+        pwd.setAttribute("type", isText ? "password" : "text");
+        icon.textContent = isText ? "👁️" : "🙈";
+      });
+    }
+  });
+</script>
+{% endblock %} {% endcomment %}
+
+
+
+
+{% comment %} {% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Connexion | SOGENTIS" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/login.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="login-container container">
+  <div class="col-md-6 col-lg-5">
+
+    <div class="card shadow border-0 login-card">
+      <div class="card-body p-4">
+
+        <!-- Title -->
+        <h3 class="text-center mb-4">{% trans "Connexion" %}</h3>
+
+        <!-- Messages -->
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} text-center mb-3">
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+
+        <!-- FORM -->
+        <form method="post" action="{% url 'accounts_users_web:login' %}{% if next %}?next={{ next|urlencode }}{% endif %}">
+          {% csrf_token %}
+
+          {% if form.non_field_errors %}
+            <div class="alert alert-danger">{{ form.non_field_errors.0 }}</div>
+          {% endif %}
+
+          <div class="mb-3">
+            <label class="form-label" for="{{ form.username.id_for_label }}">
+              {{ form.username.label }}
+            </label>
+            {{ form.username }}
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="{{ form.password.id_for_label }}">
+              {{ form.password.label }}
+            </label>
+            {{ form.password }}
+          </div>
+
+          {% if next %}
+            <input type="hidden" name="next" value="{{ next }}">
+          {% endif %}
+
+          <div class="d-grid">
+            <button type="submit" class="btn btn-primary w-100 py-2">
+              {% trans "Se connecter" %}
+            </button>
+          </div>
+        </form>
+
+        <!-- LINKS -->
+        <div class="text-center mt-4 small">
+          <p>
+            {% trans "Pas encore inscrit ?" %}
+            <a href="{% url 'accounts_users_web:signup' %}">
+              {% trans "Créer un compte" %}
+            </a>
+          </p>
+
+          <p>
+            <a href="{% url 'accounts_users_web:password_reset' %}">
+              {% trans "Mot de passe oublié ?" %}
+            </a>
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/login.js' %}"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    let loginInput = document.getElementById("id_username");
+    if (loginInput) loginInput.focus();
+  });
+</script>
+{% endblock %} {% endcomment %}
+
+
+
+
+{% comment %} {% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Connexion | SOGENTIS" %}{% endblock %}
+
+{% block extra_css %}
+
 <style>
   body {
     background-image: url("{% static 'social/img/kids1.jpg' %}");
@@ -86,7 +965,7 @@ Template de connexion utilisateur - SOGENTIS
     if (loginInput) loginInput.focus();
   });
 </script>
-{% endblock %}
+{% endblock %} {% endcomment %}
 
 
 

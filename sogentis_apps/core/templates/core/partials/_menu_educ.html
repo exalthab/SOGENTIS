@@ -1,6 +1,168 @@
 {# core/partials/_menu_educ.html #}
 {% load i18n %}
 
+<nav class="navbar navbar-expand-lg bg-light border-bottom shadow-sm sticky-top"
+     aria-label="{% trans 'Menu éducation & formations' %}">
+
+  <div class="container-fluid">
+
+    <!-- Branding -->
+    <a class="navbar-brand fw-semibold d-flex align-items-center"
+       href="{% url 'economic:formations:index' %}">
+      <i class="fa-solid fa-graduation-cap me-2"></i>
+      {% trans "Éducation & Formations" %}
+    </a>
+
+    <!-- Toggle mobile -->
+    <button class="navbar-toggler" type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#educSubnav"
+            aria-controls="educSubnav"
+            aria-expanded="false"
+            aria-label="{% trans 'Basculer la navigation' %}">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Menu -->
+    <div class="collapse navbar-collapse" id="educSubnav">
+
+      <!-- Liens principaux -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match and request.resolver_match.namespace == 'formations' %}active{% endif %}"
+             href="{% url 'economic:formations:index' %}">
+            <i class="fa-solid fa-book-open me-1"></i>
+            {% trans "Catalogue" %}
+          </a>
+        </li>
+
+        {# Parcours : si tu n’as pas encore de page dédiée, on pointe sur index #}
+        <li class="nav-item">
+          <a class="nav-link"
+             href="{% url 'economic:formations:index' %}">
+            <i class="fa-solid fa-route me-1"></i>
+            {% trans "Parcours" %}
+          </a>
+        </li>
+
+        {# Calendrier : si tu as une URL dédiée, remplace par economic:formations:calendar #}
+        <li class="nav-item">
+          <a class="nav-link"
+             href="{% url 'economic:formations:index' %}#calendar">
+            <i class="fa-regular fa-calendar-days me-1"></i>
+            {% trans "Calendrier" %}
+          </a>
+        </li>
+
+        {# Certifications : si tu as une page dédiée, remplace par economic:formations:certifications #}
+        <li class="nav-item">
+          <a class="nav-link"
+             href="{% url 'economic:formations:index' %}#certifications">
+            <i class="fa-solid fa-certificate me-1"></i>
+            {% trans "Certifications" %}
+          </a>
+        </li>
+
+        {# Formateurs : si tu as une page dédiée, remplace par economic:formations:instructors #}
+        <li class="nav-item">
+          <a class="nav-link"
+             href="{% url 'economic:formations:index' %}#instructors">
+            <i class="fa-regular fa-user me-1"></i>
+            {% trans "Formateurs" %}
+          </a>
+        </li>
+
+        {# Tarifs : si tu as une page dédiée, remplace par economic:formations:pricing #}
+        <li class="nav-item">
+          <a class="nav-link"
+             href="{% url 'economic:formations:index' %}#pricing">
+            <i class="fa-solid fa-tags me-1"></i>
+            {% trans "Tarifs" %}
+          </a>
+        </li>
+
+        {# FAQ Formations : si tu as une app support/faq, on peut pointer vers support #}
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match and request.resolver_match.namespace == 'support' %}active{% endif %}"
+             href="{% url 'economic:support:index' %}">
+            <i class="fa-regular fa-circle-question me-1"></i>
+            {% trans "FAQ" %}
+          </a>
+        </li>
+
+      </ul>
+
+      <!-- Recherche -->
+      <form class="d-flex me-3"
+            method="get"
+            action="{% url 'economic:formations:index' %}"
+            role="search">
+        <input class="form-control"
+               type="search"
+               name="q"
+               value="{{ request.GET.q }}"
+               placeholder="{% trans 'Rechercher une formation…' %}"
+               aria-label="{% trans 'Rechercher' %}">
+      </form>
+
+      <!-- Actions -->
+      <div class="d-flex gap-2">
+        <a class="btn btn-outline-primary"
+           href="{% url 'accounts_users:login' %}">
+          <i class="fa-solid fa-user-graduate me-1"></i>
+          {% trans "Espace apprenant" %}
+        </a>
+
+        <a class="btn btn-primary"
+           href="{% url 'accounts_users:signup' %}">
+          <i class="fa-solid fa-pen-to-square me-1"></i>
+          {% trans "S’inscrire" %}
+        </a>
+      </div>
+
+    </div>
+  </div>
+</nav>
+
+<!-- Bandeau informations -->
+<div class="bg-white border-bottom">
+  <div class="container-fluid py-2 d-flex flex-wrap gap-3 align-items-center">
+
+    <span>
+      <i class="fa-regular fa-circle-check me-1 text-success"></i>
+      {% trans "Certifications reconnues" %}
+    </span>
+
+    <span>
+      <i class="fa-solid fa-laptop-file me-1 text-primary"></i>
+      {% trans "Cours en présentiel & en ligne" %}
+    </span>
+
+    <span>
+      <i class="fa-solid fa-hand-holding-dollar me-1 text-warning"></i>
+      {% trans "Financements possibles" %}
+    </span>
+
+    <a href="{% url 'core:contact' %}"
+       class="ms-auto text-decoration-none">
+      <i class="fa-regular fa-envelope me-1"></i>
+      {% trans "Contact pédagogique" %}
+    </a>
+
+  </div>
+</div>
+
+
+
+
+
+
+
+
+{% comment %} {# core/partials/_menu_educ.html #}
+{% load i18n %}
+
 {# Pré-chargement silencieux des URLs #}
 {% url 'academy:courses' as edu_courses_url %}
 {% url 'academy:paths' as edu_paths_url %}
@@ -156,4 +318,4 @@
     </a>
 
   </div>
-</div>
+</div> {% endcomment %}

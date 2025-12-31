@@ -1,0 +1,224 @@
+{# templates/dashboard/admin/moderation.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Modération" %} | SOGENTIS{% endblock %}
+
+{% block dashboard_header %}
+  <i class="fas fa-shield-alt me-2 text-warning"></i>
+  {% trans "Modération" %}
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="container-fluid">
+
+  <div class="row g-4">
+    {% comment %}  Profils en attente {% endcomment %}
+    <div class="col-lg-7">
+      <div class="card shadow-sm h-100">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h2 class="h6 mb-0">
+            <i class="fas fa-user-clock me-1 text-warning"></i>
+            {% trans "Profils en attente de validation" %}
+          </h2>
+          <a href="{% url 'dashboard:pending_profiles' %}" class="btn btn-sm btn-outline-warning">
+            {% trans "Tout voir" %}
+          </a>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-sm mb-0 align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>{% trans "Utilisateur" %}</th>
+                  <th>{% trans "Type" %}</th>
+                  <th>{% trans "Statut" %}</th>
+                  <th class="text-end">{% trans "Actions" %}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for p in pending_profiles %}
+                  <tr>
+                    <td>{{ p.user.get_full_name|default:p.user.username }}</td>
+                    <td>{{ p.membership_role.label|default:"—" }}</td>
+                    <td>
+                      <span class="badge bg-warning text-dark">
+                        {% trans "En attente" %}
+                      </span>
+                    </td>
+                    <td class="text-end">
+                      <a href="{% url 'dashboard:profile_approve' p.id %}"
+                         class="btn btn-sm btn-success">
+                        <i class="fas fa-check"></i>
+                      </a>
+                      <a href="{% url 'dashboard:profile_refuse' p.id %}"
+                         class="btn btn-sm btn-danger">
+                        <i class="fas fa-times"></i>
+                      </a>
+                    </td>
+                  </tr>
+                {% empty %}
+                  <tr>
+                    <td colspan="4" class="text-center text-muted py-3">
+                      {% trans "Aucun profil en attente." %}
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% comment %} Signalements / logs placeholder {% endcomment %}
+    <div class="col-lg-5">
+      <div class="card shadow-sm h-100">
+        <div class="card-header">
+          <h2 class="h6 mb-0">
+            <i class="fas fa-flag me-1 text-danger"></i>
+            {% trans "Signalements & activité" %}
+          </h2>
+        </div>
+        <div class="card-body">
+          <p class="text-muted small">
+            {% trans "Cette section pourra afficher plus tard les contenus signalés, les logs critiques ou les actions de modération." %}
+          </p>
+
+          <ul class="list-group list-group-flush small">
+            <li class="list-group-item d-flex justify-content-between">
+              <span>{% trans "Signalements aujourd'hui" %}</span>
+              <strong>0</strong>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <span>{% trans "Profils validés ce mois" %}</span>
+              <strong>0</strong>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <span>{% trans "Profils refusés ce mois" %}</span>
+              <strong>0</strong>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}
+
+
+
+
+
+
+{% comment %} {# templates/dashboard/admin/moderation.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Modération" %} | SOGENTIS{% endblock %}
+
+{% block dashboard_header %}
+  <i class="fas fa-shield-alt me-2 text-warning"></i>
+  {% trans "Modération" %}
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="container-fluid">
+
+  <div class="row g-4">
+    <!-- Profils en attente -->
+    <div class="col-lg-7">
+      <div class="card shadow-sm h-100">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h2 class="h6 mb-0">
+            <i class="fas fa-user-clock me-1 text-warning"></i>
+            {% trans "Profils en attente de validation" %}
+          </h2>
+          <a href="{% url 'dashboard:pending_profiles' %}" class="btn btn-sm btn-outline-warning">
+            {% trans "Tout voir" %}
+          </a>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-sm mb-0 align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>{% trans "Utilisateur" %}</th>
+                  <th>{% trans "Type" %}</th>
+                  <th>{% trans "Statut" %}</th>
+                  <th class="text-end">{% trans "Actions" %}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for p in pending_profiles|default:profiles %}
+                  <tr>
+                    <td>{{ p.user.get_full_name|default:p.user.username }}</td>
+                    <td>{{ p.membership_role.label|default:"—" }}</td>
+                    <td>
+                      <span class="badge bg-warning text-dark">
+                        {% trans "En attente" %}
+                      </span>
+                    </td>
+                    <td class="text-end">
+                      <a href="{% url 'dashboard:profile_approve' p.id %}"
+                         class="btn btn-sm btn-success">
+                        <i class="fas fa-check"></i>
+                      </a>
+                      <a href="{% url 'dashboard:profile_refuse' p.id %}"
+                         class="btn btn-sm btn-danger">
+                        <i class="fas fa-times"></i>
+                      </a>
+                    </td>
+                  </tr>
+                {% empty %}
+                  <tr>
+                    <td colspan="4" class="text-center text-muted py-3">
+                      {% trans "Aucun profil en attente." %}
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Signalements / logs placeholder -->
+    <div class="col-lg-5">
+      <div class="card shadow-sm h-100">
+        <div class="card-header">
+          <h2 class="h6 mb-0">
+            <i class="fas fa-flag me-1 text-danger"></i>
+            {% trans "Signalements & activité" %}
+          </h2>
+        </div>
+        <div class="card-body">
+          <p class="text-muted small">
+            {% trans "Cette section pourra afficher plus tard les contenus signalés, les logs critiques ou les actions de modération." %}
+          </p>
+
+          <ul class="list-group list-group-flush small">
+            <li class="list-group-item d-flex justify-content-between">
+              <span>{% trans "Signalements aujourd'hui" %}</span>
+              <strong>0</strong>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <span>{% trans "Profils validés ce mois" %}</span>
+              <strong>0</strong>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <span>{% trans "Profils refusés ce mois" %}</span>
+              <strong>0</strong>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %} {% endcomment %}

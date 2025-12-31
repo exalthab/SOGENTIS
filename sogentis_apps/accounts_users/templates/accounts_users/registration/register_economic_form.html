@@ -1,0 +1,1630 @@
+{# ✅ 1) Template final (robuste) — templates/accounts_users/registration/register_economic_form.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks %}
+
+{% block title %}
+  {% if economic_type == "client" %}{% trans "Inscription Client | SOGENTIS" %}
+  {% elif economic_type == "vendor" %}{% trans "Inscription Vendeur | SOGENTIS" %}
+  {% elif economic_type == "b2b" %}{% trans "Inscription Entreprise | SOGENTIS" %}
+  {% else %}{% trans "Inscription | SOGENTIS" %}
+  {% endif %}
+{% endblock %}
+
+{% block auth_title %}
+  {% if economic_type == "client" %}{% trans "Créer un compte client" %}
+  {% elif economic_type == "vendor" %}{% trans "Créer un compte vendeur" %}
+  {% elif economic_type == "b2b" %}{% trans "Créer un compte entreprise" %}
+  {% else %}{% trans "Créer un compte" %}
+  {% endif %}
+{% endblock %}
+
+{% block auth_subtitle %}{% trans "Accès sécurisé au pôle économique SOGENTIS" %}{% endblock %}
+{% block auth_bg_image %}{% static "economic/img/business.jpg" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+<form method="post" enctype="multipart/form-data" novalidate>
+  {% csrf_token %}
+
+  {% if user_form.non_field_errors %}
+    <div class="alert alert-danger" role="alert">{{ user_form.non_field_errors }}</div>
+  {% endif %}
+  {% if profile_form.non_field_errors %}
+    <div class="alert alert-danger" role="alert">{{ profile_form.non_field_errors }}</div>
+  {% endif %}
+  {% if economic_form.non_field_errors %}
+    <div class="alert alert-danger" role="alert">{{ economic_form.non_field_errors }}</div>
+  {% endif %}
+
+  <h6 class="fw-bold mb-3">{% trans "Informations du compte" %}</h6>
+
+  {% for field in user_form %}
+    <div class="mb-3">
+      <label class="form-label" for="{{ field.id_for_label }}">
+        {{ field.label }}{% if field.field.required %}*{% endif %}
+      </label>
+
+      {% if field.field.widget.input_type == "password" %}
+        {% render_field field class="form-control" %}
+        {% if field.errors %}
+          <div class="text-danger small" aria-live="polite">{{ field.errors.0 }}</div>
+        {% endif %}
+
+        <div class="d-flex align-items-center mt-1">
+          <button type="button"
+                  class="btn btn-sm btn-outline-secondary toggle-password"
+                  data-target="{{ field.id_for_label }}"
+                  aria-label="{% trans 'Afficher le mot de passe' %}">
+            👁️
+          </button>
+        </div>
+
+        <div class="caps-lock-hint text-danger small mt-1 d-none" aria-live="polite">
+          {% trans "Attention : la touche Verr. Maj (Caps Lock) est activée." %}
+        </div>
+      {% else %}
+        {% render_field field class="form-control" %}
+        {% if field.errors %}
+          <div class="text-danger small" aria-live="polite">{{ field.errors.0 }}</div>
+        {% endif %}
+      {% endif %}
+    </div>
+  {% endfor %}
+
+  <h6 class="fw-bold mt-4 mb-3">{% trans "Profil personnel" %}</h6>
+  {% for field in profile_form %}
+    {% if field.name != "terms" %}
+      <div class="mb-3">
+        <label class="form-label" for="{{ field.id_for_label }}">
+          {{ field.label }}{% if field.field.required %}*{% endif %}
+        </label>
+
+        {% if field.field.widget.input_type == "file" %}
+          {% render_field field class="form-control" %}
+        {% elif field.field.widget.input_type == "checkbox" %}
+          <div class="form-check">
+            {% render_field field class="form-check-input" %}
+          </div>
+        {% else %}
+          {% render_field field class="form-control" %}
+        {% endif %}
+
+        {% if field.help_text %}
+          <div class="form-text">{{ field.help_text|safe }}</div>
+        {% endif %}
+        {% if field.errors %}
+          <div class="text-danger small" aria-live="polite">{{ field.errors.0 }}</div>
+        {% endif %}
+      </div>
+    {% endif %}
+  {% endfor %}
+
+  <h6 class="fw-bold mt-4 mb-3">{% trans "Informations économiques" %}</h6>
+  {% for field in economic_form %}
+    <div class="mb-3">
+      <label class="form-label" for="{{ field.id_for_label }}">
+        {{ field.label }}{% if field.field.required %}*{% endif %}
+      </label>
+
+      {% if field.field.widget.input_type == "file" %}
+        {% render_field field class="form-control" %}
+        <div class="form-text">{% trans "Formats acceptés : PDF (max 2MB selon validation)." %}</div>
+      {% else %}
+        {% render_field field class="form-control" %}
+      {% endif %}
+
+      {% if field.errors %}
+        <div class="text-danger small" aria-live="polite">{{ field.errors.0 }}</div>
+      {% endif %}
+    </div>
+  {% endfor %}
+
+  <div class="form-check mt-4">
+    {% render_field profile_form.terms class="form-check-input" %}
+    <label class="form-check-label" for="{{ profile_form.terms.id_for_label }}">
+      {% trans "J’accepte les" %}
+      <a href="{% url 'core:cgu' %}" target="_blank" rel="noopener">
+        {% trans "conditions générales" %}
+      </a>
+    </label>
+    {% if profile_form.terms.errors %}
+      <div class="text-danger small" aria-live="polite">{{ profile_form.terms.errors.0 }}</div>
+    {% endif %}
+  </div>
+
+  <div class="d-grid mt-4">
+    <button type="submit" class="btn btn-success fw-bold">
+      {% trans "Créer mon compte" %}
+    </button>
+  </div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+{% endblock %}
+
+
+
+
+
+{% comment %} {# templates/accounts_users/registration/register_economic_form.html 30/12/2025 #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks user_form_tags %}
+
+{% block title %}
+  {% if economic_type == "client" %}{% trans "Inscription Client | SOGENTIS" %}
+  {% elif economic_type == "vendor" %}{% trans "Inscription Vendeur | SOGENTIS" %}
+  {% elif economic_type == "b2b" %}{% trans "Inscription Entreprise | SOGENTIS" %}
+  {% endif %}
+{% endblock %}
+
+{% block auth_title %}
+  {% if economic_type == "client" %}{% trans "Créer un compte client" %}
+  {% elif economic_type == "vendor" %}{% trans "Créer un compte vendeur" %}
+  {% elif economic_type == "b2b" %}{% trans "Créer un compte entreprise" %}
+  {% endif %}
+{% endblock %}
+
+{% block auth_subtitle %}
+  {% trans "Accès sécurisé au pôle économique SOGENTIS" %}
+{% endblock %}
+
+{% block auth_bg_image %}
+  {% static "economic/img/business.jpg" %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+<form method="post" enctype="multipart/form-data" novalidate>
+  {% csrf_token %}
+
+  <!-- =========================
+       ERREURS GLOBALES
+  ========================== -->
+  {{ user_form.non_field_errors }}
+  {{ profile_form.non_field_errors }}
+  {{ economic_form.non_field_errors }}
+
+  <!-- =========================
+       COMPTE UTILISATEUR
+  ========================== -->
+  <h6 class="fw-bold mb-3">{% trans "Informations du compte" %}</h6>
+  {% for field in user_form %}
+    <div class="mb-3">
+      <label class="form-label">
+        {{ field.label }}{% if field.field.required %}*{% endif %}
+      </label>
+
+      {{ field }}
+
+      {% if field.field.widget.input_type == "password" %}
+        <div class="d-flex align-items-center mt-1">
+          <button type="button"
+                  class="btn btn-sm btn-outline-secondary toggle-password"
+                  data-target="{{ field.id_for_label }}"
+                  aria-label="{% trans 'Afficher le mot de passe' %}">
+            👁️
+          </button>
+        </div>
+
+        <div class="caps-lock-hint text-danger small mt-1 d-none" aria-live="polite">
+          {% trans "Attention : la touche Verr. Maj (Caps Lock) est activée." %}
+        </div>
+      {% endif %}
+
+      {% if field.errors %}
+        <div class="text-danger small" aria-live="polite">
+          {{ field.errors.0 }}
+        </div>
+      {% endif %}
+    </div>
+  {% endfor %}
+
+  <!-- =========================
+       CONFIRMATION DU MOT DE PASSE
+  ========================== -->
+  <h6 class="fw-bold mt-4 mb-3">{% trans "Confirmation du mot de passe" %}</h6>
+  <div class="mb-3">
+    <label for="id_confirm_password" class="form-label">{% trans "Confirmer le mot de passe" %}*</label>
+    <input type="password" name="confirm_password" id="id_confirm_password" class="form-control" required>
+    {% if user_form.confirm_password.errors %}
+      <div class="text-danger small" aria-live="polite">
+        {{ user_form.confirm_password.errors.0 }}
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- =========================
+       PROFIL PERSONNEL
+  ========================== -->
+  <h6 class="fw-bold mt-4 mb-3">{% trans "Profil personnel" %}</h6>
+  {% for field in profile_form %}
+    {% if field.name != "terms" %}
+      <div class="mb-3">
+        <label class="form-label">
+          {{ field.label }}{% if field.field.required %}*{% endif %}
+        </label>
+        {{ field }}
+        {% if field.errors %}
+          <div class="text-danger small">{{ field.errors.0 }}</div>
+        {% endif %}
+      </div>
+    {% endif %}
+  {% endfor %}
+
+  <!-- =========================
+       INFORMATIONS ÉCONOMIQUES
+  ========================== -->
+  <h6 class="fw-bold mt-4 mb-3">{% trans "Informations économiques" %}</h6>
+  {% for field in economic_form %}
+    <div class="mb-3">
+      <label class="form-label">
+        {{ field.label }}{% if field.field.required %}*{% endif %}
+      </label>
+      {{ field }}
+      {% if field.errors %}
+        <div class="text-danger small">{{ field.errors.0 }}</div>
+      {% endif %}
+    </div>
+  {% endfor %}
+
+  <!-- =========================
+       CONDITIONS GÉNÉRALES
+  ========================== -->
+  <div class="form-check mt-4">
+    {{ profile_form.terms }}
+    <label class="form-check-label" for="{{ profile_form.terms.id_for_label }}">
+      {% trans "J’accepte les" %}
+      <a href="{% url 'core:cgu' %}" target="_blank">
+        {% trans "conditions générales" %}
+      </a>
+    </label>
+    {% if profile_form.terms.errors %}
+      <div class="text-danger small">{{ profile_form.terms.errors.0 }}</div>
+    {% endif %}
+  </div>
+
+  <!-- =========================
+       SUBMIT
+  ========================== -->
+  <div class="d-grid mt-4">
+    <button type="submit" class="btn btn-success fw-bold">
+      {% trans "Créer mon compte" %}
+    </button>
+  </div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+{% endblock %}
+ {% endcomment %}
+
+
+
+
+
+{% comment %} {% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n user_form_tags widget_tweaks %}
+
+{% block title %}
+  {% if economic_type == "client" %} {% trans "Inscription Client | SOGENTIS" %}
+  {% elif economic_type == "vendor" %} {% trans "Inscription Vendeur | SOGENTIS" %}
+  {% elif economic_type == "b2b" %} {% trans "Inscription Entreprise | SOGENTIS" %}
+  {% endif %}
+{% endblock %}
+
+{% block auth_title %}
+  {% if economic_type == "client" %} {% trans "Créer un compte client" %}
+  {% elif economic_type == "vendor" %} {% trans "Créer un compte vendeur" %}
+  {% elif economic_type == "b2b" %} {% trans "Créer un compte entreprise" %}
+  {% endif %}
+{% endblock %}
+
+{% block auth_subtitle %} {% trans "Accès sécurisé au pôle économique SOGENTIS" %} {% endblock %}
+{% block auth_bg_image %} {% static "economic/img/business.jpg" %} {% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+<style>
+  body { font-family: Arial, sans-serif; }
+  h6 { font-weight: bold; margin-top: 1.5rem; }
+  .mb-3 { margin-bottom: 1rem; }
+  .form-control.is-invalid { border-color: #dc3545; }
+  .form-control.is-valid { border-color: #28a745; }
+  .form-check-label a { text-decoration: underline; }
+  #profile_picture { display: none; max-width: 150px; margin-top: 0.5rem; border-radius: 5px; }
+  #trade_register_document { display: block; margin-top: 0.5rem; font-style: italic; }
+</style>
+{% endblock %}
+
+{% block content %}
+{% with excluded_fields="terms judicial_record profile_picture"|split:" " %}
+<form method="post" enctype="multipart/form-data" novalidate id="economic-form">
+  {% csrf_token %}
+
+  <!-- Erreurs globales -->
+  {{ user_form.non_field_errors }}
+  {{ profile_form.non_field_errors }}
+  {{ economic_form.non_field_errors }}
+
+  <!-- Informations du compte -->
+  <h6>{% trans "Informations du compte" %}</h6>
+  {% for field in user_form %}
+    <div class="mb-3">
+      <label class="form-label">{{ field.label }}{% if field.field.required %}*{% endif %}</label>
+      {% render_field field class="form-control" %}
+      {% if field.errors %}
+        <div class="text-danger small mt-1">{{ field.errors.0 }}</div>
+      {% endif %}
+    </div>
+  {% endfor %}
+
+  <!-- Profil personnel -->
+  <h6>{% trans "Profil personnel" %}</h6>
+  {% for field in profile_form %}
+    {% if field.name not in excluded_fields %}
+      <div class="mb-3">
+        <label class="form-label">{{ field.label }}{% if field.field.required %}*{% endif %}</label>
+        {% render_field field class="form-control" %}
+        {% if field.errors %}
+          <div class="text-danger small mt-1">{{ field.errors.0 }}</div>
+        {% endif %}
+      </div>
+    {% endif %}
+  {% endfor %}
+
+  <!-- Informations économiques -->
+  <h6>{% trans "Informations économiques" %}</h6>
+  {% for field in economic_form %}
+    <div class="mb-3">
+      <label class="form-label">{{ field.label }}{% if field.field.required %}*{% endif %}</label>
+
+      {% if field.name == "profile_picture" %}
+        {% render_field field class="form-control" data-preview="profile_picture" %}
+        <img id="profile_picture" src="#" alt="Aperçu">
+      {% elif field.name == "trade_register_document" %}
+        {% render_field field class="form-control" data-preview="trade_register_document" %}
+        <span id="trade_register_document" class="small text-muted">{% trans "Aucun fichier sélectionné" %}</span>
+      {% else %}
+        {% render_field field class="form-control" %}
+      {% endif %}
+
+      {% if field.errors %}
+        <div class="text-danger small mt-1">{{ field.errors.0 }}</div>
+      {% endif %}
+    </div>
+  {% endfor %}
+
+  <!-- CGU -->
+  <div class="mb-3 form-check mt-4">
+    {% render_field profile_form.terms class="form-check-input" id="id_terms" %}
+    <label class="form-check-label" for="id_terms">
+      {% trans "J’accepte les" %}
+      <a href="{% url 'core:cgu' %}" target="_blank">{% trans "conditions générales" %}</a>
+    </label>
+    {% if profile_form.terms.errors %}
+      <div class="text-danger small mt-1">{{ profile_form.terms.errors.0 }}</div>
+    {% endif %}
+  </div>
+
+  <!-- Bouton soumission -->
+  <div class="d-grid mt-4">
+    <button type="submit" id="submit-btn" class="btn btn-success fw-bold">
+      {% trans "Créer mon compte" %}
+    </button>
+  </div>
+
+  <!-- Lien vers connexion -->
+  <div class="text-center mt-3 small">
+    <p>
+      {% trans "Déjà inscrit ?" %}
+      <a href="{% url 'accounts_users_web:login' %}?context=economic">{% trans "Se connecter" %}</a>
+    </p>
+  </div>
+</form>
+{% endwith %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/accounts_users/registration/register_economic_form.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks user_form_tags %}
+
+{% block title %}
+  {% if economic_type == "client" %}
+    {% trans "Inscription Client | SOGENTIS" %}
+  {% elif economic_type == "vendor" %}
+    {% trans "Inscription Vendeur | SOGENTIS" %}
+  {% elif economic_type == "b2b" %}
+    {% trans "Inscription Entreprise | SOGENTIS" %}
+  {% endif %}
+{% endblock %}
+
+{% block auth_title %}
+  {% if economic_type == "client" %}
+    {% trans "Créer un compte client" %}
+  {% elif economic_type == "vendor" %}
+    {% trans "Créer un compte vendeur" %}
+  {% elif economic_type == "b2b" %}
+    {% trans "Créer un compte entreprise" %}
+  {% endif %}
+{% endblock %}
+
+{% block auth_subtitle %}
+  {% trans "Accès sécurisé au pôle économique SOGENTIS" %}
+{% endblock %}
+
+{% block auth_bg_image %}
+  {% static "economic/img/business.jpg" %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+{% with excluded_fields="terms judicial_record profile_picture"|split:" " %}
+
+<form method="post" enctype="multipart/form-data" novalidate>
+  {% csrf_token %}
+
+  {{ user_form.non_field_errors }}
+  {{ profile_form.non_field_errors }}
+  {{ economic_form.non_field_errors }}
+
+  <h6 class="fw-bold mb-3">{% trans "Informations du compte" %}</h6>
+  {% for field in user_form %}
+    <div class="mb-3">
+      <label class="form-label">{{ field.label }} *</label>
+      {% render_field field class="form-control" %}
+      {{ field.errors }}
+    </div>
+  {% endfor %}
+
+  <h6 class="fw-bold mt-4 mb-3">{% trans "Profil personnel" %}</h6>
+  {% for field in profile_form %}
+    {% if field.name not in excluded_fields %}
+      <div class="mb-3">
+        <label class="form-label">{{ field.label }} *</label>
+        {% render_field field class="form-control" %}
+        {{ field.errors }}
+      </div>
+    {% endif %}
+  {% endfor %}
+
+  <h6 class="fw-bold mt-4 mb-3">{% trans "Informations économiques" %}</h6>
+  {% for field in economic_form %}
+    <div class="mb-3">
+      <label class="form-label">{{ field.label }} *</label>
+      {% if field.name in "profile_picture trade_register_document" %}
+        {% render_field field class="form-control" data-preview=field.name %}
+        {% if field.name == "profile_picture" %}
+          <img id="profile_picture" src="#" alt="Aperçu" style="display:none; max-width:150px; margin-top:10px;">
+        {% else %}
+          <span id="trade_register_document" class="small text-muted"></span>
+        {% endif %}
+      {% else %}
+        {% render_field field class="form-control" %}
+      {% endif %}
+      {{ field.errors }}
+    </div>
+  {% endfor %}
+
+  <div class="mb-3 form-check mt-4">
+    {% render_field profile_form.terms class="form-check-input" id="id_terms" %}
+    <label class="form-check-label" for="id_terms">
+      {% trans "J’accepte les" %}
+      <a href="{% url 'core:cgu' %}" target="_blank">{% trans "conditions générales" %}</a>
+    </label>
+    <div id="terms-error" class="text-danger small mt-1 d-none">
+      {% trans "Vous devez accepter les conditions générales." %}
+    </div>
+    {% if profile_form.terms.errors %}
+      <div class="text-danger small mt-1">{{ profile_form.terms.errors.0 }}</div>
+    {% endif %}
+  </div>
+
+  <div class="d-grid mt-4">
+    <button type="submit" id="submit-btn" class="btn btn-success fw-bold">
+      {% trans "Créer mon compte" %}
+    </button>
+  </div>
+</form>
+
+<div class="text-center mt-3 small">
+  <p>
+    {% trans "Déjà inscrit ?" %}
+    <a href="{% url 'accounts_users_web:login' %}?context=economic">
+      {% trans "Se connecter" %}
+    </a>
+  </p>
+</div>
+
+{% endwith %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+{% comment %} 
+{# templates/accounts_users/registration/register_economic_form.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks user_form_tags %} 
+
+{% block title %}
+  {% if economic_type == "client" %}
+    {% trans "Inscription Client | SOGENTIS" %}
+  {% elif economic_type == "vendor" %}
+    {% trans "Inscription Vendeur | SOGENTIS" %}
+  {% elif economic_type == "b2b" %}
+    {% trans "Inscription Entreprise | SOGENTIS" %}
+  {% endif %}
+{% endblock %}
+
+{% block auth_title %}
+  {% if economic_type == "client" %}
+    {% trans "Créer un compte client" %}
+  {% elif economic_type == "vendor" %}
+    {% trans "Créer un compte vendeur" %}
+  {% elif economic_type == "b2b" %}
+    {% trans "Créer un compte entreprise" %}
+  {% endif %}
+{% endblock %}
+
+{% block auth_subtitle %}
+  {% trans "Accès sécurisé au pôle économique SOGENTIS" %}
+{% endblock %}
+
+{% block auth_bg_image %}
+  {% static "economic/img/business.jpg" %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+{% with excluded_fields="terms judicial_record profile_picture"|split:" " %}
+
+<form method="post" enctype="multipart/form-data" novalidate>
+  {% csrf_token %}
+
+  {{ user_form.non_field_errors }}
+  {{ profile_form.non_field_errors }}
+  {{ economic_form.non_field_errors }}
+
+  {# ================= COMPTE UTILISATEUR ================= #}
+  <h6 class="fw-bold mb-3">{% trans "Informations du compte" %}</h6>
+
+  {% for field in user_form %}
+    <div class="mb-3">
+      <label class="form-label">{{ field.label }} *</label>
+      {% render_field field class="form-control" %}
+      {{ field.errors }}
+    </div>
+  {% endfor %}
+
+  {# ================= PROFIL COMMUN ================= #}
+  <h6 class="fw-bold mt-4 mb-3">{% trans "Profil personnel" %}</h6>
+
+  {% for field in profile_form %}
+    {% if field.name not in excluded_fields %}
+      <div class="mb-3">
+        <label class="form-label">{{ field.label }} *</label>
+        {% render_field field class="form-control" %}
+        {{ field.errors }}
+      </div>
+    {% endif %}
+  {% endfor %}
+
+  {# ================= PROFIL ÉCONOMIQUE ================= #}
+  <h6 class="fw-bold mt-4 mb-3">{% trans "Informations économiques" %}</h6>
+
+  {% for field in economic_form %}
+    <div class="mb-3">
+      <label class="form-label">{{ field.label }} *</label>
+
+      {# Champ fichiers avec preview #}
+      {% if field.name in "profile_picture trade_register_document" %}
+        {% render_field field class="form-control" data-preview=field.name %}
+        {% if field.name == "profile_picture" %}
+          <img id="profile_picture" src="#" alt="Aperçu" style="display:none; max-width:150px; margin-top:10px;">
+        {% else %}
+          <span id="trade_register_document" class="small text-muted"></span>
+        {% endif %}
+      {% else %}
+        {% render_field field class="form-control" %}
+      {% endif %}
+      {{ field.errors }}
+    </div>
+  {% endfor %}
+
+  {# ================= CONDITIONS GÉNÉRALES ================= #}
+  <div class="mb-3 form-check mt-4">
+    {% render_field profile_form.terms class="form-check-input" id="id_terms" %}
+    <label class="form-check-label" for="id_terms">
+      {% trans "J’accepte les" %}
+      <a href="{% url 'core:cgu' %}" target="_blank">{% trans "conditions générales" %}</a>
+    </label>
+
+    <div id="terms-error" class="text-danger small mt-1 d-none">
+      {% trans "Vous devez accepter les conditions générales." %}
+    </div>
+
+    {% if profile_form.terms.errors %}
+      <div class="text-danger small mt-1">
+        {{ profile_form.terms.errors.0 }}
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="d-grid mt-4">
+    <button type="submit" id="submit-btn" class="btn btn-success fw-bold">
+      {% trans "Créer mon compte" %}
+    </button>
+  </div>
+</form>
+
+<div class="text-center mt-3 small">
+  <p>
+    {% trans "Déjà inscrit ?" %}
+    <a href="{% url 'accounts_users_web:login' %}?context=economic">
+      {% trans "Se connecter" %}
+    </a>
+  </p>
+</div>
+
+{% endwith %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+{% endblock %}
+{% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/accounts_users/registration/register_economic_form.html alerte rouge ok#}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks user_form_tags %} 
+
+{% block title %}
+  {% if economic_type == "client" %}
+    {% trans "Inscription Client | SOGENTIS" %}
+  {% elif economic_type == "vendor" %}
+    {% trans "Inscription Vendeur | SOGENTIS" %}
+  {% elif economic_type == "b2b" %}
+    {% trans "Inscription Entreprise | SOGENTIS" %}
+  {% endif %}
+{% endblock %}
+
+{% block auth_title %}
+  {% if economic_type == "client" %}
+    {% trans "Créer un compte client" %}
+  {% elif economic_type == "vendor" %}
+    {% trans "Créer un compte vendeur" %}
+  {% elif economic_type == "b2b" %}
+    {% trans "Créer un compte entreprise" %}
+  {% endif %}
+{% endblock %}
+
+{% block auth_subtitle %}
+  {% trans "Accès sécurisé au pôle économique SOGENTIS" %}
+{% endblock %}
+
+{% block auth_bg_image %}
+  {% static "economic/img/business.jpg" %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+{% with excluded_fields="terms judicial_record profile_picture"|split:" " %}
+
+<form method="post" enctype="multipart/form-data" novalidate>
+  {% csrf_token %}
+
+  {{ user_form.non_field_errors }}
+  {{ profile_form.non_field_errors }}
+  {{ economic_form.non_field_errors }}
+
+  {# ================= COMPTE UTILISATEUR ================= #}
+  <h6 class="fw-bold mb-3">{% trans "Informations du compte" %}</h6>
+  {% for field in user_form %}
+    <div class="mb-3">
+      <label class="form-label">{{ field.label }} {% if field.field.required %}*{% endif %}</label>
+      {% render_field field class="form-control" %}
+      {% if field.errors %}
+        <div class="text-danger small mt-1">
+          {{ field.errors.0 }}
+        </div>
+      {% endif %}
+    </div>
+  {% endfor %}
+
+  {# ================= PROFIL COMMUN ================= #}
+  <h6 class="fw-bold mt-4 mb-3">{% trans "Profil personnel" %}</h6>
+  {% for field in profile_form %}
+    {% if field.name not in excluded_fields %}
+      <div class="mb-3">
+        <label class="form-label">{{ field.label }} {% if field.field.required %}*{% endif %}</label>
+        {% render_field field class="form-control" %}
+        {% if field.errors %}
+          <div class="text-danger small mt-1">
+            {{ field.errors.0 }}
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
+  {% endfor %}
+
+  {# ================= PROFIL ÉCONOMIQUE ================= #}
+  <h6 class="fw-bold mt-4 mb-3">{% trans "Informations économiques" %}</h6>
+  {% for field in economic_form %}
+    <div class="mb-3">
+      <label class="form-label">{{ field.label }} {% if field.field.required %}*{% endif %}</label>
+      {% render_field field class="form-control" %}
+      {% if field.errors %}
+        <div class="text-danger small mt-1">
+          {{ field.errors.0 }}
+        </div>
+      {% endif %}
+    </div>
+  {% endfor %}
+
+  {# ================= CONDITIONS GÉNÉRALES ================= #}
+  <div class="mb-3 form-check mt-4">
+    {% render_field profile_form.terms class="form-check-input" id="id_terms" %}
+    <label class="form-check-label" for="id_terms">
+      {% trans "J’accepte les" %}
+      <a href="{% url 'core:cgu' %}" target="_blank">{% trans "conditions générales" %}</a>
+    </label>
+    <div id="terms-error" class="text-danger small mt-1 d-none">
+      {% trans "Vous devez accepter les conditions générales." %}
+    </div>
+    {% if profile_form.terms.errors %}
+      <div class="text-danger small mt-1">
+        {{ profile_form.terms.errors.0 }}
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="d-grid mt-4">
+    <button type="submit" id="submit-btn" class="btn btn-success fw-bold" disabled>
+      {% trans "Créer mon compte" %}
+    </button>
+  </div>
+</form>
+
+<div class="text-center mt-3 small">
+  <p>
+    {% trans "Déjà inscrit ?" %}
+    <a href="{% url 'accounts_users_web:login' %}?context=economic">
+      {% trans "Se connecter" %}
+    </a>
+  </p>
+</div>
+
+{% endwith %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+{% comment %} {# templates/accounts_users/registration/register_economic_form.html #}
+
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks user_form_tags %}
+
+{% block title %}
+  {% if economic_type == "client" %}
+    {% trans "Inscription Client | SOGENTIS" %}
+  {% elif economic_type == "vendor" %}
+    {% trans "Inscription Vendeur | SOGENTIS" %}
+  {% elif economic_type == "b2b" %}
+    {% trans "Inscription Entreprise | SOGENTIS" %}
+  {% endif %}
+{% endblock %}
+
+{% block auth_title %}
+  {% if economic_type == "client" %}
+    {% trans "Créer un compte client" %}
+  {% elif economic_type == "vendor" %}
+    {% trans "Créer un compte vendeur" %}
+  {% elif economic_type == "b2b" %}
+    {% trans "Créer un compte entreprise" %}
+  {% endif %}
+{% endblock %}
+
+{% block auth_subtitle %}
+  {% trans "Accès sécurisé au pôle économique SOGENTIS" %}
+{% endblock %}
+
+{% block auth_bg_image %}
+  {% static "economic/img/business.jpg" %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+{% with excluded_fields="terms judicial_record profile_picture"|split:" " %}
+
+<form method="post" enctype="multipart/form-data" novalidate>
+  {% csrf_token %}
+
+  {{ user_form.non_field_errors }}
+  {{ profile_form.non_field_errors }}
+  {{ economic_form.non_field_errors }}
+
+  {# ================= COMPTE UTILISATEUR ================= #}
+  <h6 class="fw-bold mb-3">{% trans "Informations du compte" %}</h6>
+
+  {% for field in user_form %}
+    <div class="mb-3">
+      <label class="form-label">{{ field.label }} *</label>
+      {% render_field field class="form-control" %}
+      {{ field.errors }}
+    </div>
+  {% endfor %}
+
+  {# ================= PROFIL COMMUN ================= #}
+  <h6 class="fw-bold mt-4 mb-3">{% trans "Profil personnel" %}</h6>
+
+  {% for field in profile_form %}
+    {% if field.name not in excluded_fields %}
+      <div class="mb-3">
+        <label class="form-label">{{ field.label }} *</label>
+        {% render_field field class="form-control" %}
+        {{ field.errors }}
+      </div>
+    {% endif %}
+  {% endfor %}
+
+  {# ================= PROFIL ÉCONOMIQUE ================= #}
+  <h6 class="fw-bold mt-4 mb-3">{% trans "Informations économiques" %}</h6>
+
+  {% for field in economic_form %}
+    <div class="mb-3">
+      <label class="form-label">{{ field.label }} *</label>
+      {% render_field field class="form-control" %}
+      {{ field.errors }}
+    </div>
+  {% endfor %}
+
+  {# ================= CONDITIONS ================= #}
+{# ================= CONDITIONS GÉNÉRALES ================= #}
+<div class="mb-3 form-check mt-4">
+
+  {% render_field profile_form.terms class="form-check-input" id="id_terms" %}
+  
+  <label class="form-check-label" for="id_terms">
+    {% trans "J’accepte les" %}
+    <a href="{% url 'core:cgu' %}" target="_blank">
+      {% trans "conditions générales" %}
+    </a>
+  </label>
+
+  {# JS error (temps réel) #}
+  <div id="terms-error" class="text-danger small mt-1 d-none">
+    {% trans "Vous devez accepter les conditions générales." %}
+  </div>
+
+  {# Django server-side error #}
+  {% if profile_form.terms.errors %}
+    <div class="text-danger small mt-1">
+      {{ profile_form.terms.errors.0 }}
+    </div>
+  {% endif %}
+</div>
+
+<div class="d-grid mt-4">
+  <button
+    type="submit"
+    id="submit-btn"
+    class="btn btn-success fw-bold"
+    disabled
+  >
+    {% trans "Créer mon compte" %}
+  </button>
+</div>
+</form>
+
+<div class="text-center mt-3 small">
+  <p>
+    {% trans "Déjà inscrit ?" %}
+    <a href="{% url 'accounts_users_web:login' %}?context=economic">
+      {% trans "Se connecter" %}
+    </a>
+  </p>
+</div>
+
+{% endwith %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/accounts_users/registration/register_economic_form.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks %}
+
+{# ========================================================== #}
+{#                          SEO                               #}
+{# ========================================================== #}
+{% block title %}
+    {% if economic_type == "client" %}
+        {% trans "Inscription Client | SOGENTIS" %}
+    {% elif economic_type == "vendor" %}
+        {% trans "Inscription Vendeur | SOGENTIS" %}
+    {% elif economic_type == "b2b" %}
+        {% trans "Inscription Entreprise | SOGENTIS" %}
+    {% endif %}
+{% endblock %}
+
+{# ========================================================== #}
+{#                    TITRES CONTEXTUELS                      #}
+{# ========================================================== #}
+{% block auth_title %}
+    {% if economic_type == "client" %}
+        {% trans "Créer un compte client" %}
+    {% elif economic_type == "vendor" %}
+        {% trans "Créer un compte vendeur" %}
+    {% elif economic_type == "b2b" %}
+        {% trans "Créer un compte entreprise" %}
+    {% endif %}
+{% endblock %}
+
+{% block auth_subtitle %}
+    {% if economic_type == "client" %}
+        {% trans "Accédez au e-commerce et aux services en ligne." %}
+    {% elif economic_type == "vendor" %}
+        {% trans "Vendez vos produits et gérez vos commandes." %}
+    {% elif economic_type == "b2b" %}
+        {% trans "Accédez aux solutions professionnelles et partenariats." %}
+    {% endif %}
+{% endblock %}
+
+{# ========================================================== #}
+{#                  IMAGE CONTEXTUELLE                        #}
+{# ========================================================== #}
+{% block auth_bg_image %}
+    {% static "economic/img/business.jpg" %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{# ========================================================== #}
+{#                         CONTENU                            #}
+{# ========================================================== #}
+{% block content %}
+
+<form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+
+    {# ====================================================== #}
+    {#                MESSAGES / ERREURS                      #}
+    {# ====================================================== #}
+    {{ user_form.non_field_errors }}
+    {{ profile_form.non_field_errors }}
+    {{ economic_form.non_field_errors }}
+
+    {# ====================================================== #}
+    {#                INFORMATIONS UTILISATEUR                #}
+    {# ====================================================== #}
+    <h6 class="fw-bold mb-3">{% trans "Informations du compte" %}</h6>
+
+    {% for field in user_form %}
+        <div class="mb-3">
+            <label class="form-label" for="{{ field.id_for_label }}">
+                {{ field.label }}{% if field.field.required %} *{% endif %}
+            </label>
+            {% render_field field class="form-control" %}
+            {% if field.errors %}
+                <div class="text-danger small">{{ field.errors|join:", " }}</div>
+            {% endif %}
+        </div>
+    {% endfor %}
+
+    {# ====================================================== #}
+    {#                PROFIL COMMUN                           #}
+    {# ====================================================== #}
+    <h6 class="fw-bold mt-4 mb-3">{% trans "Profil personnel" %}</h6>
+
+    {% for field in profile_form %}
+        {% if field.name not in "terms judicial_record profile_picture" %}
+            <div class="mb-3">
+                <label class="form-label" for="{{ field.id_for_label }}">
+                    {{ field.label }}{% if field.field.required %} *{% endif %}
+                </label>
+                {% render_field field class="form-control" %}
+                {% if field.errors %}
+                    <div class="text-danger small">{{ field.errors|join:", " }}</div>
+                {% endif %}
+            </div>
+        {% endif %}
+    {% endfor %}
+
+    {# ====================================================== #}
+    {#           PROFIL ÉCONOMIQUE SPÉCIALISÉ                 #}
+    {# ====================================================== #}
+    <h6 class="fw-bold mt-4 mb-3">
+        {% trans "Informations économiques" %}
+    </h6>
+
+    {% for field in economic_form %}
+        <div class="mb-3">
+            <label class="form-label" for="{{ field.id_for_label }}">
+                {{ field.label }}{% if field.field.required %} *{% endif %}
+            </label>
+            {% render_field field class="form-control" %}
+            {% if field.errors %}
+                <div class="text-danger small">{{ field.errors|join:", " }}</div>
+            {% endif %}
+        </div>
+    {% endfor %}
+
+    {# ====================================================== #}
+    {#                     CONDITIONS                         #}
+    {# ====================================================== #}
+    <div class="mb-3 form-check mt-4">
+        {{ profile_form.terms }}
+        <label class="form-check-label" for="{{ profile_form.terms.id_for_label }}">
+            {% trans "J’accepte les conditions générales" %}
+        </label>
+        {% for error in profile_form.terms.errors %}
+            <div class="text-danger small">{{ error }}</div>
+        {% endfor %}
+    </div>
+
+    {# ====================================================== #}
+    {#                      SUBMIT                            #}
+    {# ====================================================== #}
+    <div class="d-grid mt-4">
+        <button type="submit" class="btn btn-success py-2 fw-bold">
+            {% trans "Créer mon compte" %}
+        </button>
+    </div>
+</form>
+
+<div class="text-center mt-3 small">
+    <p>
+        {% trans "Déjà inscrit ?" %}
+        <a href="{% url 'accounts_users_web:login' %}?context=economic">
+            {% trans "Se connecter" %}
+        </a>
+    </p>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+{% endblock %}
+ {% endcomment %}
+
+
+
+
+
+
+{% comment %} {% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks %}
+
+{% block title %}
+    {% if economic_type == "client" %}
+        {% trans "Inscription Client | SOGENTIS" %}
+    {% elif economic_type == "vendor" %}
+        {% trans "Inscription Vendeur | SOGENTIS" %}
+    {% elif economic_type == "b2b" %}
+        {% trans "Inscription Entreprise | SOGENTIS" %}
+    {% endif %}
+{% endblock %}
+
+{% block auth_title %}
+    {% if economic_type == "client" %}
+        {% trans "Créer un compte client" %}
+    {% elif economic_type == "vendor" %}
+        {% trans "Créer un compte vendeur" %}
+    {% elif economic_type == "b2b" %}
+        {% trans "Créer un compte entreprise" %}
+    {% endif %}
+{% endblock %}
+
+{% block auth_subtitle %}
+    {% if economic_type == "client" %}
+        {% trans "Accédez au e-commerce et aux services en ligne." %}
+    {% elif economic_type == "vendor" %}
+        {% trans "Vendez vos produits et gérez vos commandes." %}
+    {% elif economic_type == "b2b" %}
+        {% trans "Accédez aux solutions professionnelles et partenariats." %}
+    {% endif %}
+{% endblock %}
+
+{% block auth_bg_image %}
+    {% static "economic/img/business.jpg" %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+
+    {{ form.non_field_errors }}
+    {{ profile_form.non_field_errors }}
+
+    <!-- UTILISATEUR -->
+    {% for field in form %}
+        <div class="mb-3">
+            <label class="form-label">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
+            {{ field }}
+            {% if field.errors %}
+                <div class="text-danger small">{{ field.errors|join:", " }}</div>
+            {% endif %}
+        </div>
+    {% endfor %}
+
+    <!-- PROFIL -->
+    {% for field in profile_form %}
+        {% if field.name not in "membership_role role" %}
+            <div class="mb-3">
+                <label class="form-label">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <div class="text-danger small">{{ field.errors|join:", " }}</div>
+                {% endif %}
+            </div>
+        {% endif %}
+    {% endfor %}
+
+    {% if economic_type != "client" %}
+        <div class="alert alert-warning small">
+            {% trans "Les comptes vendeurs et entreprises nécessitent une validation manuelle." %}
+        </div>
+    {% endif %}
+
+    <div class="d-grid mt-3">
+        <button type="submit" class="btn btn-success py-2 fw-bold">
+            {% trans "Créer mon compte" %}
+        </button>
+    </div>
+</form>
+
+<div class="text-center mt-3 small">
+    <p>
+        {% trans "Déjà inscrit ?" %}
+        <a href="{% url 'accounts_users_web:login' %}?context=economic">
+            {% trans "Se connecter" %}
+        </a>
+    </p>
+</div>
+
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/accounts_users/registration/register_economic_form.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks %}
+
+{# ========================================================== #}
+{#                          SEO                               #}
+{# ========================================================== #}
+{% block title %}
+    {% if economic_type == "client" %}
+        {% trans "Inscription Client | SOGENTIS" %}
+    {% elif economic_type == "vendor" %}
+        {% trans "Inscription Vendeur | SOGENTIS" %}
+    {% elif economic_type == "b2b" %}
+        {% trans "Inscription Entreprise | SOGENTIS" %}
+    {% endif %}
+{% endblock %}
+
+{% block auth_title %}
+    {% if economic_type == "client" %}
+        {% trans "Créer un compte client" %}
+    {% elif economic_type == "vendor" %}
+        {% trans "Créer un compte vendeur" %}
+    {% elif economic_type == "b2b" %}
+        {% trans "Créer un compte entreprise" %}
+    {% endif %}
+{% endblock %}
+
+{% block auth_subtitle %}
+    {% if economic_type == "client" %}
+        {% trans "Accédez au e-commerce et aux services en ligne." %}
+    {% elif economic_type == "vendor" %}
+        {% trans "Vendez vos produits et gérez vos commandes." %}
+    {% elif economic_type == "b2b" %}
+        {% trans "Accédez aux solutions professionnelles et partenariats." %}
+    {% endif %}
+{% endblock %}
+
+{# ========================================================== #}
+{#                  IMAGE CONTEXTUELLE                        #}
+{# ========================================================== #}
+{% block auth_bg_image %}
+    {% static "economic/img/business.jpg" %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{# ========================================================== #}
+{#                         CONTENU                            #}
+{# ========================================================== #}
+{% block content %}
+
+<form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+
+    {{ form.non_field_errors }}
+    {{ profile_form.non_field_errors }}
+
+    {# ====================================================== #}
+    {#                INFOS UTILISATEUR                       #}
+    {# ====================================================== #}
+    {% for field in form %}
+        <div class="mb-3">
+            <label class="form-label" for="{{ field.id_for_label }}">
+                {{ field.label }}{% if field.field.required %} *{% endif %}
+            </label>
+            {{ field }}
+            {% if field.errors %}
+                <div class="text-danger small">{{ field.errors|join:", " }}</div>
+            {% endif %}
+        </div>
+    {% endfor %}
+
+    {# ====================================================== #}
+    {#                PROFIL ÉCONOMIQUE                       #}
+    {# ====================================================== #}
+    {% for field in profile_form %}
+        {% if field.name not in "terms judicial_record profile_picture" %}
+            <div class="mb-3">
+                <label class="form-label" for="{{ field.id_for_label }}">
+                    {{ field.label }}{% if field.field.required %} *{% endif %}
+                </label>
+                {{ field }}
+                {% if field.errors %}
+                    <div class="text-danger small">{{ field.errors|join:", " }}</div>
+                {% endif %}
+            </div>
+        {% endif %}
+    {% endfor %}
+
+    {# ====================================================== #}
+    {#          CHAMPS SPÉCIFIQUES VENDEUR / B2B              #}
+    {# ====================================================== #}
+    {% if economic_type == "vendor" or economic_type == "b2b" %}
+        <div class="alert alert-warning small">
+            {% trans "Les comptes vendeurs et entreprises nécessitent une validation manuelle avant activation." %}
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label" for="{{ profile_form.company_name.id_for_label }}">
+                {{ profile_form.company_name.label }} *
+            </label>
+            {{ profile_form.company_name }}
+            {% for error in profile_form.company_name.errors %}
+                <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label" for="{{ profile_form.company_document.id_for_label }}">
+                {{ profile_form.company_document.label }} *
+            </label>
+            {{ profile_form.company_document }}
+            {% for error in profile_form.company_document.errors %}
+                <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {# ====================================================== #}
+    {#                       TERMS                            #}
+    {# ====================================================== #}
+    <div class="mb-3 form-check">
+        {{ profile_form.terms }}
+        <label class="form-check-label" for="{{ profile_form.terms.id_for_label }}">
+            {% trans "J’accepte les conditions générales" %}
+        </label>
+        {% for error in profile_form.terms.errors %}
+            <div class="text-danger small">{{ error }}</div>
+        {% endfor %}
+    </div>
+
+    {# ====================================================== #}
+    {#                     SUBMIT                             #}
+    {# ====================================================== #}
+    <div class="d-grid mt-3">
+        <button type="submit" class="btn btn-success py-2 fw-bold">
+            {% trans "Créer mon compte" %}
+        </button>
+    </div>
+</form>
+
+<div class="text-center mt-3 small">
+    <p>
+        {% trans "Déjà inscrit ?" %}
+        <a href="{% url 'accounts_users_web:login' %}?context=economic">
+            {% trans "Se connecter" %}
+        </a>
+    </p>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+{% endblock %}
+ {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# /accounts_users/registration/register_economic_form.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n %}
+
+{% block title %}
+  {% if economic_type == "client" %}
+    {% trans "Créer un compte client | SOGENTIS" %}
+  {% elif economic_type == "vendor" %}
+    {% trans "Créer un compte vendeur | SOGENTIS" %}
+  {% elif economic_type == "b2b" %}
+    {% trans "Créer un compte entreprise | SOGENTIS" %}
+  {% else %}
+    {% trans "S'inscrire | SOGENTIS" %}
+  {% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="auth-shell py-4">
+  <div class="auth-card mx-auto">
+    <div class="card-body">
+
+      <!-- ===== TITRE DYNAMIQUE ===== -->
+      <h3 class="text-center mb-2 fw-bold">
+        {% if economic_type == "client" %}
+          {% trans "Créer un compte client" %}
+        {% elif economic_type == "vendor" %}
+          {% trans "Créer un compte vendeur" %}
+        {% elif economic_type == "b2b" %}
+          {% trans "Créer un compte entreprise" %}
+        {% else %}
+          {% trans "Créer un compte" %}
+        {% endif %}
+      </h3>
+
+      <!-- ===== SOUS-TITRE ===== -->
+      {% if economic_type %}
+        <p class="text-center text-muted mb-4">
+          {% if economic_type == "client" %}
+            {% trans "Accédez aux services et effectuez vos achats en toute simplicité." %}
+          {% elif economic_type == "vendor" %}
+            {% trans "Vendez vos produits et gérez votre activité sur la plateforme." %}
+          {% elif economic_type == "b2b" %}
+            {% trans "Créez un compte entreprise et collaborez avec notre réseau économique." %}
+          {% endif %}
+        </p>
+      {% endif %}
+
+      <!-- ===== MESSAGES DJANGO ===== -->
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} text-center" role="alert">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      <!-- ===== MESSAGE SUCCÈS ===== -->
+      {% if account_created %}
+        <div class="alert alert-success text-center" role="alert">
+          {% trans "Votre compte a été créé avec succès. Vous allez être redirigé vers la page d’accueil…" %}
+        </div>
+        <script>
+          setTimeout(() => {
+            window.location.href = "{% url 'home' %}";
+          }, 5000);
+        </script>
+      {% endif %}
+
+      <!-- ===== FORMULAIRE ===== -->
+      <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+
+        {% if economic_type %}
+          <input type="hidden" name="economic_type" value="{{ economic_type }}">
+        {% endif %}
+
+        {{ form.non_field_errors }}
+        {{ profile_form.non_field_errors }}
+
+        <!-- ===== USER FORM ===== -->
+        {% for field in form %}
+          <div class="mb-3">
+            <label class="form-label" for="{{ field.id_for_label }}">
+              {{ field.label }}{% if field.field.required %} *{% endif %}
+            </label>
+            {{ field }}
+            {% if field.errors %}
+              <div class="text-danger small">
+                {{ field.errors|join:", " }}
+              </div>
+            {% endif %}
+          </div>
+        {% endfor %}
+
+        <!-- ===== PROFILE FORM (SAUF SPÉCIAUX) ===== -->
+        {% for field in profile_form %}
+          {% if field.name not in "terms judicial_record profile_picture" %}
+            <div class="mb-3">
+              <label class="form-label" for="{{ field.id_for_label }}">
+                {{ field.label }}{% if field.field.required %} *{% endif %}
+              </label>
+              {{ field }}
+              {% if field.errors %}
+                <div class="text-danger small">
+                  {{ field.errors|join:", " }}
+                </div>
+              {% endif %}
+            </div>
+          {% endif %}
+        {% endfor %}
+
+        <!-- ===== PHOTO DE PROFIL ===== -->
+        <div class="mb-3">
+          <label class="form-label" for="{{ profile_form.profile_picture.id_for_label }}">
+            {{ profile_form.profile_picture.label }}
+          </label>
+          {{ profile_form.profile_picture }}
+          {% for error in profile_form.profile_picture.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- ===== CASIER JUDICIAIRE (PDF) ===== -->
+        <div class="mb-3">
+          <label class="form-label" for="{{ profile_form.judicial_record.id_for_label }}">
+            {{ profile_form.judicial_record.label }} *
+          </label>
+          {{ profile_form.judicial_record }}
+          {% for error in profile_form.judicial_record.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+          <div id="pdf-preview" class="mt-2"></div>
+        </div>
+
+        <!-- ===== CONDITIONS ===== -->
+        <div class="mb-3 form-check">
+          {{ profile_form.terms }}
+          <label class="form-check-label" for="{{ profile_form.terms.id_for_label }}">
+            {% trans "J'accepte les conditions générales et confirme sur mon honneur que mon identification est authentique" %}
+          </label>
+          {% for error in profile_form.terms.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        {% if next %}
+          <input type="hidden" name="next" value="{{ next }}">
+        {% endif %}
+
+        <div class="d-grid">
+          <button type="submit" class="btn btn-success py-2 fw-bold">
+            {% trans "S'inscrire" %}
+          </button>
+        </div>
+      </form>
+
+      <!-- ===== LIEN LOGIN ===== -->
+      <div class="text-center mt-3">
+        <small>
+          {% trans "Déjà inscrit ?" %}
+          <a href="{% url 'accounts_users_web:login_economic' %}">
+            {% trans "Se connecter" %}
+          </a>
+        </small>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const input = document.getElementById("id_judicial_record");
+    const preview = document.getElementById("pdf-preview");
+
+    if (input) {
+      input.addEventListener("change", () => {
+        const file = input.files[0];
+        if (!file) return;
+
+        if (file.type === "application/pdf") {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            preview.innerHTML = `
+              <embed src="${e.target.result}"
+                     type="application/pdf"
+                     width="100%"
+                     height="300px"
+                     class="rounded border" />
+            `;
+          };
+          reader.readAsDataURL(file);
+        } else {
+          preview.innerHTML = `
+            <p class="text-danger fw-semibold">
+              {% trans "Format non pris en charge. Le fichier doit être en PDF." %}
+            </p>
+          `;
+        }
+      });
+    }
+  });
+</script>
+{% endblock %} {% endcomment %}

@@ -1,0 +1,123 @@
+{# templates/economic/ecommerce/product_list.html #}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Boutique" %} | SOGENTIS{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'economic/css/ecommerce.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="shop-hero">
+  <div class="container">
+    <div class="shop-hero__row">
+      <div>
+        <h1 class="shop-title">🛒 {% trans "Boutique SOGENTIS" %}</h1>
+        <p class="shop-subtitle">{% trans "Produits fiables, expérience simple, commande rapide." %}</p>
+      </div>
+
+      <form class="shop-search" method="get">
+        <input type="search" name="q" value="{{ request.GET.q }}" placeholder="{% trans 'Rechercher un produit…' %}" aria-label="{% trans 'Rechercher' %}">
+        <button class="btn btn-primary" type="submit">{% trans "Rechercher" %}</button>
+      </form>
+    </div>
+
+    <div class="shop-filters">
+      <div class="shop-filters__left">
+        <select name="category" form="filtersForm" class="shop-select">
+          <option value="">{% trans "Toutes catégories" %}</option>
+          {% for c in categories %}
+            <option value="{{ c.id }}" {% if request.GET.category == c.id|stringformat:"s" %}selected{% endif %}>
+              {{ c.name }}
+            </option>
+          {% endfor %}
+        </select>
+
+        <select name="sort" form="filtersForm" class="shop-select">
+          <option value="">{% trans "Trier par" %}</option>
+          <option value="new" {% if request.GET.sort == "new" %}selected{% endif %}>{% trans "Nouveautés" %}</option>
+          <option value="price_asc" {% if request.GET.sort == "price_asc" %}selected{% endif %}>{% trans "Prix croissant" %}</option>
+          <option value="price_desc" {% if request.GET.sort == "price_desc" %}selected{% endif %}>{% trans "Prix décroissant" %}</option>
+        </select>
+      </div>
+
+      <div class="shop-filters__right">
+        <form id="filtersForm" method="get" class="shop-inline">
+          {# conserve q #}
+          {% if request.GET.q %}<input type="hidden" name="q" value="{{ request.GET.q }}">{% endif %}
+          <button class="btn btn-outline" type="submit">⚙️ {% trans "Appliquer" %}</button>
+          <a class="btn btn-ghost" href="?">{% trans "Réinitialiser" %}</a>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="shop-section">
+  <div class="container">
+    <div class="shop-grid">
+      {% for product in products %}
+        <article class="p-card">
+          <a class="p-card__media" href="{% url 'economic:product_detail' product.slug %}">
+            {% if product.main_image %}
+              <img src="{{ product.main_image.url }}" alt="{{ product.name }}">
+            {% else %}
+              <div class="p-card__placeholder">📦</div>
+            {% endif %}
+            {% if product.is_featured %}<span class="p-badge p-badge--hot">{% trans "Populaire" %}</span>{% endif %}
+            {% if not product.is_active %}<span class="p-badge p-badge--off">{% trans "Indisponible" %}</span>{% endif %}
+          </a>
+
+          <div class="p-card__body">
+            <h3 class="p-card__title">
+              <a href="{% url 'economic:product_detail' product.slug %}">{{ product.name }}</a>
+            </h3>
+            <div class="p-card__meta">
+              <span class="p-price">{{ product.price }} {{ CURRENCY|default:"XOF" }}</span>
+              {% if product.stock is not None %}
+                <span class="p-stock {% if product.stock > 0 %}in{% else %}out{% endif %}">
+                  {% if product.stock > 0 %}{% trans "En stock" %}{% else %}{% trans "Rupture" %}{% endif %}
+                </span>
+              {% endif %}
+            </div>
+
+            <div class="p-card__actions">
+              <a class="btn btn-outline w-100" href="{% url 'economic:product_detail' product.slug %}">
+                {% trans "Voir détails" %}
+              </a>
+              {% if product.is_active %}
+              <form method="post" action="{% url 'economic:add_to_cart' product.id %}" class="w-100">
+                {% csrf_token %}
+                <button class="btn btn-primary w-100" type="submit">➕ {% trans "Ajouter" %}</button>
+              </form>
+              {% endif %}
+            </div>
+          </div>
+        </article>
+      {% empty %}
+        <div class="shop-empty">
+          <h3>{% trans "Aucun produit trouvé." %}</h3>
+          <p class="eco-muted">{% trans "Essayez un autre mot-clé ou réinitialisez les filtres." %}</p>
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if is_paginated %}
+      <div class="shop-pagination">
+        {% if page_obj.has_previous %}
+          <a class="btn btn-ghost" href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{% trans "Précédent" %}</a>
+        {% endif %}
+        <span class="shop-page">{% trans "Page" %} {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+          <a class="btn btn-ghost" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{% trans "Suivant" %}</a>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'economic/js/ecommerce.js' %}"></script>
+{% endblock %}

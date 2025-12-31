@@ -1,0 +1,49 @@
+{# templates/accounts_users/auth/choice.html #}
+{% extends "main.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="container py-5 text-center">
+    <h1>{% trans "Se connecter ou s’inscrire" %}</h1>
+
+    <div class="row justify-content-center mt-4 g-4">
+
+        <!-- SOCIAL -->
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5>{% trans "Engagement social" %}</h5>
+                    <p>{% trans "Donateurs, membres, volontaires." %}</p>
+                    <a href="{% url 'accounts_users_web:social_login' %}"
+                       class="btn btn-primary w-100 mb-2">
+                        {% trans "Se connecter" %}
+                    </a>
+                    <a href="{% url 'accounts_users_web:social_register' %}"
+                       class="btn btn-outline-primary w-100">
+                        {% trans "S’inscrire" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ECONOMIQUE -->
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5>{% trans "Pôle économique" %}</h5>
+                    <p>{% trans "Clients, vendeurs, entreprises." %}</p>
+                    <a href="{% url 'accounts_users_web:login_economic' %}"
+                       class="btn btn-success w-100 mb-2">
+                        {% trans "Se connecter" %}
+                    </a>
+                    <a href="{% url 'accounts_users_web:register_choice' %}"
+                       class="btn btn-outline-success w-100">
+                        {% trans "S’inscrire" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

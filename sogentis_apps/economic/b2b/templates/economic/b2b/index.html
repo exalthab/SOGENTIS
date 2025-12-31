@@ -1,0 +1,14 @@
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block content %}
+<h1>{% trans "Dashboard entreprise" %}</h1>
+
+<p><strong>{{ company.name }}</strong></p>
+
+<ul>
+  <li>{% trans "Utilisateurs" %}: {{ stats.users_count }}</li>
+  <li>{% trans "Commandes" %}: {{ stats.orders_count }}</li>
+  <li>{% trans "Total dépensé" %}: {{ stats.total_spent }}</li>
+</ul>
+{% endblock %}

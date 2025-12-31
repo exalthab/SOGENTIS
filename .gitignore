@@ -5,3 +5,10 @@ __pycache__/
 .env.dev
 .gitignore
 .env.prod
+.env.test
+.DS_Store
+.idea/
+.vscode/
+.env.local
+.env.email
+

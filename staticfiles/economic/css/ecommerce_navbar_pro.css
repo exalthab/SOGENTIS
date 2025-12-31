@@ -1,0 +1,105 @@
+/* ================= TOPBAR ================= */
+.eco-topbar {
+    background: #f8f9fa;
+    font-size: .85rem;
+    padding: .4rem 0;
+}
+
+.topbar-link {
+    color: #333;
+    text-decoration: none;
+}
+
+.topbar-cart {
+    position: relative;
+    color: #111;
+}
+
+.cart-badge {
+    position: absolute;
+    top: -6px;
+    right: -8px;
+    background: #ef4444;
+    color: #fff;
+    font-size: .65rem;
+    padding: 2px 6px;
+    border-radius: 50%;
+}
+
+/* ================= MAIN NAV ================= */
+.eco-main-nav {
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    padding: .8rem 0;
+}
+
+.eco-logo img {
+    height: 42px;
+}
+
+.eco-search {
+    display: flex;
+    flex-grow: 1;
+    max-width: 640px;
+}
+
+.eco-search input {
+    flex: 1;
+    padding: .55rem .75rem;
+    border: 2px solid #111;
+    border-right: none;
+    border-radius: .4rem 0 0 .4rem;
+}
+
+.eco-search button {
+    background: #111;
+    color: #fff;
+    border: none;
+    padding: 0 1rem;
+    border-radius: 0 .4rem .4rem 0;
+}
+
+/* ================= CATEGORY BAR ================= */
+.eco-category-bar {
+    background: #111;
+    color: #fff;
+    padding: .5rem 0;
+}
+
+.btn-category {
+    background: #fff;
+    color: #111;
+    border-radius: 999px;
+    padding: .4rem 1rem;
+    font-weight: 600;
+    border: none;
+}
+
+.eco-link {
+    color: #fff;
+    text-decoration: none;
+    font-size: .9rem;
+}
+
+.eco-link.highlight {
+    color: #ff4d4f;
+    font-weight: 700;
+}
+
+/* ================= MEGA MENU ================= */
+.mega-menu {
+    width: 900px;
+    padding: 1.2rem;
+}
+
+.mega-menu h6 {
+    font-weight: 700;
+}
+
+.mega-menu a {
+    display: block;
+    font-size: .85rem;
+    color: #333;
+    text-decoration: none;
+    margin-bottom: .4rem;
+}

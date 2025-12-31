@@ -1,0 +1,105 @@
+# /economic/permissions.py
+# =====================================================
+# Policy de base : rôles économiques
+# =====================================================
+
+from django.conf import settings
+
+# -----------------------------------------------------
+# UTILITAIRES
+# -----------------------------------------------------
+
+def is_authenticated_user(user):
+    """Utilisateur connecté"""
+    return bool(user and user.is_authenticated)
+
+
+def is_staff(user):
+    """Utilisateur staff / admin Django"""
+    return is_authenticated_user(user) and user.is_staff
+
+
+# -----------------------------------------------------
+# VENDOR (Marketplace)
+# -----------------------------------------------------
+
+def is_vendor(user):
+    """
+    Utilisateur lié à un profil vendeur (Marketplace)
+    Défensif : ne crash pas si relation absente
+    """
+    return is_authenticated_user(user) and hasattr(user, "vendor")
+
+
+def is_verified_vendor(user):
+    """
+    Vendeur vérifié par l'administrateur
+    """
+    return is_vendor(user) and getattr(user.vendor, "is_verified", False)
+
+
+# -----------------------------------------------------
+# B2B (Entreprise)
+# -----------------------------------------------------
+
+def is_b2b_user(user):
+    """
+    Utilisateur rattaché à une entreprise B2B
+    """
+    return is_authenticated_user(user) and hasattr(user, "company_user")
+
+
+def is_b2b_admin(user):
+    """
+    Admin d'une entreprise B2B
+    """
+    return is_b2b_user(user) and getattr(user.company_user, "is_admin", False)
+
+
+def is_b2b_manager(user):
+    """
+    Alias explicite pour un manager B2B (admin ou responsable)
+    """
+    return is_b2b_admin(user)
+
+
+# -----------------------------------------------------
+# NIVEAU PRINCIPAL
+# -----------------------------------------------------
+
+def get_user_level(user):
+    """
+    Retourne le niveau principal de l'utilisateur selon la hiérarchie :
+
+    public → user → vendor → verified_vendor → b2b → b2b_admin → staff
+    """
+    if not is_authenticated_user(user):
+        return "public"
+
+    if is_staff(user):
+        return "staff"
+
+    if is_b2b_admin(user):
+        return "b2b_admin"
+
+    if is_b2b_user(user):
+        return "b2b"
+
+    if is_verified_vendor(user):
+        return "verified_vendor"
+
+    if is_vendor(user):
+        return "vendor"
+
+    return "user"
+
+
+
+# # sogentis_apps/economic/permissions.py
+# """
+# Permissions globales du pôle économique
+# (extensions futures possibles)
+# """
+
+# def is_economic_staff(user):
+#     return bool(user and user.is_authenticated and user.is_staff)

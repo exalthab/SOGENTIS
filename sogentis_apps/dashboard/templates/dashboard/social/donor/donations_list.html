@@ -1,0 +1,189 @@
+{# templates/dashboard/social/donor/donations_list.html #}
+{% extends "dashboard/social/base_social.html" %}
+{% load i18n humanize %}
+
+{% block title %}{% trans "Mes dons" %}{% endblock %}
+
+{% block content %}
+<h2 class="mb-3">📄 {% trans "Historique de mes dons" %}</h2>
+
+<form method="get" class="filter-form mb-3">
+  <div class="row g-2 align-items-end">
+
+    <div class="col-md-6">
+      <label class="form-label">{% trans "Projet" %}</label>
+      <select name="project" class="form-select">
+        <option value="">{% trans "Tous" %}</option>
+        {% for p in projects %}
+          <option value="{{ p.id }}" {% if project_filter and p.id|stringformat:"s" == project_filter %}selected{% endif %}>
+            {{ p.title }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-label">{% trans "À partir de la date" %}</label>
+      <input type="date" name="date" class="form-control" value="{{ date_filter|default:'' }}">
+    </div>
+
+    <div class="col-md-2 d-grid">
+      <button type="submit" class="btn btn-primary">
+        {% trans "Filtrer" %}
+      </button>
+    </div>
+
+  </div>
+</form>
+
+<div class="table-responsive">
+  <table class="table table-hover align-middle">
+    <thead>
+      <tr>
+        <th>{% trans "Date" %}</th>
+        <th>{% trans "Projet" %}</th>
+        <th>{% trans "Montant" %}</th>
+        <th class="text-end">{% trans "Reçu" %}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for donation in page_obj %}
+        <tr>
+          <td>{{ donation.created_at|date:"d/m/Y" }}</td>
+
+          <td>
+            {% if donation.project %}
+              {{ donation.project.title|default:donation.project }}
+            {% else %}
+              <span class="text-muted">—</span>
+            {% endif %}
+          </td>
+
+          <td class="fw-semibold">
+            {{ donation.amount|intcomma }}
+            {% if donation.currency %}
+              {{ donation.currency }}
+            {% else %}
+              FCFA
+            {% endif %}
+          </td>
+
+          <td class="text-end">
+            {% if donation.receipt_pdf %}
+              <a class="btn btn-sm btn-outline-success"
+                 href="{% url 'dashboard:social_donor_receipt_download' donation.id %}">
+                📄 {% trans "Télécharger" %}
+              </a>
+            {% else %}
+              <span class="text-muted">—</span>
+            {% endif %}
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="4" class="text-center text-muted py-3">
+            {% trans "Aucun don trouvé." %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% if page_obj.paginator.num_pages > 1 %}
+<nav class="pagination d-flex align-items-center justify-content-center gap-3 mt-3">
+  {% if page_obj.has_previous %}
+    <a class="btn btn-sm btn-outline-secondary"
+       href="?page={{ page_obj.previous_page_number }}{% if project_filter %}&project={{ project_filter }}{% endif %}{% if date_filter %}&date={{ date_filter }}{% endif %}">
+      &laquo;
+    </a>
+  {% endif %}
+
+  <span class="small text-muted">
+    {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+  </span>
+
+  {% if page_obj.has_next %}
+    <a class="btn btn-sm btn-outline-secondary"
+       href="?page={{ page_obj.next_page_number }}{% if project_filter %}&project={{ project_filter }}{% endif %}{% if date_filter %}&date={{ date_filter }}{% endif %}">
+      &raquo;
+    </a>
+  {% endif %}
+</nav>
+{% endif %}
+{% endblock %}
+
+
+
+
+
+
+{% comment %} {# templates/dashboard/social/donor/donations_list.html #}
+{% extends "dashboard/social/base_social.html" %}
+{% load i18n humanize %}
+
+{% block title %}{% trans "Mes dons" %}{% endblock %}
+
+{% block content %}
+<h2>📄 {% trans "Historique de mes dons" %}</h2>
+
+<form method="get" class="filter-form">
+    <input
+        type="text"
+        name="project"
+        placeholder="{% trans 'Projet' %}"
+        value="{{ request.GET.project }}"
+    >
+    <button type="submit">{% trans "Filtrer" %}</button>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>{% trans "Date" %}</th>
+            <th>{% trans "Projet" %}</th>
+            <th>{% trans "Montant" %}</th>
+            <th>{% trans "Reçu" %}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for donation in page_obj %}
+        <tr>
+            <td>{{ donation.created_at|date:"d/m/Y" }}</td>
+            <td>{{ donation.project|default:"—" }}</td>
+            <td>{{ donation.amount|intcomma }} FCFA</td>
+            <td>
+                {% if donation.receipt_pdf %}
+                    <a href="{% url 'dashboard:social_donor_receipt_download' donation.id %}">
+                        📄 {% trans "Télécharger" %}
+                    </a>
+                {% else %}
+                    —
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">{% trans "Aucun don trouvé." %}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if page_obj.paginator.num_pages > 1 %}
+<nav class="pagination">
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}">&laquo;</a>
+    {% endif %}
+
+    <span>
+        {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+    </span>
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">&raquo;</a>
+    {% endif %}
+</nav>
+{% endif %}
+
+{% endblock %} {% endcomment %}

@@ -1,0 +1,135 @@
+{# templates/economic/services/service_list.html #}
+{% extends "economic/services/base_services.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Catalogue de services" %} | SOGENTIS{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  {# HERO #}
+  <section class="services-hero mb-4">
+    <div class="row align-items-center g-3">
+      <div class="col-lg-7">
+        <h1 class="services-hero-title">
+          {% trans "Découvrez nos services numériques" %}
+        </h1>
+        <p class="services-hero-subtitle">
+          {% trans "Accompagnement, développement, hébergement, formation et plus encore pour soutenir vos projets." %}
+        </p>
+        <div class="d-flex flex-wrap gap-2 mt-2">
+          <a href="{% url 'economic:services:service_request' %}" class="btn btn-primary">
+            {% trans "Demander un devis" %}
+          </a>
+          <a href="#services-list" class="btn btn-outline-secondary">
+            {% trans "Voir tous les services" %}
+          </a>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <div class="services-hero-card">
+          <h5 class="mb-2">{% trans "Pourquoi choisir SOGENTIS ?" %}</h5>
+          <ul class="services-hero-list">
+            <li>{% trans "Équipe expérimentée et engagée" %}</li>
+            <li>{% trans "Solutions adaptées à votre contexte" %}</li>
+            <li>{% trans "Suivi et support continu" %}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {# FILTRES PAR CATÉGORIE (optionnel) #}
+  {% if categories %}
+    <section class="services-categories mb-4">
+      <div class="d-flex flex-wrap align-items-center gap-2">
+        <span class="fw-semibold small text-muted">{% trans "Catégories :" %}</span>
+        <a href="{% url 'economic:services:service_list' %}"
+           class="badge rounded-pill bg-dark text-decoration-none">
+          {% trans "Tous" %}
+        </a>
+        {% for category in categories %}
+          <a href="{% url 'economic:services:service_list' %}?category={{ category.slug }}"
+             class="badge rounded-pill bg-light text-dark border text-decoration-none">
+            {{ category.name }}
+          </a>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+
+  {# LISTE DES SERVICES #}
+  <section id="services-list">
+    {% if services %}
+      <div class="row g-3 g-md-4">
+        {% for service in services %}
+          <div class="col-md-6 col-lg-4">
+            <article class="service-card h-100">
+              <div class="service-card-body">
+                <div class="service-card-header">
+                  {% if service.category %}
+                    <span class="service-category-badge">
+                      {{ service.category }}
+                    </span>
+                  {% endif %}
+                  {% if service.base_price %}
+                    <span class="service-price">
+                      {{ service.base_price }} {{ DEFAULT_CURRENCY|default:"XOF" }}
+                    </span>
+                  {% endif %}
+                </div>
+
+                <h3 class="service-title">
+                  <a href="{% url 'economic:services:service_detail' slug=service.slug %}">
+                    {{ service.name }}
+                  </a>
+                </h3>
+
+                {% if service.short_description %}
+                  <p class="service-excerpt">
+                    {{ service.short_description }}
+                  </p>
+                {% endif %}
+
+                <div class="service-meta">
+                  {% if service.is_featured %}
+                    <span class="badge bg-warning text-dark me-1">
+                      ⭐ {% trans "Recommandé" %}
+                    </span>
+                  {% endif %}
+                  {% if service.delivery_time_label %}
+                    <span class="badge bg-light text-muted border">
+                      ⏱ {{ service.delivery_time_label }}
+                    </span>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="service-card-footer">
+                <a href="{% url 'economic:services:service_detail' slug=service.slug %}"
+                   class="btn btn-sm btn-outline-primary">
+                  {% trans "Voir le détail" %}
+                </a>
+                <a href="{% url 'economic:services:service_request' %}?service={{ service.slug }}"
+                   class="btn btn-sm btn-primary ms-2">
+                  {% trans "Je suis intéressé(e)" %}
+                </a>
+              </div>
+            </article>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="text-center py-5 text-muted">
+        <p class="mb-1">
+          {% trans "Aucun service n’est disponible pour le moment." %}
+        </p>
+        <p class="small">
+          {% trans "Contactez-nous pour définir ensemble une offre adaptée." %}
+        </p>
+      </div>
+    {% endif %}
+  </section>
+
+</div>
+{% endblock %}

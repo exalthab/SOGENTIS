@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-05 16:55+0000\n"
+"POT-Creation-Date: 2025-12-09 15:51+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,132 +28,159 @@ msgstr "French"
 msgid "Anglais"
 msgstr "English"
 
-#: .\sogentis_apps\about\templates\about\about_index.html:5
-#: .\sogentis_apps\about\templates\about\about_index.html:13
-#: .\sogentis_apps\about\templates\about\components\hero.html:86
+#: .\sogentis_apps\about\templates\about\about_index.html:6
+#: .\sogentis_apps\about\templates\about\about_index.html:12
+#: .\sogentis_apps\about\templates\about\components\hero.html:32
 #: .\sogentis_apps\core\templates\core\partials\_menu_mobile.html:24
 msgid "À propos de SOGENTIS"
 msgstr "About SOGENTIS"
 
-#: .\sogentis_apps\about\templates\about\about_index.html:8
+#: .\sogentis_apps\about\templates\about\about_index.html:9
+#, fuzzy
+#| msgid ""
+#| "\n"
+#| "    Découvrez la vision, la gouvernance, les enfants, les mamans et les "
+#| "partenaires de SOGENTIS.\n"
+#| "  "
 msgid ""
-"\n"
-"    Découvrez la vision, la gouvernance, les enfants, les mamans et les "
-"partenaires de SOGENTIS.\n"
-"  "
+"Découvrez la vision, la gouvernance, les enfants, les mamans et les "
+"partenaires de SOGENTIS."
 msgstr ""
 "\n"
 "    Discover the vision, governance, children, mothers and partners of "
 "SOGENTIS.\n"
 "  "
 
-#: .\sogentis_apps\about\templates\about\about_index.html:15
+#: .\sogentis_apps\about\templates\about\about_index.html:14
+#, fuzzy
+#| msgid ""
+#| "\n"
+#| "    SOGENTIS se structure autour d’un pôle social et d’un pôle économique "
+#| "pour soutenir durablement les enfants, les femmes et les communautés.\n"
+#| "  "
 msgid ""
-"\n"
-"    SOGENTIS se structure autour d’un pôle social et d’un pôle économique "
-"pour soutenir durablement les enfants, les femmes et les communautés.\n"
-"  "
+"SOGENTIS se structure autour d’un pôle social et d’un pôle économique pour "
+"soutenir durablement les enfants, les femmes et les communautés."
 msgstr ""
 "\n"
-"    SOGENTIS is built around a social division and an economic division "
-"to sustainably support children, women and communities.\n"
+"    SOGENTIS is built around a social division and an economic division to "
+"sustainably support children, women and communities.\n"
 "  "
 
-#: .\sogentis_apps\about\templates\about\about_index.html:51
+#: .\sogentis_apps\about\templates\about\about_index.html:43
+#, fuzzy
+#| msgid "Section À propos"
+msgid "Navigation À propos"
+msgstr "About Section"
+
+#: .\sogentis_apps\about\templates\about\about_index.html:46
 msgid "Intro"
 msgstr "Introduction"
 
-#: .\sogentis_apps\about\templates\about\about_index.html:52
+#: .\sogentis_apps\about\templates\about\about_index.html:47
 #: .\sogentis_apps\social\templates\social\partials\_menubar_soci.html:47
 #: .\sogentis_apps\z_about_old\models\about_page.py:26
 msgid "À propos"
 msgstr "About"
 
-#: .\sogentis_apps\about\templates\about\about_index.html:53
+#: .\sogentis_apps\about\templates\about\about_index.html:48
 msgid "Gouvernance"
 msgstr "Governance"
 
-#: .\sogentis_apps\about\templates\about\about_index.html:54
+#: .\sogentis_apps\about\templates\about\about_index.html:49
 msgid "Enfants"
 msgstr "Children"
 
-#: .\sogentis_apps\about\templates\about\about_index.html:55
+#: .\sogentis_apps\about\templates\about\about_index.html:50
 msgid "Mamans"
 msgstr "Mothers"
 
-#: .\sogentis_apps\about\templates\about\about_index.html:56
-#: .\sogentis_apps\about\templates\about\about_index.html:174
+#: .\sogentis_apps\about\templates\about\about_index.html:51
+#: .\sogentis_apps\about\templates\about\about_index.html:173
 #: .\sogentis_apps\z_about_old\models\partner.py:34
 msgid "Partenaires"
 msgstr "Partners"
 
-#: .\sogentis_apps\about\templates\about\about_index.html:84
+#: .\sogentis_apps\about\templates\about\about_index.html:68
+msgid "Présentation"
+msgstr "Overview"
+
+#: .\sogentis_apps\about\templates\about\about_index.html:80
 msgid "Gouvernance et équipe"
 msgstr "Governance and team"
 
-#: .\sogentis_apps\about\templates\about\about_index.html:86
+#: .\sogentis_apps\about\templates\about\about_index.html:81
 msgid "Une équipe engagée pour porter la vision de SOGENTIS."
 msgstr "A dedicated team committed to carrying SOGENTIS's vision."
 
-#: .\sogentis_apps\about\templates\about\about_index.html:92
+#: .\sogentis_apps\about\templates\about\about_index.html:85
+#, fuzzy
+#| msgid "Membres de l’équipe"
+msgid "Catégories d’équipe"
+msgstr "Team members"
+
+#: .\sogentis_apps\about\templates\about\about_index.html:87
 msgid "Conseil"
 msgstr "Board"
 
-#: .\sogentis_apps\about\templates\about\about_index.html:93
+#: .\sogentis_apps\about\templates\about\about_index.html:90
 msgid "Employés"
 msgstr "Employees"
 
 #: .\sogentis_apps\about\templates\about\about_index.html:104
+#: .\sogentis_apps\about\templates\about\about_index.html:107
 msgid "Aucun membre trouvé."
 msgstr "No member found."
 
-#: .\sogentis_apps\about\templates\about\about_index.html:117
+#: .\sogentis_apps\about\templates\about\about_index.html:123
+#: .\sogentis_apps\about\templates\about\about_index.html:126
 msgid "Aucun employé trouvé."
 msgstr "No employee found."
 
-#: .\sogentis_apps\about\templates\about\about_index.html:125
+#: .\sogentis_apps\about\templates\about\about_index.html:134
 msgid "Organisation interne"
 msgstr "Internal organization"
 
-#: .\sogentis_apps\about\templates\about\about_index.html:140
+#: .\sogentis_apps\about\templates\about\about_index.html:147
 #: .\sogentis_apps\z_about_old\models\child.py:37
 msgid "Enfants bénéficiaires"
 msgstr "Supported children"
 
-#: .\sogentis_apps\about\templates\about\about_index.html:142
+#: .\sogentis_apps\about\templates\about\about_index.html:148
 msgid ""
 "Des parcours d'enfants accompagnés dans leur scolarité et leur "
 "épanouissement."
 msgstr "Children supported in their education and personal development."
 
-#: .\sogentis_apps\about\templates\about\about_index.html:157
+#: .\sogentis_apps\about\templates\about\about_index.html:160
 #: .\sogentis_apps\z_about_old\models\mother.py:24
 msgid "Mamans bénéficiaires"
 msgstr "Supported mothers"
 
-#: .\sogentis_apps\about\templates\about\about_index.html:159
+#: .\sogentis_apps\about\templates\about\about_index.html:161
 msgid ""
 "Des femmes soutenues pour développer leurs activités et stabiliser leur "
 "foyer."
-msgstr "Women supported to grow their activities and stabilize their households."
+msgstr ""
+"Women supported to grow their activities and stabilize their households."
 
-#: .\sogentis_apps\about\templates\about\about_index.html:176
+#: .\sogentis_apps\about\templates\about\about_index.html:174
 msgid "Des institutions et organisations qui rendent ce travail possible."
 msgstr "Institutions and organizations that make this work possible."
 
-#: .\sogentis_apps\about\templates\about\about_index.html:192
+#: .\sogentis_apps\about\templates\about\about_index.html:186
 msgid "Nos deux pôles d’activité"
 msgstr "Our two activity divisions"
 
-#: .\sogentis_apps\about\templates\about\about_index.html:196
+#: .\sogentis_apps\about\templates\about\about_index.html:190
 msgid ""
 "Une structure innovante qui combine impact social et solutions économiques "
 "pour un développement durable."
 msgstr ""
-"An innovative structure combining social impact and economic solutions "
-"for sustainable development."
+"An innovative structure combining social impact and economic solutions for "
+"sustainable development."
 
-#: .\sogentis_apps\about\templates\about\about_index.html:207
+#: .\sogentis_apps\about\templates\about\about_index.html:198
 #: .\sogentis_apps\core\templates\core\home.html:71
 #: .\sogentis_apps\core\templates\core\partials\_menu_mobile.html:28
 #: .\sogentis_apps\core\templates\core\partials\_navbar.html:46
@@ -161,7 +188,7 @@ msgstr ""
 msgid "Pôle Social"
 msgstr "Social Division"
 
-#: .\sogentis_apps\about\templates\about\about_index.html:209
+#: .\sogentis_apps\about\templates\about\about_index.html:199
 msgid ""
 "Éducation, environnement, infrastructures, aide aux enfants, femmes et "
 "familles vulnérables."
@@ -169,12 +196,12 @@ msgstr ""
 "Education, environment, infrastructure, support for children, women and "
 "vulnerable families."
 
-#: .\sogentis_apps\about\templates\about\about_index.html:211
-#: .\sogentis_apps\about\templates\about\about_index.html:225
+#: .\sogentis_apps\about\templates\about\about_index.html:200
+#: .\sogentis_apps\about\templates\about\about_index.html:210
 msgid "Découvrir le pôle"
 msgstr "Discover the division"
 
-#: .\sogentis_apps\about\templates\about\about_index.html:221
+#: .\sogentis_apps\about\templates\about\about_index.html:208
 #: .\sogentis_apps\core\templates\core\home.html:84
 #: .\sogentis_apps\core\templates\core\partials\_menu_eco.html:25
 #: .\sogentis_apps\core\templates\core\partials\_menu_mobile.html:32
@@ -183,7 +210,7 @@ msgstr "Discover the division"
 msgid "Pôle Économique"
 msgstr "Economic Division"
 
-#: .\sogentis_apps\about\templates\about\about_index.html:223
+#: .\sogentis_apps\about\templates\about\about_index.html:209
 msgid ""
 "Boutique solidaire, services, formations, consultance, IT, hébergement et "
 "solutions durables."
@@ -191,50 +218,65 @@ msgstr ""
 "Solidarity shop, services, training, consultancy, IT, hosting and "
 "sustainable solutions."
 
-#: .\sogentis_apps\about\templates\about\components\about_subsection.html:17
+#: .\sogentis_apps\about\templates\about\components\about_subsection.html:11
+#: .\sogentis_apps\z_about_old\models\about_section.py:40
+msgid "Sections À propos"
+msgstr "About Sections"
+
+#: .\sogentis_apps\about\templates\about\components\about_subsection.html:28
 msgid "Aucune section disponible"
 msgstr "No section available"
 
-#: .\sogentis_apps\about\templates\about\components\child_card.html:26
-#: .\sogentis_apps\about\templates\about\components\mother_card.html:21
+#: .\sogentis_apps\about\templates\about\components\child_card.html:16
+#: .\sogentis_apps\about\templates\about\components\child_card.html:25
+#: .\sogentis_apps\about\templates\about\components\child_card.html:84
+#, fuzzy
+#| msgid "Enfants"
+msgid "Enfant"
+msgstr "Children"
+
+#: .\sogentis_apps\about\templates\about\components\child_card.html:31
+#: .\sogentis_apps\about\templates\about\components\mother_card.html:30
 #: .\sogentis_apps\z_about_old\models\child.py:23
 #: .\sogentis_apps\z_about_old\templates\about\child_support.html:73
 #: .\sogentis_apps\z_about_old\templates\about\children_list.html:23
 msgid "Âge"
 msgstr "Age"
 
-#: .\sogentis_apps\about\templates\about\components\child_card.html:26
+#: .\sogentis_apps\about\templates\about\components\child_card.html:31
+#: .\sogentis_apps\about\templates\about\components\mother_card.html:30
 #: .\sogentis_apps\z_about_old\templates\about\child_support.html:73
 msgid "ans"
 msgstr "years"
 
-#: .\sogentis_apps\about\templates\about\components\child_card.html:30
+#: .\sogentis_apps\about\templates\about\components\child_card.html:35
 msgid "Classe"
 msgstr "Class"
 
-#: .\sogentis_apps\about\templates\about\components\child_card.html:34
+#: .\sogentis_apps\about\templates\about\components\child_card.html:39
 #: .\sogentis_apps\z_about_old\templates\about\child_support.html:77
 msgid "École"
 msgstr "School"
 
-#: .\sogentis_apps\about\templates\about\components\child_card.html:39
+#: .\sogentis_apps\about\templates\about\components\child_card.html:44
 msgid "Budget annuel"
 msgstr "Annual budget"
 
-#: .\sogentis_apps\about\templates\about\components\child_card.html:51
-#: .\sogentis_apps\about\templates\about\components\child_card.html:96
+#: .\sogentis_apps\about\templates\about\components\child_card.html:53
+#: .\sogentis_apps\about\templates\about\components\child_card.html:105
 #: .\sogentis_apps\z_about_old\templates\about\child_support.html:81
 msgid "Soutenir cet enfant"
 msgstr "Support this child"
 
-#: .\sogentis_apps\about\templates\about\components\child_card.html:58
-#: .\sogentis_apps\about\templates\about\components\mother_card.html:49
+#: .\sogentis_apps\about\templates\about\components\child_card.html:64
+#: .\sogentis_apps\about\templates\about\components\mother_card.html:68
 msgid "Voir description"
 msgstr "View description"
 
-#: .\sogentis_apps\about\templates\about\components\child_card.html:72
-#: .\sogentis_apps\about\templates\about\components\mother_card.html:60
+#: .\sogentis_apps\about\templates\about\components\child_card.html:81
+#: .\sogentis_apps\about\templates\about\components\mother_card.html:82
 #: .\sogentis_apps\core\templates\core\partials\_menu_mobile.html:12
+#: .\sogentis_apps\core\templates\core\partials\_topbar.html:116
 #: .\sogentis_apps\dashboard\templates\dashboard\note_form.html:16
 #: .\sogentis_apps\dashboard\templates\dashboard\notes\notes_list.html:19
 #: .\sogentis_apps\dashboard\templates\dashboard\profile.html:14
@@ -242,18 +284,18 @@ msgstr "View description"
 #: .\sogentis_apps\social\templates\social\create_project.html:15
 #: .\sogentis_apps\social\templates\social\donation_payment_choice.html:36
 #: .\sogentis_apps\social\templates\social\donation_success.html:14
-#: .\templates\main.html:119
+#: .\templates\main.html:116
 msgid "Fermer"
 msgstr "Close"
 
-#: .\sogentis_apps\about\templates\about\components\child_card.html:79
-#: .\sogentis_apps\about\templates\about\components\mother_card.html:67
+#: .\sogentis_apps\about\templates\about\components\child_card.html:89
+#: .\sogentis_apps\about\templates\about\components\mother_card.html:89
 msgid "Date de naissance"
 msgstr "Date of birth"
 
-#: .\sogentis_apps\about\templates\about\components\child_card.html:83
-#: .\sogentis_apps\about\templates\about\components\mother_card.html:25
-#: .\sogentis_apps\about\templates\about\components\mother_card.html:71
+#: .\sogentis_apps\about\templates\about\components\child_card.html:93
+#: .\sogentis_apps\about\templates\about\components\mother_card.html:34
+#: .\sogentis_apps\about\templates\about\components\mother_card.html:93
 #: .\sogentis_apps\accounts_users\models\users_profile.py:34
 #: .\sogentis_apps\dashboard\forms\profile_form.py:21
 #: .\sogentis_apps\dashboard\forms\profile_form.py:30
@@ -261,22 +303,33 @@ msgstr "Date of birth"
 msgid "Pays"
 msgstr "Country"
 
-#: .\sogentis_apps\about\templates\about\components\child_card.html:87
+#: .\sogentis_apps\about\templates\about\components\child_card.html:97
 msgid "Identifiant"
 msgstr "Identifier"
 
-#: .\sogentis_apps\about\templates\about\components\child_card.html:105
+#: .\sogentis_apps\about\templates\about\components\child_card.html:114
 msgid "Aucun enfant disponible."
 msgstr "No child available."
 
-#: .\sogentis_apps\about\templates\about\components\hero.html:11
-#: .\sogentis_apps\about\templates\about\components\hero.html:72
+#: .\sogentis_apps\about\templates\about\components\hero.html:10
+#, fuzzy
+#| msgid "Page À propos"
+msgid "En-tête À propos"
+msgstr "About Page"
+
+#: .\sogentis_apps\about\templates\about\components\hero.html:12
+#, fuzzy
+#| msgid "Retour à l'accueil"
+msgid "Retour à l’accueil"
+msgstr "Back to home"
+
+#: .\sogentis_apps\about\templates\about\components\hero.html:13
 #: .\sogentis_apps\core\templates\core\partials\_menu_mobile.html:20
 #: .\sogentis_apps\social\templates\social\publications.html:10
 msgid "Accueil"
 msgstr "Home"
 
-#: .\sogentis_apps\about\templates\about\components\hero.html:89
+#: .\sogentis_apps\about\templates\about\components\hero.html:40
 msgid ""
 "Une plateforme sociale et économique dédiée à l'humain, à l'enfance et aux "
 "communautés."
@@ -284,37 +337,47 @@ msgstr ""
 "A social and economic platform dedicated to people, childhood and "
 "communities."
 
-#: .\sogentis_apps\about\templates\about\components\mother_card.html:29
-#: .\sogentis_apps\about\templates\about\components\mother_card.html:79
+#: .\sogentis_apps\about\templates\about\components\mother_card.html:39
+#: .\sogentis_apps\about\templates\about\components\mother_card.html:102
 msgid "Activité"
 msgstr "Activity"
 
-#: .\sogentis_apps\about\templates\about\components\mother_card.html:33
-#: .\sogentis_apps\about\templates\about\components\mother_card.html:87
+#: .\sogentis_apps\about\templates\about\components\mother_card.html:45
+#: .\sogentis_apps\about\templates\about\components\mother_card.html:111
 msgid "Revenu mensuel"
 msgstr "Monthly income"
 
-#: .\sogentis_apps\about\templates\about\components\mother_card.html:37
-#: .\sogentis_apps\about\templates\about\components\mother_card.html:83
+#: .\sogentis_apps\about\templates\about\components\mother_card.html:52
+#: .\sogentis_apps\about\templates\about\components\mother_card.html:107
 msgid "Capital nécessaire"
 msgstr "Required capital"
 
-#: .\sogentis_apps\about\templates\about\components\mother_card.html:45
-#: .\sogentis_apps\about\templates\about\components\mother_card.html:99
+#: .\sogentis_apps\about\templates\about\components\mother_card.html:62
+#: .\sogentis_apps\about\templates\about\components\mother_card.html:120
 msgid "Soutenir cette mère"
 msgstr "Support this mother"
 
-#: .\sogentis_apps\about\templates\about\components\mother_card.html:75
+#: .\sogentis_apps\about\templates\about\components\mother_card.html:97
 msgid "Numéro d'identification"
 msgstr "Identification number"
 
-#: .\sogentis_apps\about\templates\about\components\mother_card.html:108
+#: .\sogentis_apps\about\templates\about\components\mother_card.html:130
 msgid "Aucune mère disponible pour le moment."
 msgstr "No mother available at the moment."
 
-#: .\sogentis_apps\about\templates\about\components\organigram.html:8
+#: .\sogentis_apps\about\templates\about\components\organigram.html:10
 msgid "Structure organisationnelle"
 msgstr "Organizational structure"
+
+#: .\sogentis_apps\about\templates\about\components\organigram.html:14
+#, fuzzy
+#| msgid "Programmes"
+msgid "Organigramme"
+msgstr "Programs"
+
+#: .\sogentis_apps\about\templates\about\components\organigram.html:16
+msgid "Niveau 1"
+msgstr "Level 1"
 
 #: .\sogentis_apps\about\templates\about\components\organigram.html:18
 msgid "Assemblée Générale"
@@ -324,64 +387,76 @@ msgstr "General Assembly"
 msgid "Pilotage global de l'organisation"
 msgstr "Overall steering of the organization"
 
-#: .\sogentis_apps\about\templates\about\components\organigram.html:29
+#: .\sogentis_apps\about\templates\about\components\organigram.html:26
+msgid "Niveau 2 — CA"
+msgstr "Level 2 - CA"
+
+#: .\sogentis_apps\about\templates\about\components\organigram.html:28
 msgid "Conseil d'Administration"
 msgstr "Board of Directors"
 
-#: .\sogentis_apps\about\templates\about\components\organigram.html:30
+#: .\sogentis_apps\about\templates\about\components\organigram.html:29
 msgid "Supervision stratégique"
 msgstr "Strategic supervision"
 
-#: .\sogentis_apps\about\templates\about\components\organigram.html:41
-msgid "DIRECTION EXECUTIVE"
-msgstr "EXECUTIVE MANAGEMENT"
+#: .\sogentis_apps\about\templates\about\components\organigram.html:37
+msgid "Niveau 2 — Direction"
+msgstr "Level 2 — Management"
 
-#: .\sogentis_apps\about\templates\about\components\organigram.html:42
+#: .\sogentis_apps\about\templates\about\components\organigram.html:39
+msgid "Direction Exécutive"
+msgstr "Executive Management"
+
+#: .\sogentis_apps\about\templates\about\components\organigram.html:40
 msgid "Fonctionnement & gestion"
 msgstr "Operations & management"
 
-#: .\sogentis_apps\about\templates\about\components\organigram.html:53
+#: .\sogentis_apps\about\templates\about\components\organigram.html:48
+msgid "Niveau 3 — Départements"
+msgstr ""
+
+#: .\sogentis_apps\about\templates\about\components\organigram.html:50
 msgid "Ressources Humaines"
 msgstr "Human Resources"
 
-#: .\sogentis_apps\about\templates\about\components\organigram.html:54
+#: .\sogentis_apps\about\templates\about\components\organigram.html:51
 msgid "Recrutement & Gestion du personnel"
 msgstr "Recruitment & personnel management"
 
-#: .\sogentis_apps\about\templates\about\components\organigram.html:57
+#: .\sogentis_apps\about\templates\about\components\organigram.html:54
 msgid "Finance"
 msgstr "Finance"
 
-#: .\sogentis_apps\about\templates\about\components\organigram.html:58
+#: .\sogentis_apps\about\templates\about\components\organigram.html:55
 msgid "Gestion budgétaire & comptable"
 msgstr "Budgetary & accounting management"
 
-#: .\sogentis_apps\about\templates\about\components\organigram.html:61
+#: .\sogentis_apps\about\templates\about\components\organigram.html:58
 msgid "Programmes"
 msgstr "Programs"
 
-#: .\sogentis_apps\about\templates\about\components\organigram.html:62
+#: .\sogentis_apps\about\templates\about\components\organigram.html:59
 msgid "Coordination & suivi des projets"
 msgstr "Project coordination & monitoring"
 
-#: .\sogentis_apps\about\templates\about\components\organigram.html:65
+#: .\sogentis_apps\about\templates\about\components\organigram.html:62
 msgid "Communication"
 msgstr "Communication"
 
-#: .\sogentis_apps\about\templates\about\components\organigram.html:66
+#: .\sogentis_apps\about\templates\about\components\organigram.html:63
 msgid "Relations publiques & médias"
 msgstr "Public relations & media"
 
-#: .\sogentis_apps\about\templates\about\components\partner_card.html:30
+#: .\sogentis_apps\about\templates\about\components\partner_card.html:37
 msgid "Visiter le site"
 msgstr "Visit website"
 
-#: .\sogentis_apps\about\templates\about\components\partner_card.html:36
+#: .\sogentis_apps\about\templates\about\components\partner_card.html:45
 msgid "Aucun partenaire pour le moment."
 msgstr "No partner at the moment."
 
-#: .\sogentis_apps\accounts_users\forms\auth_forms.py:7
 #: .\sogentis_apps\accounts_users\forms\auth_forms.py:8
+#: .\sogentis_apps\accounts_users\forms\auth_forms.py:11
 #: .\sogentis_apps\accounts_users\forms\resend_activation_form.py:7
 #: .\sogentis_apps\accounts_users\forms\resend_activation_form.py:8
 #: .\sogentis_apps\accounts_users\forms\signup_forms.py:27
@@ -391,13 +466,34 @@ msgstr "No partner at the moment."
 msgid "Adresse e-mail"
 msgstr "Email address"
 
-#: .\sogentis_apps\accounts_users\forms\auth_forms.py:11
-#: .\sogentis_apps\accounts_users\forms\auth_forms.py:12
+#: .\sogentis_apps\accounts_users\forms\auth_forms.py:15
+#: .\sogentis_apps\accounts_users\forms\auth_forms.py:24
+#, fuzzy
+#| msgid "Ce compte est inactif."
+msgid "Ce champ est obligatoire."
+msgstr "This account is inactive."
+
+#: .\sogentis_apps\accounts_users\forms\auth_forms.py:18
+#: .\sogentis_apps\accounts_users\forms\auth_forms.py:21
 #: .\sogentis_apps\accounts_users\forms\login_forms.py:13
 #: .\sogentis_apps\accounts_users\forms\login_forms.py:14
 #: .\sogentis_apps\accounts_users\forms\signup_forms.py:16
+#: .\sogentis_apps\accounts_users\templates\accounts_users\registration\login.html:51
 msgid "Mot de passe"
 msgstr "Password"
+
+#: .\sogentis_apps\accounts_users\forms\auth_forms.py:28
+msgid "Se souvenir de moi"
+msgstr "Remember me"
+
+#: .\sogentis_apps\accounts_users\forms\auth_forms.py:34
+msgid "Adresse e-mail et/ou mot de passe invalide."
+msgstr "Invalid email address and/or password."
+
+#: .\sogentis_apps\accounts_users\forms\auth_forms.py:35
+#: .\sogentis_apps\accounts_users\forms\login_forms.py:19
+msgid "Ce compte est inactif."
+msgstr "This account is inactive."
 
 #: .\sogentis_apps\accounts_users\forms\login_forms.py:9
 #: .\sogentis_apps\accounts_users\forms\login_forms.py:10
@@ -409,10 +505,6 @@ msgstr "Username"
 #: .\sogentis_apps\accounts_users\forms\login_forms.py:18
 msgid "Nom d'utilisateur ou mot de passe incorrect."
 msgstr "Incorrect username or password."
-
-#: .\sogentis_apps\accounts_users\forms\login_forms.py:19
-msgid "Ce compte est inactif."
-msgstr "This account is inactive."
 
 #: .\sogentis_apps\accounts_users\forms\password_forms.py:14
 #: .\sogentis_apps\accounts_users\forms\password_forms.py:15
@@ -457,7 +549,7 @@ msgstr "Full name"
 #: .\sogentis_apps\accounts_users\forms\profile_forms.py:25
 #: .\sogentis_apps\accounts_users\forms\signup_forms.py:71
 #: .\sogentis_apps\accounts_users\models\users_profile.py:32
-#: .\sogentis_apps\core\templates\core\partials\_topbar.html:20
+#: .\sogentis_apps\core\templates\core\partials\_topbar.html:19
 #: .\sogentis_apps\dashboard\forms\profile_form.py:20
 #: .\sogentis_apps\dashboard\forms\profile_form.py:29
 #: .\sogentis_apps\dashboard\templates\dashboard\profile.html:39
@@ -481,8 +573,9 @@ msgid "Le fichier doit être au format PDF."
 msgstr "The file must be in PDF format."
 
 #: .\sogentis_apps\accounts_users\forms\profile_forms.py:39
-#: .\sogentis_apps\accounts_users\forms\signup_forms.py:86
-msgid "Le fichier ne doit pas dépasser 2 Mo"
+#, fuzzy
+#| msgid "Le fichier ne doit pas dépasser 2 Mo"
+msgid "Le fichier ne doit pas dépasser 2 Mo"
 msgstr "The file must not exceed 2 MB"
 
 #: .\sogentis_apps\accounts_users\forms\signup_forms.py:15
@@ -496,6 +589,12 @@ msgstr "Passwords do not match."
 #: .\sogentis_apps\accounts_users\forms\signup_forms.py:41
 msgid "Un compte avec cette adresse e-mail existe déjà."
 msgstr "An account with this email address already exists."
+
+#: .\sogentis_apps\accounts_users\forms\signup_forms.py:86
+#, fuzzy
+#| msgid "Le fichier ne doit pas dépasser 2 Mo."
+msgid "Le fichier ne doit pas dépasser 2 Mo."
+msgstr "The file must not exceed 2 MB."
 
 #: .\sogentis_apps\accounts_users\managers\custom_user_manager.py:7
 msgid "L'adresse e-mail est obligatoire"
@@ -724,6 +823,7 @@ msgid "Casier judiciaire"
 msgstr "Criminal record"
 
 #: .\sogentis_apps\accounts_users\models\users_profile.py:58
+#: .\sogentis_apps\dashboard\forms\profile_form.py:25
 msgid "Type d’adhésion"
 msgstr "Membership type"
 
@@ -798,11 +898,11 @@ msgstr "Your account has been successfully activated."
 
 #: .\sogentis_apps\accounts_users\templates\accounts_users\activation\account_activation_complete.html:18
 #: .\sogentis_apps\accounts_users\templates\accounts_users\registration\activation_success.html:20
-#: .\sogentis_apps\accounts_users\templates\accounts_users\registration\login.html:61
+#: .\sogentis_apps\accounts_users\templates\accounts_users\registration\login.html:81
 #: .\sogentis_apps\accounts_users\templates\accounts_users\registration\signup.html:112
 #: .\sogentis_apps\core\templates\core\partials\_menu_mobile.html:156
-#: .\sogentis_apps\core\templates\core\partials\_topbar.html:127
-#: .\sogentis_apps\core\templates\core\partials\_topbar.html:229
+#: .\sogentis_apps\core\templates\core\partials\_topbar.html:105
+#: .\sogentis_apps\core\templates\core\partials\_topbar.html:168
 #: .\sogentis_apps\core\templates\core\partials\_user_menu.html:44
 msgid "Se connecter"
 msgstr "Log in"
@@ -817,12 +917,16 @@ msgid "Bienvenue sur SOGENTIS"
 msgstr "Welcome to SOGENTIS"
 
 #: .\sogentis_apps\accounts_users\templates\accounts_users\emails\account_activation_email.html:12
+#, fuzzy
+#| msgid ""
+#| "Merci de vous être inscrit sur notre plateforme. Veuillez cliquer sur le "
+#| "bouton ci-dessous pour activer votre compte:"
 msgid ""
 "Merci de vous être inscrit sur notre plateforme. Veuillez cliquer sur le "
-"bouton ci-dessous pour activer votre compte:"
+"bouton ci-dessous pour activer votre compte :"
 msgstr ""
-"Thank you for registering on our platform. Please click the button below "
-"to activate your account:"
+"Thank you for registering on our platform. Please click the button below to "
+"activate your account:"
 
 #: .\sogentis_apps\accounts_users\templates\accounts_users\emails\account_activation_email.html:17
 #: .\sogentis_apps\accounts_users\templates\accounts_users\registration\account_activation_resend_email.html:60
@@ -830,14 +934,13 @@ msgid "Activer mon compte"
 msgstr "Activate my account"
 
 #: .\sogentis_apps\accounts_users\templates\accounts_users\emails\account_activation_email.html:22
-msgid "Ou copiez-collez ce lien dans votre navigateur:"
+msgid "Ou copiez-collez ce lien dans votre navigateur :"
 msgstr "Or copy and paste this link into your browser:"
 
 #: .\sogentis_apps\accounts_users\templates\accounts_users\emails\account_activation_email.html:29
 msgid ""
 "Si vous n'avez pas demandé cette inscription, vous pouvez ignorer cet e-mail."
-msgstr ""
-"If you did not request this registration, you may ignore this email."
+msgstr "If you did not request this registration, you may ignore this email."
 
 #: .\sogentis_apps\accounts_users\templates\accounts_users\emails\profile_approved.html:14
 msgid "Profil validé !"
@@ -850,8 +953,12 @@ msgid "Bonjour %(user.get_full_name|default:user.username)s,"
 msgstr "Hello %(user.get_full_name|default:user.username)s,"
 
 #: .\sogentis_apps\accounts_users\templates\accounts_users\emails\profile_approved.html:18
+#, fuzzy
+#| msgid ""
+#| "Votre profil SOGENTIS a été validé ! Vous avez désormais accès à toutes "
+#| "les fonctionnalités du site."
 msgid ""
-"Votre profil SOGENTIS a été validé ! Vous avez désormais accès à toutes les "
+"Votre profil SOGENTIS a été validé ! Vous avez désormais accès à toutes les "
 "fonctionnalités du site."
 msgstr ""
 "Your SOGENTIS profile has been approved! You now have access to all the "
@@ -870,8 +977,8 @@ msgid ""
 "Votre profil SOGENTIS n'a pas été validé. Pour plus d'informations, "
 "contactez l'équipe SOGENTIS."
 msgstr ""
-"Your SOGENTIS profile has not been approved. For more information, "
-"please contact the SOGENTIS team."
+"Your SOGENTIS profile has not been approved. For more information, please "
+"contact the SOGENTIS team."
 
 #: .\sogentis_apps\accounts_users\templates\accounts_users\emails\profile_refused.html:21
 msgid "Merci de votre compréhension."
@@ -911,13 +1018,17 @@ msgstr ""
 "      "
 
 #: .\sogentis_apps\accounts_users\templates\accounts_users\registration\account_activation_resend_email.html:56
-msgid "Pour activer votre compte, cliquez sur le bouton ci-dessous :"
+#, fuzzy
+#| msgid "Pour activer votre compte, cliquez sur le bouton ci-dessous :"
+msgid "Pour activer votre compte, cliquez sur le bouton ci-dessous :"
 msgstr "To activate your account, click the button below:"
 
 #: .\sogentis_apps\accounts_users\templates\accounts_users\registration\account_activation_resend_email.html:65
 #: .\sogentis_apps\accounts_users\templates\accounts_users\registration\password_reset_email.html:65
 #: .\sogentis_apps\accounts_users\templates\accounts_users\registration\password_reset_email.html:161
-msgid "Ou copiez-collez ce lien dans votre navigateur :"
+#, fuzzy
+#| msgid "Ou copiez-collez ce lien dans votre navigateur:"
+msgid "Ou copiez-collez ce lien dans votre navigateur :"
 msgstr "Or copy and paste this link into your browser:"
 
 #: .\sogentis_apps\accounts_users\templates\accounts_users\registration\account_activation_resend_email.html:72
@@ -930,8 +1041,7 @@ msgstr ""
 #: .\sogentis_apps\accounts_users\templates\accounts_users\registration\account_activation_resend_email.html:76
 msgid ""
 "Si vous n’êtes pas à l’origine de cette demande, veuillez ignorer cet e-mail."
-msgstr ""
-"If you did not make this request, please ignore this email."
+msgstr "If you did not make this request, please ignore this email."
 
 #: .\sogentis_apps\accounts_users\templates\accounts_users\registration\account_activation_resend_email.html:80
 #: .\sogentis_apps\accounts_users\templates\accounts_users\registration\password_reset_email.html:79
@@ -976,7 +1086,9 @@ msgid "Votre compte est déjà actif. Vous pouvez vous connecter."
 msgstr "Your account is already active. You can log in."
 
 #: .\sogentis_apps\accounts_users\templates\accounts_users\registration\activation_success.html:14
-msgid "Activation réussie !"
+#, fuzzy
+#| msgid "Activation réussie !"
+msgid "Activation réussie !"
 msgstr "Activation successful!"
 
 #: .\sogentis_apps\accounts_users\templates\accounts_users\registration\activation_success.html:16
@@ -986,26 +1098,56 @@ msgid ""
 msgstr ""
 "Your account has been successfully activated. You can now log in to SOGENTIS."
 
-#: .\sogentis_apps\accounts_users\templates\accounts_users\registration\login.html:7
-msgid "Connexion | SOGENTIS"
-msgstr "Login | SOGENTIS"
+#: .\sogentis_apps\accounts_users\templates\accounts_users\registration\base_auth.html:39
+#: .\sogentis_apps\core\templates\core\partials\_menu_mobile.html:107
+#: .\sogentis_apps\core\templates\core\partials\_topbar.html:140
+msgid "Langue"
+msgstr "Language"
 
-#: .\sogentis_apps\accounts_users\templates\accounts_users\registration\login.html:36
+#: .\sogentis_apps\accounts_users\templates\accounts_users\registration\base_auth.html:63
+#: .\sogentis_apps\accounts_users\templates\accounts_users\registration\login.html:9
 #: .\sogentis_apps\core\templates\core\partials\_menu_eco.html:180
 msgid "Connexion"
 msgstr "Login"
 
-#: .\sogentis_apps\accounts_users\templates\accounts_users\registration\login.html:67
+#: .\sogentis_apps\accounts_users\templates\accounts_users\registration\base_auth.html:65
+#: .\sogentis_apps\accounts_users\templates\accounts_users\registration\login.html:10
+#, fuzzy
+#| msgid "Activez votre compte SOGENTIS"
+msgid "Accédez à votre compte SOGENTIS"
+msgstr "Activate your SOGENTIS account"
+
+#: .\sogentis_apps\accounts_users\templates\accounts_users\registration\login.html:6
+msgid "Connexion | SOGENTIS"
+msgstr "Login | SOGENTIS"
+
+#: .\sogentis_apps\accounts_users\templates\accounts_users\registration\login.html:38
+#, fuzzy
+#| msgid "Identifiant"
+msgid "Identifiant ou e-mail"
+msgstr "Identifier"
+
+#: .\sogentis_apps\accounts_users\templates\accounts_users\registration\login.html:59
+#, fuzzy
+#| msgid "Confirmer le mot de passe"
+msgid "Afficher/masquer le mot de passe"
+msgstr "Confirm password"
+
+#: .\sogentis_apps\accounts_users\templates\accounts_users\registration\login.html:65
+msgid "Verr. Maj activé — attention aux majuscules."
+msgstr "Caps Lock is on — be careful with uppercase letters."
+
+#: .\sogentis_apps\accounts_users\templates\accounts_users\registration\login.html:89
 msgid "Pas encore inscrit ?"
 msgstr "Not registered yet?"
 
-#: .\sogentis_apps\accounts_users\templates\accounts_users\registration\login.html:68
+#: .\sogentis_apps\accounts_users\templates\accounts_users\registration\login.html:90
 #: .\sogentis_apps\accounts_users\templates\accounts_users\registration\signup.html:16
 #: .\sogentis_apps\core\templates\core\partials\_menu_eco.html:186
 msgid "Créer un compte"
 msgstr "Create an account"
 
-#: .\sogentis_apps\accounts_users\templates\accounts_users\registration\login.html:71
+#: .\sogentis_apps\accounts_users\templates\accounts_users\registration\login.html:94
 msgid "Mot de passe oublié ?"
 msgstr "Forgot password?"
 
@@ -1071,10 +1213,12 @@ msgstr ""
 "your account on <strong>SOGENTIS</strong>."
 
 #: .\sogentis_apps\accounts_users\templates\accounts_users\registration\password_reset_email.html:54
+#, fuzzy
+#| msgid ""
+#| "Pour définir un nouveau mot de passe, cliquez sur le bouton ci-dessous :"
 msgid ""
-"Pour définir un nouveau mot de passe, cliquez sur le bouton ci-dessous :"
-msgstr ""
-"To set a new password, click the button below:"
+"Pour définir un nouveau mot de passe, cliquez sur le bouton ci-dessous :"
+msgstr "To set a new password, click the button below:"
 
 #: .\sogentis_apps\accounts_users\templates\accounts_users\registration\password_reset_email.html:61
 #: .\sogentis_apps\accounts_users\templates\accounts_users\registration\password_reset_email.html:157
@@ -1086,16 +1230,14 @@ msgstr "Reset my password"
 msgid ""
 "Ce lien est valide pour une durée limitée et ne peut être utilisé qu’une "
 "seule fois."
-msgstr ""
-"This link is valid for a limited time and can only be used once."
+msgstr "This link is valid for a limited time and can only be used once."
 
 #: .\sogentis_apps\accounts_users\templates\accounts_users\registration\password_reset_email.html:75
 #: .\sogentis_apps\accounts_users\templates\accounts_users\registration\password_reset_email.html:171
 msgid ""
 "Si vous n’avez pas demandé cette réinitialisation, vous pouvez ignorer cet e-"
 "mail."
-msgstr ""
-"If you did not request this reset, you may ignore this email."
+msgstr "If you did not request this reset, you may ignore this email."
 
 #: .\sogentis_apps\accounts_users\templates\accounts_users\registration\resend_activation.html:4
 msgid "Renvoyer le lien d’activation | SOGENTIS"
@@ -1162,13 +1304,9 @@ msgstr "This account is already activated."
 msgid "Le lien d'activation est invalide ou expiré."
 msgstr "The activation link is invalid or has expired."
 
-#: .\sogentis_apps\accounts_users\views\auth.py:20
+#: .\sogentis_apps\accounts_users\views\auth.py:28
 msgid "Votre compte n'est pas encore activé."
 msgstr "Your account is not yet activated."
-
-#: .\sogentis_apps\accounts_users\views\auth.py:25
-msgid "Identifiants invalides."
-msgstr "Invalid credentials."
 
 #: .\sogentis_apps\accounts_users\views\password.py:30
 msgid "Votre mot de passe a été changé avec succès."
@@ -1183,7 +1321,9 @@ msgid "Si cette adresse existe, un email de réinitialisation a été envoyé."
 msgstr "If this address exists, a password reset email has been sent."
 
 #: .\sogentis_apps\accounts_users\views\password.py:65
-msgid "Votre mot de passe a bien été modifié !"
+#, fuzzy
+#| msgid "Votre mot de passe a bien été modifié !"
+msgid "Votre mot de passe a bien été modifié !"
 msgstr "Your password has been successfully updated!"
 
 #: .\sogentis_apps\accounts_users\views\password.py:80
@@ -1207,22 +1347,27 @@ msgstr "Invalid activation link."
 msgid "Lien d’activation invalide ou expiré."
 msgstr "Activation link invalid or expired."
 
-#: .\sogentis_apps\accounts_users\web\views\auth_web_views.py:10
+#: .\sogentis_apps\accounts_users\web\views\auth_web_views.py:16
 msgid "Vous êtes déjà connecté."
 msgstr "You are already logged in."
 
-#: .\sogentis_apps\accounts_users\web\views\auth_web_views.py:21
+#: .\sogentis_apps\accounts_users\web\views\auth_web_views.py:32
+#, fuzzy
+#| msgid ""
+#| "Votre compte n'est pas encore activé. Vérifiez votre email ou contactez "
+#| "l’administrateur."
 msgid ""
-"Votre compte n'est pas encore activé. Vérifiez votre email ou contactez "
+"Votre compte n'est pas encore activé. Vérifiez votre e-mail ou contactez "
 "l’administrateur."
 msgstr ""
-"Your account is not yet activated. Check your email or contact the administrator."
+"Your account is not yet activated. Check your email or contact the "
+"administrator."
 
-#: .\sogentis_apps\accounts_users\web\views\auth_web_views.py:26
+#: .\sogentis_apps\accounts_users\web\views\auth_web_views.py:47
 msgid "Identifiants invalides. Veuillez réessayer."
 msgstr "Invalid credentials. Please try again."
 
-#: .\sogentis_apps\accounts_users\web\views\auth_web_views.py:37
+#: .\sogentis_apps\accounts_users\web\views\auth_web_views.py:57
 msgid "Vous avez été déconnecté avec succès."
 msgstr "You have been successfully logged out."
 
@@ -1231,10 +1376,13 @@ msgid ""
 "Si cette adresse existe, un email de réinitialisation a été envoyé. Vérifiez "
 "vos spams si besoin."
 msgstr ""
-"If this address exists, a password reset email has been sent. Check your spam folder if needed."
+"If this address exists, a password reset email has been sent. Check your "
+"spam folder if needed."
 
 #: .\sogentis_apps\accounts_users\web\views\password_views.py:36
-msgid "Votre mot de passe a été modifié avec succès !"
+#, fuzzy
+#| msgid "Votre mot de passe a été modifié avec succès !"
+msgid "Votre mot de passe a été modifié avec succès !"
 msgstr "Your password has been successfully updated!"
 
 #: .\sogentis_apps\accounts_users\web\views\registration_views.py:59
@@ -1334,17 +1482,17 @@ msgstr "Contact messages"
 #: .\sogentis_apps\core\templates\core\contact.html:4
 #: .\sogentis_apps\core\templates\core\cookies.html:40
 #: .\sogentis_apps\core\templates\core\partials\_menu_mobile.html:40
-#: .\sogentis_apps\core\templates\core\partials\_topbar.html:147
+#: .\sogentis_apps\core\templates\core\partials\_topbar.html:122
 #: .\sogentis_apps\social\templates\social\partials\_menubar_soci.html:76
 #: .\templates\500.html:11
 msgid "Contact"
 msgstr "Contact"
 
-#: .\sogentis_apps\core\templates\core\contact.html:12
+#: .\sogentis_apps\core\templates\core\contact.html:13
 msgid "Contactez-nous"
 msgstr "Contact us"
 
-#: .\sogentis_apps\core\templates\core\contact.html:43
+#: .\sogentis_apps\core\templates\core\contact.html:44
 #: .\sogentis_apps\dashboard\templates\dashboard\support.html:24
 #: .\sogentis_apps\social\templates\social\volunteers\become_volunteer.html:10
 msgid "Envoyer"
@@ -1368,7 +1516,8 @@ msgid ""
 "Un cookie est un petit fichier texte stocké sur votre appareil lors de votre "
 "visite sur un site web."
 msgstr ""
-"A cookie is a small text file stored on your device during your visit to a website."
+"A cookie is a small text file stored on your device during your visit to a "
+"website."
 
 #: .\sogentis_apps\core\templates\core\cookies.html:22
 msgid "Utilisation des cookies"
@@ -1386,7 +1535,8 @@ msgid ""
 msgstr ""
 "\n"
 "    The %(project)s website uses cookies to improve your user experience,\n"
-"    measure audience traffic, and enable certain features such as authentication.\n"
+"    measure audience traffic, and enable certain features such as "
+"authentication.\n"
 "    "
 
 #: .\sogentis_apps\core\templates\core\cookies.html:30
@@ -1398,7 +1548,8 @@ msgid ""
 "Certains cookies peuvent être déposés par des services tiers comme Google "
 "Analytics ou les réseaux sociaux."
 msgstr ""
-"Some cookies may be placed by third-party services such as Google Analytics or social networks."
+"Some cookies may be placed by third-party services such as Google Analytics "
+"or social networks."
 
 #: .\sogentis_apps\core\templates\core\cookies.html:35
 msgid "Gestion des cookies"
@@ -1410,7 +1561,8 @@ msgid ""
 "supprimer les cookies. Le refus des cookies peut altérer certaines "
 "fonctionnalités du site."
 msgstr ""
-"You can configure your browser at any time to refuse or delete cookies. Refusing cookies may affect certain site features."
+"You can configure your browser at any time to refuse or delete cookies. "
+"Refusing cookies may affect certain site features."
 
 #: .\sogentis_apps\core\templates\core\cookies.html:42
 #, python-format
@@ -1469,7 +1621,8 @@ msgid ""
 "  "
 msgstr ""
 "\n"
-"    Join SOGENTIS: two united divisions, social and economic, for a sustainable future.\n"
+"    Join SOGENTIS: two united divisions, social and economic, for a "
+"sustainable future.\n"
 "  "
 
 #: .\sogentis_apps\core\templates\core\home.html:53
@@ -1648,8 +1801,7 @@ msgid "Contact pédagogique"
 msgstr "Educational contact"
 
 #: .\sogentis_apps\core\templates\core\partials\_menu_mobile.html:7
-#: .\sogentis_apps\core\templates\core\partials\_topbar.html:45
-#: .\sogentis_apps\core\templates\core\partials\_topbar.html:139
+#: .\sogentis_apps\core\templates\core\partials\_topbar.html:115
 msgid "Menu"
 msgstr "Menu"
 
@@ -1664,31 +1816,26 @@ msgstr "Make a donation"
 msgid "Réseaux sociaux"
 msgstr "Social networks"
 
-#: .\sogentis_apps\core\templates\core\partials\_menu_mobile.html:107
-#: .\sogentis_apps\core\templates\core\partials\_topbar.html:172
-#: .\sogentis_apps\core\templates\core\partials\_topbar.html:194
-msgid "Langue"
-msgstr "Language"
-
 #: .\sogentis_apps\core\templates\core\partials\_menu_mobile.html:128
-#: .\sogentis_apps\core\templates\core\partials\_topbar.html:207
+#: .\sogentis_apps\core\templates\core\partials\_topbar.html:151
 msgid "Thème"
 msgstr "Theme"
 
 #: .\sogentis_apps\core\templates\core\partials\_menu_mobile.html:130
+#: .\sogentis_apps\core\templates\core\partials\_topbar.html:78
 msgid "Basculer le thème"
 msgstr "Switch theme"
 
 #: .\sogentis_apps\core\templates\core\partials\_menu_mobile.html:143
-#: .\sogentis_apps\core\templates\core\partials\_topbar.html:111
-#: .\sogentis_apps\core\templates\core\partials\_topbar.html:216
+#: .\sogentis_apps\core\templates\core\partials\_topbar.html:89
+#: .\sogentis_apps\core\templates\core\partials\_topbar.html:157
 #: .\sogentis_apps\core\templates\core\partials\_user_menu.html:27
 msgid "Tableau de bord"
 msgstr "Dashboard"
 
 #: .\sogentis_apps\core\templates\core\partials\_menu_mobile.html:149
-#: .\sogentis_apps\core\templates\core\partials\_topbar.html:117
-#: .\sogentis_apps\core\templates\core\partials\_topbar.html:222
+#: .\sogentis_apps\core\templates\core\partials\_topbar.html:95
+#: .\sogentis_apps\core\templates\core\partials\_topbar.html:162
 #: .\sogentis_apps\core\templates\core\partials\_user_menu.html:34
 #: .\sogentis_apps\social\templates\social\publications.html:27
 msgid "Se déconnecter"
@@ -1746,16 +1893,29 @@ msgstr "Volunteering & Engagement"
 msgid "Accueil Économique"
 msgstr "Economic Home"
 
-#: .\sogentis_apps\core\templates\core\partials\_topbar.html:24
+#: .\sogentis_apps\core\templates\core\partials\_topbar.html:22
 msgid "Contact E-mail"
 msgstr "Contact Email"
 
-#: .\sogentis_apps\core\templates\core\partials\_topbar.html:152
-#: .\sogentis_apps\social\templates\social\donation_cancel.html:19
-msgid "Nous contacter"
-msgstr "Contact us"
+#: .\sogentis_apps\core\templates\core\partials\_topbar.html:32
+#, fuzzy
+#| msgid "Découvrir le pôle"
+msgid "Ouvrir le menu"
+msgstr "Discover the division"
 
 #: .\sogentis_apps\dashboard\admin\dashboard_note_admin.py:20
+#: .\sogentis_apps\z_about_old\admin_modules\about_page_admin.py:124
+#: .\sogentis_apps\z_about_old\admin_modules\child_admin.py:27
+#: .\sogentis_apps\z_about_old\admin_modules\donation_admin.py:26
+#: .\sogentis_apps\z_about_old\admin_modules\mission_admin.py:28
+#: .\sogentis_apps\z_about_old\admin_modules\mother_admin.py:27
+#: .\sogentis_apps\z_about_old\admin_modules\objective_admin.py:28
+#: .\sogentis_apps\z_about_old\admin_modules\partner_admin.py:28
+#: .\sogentis_apps\z_about_old\admin_modules\section_admin.py:31
+#: .\sogentis_apps\z_about_old\admin_modules\sponsor_admin.py:25
+#: .\sogentis_apps\z_about_old\admin_modules\team_member_admin.py:31
+#: .\sogentis_apps\z_about_old\admin_modules\value_admin.py:31
+#: .\sogentis_apps\z_about_old\admin_modules\vision_admin.py:31
 msgid "Métadonnées"
 msgstr "Metadata"
 
@@ -1864,10 +2024,30 @@ msgid "Auteur"
 msgstr "Author"
 
 #: .\sogentis_apps\dashboard\models\dashboard_note.py:16
+#: .\sogentis_apps\dashboard\templates\dashboard\engagements_list.html:25
+#: .\sogentis_apps\social\models\engagement.py:13
+#: .\sogentis_apps\social\models\evenement.py:6
+#: .\sogentis_apps\social\models\publication.py:12
+#: .\sogentis_apps\z_about_old\admin_modules\about_page_admin.py:132
+#: .\sogentis_apps\z_about_old\admin_modules\mission_admin.py:36
+#: .\sogentis_apps\z_about_old\admin_modules\objective_admin.py:36
+#: .\sogentis_apps\z_about_old\admin_modules\section_admin.py:40
+#: .\sogentis_apps\z_about_old\admin_modules\value_admin.py:40
+#: .\sogentis_apps\z_about_old\admin_modules\vision_admin.py:40
+#: .\sogentis_apps\z_about_old\models\about_page.py:8
+#: .\sogentis_apps\z_about_old\models\about_section.py:21
+#: .\sogentis_apps\z_about_old\models\mission_item.py:14
+#: .\sogentis_apps\z_about_old\models\value_item.py:14
+#: .\sogentis_apps\z_about_old\models\vision_item.py:14
 msgid "Titre"
 msgstr "Title"
 
 #: .\sogentis_apps\dashboard\models\dashboard_note.py:17
+#: .\sogentis_apps\z_about_old\admin_modules\section_admin.py:22
+#: .\sogentis_apps\z_about_old\admin_modules\value_admin.py:22
+#: .\sogentis_apps\z_about_old\admin_modules\vision_admin.py:22
+#: .\sogentis_apps\z_about_old\models\about_page.py:9
+#: .\sogentis_apps\z_about_old\models\about_section.py:22
 msgid "Contenu"
 msgstr "Content"
 
@@ -1925,14 +2105,25 @@ msgid "Historique de mes dons"
 msgstr "My donation history"
 
 #: .\sogentis_apps\dashboard\templates\dashboard\dons_list.html:47
+#: .\sogentis_apps\social\models\don.py:12
+#: .\sogentis_apps\social\templates\social\donation_history.html:16
+#: .\sogentis_apps\social\templates\social\public_donations.html:14
+#: .\sogentis_apps\social\templates\social\receipt_template.html:104
+#: .\sogentis_apps\z_about_old\admin_modules\donation_admin.py:40
 msgid "Montant"
 msgstr "Amount"
 
 #: .\sogentis_apps\dashboard\templates\dashboard\dons_list.html:48
+#: .\sogentis_apps\dashboard\templates\dashboard\engagements_list.html:26
+#: .\sogentis_apps\social\templates\social\donation_history.html:15
+#: .\sogentis_apps\social\templates\social\public_donations.html:16
+#: .\sogentis_apps\social\templates\social\receipt_template.html:92
 msgid "Date"
 msgstr "Date"
 
 #: .\sogentis_apps\dashboard\templates\dashboard\dons_list.html:50
+#: .\sogentis_apps\social\models\document_access.py:30
+#: .\sogentis_apps\social\models\donation.py:92
 msgid "Méthode de paiement"
 msgstr "Payment method"
 
@@ -2129,7 +2320,7 @@ msgstr "Cancel"
 
 #: .\sogentis_apps\dashboard\templates\dashboard\projects_list.html:4
 #: .\sogentis_apps\dashboard\templates\dashboard\projects_list.html:8
-#: .\sogentis_apps\social\templates\social\soci_index.html:120
+#: .\sogentis_apps\social\templates\social\soci_index.html:122
 msgid "Projets en cours"
 msgstr "Ongoing projects"
 
@@ -2200,7 +2391,9 @@ msgid "Support & Assistance"
 msgstr "Support & Assistance"
 
 #: .\sogentis_apps\dashboard\templates\dashboard\support.html:9
-msgid "Besoin d’aide ? Contactez notre équipe :"
+#, fuzzy
+#| msgid "Besoin d’aide ? Contactez notre équipe :"
+msgid "Besoin d’aide ? Contactez notre équipe :"
 msgstr "Need help? Contact our team:"
 
 #: .\sogentis_apps\dashboard\templates\dashboard\support.html:21
@@ -2247,7 +2440,7 @@ msgid "Montant total des dons"
 msgstr "Total donation amount"
 
 #: .\sogentis_apps\dashboard\views\index.py:44
-#: .\sogentis_apps\social\templates\social\soci_index.html:82
+#: .\sogentis_apps\social\templates\social\soci_index.html:84
 msgid "Projets actifs"
 msgstr "Active projects"
 
@@ -2457,7 +2650,8 @@ msgid "N° de copie"
 msgstr "Copy number"
 
 #: .\sogentis_apps\social\models\document_access.py:45
-msgid "Numéro de copie (hérité). Le nouveau système utilise PublicationPurchase."
+msgid ""
+"Numéro de copie (hérité). Le nouveau système utilise PublicationPurchase."
 msgstr "Copy number (legacy). The new system uses PublicationPurchase."
 
 #: .\sogentis_apps\social\models\document_access.py:48
@@ -2465,7 +2659,9 @@ msgid "Déjà téléchargé ?"
 msgstr "Already downloaded?"
 
 #: .\sogentis_apps\social\models\document_access.py:50
-msgid "Empêche le téléchargement multiple. Si True, une demande manuelle est requise."
+msgid ""
+"Empêche le téléchargement multiple. Si True, une demande manuelle est "
+"requise."
 msgstr "Prevents multiple downloads. If True, a manual request is required."
 
 #: .\sogentis_apps\social\models\document_access.py:54
@@ -2652,7 +2848,7 @@ msgstr "Last update"
 
 #: .\sogentis_apps\social\models\project.py:32
 #: .\sogentis_apps\social\templates\social\partials\_menubar_soci.html:54
-#: .\sogentis_apps\social\templates\social\soci_index.html:72
+#: .\sogentis_apps\social\templates\social\soci_index.html:74
 msgid "Projets"
 msgstr "Projects"
 
@@ -2711,7 +2907,9 @@ msgid "a été envoyé à votre adresse email :"
 msgstr "has been sent to your email address:"
 
 #: .\sogentis_apps\social\templates\social\document_email_resent.html:19
-msgid "Merci pour votre confiance. Vérifiez votre boîte de réception (et les spams) !"
+msgid ""
+"Merci pour votre confiance. Vérifiez votre boîte de réception (et les "
+"spams) !"
 msgstr "Thank you for your trust. Check your inbox (and spam folder)!"
 
 #: .\sogentis_apps\social\templates\social\document_email_resent.html:22
@@ -2735,8 +2933,12 @@ msgid "Nous venons de vous le renvoyer à :"
 msgstr "We have just resent it to:"
 
 #: .\sogentis_apps\social\templates\social\document_paid_success.html:42
-msgid "Vérifiez votre boîte de réception (ou les spams). Contactez-nous si vous ne recevez rien dans quelques minutes."
-msgstr "Check your inbox (or spam). Contact us if you do not receive anything within a few minutes."
+msgid ""
+"Vérifiez votre boîte de réception (ou les spams). Contactez-nous si vous ne "
+"recevez rien dans quelques minutes."
+msgstr ""
+"Check your inbox (or spam). Contact us if you do not receive anything within "
+"a few minutes."
 
 #: .\sogentis_apps\social\templates\social\document_paid_success.html:46
 msgid "Retour aux documents"
@@ -2756,8 +2958,12 @@ msgid "Le don a été annulé"
 msgstr "The donation has been cancelled"
 
 #: .\sogentis_apps\social\templates\social\donation_cancel.html:12
-msgid "Votre transaction a été annulée. Si vous avez des questions, n'hésitez pas à nous contacter."
-msgstr "Your transaction has been cancelled. If you have any questions, feel free to contact us."
+msgid ""
+"Votre transaction a été annulée. Si vous avez des questions, n'hésitez pas à "
+"nous contacter."
+msgstr ""
+"Your transaction has been cancelled. If you have any questions, feel free to "
+"contact us."
 
 #: .\sogentis_apps\social\templates\social\donation_cancel.html:16
 #: .\sogentis_apps\social\templates\social\donation_success.html:38
@@ -2765,8 +2971,12 @@ msgstr "Your transaction has been cancelled. If you have any questions, feel fre
 msgid "Faire un autre don"
 msgstr "Make another donation"
 
+#: .\sogentis_apps\social\templates\social\donation_cancel.html:19
+msgid "Nous contacter"
+msgstr "Contact us"
+
 #: .\sogentis_apps\social\templates\social\donation_form.html:5
-#: .\sogentis_apps\social\templates\social\soci_index.html:423
+#: .\sogentis_apps\social\templates\social\soci_index.html:425
 msgid "Faire un Don"
 msgstr "Make a Donation"
 
@@ -2866,7 +3076,9 @@ msgid "Don réussi"
 msgstr "Donation successful"
 
 #: .\sogentis_apps\social\templates\social\donation_success.html:19
-msgid "Merci pour votre générosité !"
+#, fuzzy
+#| msgid "Merci pour votre générosité !"
+msgid "Merci pour votre générosité !"
 msgstr "Thank you for your generosity!"
 
 #: .\sogentis_apps\social\templates\social\donation_success.html:21
@@ -2874,7 +3086,8 @@ msgid ""
 "Votre don a été effectué avec succès. Nous vous remercions sincèrement pour "
 "votre soutien à notre mission."
 msgstr ""
-"Your donation was successfully completed. We sincerely thank you for your support of our mission."
+"Your donation was successfully completed. We sincerely thank you for your "
+"support of our mission."
 
 #: .\sogentis_apps\social\templates\social\donation_success.html:27
 msgid "Télécharger mon reçu de don"
@@ -2942,12 +3155,12 @@ msgid "Nos Projets à soutenir"
 msgstr "Our Projects to Support"
 
 #: .\sogentis_apps\social\templates\social\projects_list.html:44
-#: .\sogentis_apps\social\templates\social\soci_index.html:154
+#: .\sogentis_apps\social\templates\social\soci_index.html:156
 msgid "Voir le projet"
 msgstr "View project"
 
 #: .\sogentis_apps\social\templates\social\projects_list.html:55
-#: .\sogentis_apps\social\templates\social\soci_index.html:163
+#: .\sogentis_apps\social\templates\social\soci_index.html:165
 msgid "Aucun projet disponible pour le moment."
 msgstr "No project available at the moment."
 
@@ -2987,13 +3200,13 @@ msgstr "Doc No."
 
 #: .\sogentis_apps\social\templates\social\publications.html:48
 #: .\sogentis_apps\social\templates\social\publications.html:132
-#: .\sogentis_apps\social\templates\social\soci_index.html:234
+#: .\sogentis_apps\social\templates\social\soci_index.html:236
 msgid "Voir plus"
 msgstr "Show more"
 
 #: .\sogentis_apps\social\templates\social\publications.html:53
 #: .\sogentis_apps\social\templates\social\publications.html:130
-#: .\sogentis_apps\social\templates\social\soci_index.html:239
+#: .\sogentis_apps\social\templates\social\soci_index.html:241
 msgid "Voir moins"
 msgstr "Show less"
 
@@ -3084,20 +3297,26 @@ msgid ""
 "Vous avez déjà téléchargé ce document. Pour des raisons de sécurité, il ne "
 "peut être téléchargé qu’une seule fois depuis le site."
 msgstr ""
-"You have already downloaded this document. For security reasons, it can only be downloaded once from the website."
+"You have already downloaded this document. For security reasons, it can only "
+"be downloaded once from the website."
 
 #: .\sogentis_apps\social\templates\social\request_document_email.html:18
+#, fuzzy
+#| msgid ""
+#| "Vous pouvez le redemander par email ci-dessous (à l’adresse enregistrée "
+#| "sur votre compte) :"
 msgid ""
 "Vous pouvez le redemander par email ci-dessous (à l’adresse enregistrée sur "
-"votre compte) :"
+"votre compte) :"
 msgstr ""
-"You can request it again by email below (to the address registered on your account):"
+"You can request it again by email below (to the address registered on your "
+"account):"
 
 #: .\sogentis_apps\social\templates\social\request_document_email.html:23
 msgid "Recevoir à nouveau par email"
 msgstr "Receive again by email"
 
-#: .\sogentis_apps\social\templates\social\soci_index.html:23
+#: .\sogentis_apps\social\templates\social\soci_index.html:25
 msgid ""
 "En conformité avec la réglementation applicable aux associations et "
 "sociétés, nous procédons actuellement à la constitution des prérequis "
@@ -3105,134 +3324,142 @@ msgid ""
 "opérationnel structuré, conforme et pérenne à nos initiatives sociales et "
 "économiques."
 msgstr ""
-"In accordance with regulations applicable to associations and companies, we are currently setting up the required administrative prerequisites. This step is essential to ensure a structured, compliant, and sustainable operational framework for our social and economic initiatives."
+"In accordance with regulations applicable to associations and companies, we "
+"are currently setting up the required administrative prerequisites. This "
+"step is essential to ensure a structured, compliant, and sustainable "
+"operational framework for our social and economic initiatives."
 
-#: .\sogentis_apps\social\templates\social\soci_index.html:37
+#: .\sogentis_apps\social\templates\social\soci_index.html:39
 msgid "Un futur solidaire commence ici"
 msgstr "A future of solidarity begins here"
 
-#: .\sogentis_apps\social\templates\social\soci_index.html:40
+#: .\sogentis_apps\social\templates\social\soci_index.html:42
 msgid ""
 "Votre engagement est notre force. Notre association s’appuie sur une gestion "
 "rigoureuse et moderne des ressources et des revenus..."
 msgstr ""
-"Your commitment is our strength. Our association relies on rigorous and modern management of resources and income..."
+"Your commitment is our strength. Our association relies on rigorous and "
+"modern management of resources and income..."
 
-#: .\sogentis_apps\social\templates\social\soci_index.html:43
+#: .\sogentis_apps\social\templates\social\soci_index.html:45
 msgid "Je participe"
 msgstr "I participate"
 
-#: .\sogentis_apps\social\templates\social\soci_index.html:50
+#: .\sogentis_apps\social\templates\social\soci_index.html:52
 msgid "Diapositive précédente"
 msgstr "Previous slide"
 
-#: .\sogentis_apps\social\templates\social\soci_index.html:54
+#: .\sogentis_apps\social\templates\social\soci_index.html:56
 msgid "Diapositive suivante"
 msgstr "Next slide"
 
-#: .\sogentis_apps\social\templates\social\soci_index.html:63
+#: .\sogentis_apps\social\templates\social\soci_index.html:65
 msgid "Urgence"
 msgstr "Emergency"
 
-#: .\sogentis_apps\social\templates\social\soci_index.html:63
+#: .\sogentis_apps\social\templates\social\soci_index.html:65
 msgid "Aide immédiate requise à Mbour et Ziguinchor."
 msgstr "Immediate assistance required in Mbour and Ziguinchor."
 
-#: .\sogentis_apps\social\templates\social\soci_index.html:93
+#: .\sogentis_apps\social\templates\social\soci_index.html:95
 msgid "Cagnotte totale reçue"
 msgstr "Total funds received"
 
-#: .\sogentis_apps\social\templates\social\soci_index.html:104
+#: .\sogentis_apps\social\templates\social\soci_index.html:106
 msgid "Bénéficiaires"
 msgstr "Beneficiaries"
 
-#: .\sogentis_apps\social\templates\social\soci_index.html:123
+#: .\sogentis_apps\social\templates\social\soci_index.html:125
 msgid "Nos actions concrètes pour un changement durable et solidaire."
 msgstr "Our concrete actions for lasting and united change."
 
-#: .\sogentis_apps\social\templates\social\soci_index.html:148
+#: .\sogentis_apps\social\templates\social\soci_index.html:150
 msgid "Collecté"
 msgstr "Collected"
 
-#: .\sogentis_apps\social\templates\social\soci_index.html:149
+#: .\sogentis_apps\social\templates\social\soci_index.html:151
+#: .\sogentis_apps\z_about_old\admin_modules\about_page_admin.py:61
+#: .\sogentis_apps\z_about_old\models\objective_item.py:38
 msgid "Objectif"
 msgstr "Goal"
 
-#: .\sogentis_apps\social\templates\social\soci_index.html:157
+#: .\sogentis_apps\social\templates\social\soci_index.html:159
 msgid "Soutenir"
 msgstr "Support"
 
-#: .\sogentis_apps\social\templates\social\soci_index.html:176
+#: .\sogentis_apps\social\templates\social\soci_index.html:178
 msgid "Rejoignez notre mission"
 msgstr "Join our mission"
 
-#: .\sogentis_apps\social\templates\social\soci_index.html:179
+#: .\sogentis_apps\social\templates\social\soci_index.html:181
 msgid "Devenez bénévole, partenaire ou mécène en cliquant sur je m'engage."
 msgstr "Become a volunteer, partner, or sponsor by clicking on I commit."
 
-#: .\sogentis_apps\social\templates\social\soci_index.html:183
+#: .\sogentis_apps\social\templates\social\soci_index.html:185
 msgid "Je m'engage"
 msgstr "I commit"
 
-#: .\sogentis_apps\social\templates\social\soci_index.html:186
+#: .\sogentis_apps\social\templates\social\soci_index.html:188
 msgid "J'achète pour soutenir"
 msgstr "I buy to support"
 
-#: .\sogentis_apps\social\templates\social\soci_index.html:190
+#: .\sogentis_apps\social\templates\social\soci_index.html:192
 msgid ""
 "Achetez un article pour soutenir nos actions sociales et solidaires en "
 "cliquant sur j'achète."
 msgstr ""
-"Buy an item to support our social and solidarity actions by clicking on I buy."
+"Buy an item to support our social and solidarity actions by clicking on I "
+"buy."
 
-#: .\sogentis_apps\social\templates\social\soci_index.html:197
+#: .\sogentis_apps\social\templates\social\soci_index.html:199
 msgid "Notre vision en images"
 msgstr "Our vision in images"
 
-#: .\sogentis_apps\social\templates\social\soci_index.html:199
+#: .\sogentis_apps\social\templates\social\soci_index.html:201
 msgid ""
 "Découvrez ce qui nous anime : solidarité, dignité humaine et transformation "
 "sociale."
 msgstr ""
-"Discover what drives us: solidarity, human dignity, and social transformation."
+"Discover what drives us: solidarity, human dignity, and social "
+"transformation."
 
-#: .\sogentis_apps\social\templates\social\soci_index.html:204
+#: .\sogentis_apps\social\templates\social\soci_index.html:206
 msgid "Votre navigateur ne supporte pas la lecture de vidéos HTML5."
 msgstr "Your browser does not support HTML5 video playback."
 
-#: .\sogentis_apps\social\templates\social\soci_index.html:214
+#: .\sogentis_apps\social\templates\social\soci_index.html:216
 msgid "Documents téléchargeables"
 msgstr "Downloadable documents"
 
-#: .\sogentis_apps\social\templates\social\soci_index.html:221
+#: .\sogentis_apps\social\templates\social\soci_index.html:223
 msgid "Document payant, authentification requise."
 msgstr "Paid document, authentication required."
 
-#: .\sogentis_apps\social\templates\social\soci_index.html:245
+#: .\sogentis_apps\social\templates\social\soci_index.html:247
 msgid "Télécharger le PDF"
 msgstr "Download PDF"
 
-#: .\sogentis_apps\social\templates\social\soci_index.html:249
+#: .\sogentis_apps\social\templates\social\soci_index.html:251
 msgid "Obtenir ce document"
 msgstr "Get this document"
 
-#: .\sogentis_apps\social\templates\social\soci_index.html:257
+#: .\sogentis_apps\social\templates\social\soci_index.html:259
 msgid "Aucun document disponible."
 msgstr "No document available."
 
-#: .\sogentis_apps\social\templates\social\soci_index.html:277
+#: .\sogentis_apps\social\templates\social\soci_index.html:279
 msgid "Enfants soutenus"
 msgstr "Supported children"
 
-#: .\sogentis_apps\social\templates\social\soci_index.html:289
+#: .\sogentis_apps\social\templates\social\soci_index.html:291
 msgid "Projets réalisés"
 msgstr "Projects completed"
 
-#: .\sogentis_apps\social\templates\social\soci_index.html:301
+#: .\sogentis_apps\social\templates\social\soci_index.html:303
 msgid "Régions couvertes"
 msgstr "Regions covered"
 
-#: .\sogentis_apps\social\templates\social\soci_index.html:417
+#: .\sogentis_apps\social\templates\social\soci_index.html:419
 msgid "Retour à propos"
 msgstr "Back to About"
 
@@ -3374,6 +3601,37 @@ msgstr "Our values"
 msgid "Nos objectifs"
 msgstr "Our objectives"
 
+#: .\sogentis_apps\z_about_old\admin_modules\about_page_admin.py:82
+#: .\sogentis_apps\z_about_old\admin_modules\child_admin.py:37
+#: .\sogentis_apps\z_about_old\admin_modules\mother_admin.py:37
+#: .\sogentis_apps\z_about_old\admin_modules\team_member_admin.py:52
+#, fuzzy
+#| msgid "Aperçu photo / logo"
+msgid "Aperçu photo"
+msgstr "Photo / logo preview"
+
+#: .\sogentis_apps\z_about_old\admin_modules\about_page_admin.py:99
+#: .\sogentis_apps\z_about_old\admin_modules\partner_admin.py:48
+#, fuzzy
+#| msgid "Aperçu photo / logo"
+msgid "Aperçu logo"
+msgstr "Photo / logo preview"
+
+#: .\sogentis_apps\z_about_old\admin_modules\about_page_admin.py:121
+#, fuzzy
+#| msgid "Informations personnelles"
+msgid "Informations principales"
+msgstr "Personal information"
+
+#: .\sogentis_apps\z_about_old\admin_modules\about_page_admin.py:131
+msgid "(Page)"
+msgstr "(page)"
+
+#: .\sogentis_apps\z_about_old\admin_modules\about_page_admin.py:141
+#: .\sogentis_apps\z_about_old\models\about_page.py:13
+msgid "Photo de couverture"
+msgstr "Cover photo"
+
 #: .\sogentis_apps\z_about_old\admin_modules\child_admin.py:21
 #: .\sogentis_apps\z_about_old\admin_modules\donation_admin.py:20
 #: .\sogentis_apps\z_about_old\admin_modules\mission_admin.py:22
@@ -3498,10 +3756,6 @@ msgstr "Indicates whether the section should be displayed."
 #: .\sogentis_apps\z_about_old\models\about_section.py:39
 msgid "Section À propos"
 msgstr "About Section"
-
-#: .\sogentis_apps\z_about_old\models\about_section.py:40
-msgid "Sections À propos"
-msgstr "About Sections"
 
 #: .\sogentis_apps\z_about_old\models\about_section.py:44
 msgid "(Section)"
@@ -3688,8 +3942,11 @@ msgid "À PROPOS DE NOUS"
 msgstr "ABOUT US"
 
 #: .\sogentis_apps\z_about_old\templates\about\_about_index1.html:26
-msgid "Découvrez notre mission, notre vision, nos valeurs et les personnes qui incarnent SOGENTIS."
-msgstr "Discover our mission, vision, values, and the people who embody SOGENTIS."
+msgid ""
+"Découvrez notre mission, notre vision, nos valeurs et les personnes qui "
+"incarnent SOGENTIS."
+msgstr ""
+"Discover our mission, vision, values, and the people who embody SOGENTIS."
 
 #: .\sogentis_apps\z_about_old\templates\about\_about_index1.html:45
 msgid "Notre Mission"
@@ -3847,14 +4104,20 @@ msgstr "An unexpected error occurred. Please try again later."
 msgid "Si le problème persiste, contactez notre support :"
 msgstr "If the problem persists, please contact our support:"
 
-#: .\templates\main.html:154
+#: .\templates\main.html:155
 msgid "Ce site utilise des cookies pour améliorer votre expérience."
 msgstr "This website uses cookies to improve your experience."
 
-#: .\templates\main.html:155
+#: .\templates\main.html:156
 msgid "En savoir plus"
 msgstr "Learn more"
 
-#: .\templates\main.html:158
+#: .\templates\main.html:159
 msgid "Accepter"
 msgstr "Accept"
+
+#~ msgid "Identifiants invalides."
+#~ msgstr "Invalid credentials."
+
+#~ msgid "DIRECTION EXECUTIVE"
+#~ msgstr "EXECUTIVE MANAGEMENT"

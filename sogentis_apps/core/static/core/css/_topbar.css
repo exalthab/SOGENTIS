@@ -1,0 +1,201 @@
+/* =========================================================
+   TOPBAR — SOGENTIS
+   Compatible avec core/partials/_topbar.html + theme.js
+   ========================================================= */
+
+/* -------- Base -------- */
+.topbar {
+  font-size: 0.875rem;
+  line-height: 1.2;
+  /* optionnel: un léger trait pour séparer la topbar du contenu */
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+/* Conteneur interne : meilleure tenue en wrap */
+.topbar .container {
+  gap: .25rem;
+}
+
+/* Logo : pas de débordement */
+.topbar a img {
+  display: block;
+  height: 40px;
+  max-height: 40px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* Liens utilitaires (desktop) */
+.topbar a {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: inherit;
+}
+
+/* Icônes fontawesome */
+.topbar a i {
+  font-size: 1rem;
+}
+
+/* Séparateurs “|” : réduire l’opacité pour moins d’agressivité */
+.topbar .d-md-flex .text-info + .text-info::before,
+.topbar .d-md-flex .text-info + .text-white::before,
+.topbar .d-md-flex .text-white + .text-info::before,
+.topbar .d-md-flex .text-white + .text-white::before {
+  content: "·";
+  margin: 0 .5rem;
+  opacity: .4;
+}
+
+/* -------- Réseaux sociaux (desktop) -------- */
+.topbar .social-icon svg {
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+  transition: transform .2s ease, color .2s ease, fill .2s ease;
+  /* s’appuie sur la couleur du texte courant */
+  color: currentColor;
+  fill: currentColor;
+}
+
+.topbar .social-icon:hover svg {
+  transform: scale(1.1);
+  color: var(--bs-primary, #0d6efd);
+  fill: var(--bs-primary, #0d6efd);
+}
+
+/* -------- Sélecteur de langue (desktop) -------- */
+.topbar form .form-select.form-select-sm {
+  width: 120px;
+  min-width: 120px;
+  padding-top: .15rem;
+  padding-bottom: .15rem;
+  line-height: 1.2;
+}
+
+/* -------- Boutons (thème, login, user) -------- */
+.topbar .btn-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+}
+
+/* Bouton hamburger (mobile) */
+.topbar button[data-bs-toggle="offcanvas"] {
+  font-size: 1.25rem;
+  padding: 0.2rem 0.5rem;
+  line-height: 1;
+}
+
+/* -------- Hover générique -------- */
+.topbar a:hover,
+.topbar button:hover {
+  opacity: 0.85;
+  transition: opacity 0.2s ease;
+}
+
+/* =========================================================
+   OFFCANVAS (Mobile)
+   ========================================================= */
+
+.offcanvas-header.bg-dark,
+.offcanvas-body.bg-dark {
+  background: #111; /* un peu plus sombre que .bg-dark pour contraste */
+}
+
+.offcanvas-header,
+.offcanvas-body {
+  border-left: 1px solid rgba(255,255,255,0.08);
+}
+
+/* Liens & boutons dans le menu mobile */
+.offcanvas-body a,
+.offcanvas-body button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+/* Ajustement des icônes éventuelles (svg) */
+.offcanvas-body svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Sélecteur langue mobile */
+.offcanvas-body .form-select.form-select-sm {
+  line-height: 1.2;
+  padding-top: .25rem;
+  padding-bottom: .25rem;
+}
+
+/* Boutons mobiles (thème / auth) */
+.offcanvas-body .btn-sm {
+  width: 100%;
+  text-align: left;
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+/* État “actif” générique (utile si tu utilises .active sur un bouton) */
+.btn.active {
+  background-color: var(--bs-primary, #0d6efd) !important;
+  color: #fff !important;
+  border-color: var(--bs-primary, #0d6efd) !important;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 992px) {
+  /* On laisse plus de place aux éléments à droite */
+  .topbar .container {
+    gap: .5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  /* Eviter les sauts/écrasements : le logo se réduit un peu */
+  .topbar a img {
+    height: 36px;
+    max-height: 36px;
+  }
+}
+
+/* =========================================================
+   DARK MODE (piloté par body.dark-mode via theme.js)
+   ========================================================= */
+
+body.dark-mode .topbar {
+  background: #0d0f14 !important;
+  color: #f1f3f5;
+  border-bottom-color: rgba(255,255,255,0.05);
+}
+
+body.dark-mode .topbar .form-select {
+  background-color: #151923 !important;
+  color: #f1f3f5 !important;
+  border-color: #2a3242 !important;
+}
+
+body.dark-mode .topbar .btn.btn-outline-light {
+  border-color: #2a3242;
+}
+
+body.dark-mode .offcanvas.bg-dark,
+body.dark-mode .offcanvas-header.bg-dark,
+body.dark-mode .offcanvas-body.bg-dark {
+  background: #0b0e12 !important;
+  color: #e6e9ef;
+}
+
+body.dark-mode .offcanvas-header,
+body.dark-mode .offcanvas-body {
+  border-left-color: rgba(255,255,255,0.06);
+}
+
+/* Les icônes réseaux suivent currentColor, rien à forcer ici */

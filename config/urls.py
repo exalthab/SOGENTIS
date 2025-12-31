@@ -54,11 +54,10 @@ urlpatterns = [
         "accounts/api/",
         include(("accounts_users.api.urls", "accounts_users_api"), namespace="accounts_users_api")
     ),
-    path(
-        "accounts/web/",
-        include(("accounts_users.web.urls", "accounts_users_web"), namespace="accounts_users_web")
-    ),
+
     path("accounts/", include("accounts_users.urls")),
+    # path("webhooks/<str:provider>/", ecommerce_payments.webhook_generic, name="webhook_generic"),
+
 ]
 
 
@@ -73,15 +72,21 @@ urlpatterns += i18n_patterns(
     # Modules
     path("social/", include(("social.urls", "social"), namespace="social")),
     path("dashboard/", include(("dashboard.urls", "dashboard"), namespace="dashboard")),
-    path("econ/", include(("economic.urls", "econ"), namespace="econ")),
-    path("ecommerce/", include(("economic.ecommerce.urls", "ecommerce"), namespace="ecommerce")),
-    path("formations/", include(("economic.formations.urls", "formations"), namespace="formations")),
-    path("services/", include(("economic.gestion_projets.urls", "services"), namespace="services")),
+    path("economic/", include(("economic.urls", "economic"), namespace="economic")),
+    # path("econ/", include(("economic.urls", "economic"), namespace="economic")),
+
+    # path("ecommerce/", include(("economic.ecommerce.urls", "ecommerce"), namespace="ecommerce")),
+    # path("formations/", include(("economic.formations.urls", "formations"), namespace="formations")),
+    # path("services/", include(("economic.gestion_projets.urls", "services"), namespace="services")),
     path("stakeholders/", include(("stakeholders.urls", "stakeholders"), namespace="stakeholders")),
     path("search/", include("search.urls", namespace="search")),
     path("", include("donations.urls", namespace="donations")),
     path("about/", include("about.urls", namespace="about")),
 
+    path(
+        "accounts/web/",
+        include(("accounts_users.web.urls", "accounts_users_web"), namespace="accounts_users_web")
+    ),
     prefix_default_language=False,
 )
 
@@ -96,6 +101,7 @@ if settings.DEBUG:
 # ===========================================================
 # HANDLERS D'ERREURS
 # ===========================================================
+handler400 = "core.views.views.handler400"
 handler403 = "core.views.views.handler403"
 handler404 = "core.views.views.handler404"
 handler500 = "core.views.views.handler500"

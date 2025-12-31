@@ -1,3 +1,48 @@
+{# accounts_users/registration/activation_invalid.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Lien invalide ou expiré" %} | SOGENTIS{% endblock %}
+{% block auth_title %}❌ {% trans "Lien invalide ou expiré" %}{% endblock %}
+{% block auth_subtitle %}
+  {% trans "Le lien d’activation est invalide, déjà utilisé ou a expiré." %}
+{% endblock %}
+
+{% block content %}
+<div class="text-center">
+
+  <p class="mb-4 text-muted small">
+    {% trans "Si besoin, demandez un nouveau lien ou contactez notre support." %}
+  </p>
+
+  <div class="d-grid gap-2">
+
+    <a href="{% url 'accounts_users_web:resend_activation' %}"
+       class="btn btn-warning py-2 fw-semibold">
+      <i class="fas fa-envelope-open-text me-1"></i>
+      {% trans "Demander un nouveau lien d’activation" %}
+    </a>
+
+    <a href="{% url 'accounts_users_web:login' %}"
+       class="btn btn-outline-primary py-2 fw-semibold">
+      <i class="fas fa-sign-in-alt me-1"></i>
+      {% trans "Retour à la connexion" %}
+    </a>
+
+  </div>
+
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+{% comment %} {# accounts_users/registration/activation_invalid.html #}
 {% extends "accounts_users/registration/base_auth.html" %}
 {% load static i18n %}
 
@@ -70,4 +115,4 @@
     </a>
   </div>
 </div>
-{% endblock %} {% endcomment %}
+{% endblock %} {% endcomment %} {% endcomment %}

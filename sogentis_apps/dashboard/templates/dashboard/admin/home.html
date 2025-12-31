@@ -1,0 +1,1067 @@
+{# templates/dashboard/admin/home.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Dashboard administrateur" %} | {{ PROJECT_NAME }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'dashboard/css/admin_dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'global/css/vendors/fontawesome/css/all.min.css' %}">
+
+{% endblock %}
+
+{% block dashboard_header %}
+  <div class="dash-header d-flex flex-column flex-md-row justify-content-between align-items-md-center w-100 gap-3">
+    <div>
+      <h1 class="dash-title fw-bold mb-1">{% trans "Dashboard administrateur" %}</h1>
+      <p class="text-muted mb-0">
+        {% trans "Vue globale de l’activité de la plateforme et accès rapide aux outils de gestion." %}
+      </p>
+    </div>
+
+    <div class="d-flex align-items-center gap-3 flex-wrap justify-content-md-end">
+      {% if ENV_NAME %}
+        <span class="badge dash-env-badge">
+          {% trans "Environnement" %} : {{ ENV_NAME }}
+        </span>
+      {% endif %}
+
+      <nav aria-label="{% trans 'Fil d’Ariane' %}">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item">
+            <a href="{% url 'core:home' %}">{% trans "Accueil" %}</a>
+          </li>
+          <li class="breadcrumb-item active" aria-current="page">{% trans "Admin" %}</li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="container-fluid">
+
+  <section class="mb-4">
+    <div class="row g-3 g-md-4">
+
+      <div class="col-6 col-md-3">
+        <a class="kpi-card card border-0 shadow-sm h-100 text-decoration-none"
+           aria-label="{% trans 'Voir les utilisateurs' %}"
+           href="{% url 'dashboard:admin:users' %}">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <span class="small text-muted">{% trans "Utilisateurs" %}</span>
+              <span class="kpi-ico"><i class="fas fa-users" aria-hidden="true"></i></span>
+            </div>
+            <div class="fs-4 fw-bold text-dark">{{ total_users|default:0 }}</div>
+            <div class="small text-muted">{% trans "comptes enregistrés" %}</div>
+          </div>
+        </a>
+      </div>
+
+      <div class="col-6 col-md-3">
+        <a class="kpi-card card border-0 shadow-sm h-100 text-decoration-none"
+           aria-label="{% trans 'Voir les profils en attente' %}"
+           href="{% url 'dashboard:pending_profiles' %}">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <span class="small text-muted">{% trans "Validations en attente" %}</span>
+              <span class="kpi-ico"><i class="fas fa-user-check" aria-hidden="true"></i></span>
+            </div>
+            <div class="fs-4 fw-bold text-dark">{{ pending_validations|default:0 }}</div>
+            <div class="small text-muted">{% trans "profils / contenus à traiter" %}</div>
+          </div>
+        </a>
+      </div>
+
+      <div class="col-6 col-md-3">
+        <a class="kpi-card card border-0 shadow-sm h-100 text-decoration-none"
+           aria-label="{% trans 'Voir les commandes' %}"
+           href="{% url 'dashboard:orders' %}">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <span class="small text-muted">{% trans "Commandes" %}</span>
+              <span class="kpi-ico"><i class="fas fa-shopping-cart" aria-hidden="true"></i></span>
+            </div>
+            <div class="fs-4 fw-bold text-dark">{{ total_orders|default:0 }}</div>
+            <div class="small text-muted">{% trans "commandes enregistrées" %}</div>
+          </div>
+        </a>
+      </div>
+
+      <div class="col-6 col-md-3">
+        <a class="kpi-card card border-0 shadow-sm h-100 text-decoration-none"
+           aria-label="{% trans 'Voir mes dons' %}"
+           href="{% url 'dashboard:dons_list' %}">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <span class="small text-muted">{% trans "Dons du jour" %}</span>
+              <span class="kpi-ico"><i class="fas fa-hand-holding-heart" aria-hidden="true"></i></span>
+            </div>
+            <div class="fs-4 fw-bold text-dark">{{ donations_today|default:0 }}</div>
+            <div class="small text-muted">{% trans "dons enregistrés aujourd’hui" %}</div>
+          </div>
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="mt-4">
+    <h2 class="h5 mb-3">{% trans "Outils d’administration" %}</h2>
+
+    <div class="row g-4">
+
+      <div class="col-md-6 col-lg-3">
+        <div class="action-card card h-100 shadow-sm border-0">
+          <div class="card-body d-flex flex-column">
+            <div class="mb-3 d-flex align-items-center gap-2">
+              <span class="icon-circle bg-primary-subtle text-primary">
+                <i class="fas fa-users" aria-hidden="true"></i>
+              </span>
+              <h3 class="h6 mb-0">{% trans "Utilisateurs" %}</h3>
+            </div>
+            <p class="text-muted small mb-3">{% trans "Gérer les comptes, rôles, permissions et accès des utilisateurs." %}</p>
+            <div class="mt-auto">
+              <a href="{% url 'dashboard:admin:users' %}" class="btn btn-sm btn-primary w-100">
+                {% trans "Voir les utilisateurs" %}
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="action-card card h-100 shadow-sm border-0">
+          <div class="card-body d-flex flex-column">
+            <div class="mb-3 d-flex align-items-center gap-2">
+              <span class="icon-circle bg-warning-subtle text-warning">
+                <i class="fas fa-shield-halved" aria-hidden="true"></i>
+              </span>
+              <h3 class="h6 mb-0">{% trans "Modération" %}</h3>
+            </div>
+            <p class="text-muted small mb-3">{% trans "Valider, refuser ou bloquer les profils, contenus et contributions." %}</p>
+            <div class="mt-auto">
+              <a href="{% url 'dashboard:admin:moderation' %}" class="btn btn-sm btn-outline-warning w-100">
+                {% trans "Accéder à la modération" %}
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="action-card card h-100 shadow-sm border-0">
+          <div class="card-body d-flex flex-column">
+            <div class="mb-3 d-flex align-items-center gap-2">
+              <span class="icon-circle bg-info-subtle text-info">
+                <i class="fas fa-chart-line" aria-hidden="true"></i>
+              </span>
+              <h3 class="h6 mb-0">{% trans "Rapports & statistiques" %}</h3>
+            </div>
+            <p class="text-muted small mb-3">{% trans "Visualiser les indicateurs clés de la plateforme et télécharger des rapports." %}</p>
+            <div class="mt-auto">
+              <a href="{% url 'dashboard:admin:reports' %}" class="btn btn-sm btn-outline-info w-100">
+                {% trans "Voir les rapports" %}
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="action-card card h-100 shadow-sm border-0">
+          <div class="card-body d-flex flex-column">
+            <div class="mb-3 d-flex align-items-center gap-2">
+              <span class="icon-circle bg-secondary-subtle text-secondary">
+                <i class="fas fa-gear" aria-hidden="true"></i>
+              </span>
+              <h3 class="h6 mb-0">{% trans "Paramètres" %}</h3>
+            </div>
+            <p class="text-muted small mb-3">{% trans "Configurer les options globales, intégrations externes et paramètres système." %}</p>
+            <div class="mt-auto">
+              <a href="{% url 'dashboard:admin:settings' %}" class="btn btn-sm btn-outline-secondary w-100">
+                {% trans "Accéder aux paramètres" %}
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}{% endblock %}
+
+
+
+
+
+
+
+{% comment %} {# templates/dashboard/admin/home.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Dashboard administrateur" %} | {{ PROJECT_NAME }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'dashboard/css/admin_dashboard.css' %}">
+{% endblock %}
+
+{% block dashboard_header %}
+  <div class="dash-header d-flex flex-column flex-md-row justify-content-between align-items-md-center w-100 gap-3">
+    <div>
+      <h1 class="dash-title fw-bold mb-1">{% trans "Dashboard administrateur" %}</h1>
+      <p class="text-muted mb-0">
+        {% trans "Vue globale de l’activité de la plateforme et accès rapide aux outils de gestion." %}
+      </p>
+    </div>
+
+    <div class="d-flex align-items-center gap-3 flex-wrap justify-content-md-end">
+      {% if ENV_NAME %}
+        <span class="badge dash-env-badge">
+          {% trans "Environnement" %} : {{ ENV_NAME }}
+        </span>
+      {% endif %}
+
+      <nav aria-label="{% trans 'Fil d’Ariane' %}">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item">
+            <a href="{% url 'core:home' %}">{% trans "Accueil" %}</a>
+          </li>
+          <li class="breadcrumb-item active" aria-current="page">{% trans "Admin" %}</li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="container-fluid">
+
+  <!-- KPIs -->
+  <section class="mb-4">
+    <div class="row g-3 g-md-4">
+
+      <div class="col-6 col-md-3">
+        <a class="kpi-card card border-0 shadow-sm h-100 text-decoration-none"
+           href="{% url 'dashboard:admin:users' %}">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <span class="small text-muted">{% trans "Utilisateurs" %}</span>
+              <span class="kpi-ico"><i class="fa fa-users" aria-hidden="true"></i></span>
+            </div>
+            <div class="fs-4 fw-bold text-dark">{{ total_users|default:0 }}</div>
+            <div class="small text-muted">{% trans "comptes enregistrés" %}</div>
+          </div>
+        </a>
+      </div>
+
+      <div class="col-6 col-md-3">
+        <a class="kpi-card card border-0 shadow-sm h-100 text-decoration-none"
+           href="{% url 'dashboard:pending_profiles' %}">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <span class="small text-muted">{% trans "Validations en attente" %}</span>
+              <span class="kpi-ico"><i class="fa fa-user-check" aria-hidden="true"></i></span>
+            </div>
+            <div class="fs-4 fw-bold text-dark">{{ pending_validations|default:0 }}</div>
+            <div class="small text-muted">{% trans "profils / contenus à traiter" %}</div>
+          </div>
+        </a>
+      </div>
+
+      <div class="col-6 col-md-3">
+        <a class="kpi-card card border-0 shadow-sm h-100 text-decoration-none"
+           href="{% url 'dashboard:orders' %}">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <span class="small text-muted">{% trans "Commandes" %}</span>
+              <span class="kpi-ico"><i class="fa fa-shopping-cart" aria-hidden="true"></i></span>
+            </div>
+            <div class="fs-4 fw-bold text-dark">{{ total_orders|default:0 }}</div>
+            <div class="small text-muted">{% trans "commandes enregistrées" %}</div>
+          </div>
+        </a>
+      </div>
+
+      <div class="col-6 col-md-3">
+        <a class="kpi-card card border-0 shadow-sm h-100 text-decoration-none"
+           href="{% url 'dashboard:dons_list' %}">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <span class="small text-muted">{% trans "Dons du jour" %}</span>
+              <span class="kpi-ico"><i class="fa fa-hand-holding-heart" aria-hidden="true"></i></span>
+            </div>
+            <div class="fs-4 fw-bold text-dark">{{ donations_today|default:0 }}</div>
+            <div class="small text-muted">{% trans "dons enregistrés aujourd’hui" %}</div>
+          </div>
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Outils d’administration -->
+  <section class="mt-4">
+    <h2 class="h5 mb-3">{% trans "Outils d’administration" %}</h2>
+
+    <div class="row g-4">
+
+      <div class="col-md-6 col-lg-3">
+        <div class="action-card card h-100 shadow-sm border-0">
+          <div class="card-body d-flex flex-column">
+            <div class="mb-3 d-flex align-items-center gap-2">
+              <span class="icon-circle bg-primary-subtle text-primary"><i class="fa fa-users" aria-hidden="true"></i></span>
+              <h3 class="h6 mb-0">{% trans "Utilisateurs" %}</h3>
+            </div>
+            <p class="text-muted small mb-3">{% trans "Gérer les comptes, rôles, permissions et accès des utilisateurs." %}</p>
+            <div class="mt-auto">
+              <a href="{% url 'dashboard:admin:users' %}" class="btn btn-sm btn-primary w-100">
+                {% trans "Voir les utilisateurs" %}
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="action-card card h-100 shadow-sm border-0">
+          <div class="card-body d-flex flex-column">
+            <div class="mb-3 d-flex align-items-center gap-2">
+              <span class="icon-circle bg-warning-subtle text-warning"><i class="fa fa-shield-halved" aria-hidden="true"></i></span>
+              <h3 class="h6 mb-0">{% trans "Modération" %}</h3>
+            </div>
+            <p class="text-muted small mb-3">{% trans "Valider, refuser ou bloquer les profils, contenus et contributions." %}</p>
+            <div class="mt-auto">
+              <a href="{% url 'dashboard:admin:moderation' %}" class="btn btn-sm btn-outline-warning w-100">
+                {% trans "Accéder à la modération" %}
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="action-card card h-100 shadow-sm border-0">
+          <div class="card-body d-flex flex-column">
+            <div class="mb-3 d-flex align-items-center gap-2">
+              <span class="icon-circle bg-info-subtle text-info"><i class="fa fa-chart-line" aria-hidden="true"></i></span>
+              <h3 class="h6 mb-0">{% trans "Rapports & statistiques" %}</h3>
+            </div>
+            <p class="text-muted small mb-3">{% trans "Visualiser les indicateurs clés de la plateforme et télécharger des rapports." %}</p>
+            <div class="mt-auto">
+              <a href="{% url 'dashboard:admin:reports' %}" class="btn btn-sm btn-outline-info w-100">
+                {% trans "Voir les rapports" %}
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="action-card card h-100 shadow-sm border-0">
+          <div class="card-body d-flex flex-column">
+            <div class="mb-3 d-flex align-items-center gap-2">
+              <span class="icon-circle bg-secondary-subtle text-secondary"><i class="fa fa-gear" aria-hidden="true"></i></span>
+              <h3 class="h6 mb-0">{% trans "Paramètres" %}</h3>
+            </div>
+            <p class="text-muted small mb-3">{% trans "Configurer les options globales, intégrations externes et paramètres système." %}</p>
+            <div class="mt-auto">
+              <a href="{% url 'dashboard:admin:settings' %}" class="btn btn-sm btn-outline-secondary w-100">
+                {% trans "Accéder aux paramètres" %}
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}{% endblock %}
+
+
+
+ {% endcomment %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% comment %} {# templates/dashboard/admin/home.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n static %}
+
+{% block title %}
+{% trans "Dashboard administrateur" %} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'dashboard/css/admin_dashboard.css' %}">
+{% endblock %}
+
+<!-- ============================================================
+   HEADER DASHBOARD (barre du haut)
+   ============================================================ -->
+{% block dashboard_header %}
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center w-100">
+    <div>
+      <h1 class="fw-bold mb-1">
+        {% trans "Dashboard administrateur" %}
+      </h1>
+      <p class="text-muted mb-0">
+        {% trans "Vue globale de l’activité de la plateforme et accès rapide aux outils de gestion." %}
+      </p>
+    </div>
+
+    <nav aria-label="{% trans 'Fil d’Ariane' %}" class="mt-3 mt-md-0">
+      <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item">
+          <a href="{% url 'core:home' %}">
+            {% trans "Accueil" %}
+          </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+          {% trans "Admin" %}
+        </li>
+      </ol>
+    </nav>
+  </div>
+{% endblock %}
+
+<!-- ============================================================
+   CONTENU DU DASHBOARD ADMIN
+   ============================================================ -->
+{% block dashboard_content %}
+<div class="container-fluid">
+
+  <!-- Badge d’environnement éventuel -->
+  {% if ENV_NAME %}
+    <div class="mb-4">
+      <span class="badge bg-warning text-dark">
+        {% trans "Environnement" %} : {{ ENV_NAME }}
+      </span>
+    </div>
+  {% endif %}
+
+  <!-- ============================================================
+     KPIs RAPIDES
+     On suppose que la vue peut injecter :
+       - total_users
+       - pending_validations
+       - total_orders
+       - donations_today
+     Tout est sécurisé avec |default:"—"
+     ============================================================ -->
+  <section class="mb-4">
+    <div class="row g-3 g-md-4">
+
+      <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <span class="small text-muted">
+                {% trans "Utilisateurs" %}
+              </span>
+              <i class="fa fa-users text-muted"></i>
+            </div>
+            <div class="fs-4 fw-bold">
+              {{ total_users|default:"—" }}
+            </div>
+            <div class="small text-muted">
+              {% trans "comptes enregistrés" %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <span class="small text-muted">
+                {% trans "Validations en attente" %}
+              </span>
+              <i class="fa fa-user-check text-muted"></i>
+            </div>
+            <div class="fs-4 fw-bold">
+              {{ pending_validations|default:"0" }}
+            </div>
+            <div class="small text-muted">
+              {% trans "profils / contenus à traiter" %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <span class="small text-muted">
+                {% trans "Commandes" %}
+              </span>
+              <i class="fa fa-shopping-cart text-muted"></i>
+            </div>
+            <div class="fs-4 fw-bold">
+              {{ total_orders|default:"—" }}
+            </div>
+            <div class="small text-muted">
+              {% trans "commandes enregistrées" %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <span class="small text-muted">
+                {% trans "Dons du jour" %}
+              </span>
+              <i class="fa fa-hand-holding-heart text-muted"></i>
+            </div>
+            <div class="fs-4 fw-bold">
+              {{ donations_today|default:"0" }}
+            </div>
+            <div class="small text-muted">
+              {% trans "dons enregistrés aujourd’hui" %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================================================
+     RACCOURCIS ADMIN
+     ============================================================ -->
+  <section class="mt-4">
+    <h2 class="h5 mb-3">
+      {% trans "Outils d’administration" %}
+    </h2>
+
+    <div class="row g-4">
+
+      <!-- Utilisateurs -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card h-100 shadow-sm border-0">
+          <div class="card-body d-flex flex-column">
+            <div class="mb-3 d-flex align-items-center gap-2">
+              <span class="icon-circle bg-primary-subtle text-primary">
+                <i class="fa fa-users"></i>
+              </span>
+              <h3 class="h6 mb-0">
+                {% trans "Utilisateurs" %}
+              </h3>
+            </div>
+
+            <p class="card-text text-muted small mb-3">
+              {% trans "Gérer les comptes, rôles, permissions et accès des utilisateurs." %}
+            </p>
+
+            <div class="mt-auto">
+              <a href="{% url 'dashboard:admin:users' %}" class="btn btn-sm btn-primary w-100">
+                {% trans "Voir les utilisateurs" %}
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modération -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card h-100 shadow-sm border-0">
+          <div class="card-body d-flex flex-column">
+            <div class="mb-3 d-flex align-items-center gap-2">
+              <span class="icon-circle bg-warning-subtle text-warning">
+                <i class="fa fa-shield-halved"></i>
+              </span>
+              <h3 class="h6 mb-0">
+                {% trans "Modération" %}
+              </h3>
+            </div>
+
+            <p class="card-text text-muted small mb-3">
+              {% trans "Valider, refuser ou bloquer les profils, contenus et contributions." %}
+            </p>
+
+            <div class="mt-auto">
+              <a href="{% url 'dashboard:admin:moderation' %}" class="btn btn-sm btn-warning w-100">
+                {% trans "Accéder à la modération" %}
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rapports & Statistiques -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card h-100 shadow-sm border-0">
+          <div class="card-body d-flex flex-column">
+            <div class="mb-3 d-flex align-items-center gap-2">
+              <span class="icon-circle bg-info-subtle text-info">
+                <i class="fa fa-chart-line"></i>
+              </span>
+              <h3 class="h6 mb-0">
+                {% trans "Rapports & statistiques" %}
+              </h3>
+            </div>
+
+            <p class="card-text text-muted small mb-3">
+              {% trans "Visualiser les indicateurs clés de la plateforme et télécharger des rapports." %}
+            </p>
+
+            <div class="mt-auto">
+              <a href="{% url 'dashboard:admin:reports' %}" class="btn btn-sm btn-info w-100 text-white">
+                {% trans "Voir les rapports" %}
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Paramètres -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card h-100 shadow-sm border-0">
+          <div class="card-body d-flex flex-column">
+            <div class="mb-3 d-flex align-items-center gap-2">
+              <span class="icon-circle bg-secondary-subtle text-secondary">
+                <i class="fa fa-gear"></i>
+              </span>
+              <h3 class="h6 mb-0">
+                {% trans "Paramètres" %}
+              </h3>
+            </div>
+
+            <p class="card-text text-muted small mb-3">
+              {% trans "Configurer les options globales, intégrations externes et paramètres système." %}
+            </p>
+
+            <div class="mt-auto">
+              <a href="{% url 'dashboard:admin:settings' %}" class="btn btn-sm btn-secondary w-100">
+                {% trans "Accéder aux paramètres" %}
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{# Si tu veux plus tard brancher des graphiques / stats #}
+{# <script src="{% static 'dashboard/js/admin_dashboard.js' %}"></script> #}
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+{% comment %} {# templates/dashboard/admin/home.html #}
+{% extends "main.html" %}
+{% load i18n static humanize %}
+
+{% block title %}
+{% trans "Dashboard administrateur" %} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'dashboard/css/admin_dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-4 py-md-5">
+
+  <!-- ============================================================ -->
+  <!--   HEADER + BREADCRUMB -->
+  <!--   ============================================================ -->
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+    <div>
+      <h1 class="fw-bold mb-1">
+        {% trans "Dashboard administrateur" %}
+      </h1>
+      <p class="text-muted mb-0">
+        {% trans "Vue globale de l’activité de la plateforme et accès rapide aux outils de gestion." %}
+      </p>
+    </div>
+
+    <nav aria-label="{% trans 'Fil d’Ariane' %}" class="mt-3 mt-md-0">
+      <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item">
+          <a href="{% url 'core:home' %}">
+            {% trans "Accueil" %}
+          </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+          {% trans "Admin" %}
+        </li>
+      </ol>
+    </nav>
+  </div>
+
+  <!-- Badge d’environnement éventuel -->
+  {% if ENV_NAME %}
+    <div class="mb-4">
+      <span class="badge bg-warning text-dark">
+        {% trans "Environnement" %} : {{ ENV_NAME }}
+      </span>
+    </div>
+  {% endif %}
+
+  <!-- ============================================================
+     KPIs RAPIDES
+     On suppose que la vue peut injecter :
+       - total_users
+       - pending_validations
+       - total_orders
+       - donations_today
+     Tout est sécurisé avec |default:"—"
+     ============================================================ -->
+  <section class="mb-4">
+    <div class="row g-3 g-md-4">
+
+      <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <span class="small text-muted">
+                {% trans "Utilisateurs" %}
+              </span>
+              <i class="fa fa-users text-muted"></i>
+            </div>
+            <div class="fs-4 fw-bold">
+              {{ total_users|default:"—" }}
+            </div>
+            <div class="small text-muted">
+              {% trans "comptes enregistrés" %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <span class="small text-muted">
+                {% trans "Validations en attente" %}
+              </span>
+              <i class="fa fa-user-check text-muted"></i>
+            </div>
+            <div class="fs-4 fw-bold">
+              {{ pending_validations|default:"0" }}
+            </div>
+            <div class="small text-muted">
+              {% trans "profils / contenus à traiter" %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <span class="small text-muted">
+                {% trans "Commandes" %}
+              </span>
+              <i class="fa fa-shopping-cart text-muted"></i>
+            </div>
+            <div class="fs-4 fw-bold">
+              {{ total_orders|default:"—" }}
+            </div>
+            <div class="small text-muted">
+              {% trans "commandes enregistrées" %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <span class="small text-muted">
+                {% trans "Dons du jour" %}
+              </span>
+              <i class="fa fa-hand-holding-heart text-muted"></i>
+            </div>
+            <div class="fs-4 fw-bold">
+              {{ donations_today|default:"0" }}
+            </div>
+            <div class="small text-muted">
+              {% trans "dons enregistrés aujourd’hui" %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================================================
+     RACCOURCIS ADMIN
+     ============================================================ -->
+  <section class="mt-4">
+    <h2 class="h5 mb-3">
+      {% trans "Outils d’administration" %}
+    </h2>
+
+    <div class="row g-4">
+
+      <!-- Utilisateurs -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card h-100 shadow-sm border-0">
+          <div class="card-body d-flex flex-column">
+            <div class="mb-3 d-flex align-items-center gap-2">
+              <span class="icon-circle bg-primary-subtle text-primary">
+                <i class="fa fa-users"></i>
+              </span>
+              <h3 class="h6 mb-0">
+                {% trans "Utilisateurs" %}
+              </h3>
+            </div>
+
+            <p class="card-text text-muted small mb-3">
+              {% trans "Gérer les comptes, rôles, permissions et accès des utilisateurs." %}
+            </p>
+
+            <div class="mt-auto">
+              <a href="{% url 'dashboard:admin:users' %}" class="btn btn-sm btn-primary w-100">
+                {% trans "Voir les utilisateurs" %}
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modération -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card h-100 shadow-sm border-0">
+          <div class="card-body d-flex flex-column">
+            <div class="mb-3 d-flex align-items-center gap-2">
+              <span class="icon-circle bg-warning-subtle text-warning">
+                <i class="fa fa-shield-halved"></i>
+              </span>
+              <h3 class="h6 mb-0">
+                {% trans "Modération" %}
+              </h3>
+            </div>
+
+            <p class="card-text text-muted small mb-3">
+              {% trans "Valider, refuser ou bloquer les profils, contenus et contributions." %}
+            </p>
+
+            <div class="mt-auto">
+              <a href="{% url 'dashboard:admin:moderation' %}" class="btn btn-sm btn-warning w-100">
+                {% trans "Accéder à la modération" %}
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rapports & Statistiques -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card h-100 shadow-sm border-0">
+          <div class="card-body d-flex flex-column">
+            <div class="mb-3 d-flex align-items-center gap-2">
+              <span class="icon-circle bg-info-subtle text-info">
+                <i class="fa fa-chart-line"></i>
+              </span>
+              <h3 class="h6 mb-0">
+                {% trans "Rapports & statistiques" %}
+              </h3>
+            </div>
+
+            <p class="card-text text-muted small mb-3">
+              {% trans "Visualiser les indicateurs clés de la plateforme et télécharger des rapports." %}
+            </p>
+
+            <div class="mt-auto">
+              <a href="{% url 'dashboard:admin:reports' %}" class="btn btn-sm btn-info w-100 text-white">
+                {% trans "Voir les rapports" %}
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Paramètres -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card h-100 shadow-sm border-0">
+          <div class="card-body d-flex flex-column">
+            <div class="mb-3 d-flex align-items-center gap-2">
+              <span class="icon-circle bg-secondary-subtle text-secondary">
+                <i class="fa fa-gear"></i>
+              </span>
+              <h3 class="h6 mb-0">
+                {% trans "Paramètres" %}
+              </h3>
+            </div>
+
+            <p class="card-text text-muted small mb-3">
+              {% trans "Configurer les options globales, intégrations externes et paramètres système." %}
+            </p>
+
+            <div class="mt-auto">
+              <a href="{% url 'dashboard:admin:settings' %}" class="btn btn-sm btn-secondary w-100">
+                {% trans "Accéder aux paramètres" %}
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{# Si tu veux plus tard brancher des graphiques / stats #}
+{# <script src="{% static 'dashboard/js/admin_dashboard.js' %}"></script> #}
+{% endblock %} {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/dashboard/admin/home.html #}
+{% extends "main.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="container py-5">
+
+    <!-- Titre -->
+    <div class="mb-4">
+        <h1 class="fw-bold">
+            {% trans "Dashboard Administrateur" %}
+        </h1>
+        <p class="text-muted">
+            {% trans "Bienvenue dans l’espace d’administration de la plateforme." %}
+        </p>
+    </div>
+
+    <!-- Raccourcis -->
+    <div class="row g-4">
+
+        <!-- Utilisateurs -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        {% trans "Utilisateurs" %}
+                    </h5>
+                    <p class="card-text text-muted">
+                        {% trans "Gérer les comptes, rôles et accès utilisateurs." %}
+                    </p>
+                    <a href="{% url 'dashboard:admin:users' %}" class="btn btn-primary">
+                        {% trans "Voir les utilisateurs" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modération -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        {% trans "Modération" %}
+                    </h5>
+                    <p class="card-text text-muted">
+                        {% trans "Valider, bloquer ou modérer les contenus et profils." %}
+                    </p>
+                    <a href="{% url 'dashboard:admin:moderation' %}" class="btn btn-warning">
+                        {% trans "Accéder à la modération" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rapports -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        {% trans "Rapports & Statistiques" %}
+                    </h5>
+                    <p class="card-text text-muted">
+                        {% trans "Consulter les rapports d’activité et statistiques globales." %}
+                    </p>
+                    <a href="{% url 'dashboard:admin:reports' %}" class="btn btn-info">
+                        {% trans "Voir les rapports" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Paramètres -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        {% trans "Paramètres" %}
+                    </h5>
+                    <p class="card-text text-muted">
+                        {% trans "Configurer les options globales de la plateforme." %}
+                    </p>
+                    <a href="{% url 'dashboard:admin:settings' %}" class="btn btn-secondary">
+                        {% trans "Paramètres" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/dashboard/admin/home.html #}
+{% extends "main.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="container py-5">
+    <h1>{% trans "Dashboard Administrateur" %}</h1>
+    <p class="text-muted">
+        {% trans "Bienvenue dans l’espace d’administration." %}
+    </p>
+</div>
+{% endblock %} {% endcomment %}

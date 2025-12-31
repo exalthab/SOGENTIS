@@ -1,0 +1,52 @@
+{% load i18n %}
+
+<ul class="nav flex-column dashboard-menu">
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'dashboard:vendor:vendor_index' %}">
+            🏪 {% trans "Vue générale" %}
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" href="#">
+            📦 {% trans "Produits" %}
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" href="#">
+            🧾 {% trans "Commandes" %}
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" href="#">
+            📊 {% trans "Statistiques" %}
+        </a>
+    </li>
+</ul>
+
+
+
+
+
+
+{% comment %} {% load i18n %}
+
+<ul class="nav flex-column">
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'dashboard:vendor:vendor_index' %}">
+            🏪 {% trans "Vue générale" %}
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">
+            📦 {% trans "Produits" %}
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">
+            🧾 {% trans "Commandes" %}
+        </a>
+    </li>
+</ul> {% endcomment %}

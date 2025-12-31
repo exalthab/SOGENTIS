@@ -1,0 +1,23 @@
+{% load i18n %}
+
+<h2>{% trans "Tableau de bord" %}</h2>
+
+<div class="hub-grid">
+
+    {% if has_social_access %}
+    <a class="hub-card social" href="{% url 'dashboard:social_router' %}">
+        🟣
+        <h3>{% trans "Pôle Social" %}</h3>
+        <p>{% trans "Dons, engagements, impact social" %}</p>
+    </a>
+    {% endif %}
+
+    {% if has_eco_access %}
+    <a class="hub-card eco" href="{% url 'dashboard:router' %}">
+        🔵
+        <h3>{% trans "Pôle Économique" %}</h3>
+        <p>{% trans "Commandes, ventes, services" %}</p>
+    </a>
+    {% endif %}
+
+</div>

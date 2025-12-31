@@ -1,0 +1,85 @@
+{# economic/resources/resources_list.html #}
+{% extends "main.html" %}
+{% load i18n %}
+
+{% block title %}
+{% trans "Toutes les ressources" %} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+
+  <h1 class="mb-4">📂 {% trans "Toutes les ressources" %}</h1>
+
+  <ul class="list-group list-group-flush">
+    {% for resource in resources %}
+      <li class="list-group-item d-flex justify-content-between">
+        <span>{{ resource.title }}</span>
+        <a href="{% url 'economic:resources:detail' resource.slug %}">
+          {% trans "Ouvrir" %}
+        </a>
+      </li>
+    {% empty %}
+      <li class="list-group-item text-muted">
+        {% trans "Aucune ressource." %}
+      </li>
+    {% endfor %}
+  </ul>
+
+</section>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+{% comment %} {% load i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="UTF-8">
+    <title>{% trans "Liste des Ressources" %}</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; }
+        th { background-color: #f4f4f4; }
+        tr:hover { background-color: #f1f1f1; }
+    </style>
+</head>
+<body>
+    <h1>{% trans "Liste des Ressources" %}</h1>
+    {% if resources %}
+        <table>
+            <thead>
+                <tr>
+                    <th>{% trans "ID" %}</th>
+                    <th>{% trans "Nom" %}</th>
+                    <th>{% trans "Description" %}</th>
+                    <th>{% trans "Type" %}</th>
+                    <th>{% trans "Créé le" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for resource in resources %}
+                    <tr>
+                        <td>{{ resource.id }}</td>
+                        <td>{{ resource.name }}</td>
+                        <td>{{ resource.description }}</td>
+                        <td>{{ resource.type }}</td>
+                        <td>{{ resource.created_at|date:"d/m/Y" }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>{% trans "Aucune ressource trouvée." %}</p>
+    {% endif %}
+</body>
+</html> {% endcomment %}

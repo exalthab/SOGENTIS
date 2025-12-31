@@ -40,6 +40,7 @@ include(
     BASE_DIR / "config" / "settings" / "modules" / "base.py",
     BASE_DIR / "config" / "settings" / "modules" / "apps.py",
     BASE_DIR / "config" / "settings" / "modules" / "database.py",
+    BASE_DIR / "config" / "settings" / "modules" / "email.py",
     BASE_DIR / "config" / "settings" / "modules" / "logging.py",
     BASE_DIR / "config" / "settings" / "modules" / "celery.py",
     BASE_DIR / "config" / "settings" / "modules" / "ckeditor.py",

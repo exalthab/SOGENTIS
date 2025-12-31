@@ -1,0 +1,2063 @@
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks %}
+
+{% block title %}{% trans "Inscription sociale" %} | SOGENTIS{% endblock %}
+
+{% block auth_title %}{% trans "Devenir membre social" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Engagez-vous dans les actions sociales de SOGENTIS" %}{% endblock %}
+{% block auth_bg_image %}{% static "social/img/kids1.jpg" %}{% endblock %}
+
+{% block content %}
+<div class="auth-shell py-4">
+  <div class="card auth-card shadow-sm">
+    <div class="card-body">
+
+      <div class="text-center mb-4">
+        <h2 class="fw-bold">{% trans "Inscription sociale" %}</h2>
+        <p class="text-muted">{% trans "Rejoignez SOGENTIS et participez à nos actions sociales." %}</p>
+      </div>
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} text-center">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+
+      <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+        {% endif %}
+        {% if profile_form.non_field_errors %}
+          <div class="alert alert-danger">{{ profile_form.non_field_errors }}</div>
+        {% endif %}
+
+        <!-- ================= COMPTE UTILISATEUR ================= -->
+        <h5 class="text-primary mt-3">{% trans "Compte utilisateur" %}</h5>
+        <div class="row">
+          {% for field in form %}
+            <div class="col-md-6 mb-3">
+              <label class="form-label">
+                {{ field.label }}{% if field.field.required %} *{% endif %}
+              </label>
+              {% render_field field class="form-control" %}
+              {% if field.help_text %}<div class="form-text text-muted">{{ field.help_text }}</div>{% endif %}
+              {% for error in field.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+          {% endfor %}
+        </div>
+
+        <!-- ================= PROFIL SOCIAL ================= -->
+        <h5 class="text-primary mt-4">{% trans "Profil social" %}</h5>
+        {% for field in profile_form %}
+          {% if field.name not in excluded_profile_fields %}
+            <div class="mb-3">
+              <label class="form-label">
+                {{ field.label }}{% if field.field.required %} *{% endif %}
+              </label>
+              {% render_field field class="form-control" %}
+              {% if field.help_text %}<div class="form-text text-muted">{{ field.help_text }}</div>{% endif %}
+              {% for error in field.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endfor %}
+
+        <!-- ================= TÉLÉPHONE ================= -->
+        <div class="mb-3">
+          <label class="form-label">{{ profile_form.phone_number.label }} *</label>
+          {% render_field profile_form.phone_number class="form-control" placeholder="+221771234567" %}
+          {% if profile_form.phone_number.help_text %}
+            <div class="form-text text-muted">{{ profile_form.phone_number.help_text }}</div>
+          {% endif %}
+          {% for error in profile_form.phone_number.errors %}
+            <div class="invalid-feedback d-block">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- ================= PHOTO ================= -->
+        <div class="mb-3">
+          <label class="form-label">{{ profile_form.profile_picture.label }}</label>
+          {% render_field profile_form.profile_picture class="form-control" %}
+          {% for error in profile_form.profile_picture.errors %}
+            <div class="invalid-feedback d-block">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- ================= CASIER JUDICIAIRE ================= -->
+        <div class="mb-3">
+          <label class="form-label">{{ profile_form.judicial_record.label }} *</label>
+          {% render_field profile_form.judicial_record class="form-control" %}
+          <div id="pdf-preview" class="mt-2"></div>
+          {% for error in profile_form.judicial_record.errors %}
+            <div class="invalid-feedback d-block">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- ================= CONDITIONS ================= -->
+        <div class="form-check mb-4">
+          {% render_field profile_form.terms class="form-check-input" %}
+          <label class="form-check-label">
+            {% trans "J’accepte les" %}
+            <a href="{% url 'core:cgu' %}" target="_blank">{% trans "conditions générales d’utilisation" %}</a>
+          </label>
+          {% for error in profile_form.terms.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <button class="btn btn-primary btn-lg w-100" type="submit">
+          {% trans "Créer mon compte social" %}
+        </button>
+      </form>
+
+      <div class="text-center mt-3">
+        <p class="small text-muted">
+          {% trans "Vous avez déjà un compte ?" %}
+          <a href="{% url 'accounts_users_web:login' %}">{% trans "Se connecter" %}</a>
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ================= OTP MODAL ================= -->
+<div class="modal fade" id="otpModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">{% trans "Vérification du téléphone" %}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        <p class="small text-muted">{% trans "Un code SMS a été envoyé sur votre téléphone." %}</p>
+        <input
+          type="text"
+          id="otp-code-input"
+          class="form-control text-center"
+          placeholder="{% trans 'Code à 6 chiffres' %}"
+          maxlength="6"
+        />
+        <div id="otp-error" class="text-danger small mt-2 d-none"></div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Annuler" %}</button>
+        <button class="btn btn-primary" id="verify-otp-btn">{% trans "Vérifier" %}</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/form_validation1.js' %}"></script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+{% comment %} {% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks %}
+
+{% block title %}{% trans "Inscription sociale" %} | SOGENTIS{% endblock %}
+
+{% block auth_title %}{% trans "Devenir membre social" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Engagez-vous dans les actions sociales de SOGENTIS" %}{% endblock %}
+{% block auth_bg_image %}{% static "social/img/kids1.jpg" %}{% endblock %}
+
+{% block content %}
+<div class="auth-shell py-4">
+  <div class="card auth-card shadow-sm">
+    <div class="card-body">
+
+      <div class="text-center mb-4">
+        <h2 class="fw-bold">{% trans "Inscription sociale" %}</h2>
+        <p class="text-muted">{% trans "Rejoignez SOGENTIS et participez à nos actions sociales." %}</p>
+      </div>
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} text-center">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+
+      <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+        {% endif %}
+        {% if profile_form.non_field_errors %}
+          <div class="alert alert-danger">{{ profile_form.non_field_errors }}</div>
+        {% endif %}
+
+        <!-- ================= COMPTE UTILISATEUR ================= -->
+        <h5 class="text-primary mt-3">{% trans "Compte utilisateur" %}</h5>
+        <div class="row">
+          {% for field in form %}
+            <div class="col-md-6 mb-3">
+              <label class="form-label">
+                {{ field.label }}{% if field.field.required %} *{% endif %}
+              </label>
+              {% render_field field class="form-control" %}
+              {% if field.help_text %}<div class="form-text text-muted">{{ field.help_text }}</div>{% endif %}
+              {% for error in field.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+          {% endfor %}
+        </div>
+
+        <!-- ================= PROFIL SOCIAL ================= -->
+        <h5 class="text-primary mt-4">{% trans "Profil social" %}</h5>
+
+        {% for field in profile_form %}
+          {# Exclure les champs rendus manuellement (tel/docs/terms) #}
+          {% if field.name not in excluded_profile_fields %}
+            <div class="mb-3">
+              <label class="form-label">
+                {{ field.label }}{% if field.field.required %} *{% endif %}
+              </label>
+              {% render_field field class="form-control" %}
+              {% if field.help_text %}<div class="form-text text-muted">{{ field.help_text }}</div>{% endif %}
+              {% for error in field.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endfor %}
+
+        <!-- ================= TÉLÉPHONE (UNE SEULE FOIS) ================= -->
+        <div class="mb-3">
+          <label class="form-label">{{ profile_form.phone_number.label }} *</label>
+          {% render_field profile_form.phone_number class="form-control" placeholder="+221771234567" %}
+          {% if profile_form.phone_number.help_text %}
+            <div class="form-text text-muted">{{ profile_form.phone_number.help_text }}</div>
+          {% endif %}
+          {% for error in profile_form.phone_number.errors %}
+            <div class="invalid-feedback d-block">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- ================= PHOTO ================= -->
+        <div class="mb-3">
+          <label class="form-label">{{ profile_form.profile_picture.label }}</label>
+          {% render_field profile_form.profile_picture class="form-control" %}
+          {% for error in profile_form.profile_picture.errors %}
+            <div class="invalid-feedback d-block">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- ================= CASIER JUDICIAIRE ================= -->
+        <div class="mb-3">
+          <label class="form-label">{{ profile_form.judicial_record.label }} *</label>
+          {% render_field profile_form.judicial_record class="form-control" %}
+          <div id="pdf-preview" class="mt-2"></div>
+          {% for error in profile_form.judicial_record.errors %}
+            <div class="invalid-feedback d-block">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- ================= CONDITIONS ================= -->
+        <div class="form-check mb-4">
+          {% render_field profile_form.terms class="form-check-input" %}
+          <label class="form-check-label">
+            {% trans "J’accepte les" %}
+            <a href="{% url 'core:cgu' %}" target="_blank">{% trans "conditions générales d’utilisation" %}</a>
+          </label>
+          {% for error in profile_form.terms.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <button class="btn btn-primary btn-lg w-100" type="submit">
+          {% trans "Créer mon compte social" %}
+        </button>
+      </form>
+
+      <div class="text-center mt-3">
+        <p class="small text-muted">
+          {% trans "Vous avez déjà un compte ?" %}
+          <a href="{% url 'accounts_users_web:login' %}">{% trans "Se connecter" %}</a>
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
+<!-- ================= OTP MODAL ================= -->
+<div class="modal fade" id="otpModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Vérification du téléphone</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        <p class="small text-muted">
+          Un code SMS a été envoyé sur votre téléphone.
+        </p>
+
+        <input
+          type="text"
+          id="otp-code-input"
+          class="form-control text-center"
+          placeholder="Code à 6 chiffres"
+          maxlength="6"
+        />
+
+        <div id="otp-error" class="text-danger small mt-2 d-none"></div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">
+          Annuler
+        </button>
+        <button class="btn btn-primary" id="verify-otp-btn">
+          Vérifier
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/form_validation1.js' %}"></script>
+{% endblock %}  {% endcomment %}
+
+
+
+{% comment %} {# accounts_users/registration/social_signup.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks user_form_tags %}
+
+{% block title %}{% trans "Inscription sociale" %} | SOGENTIS{% endblock %}
+
+{% block auth_title %}{% trans "Devenir membre social" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Engagez-vous dans les actions sociales de SOGENTIS" %}{% endblock %}
+{% block auth_bg_image %}{% static "social/img/kids1.jpg" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-shell py-4">
+  <div class="card auth-card shadow-sm">
+    <div class="card-body">
+
+      <div class="text-center mb-4">
+        <h2 class="fw-bold">{% trans "Inscription sociale" %}</h2>
+        <p class="text-muted">{% trans "Rejoignez SOGENTIS et participez à nos actions sociales." %}</p>
+      </div>
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} text-center">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+
+      <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+
+        <!-- COMPTE UTILISATEUR -->
+        <h5 class="text-primary mt-3">{% trans "Compte utilisateur" %}</h5>
+        <div class="row">
+          {% for field in form %}
+            <div class="col-md-6 mb-3">
+              <label class="form-label">
+                {{ field.label }}{% if field.field.required %} *{% endif %}
+              </label>
+
+              {% if field.name == "password1" %}
+                {% render_field field class="form-control password-strong" %}
+              {% elif field.name == "password2" %}
+                {% render_field field class="form-control password-confirm" %}
+              {% elif field.name == "email" %}
+                {% render_field field class="form-control email-field" placeholder="exemple@domaine.com" required="required" %}
+              {% else %}
+                {% render_field field class="form-control" %}
+              {% endif %}
+
+              {% if field.help_text %}
+                <div class="form-text text-muted">{{ field.help_text }}</div>
+              {% endif %}
+              {% for error in field.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+          {% endfor %}
+        </div>
+
+        <!-- PROFIL SOCIAL -->
+        <h5 class="text-primary mt-4">{% trans "Profil social" %}</h5>
+        {% for field in profile_form %}
+          {% if field.name not in 'terms judicial_record profile_picture phone_number' %}
+            <div class="mb-3">
+              <label class="form-label">
+                {{ field.label }}{% if field.field.required %} *{% endif %}
+              </label>
+              {% render_field field class="form-control" %}
+              {% if field.help_text %}
+                <div class="form-text text-muted">{{ field.help_text }}</div>
+              {% endif %}
+              {% for error in field.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endfor %}
+
+        <!-- TÉLÉPHONE -->
+        <div class="mb-3">
+          <label class="form-label">{{ profile_form.phone_number.label }} *</label>
+          {% render_field profile_form.phone_number class="form-control" placeholder="+221771234567" %}
+          {% if profile_form.phone_number.help_text %}
+            <div class="form-text text-muted">{{ profile_form.phone_number.help_text }}</div>
+          {% endif %}
+          {% for error in profile_form.phone_number.errors %}
+            <div class="invalid-feedback d-block">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- PHOTO -->
+        <div class="mb-3">
+          <label class="form-label">{{ profile_form.profile_picture.label }}</label>
+          {% render_field profile_form.profile_picture class="form-control" %}
+        </div>
+
+        <!-- CASIER JUDICIAIRE -->
+        <div class="mb-3">
+          <label class="form-label">{{ profile_form.judicial_record.label }} *</label>
+          {% render_field profile_form.judicial_record class="form-control" %}
+          <div id="pdf-preview" class="mt-2"></div>
+          {% for error in profile_form.judicial_record.errors %}
+            <div class="invalid-feedback d-block">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- CONDITIONS -->
+        <div class="form-check mb-4">
+          {% render_field profile_form.terms class="form-check-input" %}
+          <label class="form-check-label">
+            {% trans "J’accepte les" %}
+            <a href="{% url 'core:cgu' %}" target="_blank">{% trans "conditions générales d’utilisation" %}</a>
+          </label>
+          {% for error in profile_form.terms.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <button class="btn btn-primary btn-lg w-100" type="submit">
+          {% trans "Créer mon compte social" %}
+        </button>
+      </form>
+
+      <div class="text-center mt-3">
+        <p class="small text-muted">
+          {% trans "Vous avez déjà un compte ?" %}
+          <a href="{% url 'accounts_users_web:login' %}">{% trans "Se connecter" %}</a>
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/form_validation.js' %}"></script>
+{% endblock %} {% endcomment %}
+
+
+
+
+{% comment %} {# accounts_users/registration/social_signup.html #}
+ {% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks user_form_tags %}
+
+{% block title %}{% trans "Inscription sociale" %} | SOGENTIS{% endblock %}
+
+{% block auth_title %}{% trans "Devenir membre social" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Engagez-vous dans les actions sociales de SOGENTIS" %}{% endblock %}
+{% block auth_bg_image %}{% static "social/img/kids1.jpg" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-shell py-4">
+  <div class="card auth-card shadow-sm">
+    <div class="card-body">
+
+      <div class="text-center mb-4">
+        <h2 class="fw-bold">{% trans "Inscription sociale" %}</h2>
+        <p class="text-muted">{% trans "Rejoignez SOGENTIS et participez à nos actions sociales." %}</p>
+      </div>
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} text-center">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+
+      <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+
+        <!-- COMPTE UTILISATEUR -->
+        <h5 class="text-primary mt-3">{% trans "Compte utilisateur" %}</h5>
+        <div class="row">
+          {% for field in form %}
+            <div class="col-md-6 mb-3">
+              <label class="form-label">
+                {{ field.label }}{% if field.field.required %} *{% endif %}
+              </label>
+
+              {% if field.name == "password1" %}
+                {% render_field field class="form-control password-strong" %}
+              {% elif field.name == "password2" %}
+                {% render_field field class="form-control password-confirm" %}
+              {% elif field.name == "email" %}
+                {% render_field field class="form-control email-field" placeholder="exemple@domaine.com" required="required" %}
+              {% else %}
+                {% render_field field class="form-control" %}
+              {% endif %}
+
+              {% if field.help_text %}
+                <div class="form-text text-muted">{{ field.help_text }}</div>
+              {% endif %}
+              {% for error in field.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+          {% endfor %}
+        </div>
+
+        <!-- PROFIL SOCIAL -->
+        <h5 class="text-primary mt-4">{% trans "Profil social" %}</h5>
+        {% for field in profile_form %}
+          {% if field.name not in 'terms judicial_record profile_picture phone_number' %}
+            <div class="mb-3">
+              <label class="form-label">
+                {{ field.label }}{% if field.field.required %} *{% endif %}
+              </label>
+              {% render_field field class="form-control" %}
+              {% if field.help_text %}
+                <div class="form-text text-muted">{{ field.help_text }}</div>
+              {% endif %}
+              {% for error in field.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endfor %}
+
+        <!-- TÉLÉPHONE -->
+        <div class="mb-3">
+          <label class="form-label">{{ profile_form.phone_number.label }} *</label>
+          {% render_field profile_form.phone_number class="form-control" placeholder="+221771234567" %}
+          {% if profile_form.phone_number.help_text %}
+            <div class="form-text text-muted">{{ profile_form.phone_number.help_text }}</div>
+          {% endif %}
+          {% for error in profile_form.phone_number.errors %}
+            <div class="invalid-feedback d-block">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- PHOTO -->
+        <div class="mb-3">
+          <label class="form-label">{{ profile_form.profile_picture.label }}</label>
+          {% render_field profile_form.profile_picture class="form-control" %}
+        </div>
+
+        <!-- CASIER JUDICIAIRE -->
+        <div class="mb-3">
+          <label class="form-label">{{ profile_form.judicial_record.label }} *</label>
+          {% render_field profile_form.judicial_record class="form-control" %}
+          <div id="pdf-preview" class="mt-2"></div>
+          {% for error in profile_form.judicial_record.errors %}
+            <div class="invalid-feedback d-block">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- CONDITIONS -->
+        <div class="form-check mb-4">
+          {% render_field profile_form.terms class="form-check-input" %}
+          <label class="form-check-label">
+            {% trans "J’accepte les" %}
+            <a href="{% url 'core:cgu' %}" target="_blank">{% trans "conditions générales d’utilisation" %}</a>
+          </label>
+          {% for error in profile_form.terms.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <button class="btn btn-primary btn-lg w-100" type="submit">
+          {% trans "Créer mon compte social" %}
+        </button>
+      </form>
+
+      <div class="text-center mt-3">
+        <p class="small text-muted">
+          {% trans "Vous avez déjà un compte ?" %}
+          <a href="{% url 'accounts_users_web:login' %}">{% trans "Se connecter" %}</a>
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/form_validation.js' %}"></script>
+{% endblock %}
+ {% endcomment %}
+
+
+
+
+
+
+
+{% comment %} {% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks user_form_tags %}
+
+{% block title %}{% trans "Inscription sociale" %} | SOGENTIS{% endblock %}
+
+{% block auth_title %}{% trans "Devenir membre social" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Engagez-vous dans les actions sociales de SOGENTIS" %}{% endblock %}
+{% block auth_bg_image %}{% static "social/img/kids1.jpg" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-shell py-4">
+  <div class="card auth-card shadow-sm">
+    <div class="card-body">
+
+      <div class="text-center mb-4">
+        <h2 class="fw-bold">{% trans "Inscription sociale" %}</h2>
+        <p class="text-muted">
+          {% trans "Rejoignez SOGENTIS et participez à nos actions sociales." %}
+        </p>
+      </div>
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} text-center">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+
+      <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+
+        <!-- COMPTE UTILISATEUR -->
+        <h5 class="text-primary mt-3">{% trans "Compte utilisateur" %}</h5>
+        <div class="row">
+          {% for field in form %}
+            <div class="col-md-6 mb-3">
+              <label class="form-label">
+                {{ field.label }}{% if field.field.required %} *{% endif %}
+              </label>
+
+              {% if field.name == "password1" %}
+                {% render_field field class="form-control password-strong" %}
+              {% elif field.name == "password2" %}
+                {% render_field field class="form-control password-confirm" %}
+              {% elif field.name == "email" %}
+                {% render_field field class="form-control email-field" placeholder="exemple@domaine.com" required="required" %}
+              {% else %}
+                {% render_field field class="form-control" %}
+              {% endif %}
+
+              {% if field.help_text %}
+                <div class="form-text text-muted">{{ field.help_text }}</div>
+              {% endif %}
+              {% for error in field.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+          {% endfor %}
+        </div>
+
+        <!-- PROFIL SOCIAL -->
+        <h5 class="text-primary mt-4">{% trans "Profil social" %}</h5>
+        {% for field in profile_form %}
+          {% if field.name not in 'terms judicial_record profile_picture phone_number' %}
+            <div class="mb-3">
+              <label class="form-label">
+                {{ field.label }}{% if field.field.required %} *{% endif %}
+              </label>
+              {% render_field field class="form-control" %}
+              {% if field.help_text %}
+                <div class="form-text text-muted">{{ field.help_text }}</div>
+              {% endif %}
+              {% for error in field.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endfor %}
+
+        <!-- TÉLÉPHONE -->
+        <div class="mb-3">
+          <label class="form-label">{{ profile_form.phone_number.label }} *</label>
+          {% render_field profile_form.phone_number class="form-control" placeholder="+221771234567" %}
+          {% if profile_form.phone_number.help_text %}
+            <div class="form-text text-muted">{{ profile_form.phone_number.help_text }}</div>
+          {% endif %}
+          {% for error in profile_form.phone_number.errors %}
+            <div class="invalid-feedback d-block">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- PHOTO -->
+        <div class="mb-3">
+          <label class="form-label">{{ profile_form.profile_picture.label }}</label>
+          {% render_field profile_form.profile_picture class="form-control" %}
+        </div>
+
+        <!-- CASIER JUDICIAIRE -->
+        <div class="mb-3">
+          <label class="form-label">{{ profile_form.judicial_record.label }} *</label>
+          {% render_field profile_form.judicial_record class="form-control" %}
+          <div id="pdf-preview" class="mt-2"></div>
+          {% for error in profile_form.judicial_record.errors %}
+            <div class="invalid-feedback d-block">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- CONDITIONS -->
+        <div class="form-check mb-4">
+          {% render_field profile_form.terms class="form-check-input" %}
+          <label class="form-check-label">
+            {% trans "J’accepte les" %}
+            <a href="{% url 'core:cgu' %}" target="_blank">
+              {% trans "conditions générales d’utilisation" %}
+            </a>
+          </label>
+          {% for error in profile_form.terms.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <button class="btn btn-primary btn-lg w-100" type="submit">
+          {% trans "Créer mon compte social" %}
+        </button>
+      </form>
+
+      <div class="text-center mt-3">
+        <p class="small text-muted">
+          {% trans "Vous avez déjà un compte ?" %}
+          <a href="{% url 'accounts_users_web:login' %}">{% trans "Se connecter" %}</a>
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/form_validation.js' %}"></script>
+{% endblock %}
+ {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# accounts_users/registration/social_signup.html #}
+
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks user_form_tags %}
+
+{% block title %}{% trans "Inscription sociale" %} | SOGENTIS{% endblock %}
+
+{% block auth_title %}{% trans "Devenir membre social" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Engagez-vous dans les actions sociales de SOGENTIS" %}{% endblock %}
+{% block auth_bg_image %}{% static "social/img/kids1.jpg" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-shell py-4">
+  <div class="card auth-card shadow-sm">
+    <div class="card-body">
+
+      <div class="text-center mb-4">
+        <h2 class="fw-bold">{% trans "Inscription sociale" %}</h2>
+        <p class="text-muted">
+          {% trans "Rejoignez SOGENTIS et participez à nos actions sociales." %}
+        </p>
+      </div>
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} text-center">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+
+      <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+
+        <!-- COMPTE UTILISATEUR -->
+        <h5 class="text-primary mt-3">{% trans "Compte utilisateur" %}</h5>
+        <div class="row">
+          {% for field in form %}
+            <div class="col-md-6 mb-3">
+              <label class="form-label">
+                {{ field.label }}{% if field.field.required %} *{% endif %}
+              </label>
+
+              {% if field.name == "password1" %}
+                {% render_field field class="form-control password-strong" minlength="8" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{8,}$" required="required" %}
+              {% elif field.name == "password2" %}
+                {% render_field field class="form-control password-confirm" minlength="8" required="required" %}
+              {% else %}
+                {% render_field field class="form-control" required=field.field.required %}
+              {% endif %}
+
+              {% if field.help_text %}
+                <div class="form-text text-muted">{{ field.help_text }}</div>
+              {% endif %}
+              {% for error in field.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+          {% endfor %}
+        </div>
+
+        <!-- PROFIL SOCIAL -->
+        <h5 class="text-primary mt-4">{% trans "Profil social" %}</h5>
+        {% for field in profile_form %}
+          {% if field.name not in 'terms judicial_record profile_picture phone_number' %}
+            <div class="mb-3">
+              <label class="form-label">
+                {{ field.label }}{% if field.field.required %} *{% endif %}
+              </label>
+              {% render_field field class="form-control" required=field.field.required %}
+              {% if field.help_text %}
+                <div class="form-text text-muted">{{ field.help_text }}</div>
+              {% endif %}
+              {% for error in field.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endfor %}
+
+        <!-- TÉLÉPHONE -->
+        <div class="mb-3">
+          <label class="form-label">{{ profile_form.phone_number.label }} *</label>
+          {% render_field profile_form.phone_number class="form-control" inputmode="numeric" pattern="^\+[0-9]{8,15}$" minlength="9" maxlength="16" placeholder="+221771234567" required="required" %}
+          {% if profile_form.phone_number.help_text %}
+            <div class="form-text text-muted">{{ profile_form.phone_number.help_text }}</div>
+          {% endif %}
+          {% for error in profile_form.phone_number.errors %}
+            <div class="invalid-feedback d-block">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- PHOTO -->
+        <div class="mb-3">
+          <label class="form-label">{{ profile_form.profile_picture.label }}</label>
+          {% render_field profile_form.profile_picture class="form-control" %}
+        </div>
+
+        <!-- CASIER JUDICIAIRE -->
+        <div class="mb-3">
+          <label class="form-label">{{ profile_form.judicial_record.label }} *</label>
+          {% render_field profile_form.judicial_record class="form-control" required="required" %}
+          <div id="pdf-preview" class="mt-2"></div>
+          {% for error in profile_form.judicial_record.errors %}
+            <div class="invalid-feedback d-block">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- CONDITIONS -->
+        <div class="form-check mb-4">
+          {% render_field profile_form.terms class="form-check-input" required="required" %}
+          <label class="form-check-label">
+            {% trans "J’accepte les" %}
+            <a href="{% url 'core:cgu' %}" target="_blank">
+              {% trans "conditions générales d’utilisation" %}
+            </a>
+          </label>
+          {% for error in profile_form.terms.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <button class="btn btn-primary btn-lg w-100" type="submit">
+          {% trans "Créer mon compte social" %}
+        </button>
+      </form>
+
+      <div class="text-center mt-3">
+        <p class="small text-muted">
+          {% trans "Vous avez déjà un compte ?" %}
+          <a href="{% url 'accounts_users_web:login' %}">{% trans "Se connecter" %}</a>
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+
+{% endblock %} {% endcomment %}
+
+
+
+
+{% comment %} {% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks user_form_tags %}
+
+{% block title %}{% trans "Inscription sociale" %} | SOGENTIS{% endblock %}
+
+{% block auth_title %}{% trans "Devenir membre social" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Engagez-vous dans les actions sociales de SOGENTIS" %}{% endblock %}
+{% block auth_bg_image %}{% static "social/img/kids1.jpg" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-shell py-4">
+  <div class="card auth-card shadow-sm">
+    <div class="card-body">
+
+      <div class="text-center mb-4">
+        <h2 class="fw-bold">{% trans "Inscription sociale" %}</h2>
+        <p class="text-muted">
+          {% trans "Rejoignez SOGENTIS et participez à nos actions sociales." %}
+        </p>
+      </div>
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} text-center">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+
+      <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+
+        <!-- COMPTE UTILISATEUR -->
+        <h5 class="text-primary mt-3">{% trans "Compte utilisateur" %}</h5>
+        <div class="row">
+          {% for field in form %}
+            <div class="col-md-6 mb-3">
+              <label class="form-label">
+                {{ field.label }}{% if field.field.required %} *{% endif %}
+              </label>
+
+              {% if field.name == "password1" %}
+                {% render_field field class="form-control password-strong"
+                  minlength="8"
+                  pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{8,}$"
+                  required="required" %}
+              {% elif field.name == "password2" %}
+                {% render_field field class="form-control password-confirm"
+                  minlength="8"
+                  required="required" %}
+              {% else %}
+                {% render_field field class="form-control" required=field.field.required %}
+              {% endif %}
+
+              {% if field.help_text %}
+                <div class="form-text text-muted">{{ field.help_text }}</div>
+              {% endif %}
+              {% for error in field.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+          {% endfor %}
+        </div>
+
+        <!-- PROFIL SOCIAL -->
+        <h5 class="text-primary mt-4">{% trans "Profil social" %}</h5>
+        {% for field in profile_form %}
+          {% if field.name not in 'terms judicial_record profile_picture phone_number' %}
+            <div class="mb-3">
+              <label class="form-label">
+                {{ field.label }}{% if field.field.required %} *{% endif %}
+              </label>
+              {% render_field field class="form-control" required=field.field.required %}
+              {% if field.help_text %}
+                <div class="form-text text-muted">{{ field.help_text }}</div>
+              {% endif %}
+              {% for error in field.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endfor %}
+
+        <!-- TÉLÉPHONE -->
+        <div class="mb-3">
+          <label class="form-label">{{ profile_form.phone_number.label }} *</label>
+          {% render_field profile_form.phone_number class="form-control"
+            inputmode="numeric"
+            pattern="^\\+[0-9]{8,15}$"
+            minlength="9"
+            maxlength="16"
+            placeholder="+221771234567"
+            required="required" %}
+          {% if profile_form.phone_number.help_text %}
+            <div class="form-text text-muted">{{ profile_form.phone_number.help_text }}</div>
+          {% endif %}
+          {% for error in profile_form.phone_number.errors %}
+            <div class="invalid-feedback d-block">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- PHOTO -->
+        <div class="mb-3">
+          <label class="form-label">{{ profile_form.profile_picture.label }}</label>
+          {% render_field profile_form.profile_picture class="form-control" %}
+        </div>
+
+        <!-- CASIER JUDICIAIRE -->
+        <div class="mb-3">
+          <label class="form-label">{{ profile_form.judicial_record.label }} *</label>
+          {% render_field profile_form.judicial_record class="form-control" required="required" %}
+          <div id="pdf-preview" class="mt-2"></div>
+          {% for error in profile_form.judicial_record.errors %}
+            <div class="invalid-feedback d-block">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- CONDITIONS -->
+        <div class="form-check mb-4">
+          {% render_field profile_form.terms class="form-check-input" required="required" %}
+          <label class="form-check-label">
+            {% trans "J’accepte les" %}
+            <a href="{% url 'core:cgu' %}" target="_blank">
+              {% trans "conditions générales d’utilisation" %}
+            </a>
+          </label>
+          {% for error in profile_form.terms.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <button class="btn btn-primary btn-lg w-100" type="submit">
+          {% trans "Créer mon compte social" %}
+        </button>
+      </form>
+
+      <div class="text-center mt-3">
+        <p class="small text-muted">
+          {% trans "Vous avez déjà un compte ?" %}
+          <a href="{% url 'accounts_users_web:login' %}">{% trans "Se connecter" %}</a>
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+{% endblock %}
+ {% endcomment %}
+
+
+
+
+
+{% comment %} {# accounts_users/registration/social_signup.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks user_form_tags %}
+
+{% block title %}{% trans "Inscription sociale" %} | SOGENTIS{% endblock %}
+
+{% block auth_title %}{% trans "Devenir membre social" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Engagez-vous dans les actions sociales de SOGENTIS" %}{% endblock %}
+{% block auth_bg_image %}{% static "social/img/kids1.jpg" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-shell py-4">
+  <div class="card auth-card shadow-sm">
+    <div class="card-body">
+
+      <div class="text-center mb-4">
+        <h2 class="fw-bold">{% trans "Inscription sociale" %}</h2>
+        <p class="text-muted">
+          {% trans "Rejoignez SOGENTIS et participez à nos actions sociales." %}
+        </p>
+      </div>
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} text-center">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+
+      {% if account_created %}
+        <div class="alert alert-success text-center">
+          {% trans "Votre compte a été créé avec succès. Redirection en cours…" %}
+        </div>
+        <script>
+          setTimeout(() => window.location.href = "{% url 'home' %}", 5000);
+        </script>
+      {% endif %}
+
+      <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+        {% endif %}
+        {% if profile_form.non_field_errors %}
+          <div class="alert alert-danger">{{ profile_form.non_field_errors }}</div>
+        {% endif %}
+
+        <!-- COMPTE UTILISATEUR -->
+        <h5 class="text-primary mt-3">{% trans "Compte utilisateur" %}</h5>
+        <div class="row">
+          {% for field in form %}
+            <div class="col-md-6 mb-3">
+              <label class="form-label">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
+              {% render_field field class="form-control" %}
+              {% if field.help_text %}
+                <div class="form-text text-muted">{{ field.help_text }}</div>
+              {% endif %}
+              {% for error in field.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+          {% endfor %}
+        </div>
+
+        <!-- PROFIL SOCIAL -->
+        <h5 class="text-primary mt-4">{% trans "Profil social" %}</h5>
+        {% for field in profile_form %}
+          {% if field.name != 'terms' and field.name != 'judicial_record' and field.name != 'profile_picture' %}
+            <div class="mb-3">
+              <label class="form-label">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
+              {% render_field field class="form-control" %}
+              {% if field.help_text %}
+                <div class="form-text text-muted">{{ field.help_text }}</div>
+              {% endif %}
+              {% for error in field.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endfor %}
+
+        <!-- PHOTO -->
+        <div class="mb-3">
+          <label class="form-label">{{ profile_form.profile_picture.label }}</label>
+          {% render_field profile_form.profile_picture class="form-control" %}
+          {% if profile_form.profile_picture.help_text %}
+            <div class="form-text text-muted">{{ profile_form.profile_picture.help_text }}</div>
+          {% endif %}
+        </div>
+
+        <!-- CASIER JUDICIAIRE -->
+        <div class="mb-3">
+          <label class="form-label">{{ profile_form.judicial_record.label }} *</label>
+          {% render_field profile_form.judicial_record class="form-control" %}
+          {% if profile_form.judicial_record.help_text %}
+            <div class="form-text text-muted">{{ profile_form.judicial_record.help_text }}</div>
+          {% endif %}
+          <div id="pdf-preview" class="mt-2"></div>
+        </div>
+
+        <!-- NUMÉRO DE TÉLÉPHONE -->
+        <div class="mb-3">
+          <label class="form-label" for="phone_number">{% trans "Numéro de téléphone" %} *</label>
+          {% render_field profile_form.phone_number class="form-control" %}
+          <div class="form-text text-muted">{% trans "Veuillez entrer un numéro de téléphone valide avec l'indicatif du pays." %}</div>
+        </div>
+
+        <!-- CONDITIONS -->
+        <div class="form-check mb-4">
+          {% render_field profile_form.terms %}
+          <label class="form-check-label">
+            {% trans "J'accepte les " %}
+            <a href="{% url 'core:cgu' %}" target="_blank">{% trans "conditions générales d'utilisation" %}</a>
+            {% trans " et confirme l’authenticité de mon identification." %}
+          </label>
+          {% if profile_form.terms.help_text %}
+            <div class="form-text text-muted">{{ profile_form.terms.help_text }}</div>
+          {% endif %}
+          {% for error in profile_form.terms.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <button class="btn btn-primary btn-lg w-100">
+          {% trans "Créer mon compte social" %}
+        </button>
+      </form>
+
+      <div class="text-center mt-3">
+        <p class="small text-muted">
+          {% trans "Vous avez déjà un compte ?" %}
+          <a href="{% url 'accounts_users_web:login' %}">{% trans "Se connecter" %}</a>
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    var phoneInput = document.querySelector('#id_phone_number');
+    // Ici, le champ est déjà géré par django-phonenumber-field.
+  });
+</script>
+{% endblock %}
+
+ {% endcomment %}
+
+
+
+
+
+{% comment %} {% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks user_form_tags %}
+
+{% block title %}{% trans "Inscription sociale" %} | SOGENTIS{% endblock %}
+
+{% block auth_title %}{% trans "Devenir membre social" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Engagez-vous dans les actions sociales de SOGENTIS" %}{% endblock %}
+{% block auth_bg_image %}{% static "social/img/kids1.jpg" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-shell py-4">
+  <div class="card auth-card shadow-sm">
+    <div class="card-body">
+
+      <div class="text-center mb-4">
+        <h2 class="fw-bold">{% trans "Inscription sociale" %}</h2>
+        <p class="text-muted">
+          {% trans "Rejoignez SOGENTIS et participez à nos actions sociales." %}
+        </p>
+      </div>
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} text-center">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+
+      {% if account_created %}
+        <div class="alert alert-success text-center">
+          {% trans "Votre compte a été créé avec succès. Redirection en cours…" %}
+        </div>
+        <script>
+          setTimeout(() => window.location.href = "{% url 'home' %}", 5000);
+        </script>
+      {% endif %}
+
+      <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+        {% endif %}
+        {% if profile_form.non_field_errors %}
+          <div class="alert alert-danger">{{ profile_form.non_field_errors }}</div>
+        {% endif %}
+
+        <!-- COMPTE UTILISATEUR -->
+        <h5 class="text-primary mt-3">{% trans "Compte utilisateur" %}</h5>
+        <div class="row">
+          {% for field in form %}
+            <div class="col-md-6 mb-3">
+              <label class="form-label">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
+              {% render_field field class="form-control" %}
+              {% if field.help_text %}
+                <div class="form-text text-muted">{{ field.help_text }}</div>
+              {% endif %}
+              {% for error in field.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+          {% endfor %}
+        </div>
+
+        <!-- PROFIL SOCIAL -->
+        <h5 class="text-primary mt-4">{% trans "Profil social" %}</h5>
+        {% for field in profile_form %}
+          {% if field.name != 'terms' and field.name != 'judicial_record' and field.name != 'profile_picture' %}
+            <div class="mb-3">
+              <label class="form-label">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
+              {% render_field field class="form-control" %}
+              {% if field.help_text %}
+                <div class="form-text text-muted">{{ field.help_text }}</div>
+              {% endif %}
+              {% for error in field.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endfor %}
+
+        <!-- PHOTO -->
+        <div class="mb-3">
+          <label class="form-label">{{ profile_form.profile_picture.label }}</label>
+          {% render_field profile_form.profile_picture class="form-control" %}
+          {% if profile_form.profile_picture.help_text %}
+            <div class="form-text text-muted">{{ profile_form.profile_picture.help_text }}</div>
+          {% endif %}
+        </div>
+
+        <!-- CASIER JUDICIAIRE -->
+        <div class="mb-3">
+          <label class="form-label">{{ profile_form.judicial_record.label }} *</label>
+          {% render_field profile_form.judicial_record class="form-control" %}
+          {% if profile_form.judicial_record.help_text %}
+            <div class="form-text text-muted">{{ profile_form.judicial_record.help_text }}</div>
+          {% endif %}
+          <div id="pdf-preview" class="mt-2"></div>
+        </div>
+
+        <!-- CONDITIONS -->
+        <div class="form-check mb-4">
+          {% render_field profile_form.terms %}
+          <label class="form-check-label">
+            {% trans "J'accepte les " %}
+            <a href="{% url 'core:cgu' %}" target="_blank">{% trans "conditions générales d'utilisation" %}</a>
+            {% trans " et confirme l’authenticité de mon identification." %}
+          </label>
+          {% if profile_form.terms.help_text %}
+            <div class="form-text text-muted">{{ profile_form.terms.help_text }}</div>
+          {% endif %}
+          {% for error in profile_form.terms.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <button class="btn btn-primary btn-lg w-100">
+          {% trans "Créer mon compte social" %}
+        </button>
+      </form>
+
+      <div class="text-center mt-3">
+        <p class="small text-muted">
+          {% trans "Vous avez déjà un compte ?" %}
+          <a href="{% url 'accounts_users_web:login' %}">{% trans "Se connecter" %}</a>
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+{% endblock %}
+
+ {% endcomment %}
+
+
+
+
+
+{% comment %} {% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks user_form_tags %}
+
+{% block title %}{% trans "Inscription sociale" %} | SOGENTIS{% endblock %}
+
+{% block auth_title %}{% trans "Devenir membre social" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Engagez-vous dans les actions sociales de SOGENTIS" %}{% endblock %}
+{% block auth_bg_image %}{% static "social/img/kids1.jpg" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-shell py-4">
+  <div class="card auth-card shadow-sm">
+    <div class="card-body">
+
+      <div class="text-center mb-4">
+        <h2 class="fw-bold">{% trans "Inscription sociale" %}</h2>
+        <p class="text-muted">
+          {% trans "Rejoignez SOGENTIS et participez à nos actions sociales." %}
+        </p>
+      </div>
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} text-center">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+
+      {% if account_created %}
+        <div class="alert alert-success text-center">
+          {% trans "Votre compte a été créé avec succès. Redirection en cours…" %}
+        </div>
+        <script>
+          setTimeout(() => window.location.href = "{% url 'home' %}", 5000);
+        </script>
+      {% endif %}
+
+      <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+        {% endif %}
+        {% if profile_form.non_field_errors %}
+          <div class="alert alert-danger">{{ profile_form.non_field_errors }}</div>
+        {% endif %}
+
+        <!-- COMPTE UTILISATEUR -->
+        <h5 class="text-primary mt-3">{% trans "Compte utilisateur" %}</h5>
+        <div class="row">
+          {% for field in form %}
+            <div class="col-md-6 mb-3">
+              <label class="form-label">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
+              {% render_field field class+="form-control" %}
+              {% if field.help_text %}
+                <div class="form-text text-muted">{{ field.help_text }}</div>
+              {% endif %}
+              {% for error in field.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+          {% endfor %}
+        </div>
+
+        <!-- PROFIL SOCIAL -->
+        <h5 class="text-primary mt-4">{% trans "Profil social" %}</h5>
+        {% for field in profile_form %}
+          {% if field.name != 'terms' and field.name != 'judicial_record' and field.name != 'profile_picture' %}
+            <div class="mb-3">
+              <label class="form-label">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
+              {% render_field field class+="form-control" %}
+              {% if field.help_text %}
+                <div class="form-text text-muted">{{ field.help_text }}</div>
+              {% endif %}
+              {% for error in field.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endfor %}
+
+        <!-- PHOTO -->
+        <div class="mb-3">
+          <label class="form-label">{{ profile_form.profile_picture.label }}</label>
+          {{ profile_form.profile_picture }}
+          {% if profile_form.profile_picture.help_text %}
+            <div class="form-text text-muted">{{ profile_form.profile_picture.help_text }}</div>
+          {% endif %}
+        </div>
+
+        <!-- CASIER JUDICIAIRE -->
+        <div class="mb-3">
+          <label class="form-label">{{ profile_form.judicial_record.label }} *</label>
+          {{ profile_form.judicial_record }}
+          {% if profile_form.judicial_record.help_text %}
+            <div class="form-text text-muted">{{ profile_form.judicial_record.help_text }}</div>
+          {% endif %}
+          <div id="pdf-preview" class="mt-2"></div>
+        </div>
+
+        <!-- CONDITIONS -->
+        <div class="form-check mb-4">
+          {{ profile_form.terms }}
+          <label class="form-check-label">
+            {% trans "J'accepte les conditions générales et confirme l’authenticité de mon identification." %}
+          </label>
+          {% if profile_form.terms.help_text %}
+            <div class="form-text text-muted">{{ profile_form.terms.help_text }}</div>
+          {% endif %}
+          {% for error in profile_form.terms.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <button class="btn btn-primary btn-lg w-100">
+          {% trans "Créer mon compte social" %}
+        </button>
+      </form>
+
+      <div class="text-center mt-3">
+        <p class="small text-muted">
+          {% trans "Vous avez déjà un compte ?" %}
+          <a href="{% url 'accounts_users_web:login' %}">{% trans "Se connecter" %}</a>
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks user_form_tags %}
+
+{% block title %}{% trans "Inscription sociale" %} | SOGENTIS{% endblock %}
+
+{% block auth_title %}{% trans "Devenir membre social" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Engagez-vous dans les actions sociales de SOGENTIS" %}{% endblock %}
+{% block auth_bg_image %}{% static "social/img/kids1.jpg" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-shell py-4">
+  <div class="card auth-card shadow-sm">
+    <div class="card-body">
+
+      <div class="text-center mb-4">
+        <h2 class="fw-bold">{% trans "Inscription sociale" %}</h2>
+        <p class="text-muted">
+          {% trans "Rejoignez SOGENTIS et participez à nos actions sociales." %}
+        </p>
+      </div>
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} text-center">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+
+      {% if account_created %}
+        <div class="alert alert-success text-center">
+          {% trans "Votre compte a été créé avec succès. Redirection en cours…" %}
+        </div>
+        <script>
+          setTimeout(() => window.location.href = "{% url 'home' %}", 5000);
+        </script>
+      {% endif %}
+
+      <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+        {% endif %}
+        {% if profile_form.non_field_errors %}
+          <div class="alert alert-danger">{{ profile_form.non_field_errors }}</div>
+        {% endif %}
+
+        <!-- COMPTE UTILISATEUR -->
+        <h5 class="text-primary mt-3">{% trans "Compte utilisateur" %}</h5>
+        <div class="row">
+          {% for field in form %}
+            <div class="col-md-6 mb-3">
+              <label class="form-label">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
+              {% render_field field class+="form-control" %}
+
+              {% if field.help_text %}
+                <div class="form-text text-muted">{{ field.help_text }}</div>
+              {% endif %}
+
+              {% for error in field.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+          {% endfor %}
+        </div>
+
+        <!-- PROFIL SOCIAL -->
+        <h5 class="text-primary mt-4">{% trans "Profil social" %}</h5>
+        {% for field in profile_form %}
+          {% if field.name != 'terms' and field.name != 'judicial_record' and field.name != 'profile_picture' %}
+            <div class="mb-3">
+              <label class="form-label">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
+              {% render_field field class+="form-control" %}
+
+              {% if field.help_text %}
+                <div class="form-text text-muted">{{ field.help_text }}</div>
+              {% endif %}
+
+              {% for error in field.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endfor %}
+
+        <!-- PHOTO -->
+        <div class="mb-3">
+          <label class="form-label">{{ profile_form.profile_picture.label }}</label>
+          {{ profile_form.profile_picture }}
+
+          {% if profile_form.profile_picture.help_text %}
+            <div class="form-text text-muted">
+              {{ profile_form.profile_picture.help_text }}
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- CASIER JUDICIAIRE -->
+        <div class="mb-3">
+          <label class="form-label">{{ profile_form.judicial_record.label }} *</label>
+          {{ profile_form.judicial_record }}
+
+          {% if profile_form.judicial_record.help_text %}
+            <div class="form-text text-muted">
+              {{ profile_form.judicial_record.help_text }}
+            </div>
+          {% endif %}
+
+          <div id="pdf-preview" class="mt-2"></div>
+        </div>
+
+        <!-- CONDITIONS -->
+        <div class="form-check mb-4">
+          {{ profile_form.terms }}
+          <label class="form-check-label">
+            {% trans "J'accepte les conditions générales et confirme l’authenticité de mon identification." %}
+          </label>
+
+          {% if profile_form.terms.help_text %}
+            <div class="form-text text-muted">
+              {{ profile_form.terms.help_text }}
+            </div>
+          {% endif %}
+
+          {% for error in profile_form.terms.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <button class="btn btn-primary btn-lg w-100">
+          {% trans "Créer mon compte social" %}
+        </button>
+      </form>
+
+      <div class="text-center mt-3">
+        <p class="small text-muted">
+          {% trans "Vous avez déjà un compte ?" %}
+          <a href="{% url 'accounts_users_web:login' %}">{% trans "Se connecter" %}</a>
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const input = document.getElementById("id_judicial_record");
+  const preview = document.getElementById("pdf-preview");
+
+  if (input) {
+    input.addEventListener("change", () => {
+      const file = input.files[0];
+      if (!file) return;
+
+      if (file.type === "application/pdf") {
+        const reader = new FileReader();
+        reader.onload = e => {
+          preview.innerHTML = `<embed src="${e.target.result}" width="100%" height="300px">`;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        preview.innerHTML = "<p class='text-danger'>PDF uniquement.</p>";
+      }
+    });
+  }
+});
+</script>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks user_form_tags %}
+
+{% block title %}{% trans "Inscription sociale" %} | SOGENTIS{% endblock %}
+
+{% block auth_title %}{% trans "Devenir membre social" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Engagez-vous dans les actions sociales de SOGENTIS" %}{% endblock %}
+{% block auth_bg_image %}{% static "social/img/kids1.jpg" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-shell py-4">
+  <div class="card auth-card shadow-sm">
+    <div class="card-body">
+
+      <div class="text-center mb-4">
+        <h2 class="fw-bold">{% trans "Inscription sociale" %}</h2>
+        <p class="text-muted">
+          {% trans "Rejoignez SOGENTIS et participez à nos actions sociales." %}
+        </p>
+      </div>
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} text-center">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+
+      {% if account_created %}
+        <div class="alert alert-success text-center">
+          {% trans "Votre compte a été créé avec succès. Redirection en cours…" %}
+        </div>
+        <script>
+          setTimeout(() => window.location.href = "{% url 'home' %}", 5000);
+        </script>
+      {% endif %}
+
+      <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+        {% endif %}
+        {% if profile_form.non_field_errors %}
+          <div class="alert alert-danger">{{ profile_form.non_field_errors }}</div>
+        {% endif %}
+
+        <!-- COMPTE UTILISATEUR -->
+        <h5 class="text-primary mt-3">{% trans "Compte utilisateur" %}</h5>
+        <div class="row">
+          {% for field in form %}
+            <div class="col-md-6 mb-3">
+              <label class="form-label">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
+              {% render_field field class+="form-control" %}
+              {% for error in field.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+          {% endfor %}
+        </div>
+
+        <!-- PROFIL SOCIAL -->
+        <h5 class="text-primary mt-4">{% trans "Profil social" %}</h5>
+        {% for field in profile_form %}
+          {% if field.name != 'terms' and field.name != 'judicial_record' and field.name != 'profile_picture' %}
+
+            <div class="mb-3">
+              <label class="form-label">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
+              {% render_field field class+="form-control" %}
+              {% for error in field.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endfor %}
+
+        <!-- PHOTO -->
+        <div class="mb-3">
+          <label class="form-label">{{ profile_form.profile_picture.label }}</label>
+          {{ profile_form.profile_picture }}
+        </div>
+
+        <!-- CASIER JUDICIAIRE -->
+        <div class="mb-3">
+          <label class="form-label">{{ profile_form.judicial_record.label }} *</label>
+          {{ profile_form.judicial_record }}
+          <div id="pdf-preview" class="mt-2"></div>
+        </div>
+
+        <!-- CONDITIONS -->
+        <div class="form-check mb-4">
+          {{ profile_form.terms }}
+          <label class="form-check-label">
+            {% trans "J'accepte les conditions générales et confirme l’authenticité de mon identification." %}
+          </label>
+          {% for error in profile_form.terms.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <button class="btn btn-primary btn-lg w-100">
+          {% trans "Créer mon compte social" %}
+        </button>
+      </form>
+
+      <div class="text-center mt-3">
+        <p class="small text-muted">
+          {% trans "Vous avez déjà un compte ?" %}
+          <a href="{% url 'accounts_users_web:login' %}">{% trans "Se connecter" %}</a>
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const input = document.getElementById("id_judicial_record");
+  const preview = document.getElementById("pdf-preview");
+
+  if (input) {
+    input.addEventListener("change", () => {
+      const file = input.files[0];
+      if (!file) return;
+
+      if (file.type === "application/pdf") {
+        const reader = new FileReader();
+        reader.onload = e => {
+          preview.innerHTML = `<embed src="${e.target.result}" width="100%" height="300px">`;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        preview.innerHTML = "<p class='text-danger'>PDF uniquement.</p>";
+      }
+    });
+  }
+});
+</script>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# accounts_users/registration/social_signup.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks user_form_tags %}
+
+{# ===================================================== #}
+{# TITLE #}
+{# ===================================================== #}
+{% block title %}
+  {% trans "Inscription | Engagement social | SOGENTIS" %}
+{% endblock %}
+
+{# ===================================================== #}
+{# AUTH HEADER #}
+{# ===================================================== #}
+{% block auth_title %}
+  {% trans "Devenir membre social" %}
+{% endblock %}
+
+{% block auth_subtitle %}
+  {% trans "Engagez-vous dans les actions sociales de SOGENTIS" %}
+{% endblock %}
+
+{# ===================================================== #}
+{# BACKGROUND IMAGE #}
+{# ===================================================== #}
+{% block auth_bg_image %}
+  {% static "social/img/social-bg.jpg" %}
+{% endblock %}
+
+{# ===================================================== #}
+{# CSS #}
+{# ===================================================== #}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{# ===================================================== #}
+{# CONTENT #}
+{# ===================================================== #}
+{% block content %}
+
+{# Include form media for reCAPTCHA v3 JS #}
+{{ registration_form.media }}
+
+<form method="post" enctype="multipart/form-data" novalidate>
+  {% csrf_token %}
+
+  {# ========================= #}
+  {# ERREURS GLOBALES #}
+  {# ========================= #}
+  {% if user_form.non_field_errors or registration_form.non_field_errors %}
+    <div class="alert alert-danger">
+      {{ user_form.non_field_errors }}
+      {{ registration_form.non_field_errors }}
+    </div>
+  {% endif %}
+
+  {# ================================================= #}
+  {# COMPTE UTILISATEUR #}
+  {# ================================================= #}
+  <h6 class="fw-bold mb-3">
+    {% trans "Informations du compte" %}
+  </h6>
+
+  {% for field in user_form %}
+    <div class="mb-3">
+      <label class="form-label">{{ field.label }}</label>
+      {% render_field field class="form-control" %}
+      {% if field.errors %}
+        <div class="text-danger small">{{ field.errors|striptags }}</div>
+      {% endif %}
+    </div>
+  {% endfor %}
+
+  {# ================================================= #}
+  {# PROFIL & ADHÉSION SOCIALE #}
+  {# ================================================= #}
+  <h6 class="fw-bold mt-4 mb-3">
+    {% trans "Informations personnelles et engagement social" %}
+  </h6>
+
+  {% for field in registration_form %}
+    <div class="mb-3">
+      {% if field.name == "captcha" %}
+        {# CAPTCHA ERROR HANDLING #}
+        {% if field.errors %}
+          <div class="alert alert-danger">
+            {% for error in field.errors %}
+              {{ error }}
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% elif field.field.widget.input_type == "checkbox" %}
+        <div class="form-check">
+          {{ field }}
+          <label class="form-check-label">{{ field.label }}</label>
+        </div>
+      {% else %}
+        <label class="form-label">{{ field.label }}</label>
+        {% render_field field class="form-control" %}
+      {% endif %}
+
+      {% if field.help_text %}
+        <div class="form-text">{{ field.help_text }}</div>
+      {% endif %}
+
+      {% if field.errors and field.name != "captcha" %}
+        <div class="text-danger small">{{ field.errors|striptags }}</div>
+      {% endif %}
+    </div>
+  {% endfor %}
+
+  {# =============================== #}
+  {# ACTION #}
+  {# =============================== #}
+  <div class="d-grid mt-4">
+    <button type="submit" class="btn btn-primary fw-bold">
+      {% trans "Soumettre ma demande d’adhésion" %}
+    </button>
+  </div>
+</form>
+
+{# ===================================================== #}
+{# LOGIN LINK #}
+{# ===================================================== #}
+<div class="text-center mt-3 small">
+  <p>
+    {% trans "Déjà inscrit ?" %}
+    <a href="{% url 'accounts_users_web:login' %}">
+      {% trans "Se connecter" %}
+    </a>
+  </p>
+</div>
+
+{% endblock %}
+
+{# ===================================================== #}
+{# JS #}
+{# ===================================================== #}
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const countrySelect = document.querySelector("select[name='country_of_residence']");
+    const phoneInput = document.querySelector("input[name='phone']");
+
+    // Dictionnaire de codes internationaux
+    const countryCodes = {
+        FR: "+33",
+        BE: "+32",
+        CH: "+41",
+        US: "+1",
+        CA: "+1",
+        LU: "+352",
+        DE: "+49",
+        ES: "+34"
+        // Ajouter d'autres pays si nécessaire
+    };
+
+    function updatePhonePrefix() {
+        const country = countrySelect.value;
+        if (country && countryCodes[country]) {
+            // Préserve la partie après le préfixe si l'utilisateur a déjà tapé quelque chose
+            const existingNumber = phoneInput.value.replace(/^\+\d+\s*/, "");
+            phoneInput.value = countryCodes[country] + " " + existingNumber;
+        }
+    }
+
+    // Initialiser au chargement
+    updatePhonePrefix();
+
+    // Changer automatiquement lors de la sélection du pays
+    countrySelect.addEventListener("change", updatePhonePrefix);
+});
+</script>
+{% endblock %} {% endcomment %}

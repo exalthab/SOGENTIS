@@ -1,0 +1,17 @@
+{% extends "main.html" %}
+{% load static i18n %}
+
+<h1>{% trans "Utilisateurs de l’entreprise" %}</h1>
+
+<a href="{% url 'b2b:company_user_add' %}">
+  {% trans "Ajouter un utilisateur" %}
+</a>
+
+<ul>
+  {% for cu in users %}
+    <li>
+      {{ cu.user.email }} — {{ cu.get_role_display }}
+      <a href="{% url 'b2b:company_user_edit' cu.id %}">{% trans "Modifier" %}</a>
+    </li>
+  {% endfor %}
+</ul>

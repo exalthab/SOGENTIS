@@ -1,0 +1,41 @@
+{# economic/econ_home.html #}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+{% if ECONOMIC_ENABLED %}
+<section class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="fw-bold">{% trans "Pôle Économique" %}</h1>
+        <p class="text-muted">
+            {% trans "Accédez à nos solutions économiques, formations et services professionnels." %}
+        </p>
+    </div>
+
+    <div class="row g-4">
+        {% for section in sections %}
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 shadow-sm border-0 text-center p-4">
+                <div class="mb-3">
+                    <i class="bi {{ section.icon }} fs-1 text-primary"></i>
+                </div>
+                <h5 class="fw-semibold">{{ section.title }}</h5>
+                <p class="text-muted small">
+                    {{ section.description }}
+                </p>
+                <a href="{{ section.url }}" class="btn btn-outline-primary btn-sm">
+                    {% trans "Découvrir" %}
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% else %}
+<p class="text-center mt-5 text-muted">
+    {% trans "Le pôle économique n'est pas disponible pour le moment." %}
+</p>
+{% endif %}
+{% endblock %}

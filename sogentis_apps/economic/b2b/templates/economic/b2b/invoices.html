@@ -1,0 +1,51 @@
+{# economic/b2b/templates/b2b/vendor_dashboard.html #}
+{% extends "main.html" %}
+{% load i18n %}
+
+{% block content %}
+  <h1>{% trans "Espace vendeur" %}</h1>
+
+  <div class="card p-3 mb-3">
+    <strong>{{ vendor.company_name }}</strong>
+    <div class="text-muted">{% trans "Vérifié" %} : {{ vendor.is_verified }}</div>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-4"><div class="card p-3">
+      <div class="text-muted">{% trans "Articles vendus" %}</div>
+      <div class="h4">{{ totals.items_sold|default:0 }}</div>
+    </div></div>
+    <div class="col-md-4"><div class="card p-3">
+      <div class="text-muted">{% trans "Commandes" %}</div>
+      <div class="h4">{{ totals.orders_count|default:0 }}</div>
+    </div></div>
+    <div class="col-md-4"><div class="card p-3">
+      <div class="text-muted">{% trans "Revenu (base)" %}</div>
+      <div class="h4">{{ totals.revenue|default:0 }}</div>
+    </div></div>
+  </div>
+
+  <h3>{% trans "Mes produits" %}</h3>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>{% trans "Nom" %}</th>
+        <th>{% trans "Prix" %}</th>
+        <th>{% trans "Stock" %}</th>
+        <th>{% trans "Actif" %}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in products %}
+        <tr>
+          <td>{{ p.name }}</td>
+          <td>{{ p.price }}</td>
+          <td>{{ p.stock }}</td>
+          <td>{{ p.is_active }}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="4">{% trans "Aucun produit." %}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

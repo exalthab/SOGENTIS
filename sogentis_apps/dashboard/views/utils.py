@@ -1,7 +1,7 @@
 # # dashboard/utils.py
 from django.db.models import Sum, Count, F
 from social.models import Donation, Engagement, Project
-from accounts_users.models.users_profile import UserProfile
+from accounts_users.models.users_economic_profile import UserProfile
 from accounts_users.models import CustomUser
 
 def get_dashboard_stats():

@@ -1,32 +1,51 @@
-/* Wrapper */
+/* =======================================================================
+   ORGANIGRAMME — SOGENTIS
+   ======================================================================= */
+
 .organigram-wrapper {
   margin-top: 20px;
   padding: 20px;
   border: 1px solid #dbe3f3;
   border-radius: 10px;
   background: #f9fbff;
+  max-height: 2000px;
+  overflow: hidden;
+  opacity: 1;
+  transition: max-height .5s ease, opacity .4s ease, padding .4s ease;
 }
-.hidden { display: none; }
 
-/* Toggle Button */
+/* État masqué dédié pour éviter les conflits avec .hidden globale */
+.organigram-wrapper.is-collapsed {
+  max-height: 0;
+  opacity: 0;
+  padding: 0;
+}
+
 .organigram-toggle-btn {
   width: 100%;
   padding: 12px 16px;
   font-size: 1.1rem;
   background: #1a73e8;
-  color: white;
+  color: #fff;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  transition: background .2s ease, box-shadow .2s ease, transform .15s ease;
 }
-.organigram-toggle-btn .arrow {
-  transition: transform .3s ease;
+.organigram-toggle-btn:hover {
+  background: #145dba;
+  box-shadow: 0 6px 18px rgba(26,115,232,.18);
+  transform: translateY(-1px);
 }
+.organigram-toggle-btn .arrow { transition: transform .3s ease; }
 
-/* Levels */
+/* Flèche quand ouvert */
+#org-toggle-btn[aria-expanded="true"] #org-arrow { transform: rotate(180deg); }
+
+/* Niveaux */
 .org-level {
   display: flex;
   justify-content: center;
@@ -35,216 +54,75 @@
   flex-wrap: wrap;
 }
 
-/* Cards */
+/* Cartes */
 .org-card {
   border-radius: 10px;
   padding: 18px;
   min-width: 210px;
-  max-width: 240px;
+  max-width: 260px;
   text-align: center;
   border: 1px solid #d0def5;
   box-shadow: 0 3px 7px rgba(0,0,0,.06);
-  transition: transform .2s;
+  transition: transform .2s ease, box-shadow .2s ease;
+  background: #fff;
+  outline: none;
 }
-.org-card:hover { transform: translateY(-4px); }
+.org-card:hover { transform: translateY(-4px); box-shadow: 0 8px 16px rgba(0,0,0,.08); }
 
-/* Title and Subtitle */
-.org-card h3, .org-card h4 {
-  margin-bottom: 8px;
-  font-weight: 600;
-}
-.org-card p {
-  margin: 0;
-  font-weight: 400;
-}
+.org-card h3, .org-card h4, .org-card h5 { margin-bottom: 8px; font-weight: 600; }
+.org-card p { margin: 0; font-weight: 400; color: #334155; }
 
-/* Niveau 1: Assemblée Générale */
-.org-card.main {
-  background: #1a73e8; /* Blue */
-  border: none;
-  color: white;        /* default text white */
-}
-.org-card.main h3 { color: #fff; }   /* Title white */
-.org-card.main p { color: #e0e0e0; } /* Subtitle lighter white */
+.org-card.main { background: #1a73e8; border: none; color: #fff; }
+.org-card.main p { color: #e0e0e0; }
 
-/* Conseil d'Administration */
-.org-card.board {
-  background-color: #28a745; /* Green */
-  border: 2px solid #218838;
-  color: white;
-}
-.org-card.board h4 { color: #fff; }     /* Title white */
-.org-card.board p { color: #dcdcdc; }  /* Subtitle light grey */
+.org-card.board { background: #28a745; border: 2px solid #218838; color: #fff; }
+.org-card.board p { color: #dcdcdc; }
 
-/* Direction Exécutive */
-.org-card.executive {
-  background-color: orangered;
-  border: 2px solid #ff4500;
-  color: white;
-}
-.org-card.executive h4 { color: #fff; }   /* Title white */
-.org-card.executive p { color: #fbe3d9; }/* Subtitle light cream */
+.org-card.executive { background: orangered; border: 2px solid #ff4500; color: #fff; }
+.org-card.executive p { color: #fbe3d9; }
 
-/* Level 3 Departments */
-.org-card.department {
-  background-color: #20c997; /* Teal */
-  border: 2px solid #17a2b8;
-  color: white;
-}
-.org-card.department h4 { color: #fff; }    /* Title white */
-.org-card.department p { color: #dff6f0; } /* Subtitle light teal */
+.org-card.department { background: #20c997; border: 2px solid #17a2b8; color: #fff; }
+.org-card.department p { color: #dff6f0; }
 
-/* Connectors */
-.org-connector.vertical {
-  width: 2px;
-  height: 40px;
-  background: #1a73e8;
-  margin: 0 auto;
-}
-.org-connector.horizontal {
-  width: 80%;
-  height: 2px;
-  background: #1a73e8;
-  margin: 0 auto;
-}
+/* Connecteurs */
+.org-connector.vertical { width: 2px; height: 40px; background: #1a73e8; margin: 0 auto; }
+.org-connector.horizontal { width: 80%; height: 2px; background: #1a73e8; margin: 0 auto; }
 
 /* Responsive */
 @media (max-width: 768px) {
   .org-connector.horizontal { display: none; }
   .org-level { flex-direction: column; }
+  .organigram-toggle-btn { font-size: 1rem; padding: 10px 14px; }
+  .org-card { max-width: 100%; }
 }
 
-
-
-/* Toggle bouton */
-/* .organigram-toggle-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: #1a73e8;
-  color: #fff;
-  border: none;
-  padding: 0.8rem 1.4rem;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 1rem;
+/* Animations */
+.org-card,
+.organigram-wrapper:not(.is-collapsed) .org-level {
+  animation: orgFade .35s ease both;
+}
+@keyframes orgFade {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-.organigram-toggle-btn:hover {
-  background: #145dba;
-}
+/* Focus */
+.org-card:focus { outline: 2px solid #e63946; }
 
-.organigram-toggle-btn .arrow {
-  margin-left: auto;
-  transition: transform 0.3s ease;
-} */
-
-/* Wrapper toggle */
-/* .organigram-wrapper.hidden {
-  max-height: 0;
-  overflow: hidden;
-  opacity: 0;
-  transition: max-height 0.6s ease, opacity 0.5s ease;
-}
-
-.organigram-wrapper.show {
-  max-height: 5000px;
-  opacity: 1;
-  transition: max-height 0.8s ease, opacity 0.6s ease;
-} */
-
-/* Conteneur par niveau */
-/* .org-level {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 2rem;
-  position: relative;
-  margin: 2rem 0;
-} */
-
-/* Flèches verticales entre niveaux */
-/* .org-level:not(:last-child)::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  width: 2px;
-  height: 2rem;
-  background: #1a73e8;
-} */
-
-/* Cartes */
-/* .org-card {
-  background: #fff;
-  border: 2px solid #1a73e8;
-  border-radius: 10px;
-  padding: 1rem;
-  text-align: center;
-  width: 180px;
-  position: relative;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.org-card.main {
-  width: 220px;
-  background: #1a73e8;
-  color: #fff;
-  font-weight: 700;
-} */
-
-/* Lignes horizontales pour plusieurs cartes */
-/* .org-multi-level {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  position: relative;
-}
-
-.org-multi-level::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 10%;
-  right: 10%;
-  height: 2px;
-  background: #1a73e8;
-}
-
-.org-card::after {
-  content: "";
-  position: absolute;
-  top: -2rem;
-  left: 50%;
-  width: 2px;
-  height: 2rem;
-  background: #1a73e8;
-}
-
-.org-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 15px rgba(0,0,0,0.15);
-}
-
-.org-card.small {
-  width: 150px;
-} */
-
-/* Responsive */
-/* @media (max-width: 768px) {
-  .org-level,
-  .org-multi-level {
-    flex-direction: column;
-    align-items: center;
-  }
+/* Accessibilité */
+@media (prefers-reduced-motion: reduce) {
+  .organigram-wrapper,
+  .organigram-toggle-btn,
+  .organigram-toggle-btn .arrow,
+  .org-card { transition: none !important; }
   .org-card,
-  .org-card.small {
-    width: 80%;
-  }
-  .org-level::after,
-  .org-card::after,
-  .org-multi-level::before {
-    display: none;
-  }
-} */
+  .organigram-wrapper:not(.is-collapsed) .org-level { animation: none !important; }
+}
+
+/* Dark mode (optionnel) */
+@media (prefers-color-scheme: dark) {
+  .organigram-wrapper { background: #0b1220; border-color: #1e293b; }
+  .org-card { background: #111827; border-color: #1f2a44; box-shadow: 0 3px 7px rgba(0,0,0,.4); }
+  .org-card p { color: #cbd5e1; }
+  .org-connector.vertical, .org-connector.horizontal { background: #3b82f6; }
+}

@@ -1,0 +1,50 @@
+{% load i18n %}
+
+<nav class="dashboard-secondary-menu bg-light border-bottom">
+    <div class="container d-flex gap-3 py-2 align-items-center">
+
+        <!-- Dashboard -->
+        <a href="{% url 'dashboard:hub' %}" class="text-decoration-none">
+            📊 {% trans "Dashboard" %}
+        </a>
+
+        <!-- Profil -->
+        <a href="{% url 'accounts_users_web:profile' %}" class="text-decoration-none">
+            👤 {% trans "Profil" %}
+        </a>
+
+        <!-- Déconnexion sécurisée via POST -->
+        <form method="post" action="{% url 'logout' %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-link text-decoration-none text-danger p-0 m-0">
+                🚪 {% trans "Déconnexion" %}
+            </button>
+        </form>
+
+    </div>
+</nav>
+
+
+
+
+
+{% comment %} {% load i18n %}
+
+<nav class="dashboard-secondary-menu bg-light border-bottom">
+    <div class="container d-flex gap-3 py-2">
+
+        <a href="{% url 'dashboard:hub' %}" class="text-decoration-none">
+            📊 {% trans "Dashboard" %}
+        </a>
+
+        <a href="{% url 'accounts_users_web:profile' %}" class="text-decoration-none">
+            👤 {% trans "Profil" %}
+        </a>
+
+        <a href="{% url 'logout' %}" class="text-decoration-none text-danger">
+            🚪 {% trans "Déconnexion" %}
+        </a>
+
+    </div>
+</nav>
+ {% endcomment %}

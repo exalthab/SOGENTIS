@@ -6,6 +6,8 @@
 {% block extra_css %}
 {% comment %} <link rel="stylesheet" href="{% static 'social/css/new_social_index.css' %}">
 <link rel="stylesheet" href="{% static 'social/css/vision_mission.css' %}"> {% endcomment %}
+<link rel="stylesheet" href="{% static 'global/css/soci_index.css' %}">
+
 
 {% endblock %}
 
@@ -181,7 +183,7 @@
         <a href="{% url 'accounts_users_web:login' %}" class="btn btn-light btn-lg" target="_blank" rel="noopener noreferrer">
           {% trans "Je m'engage" %}
         </a>
-        <a href="{% url 'econ:index' %}" class="btn btn-warning btn-lg" style="color: #0d1e34;" target="_blank" rel="noopener noreferrer">
+        <a href="{% url 'economic:index' %}" class="btn btn-warning btn-lg" style="color: #0d1e34;" target="_blank" rel="noopener noreferrer">
           {% trans "J'achète pour soutenir" %}
         </a>
       </div>

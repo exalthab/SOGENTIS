@@ -1,0 +1,311 @@
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block seo_title %}{{ seo_title }} — SOGENTIS{% endblock %}
+{% block seo_description %}{{ seo_description }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'economic/css/product_detail.css' %}">
+{% endblock %}
+
+{% block section_menu %}
+  {% include "economic/eco_partials/_ecommerce_navbar.html" %}
+{% endblock %}
+
+{% block content %}
+<div class="pd-wrapper py-3 py-md-4">
+  <div class="container-fluid">
+
+    <!-- Breadcrumb -->
+    <nav class="pd-breadcrumb small mb-3" aria-label="breadcrumb">
+      <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="{% url 'econ:index' %}">{% trans "Économie" %}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'econ:shop' %}">{% trans "Boutique" %}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'econ:shop' %}?category={{ product.category.slug }}">{{ product.category.name }}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
+      </ol>
+    </nav>
+
+    <div class="row g-3 g-lg-4">
+
+      <!-- LEFT: Gallery -->
+      <div class="col-lg-5">
+        <div class="pd-card card border-0 shadow-sm">
+          <div class="card-body">
+
+            <div class="pd-gallery">
+              <div class="pd-main-img">
+                {% if images and images.0.image %}
+                  <img id="pdMainImage" src="{{ images.0.image.url }}" alt="{{ product.name }}">
+                {% else %}
+                  <img id="pdMainImage" src="{{ product.image.url }}" alt="{{ product.name }}">
+                {% endif %}
+
+                {% if product.has_promo %}
+                  <div class="pd-badge pd-badge-discount">-{{ product.promo_percent }}%</div>
+                {% endif %}
+                {% if product.is_flash_sale %}
+                  <div class="pd-badge pd-badge-flash"><i class="fas fa-bolt"></i> {% trans "Flash" %}</div>
+                {% endif %}
+                {% if product.is_new %}
+                  <div class="pd-badge pd-badge-new">{% trans "Nouveau" %}</div>
+                {% endif %}
+              </div>
+
+              <!-- Thumbnails -->
+              <div class="pd-thumbs mt-3">
+                {% if images %}
+                  {% for im in images %}
+                    <button type="button"
+                            class="pd-thumb {% if forloop.first %}active{% endif %}"
+                            data-src="{{ im.image.url }}"
+                            aria-label="{% trans 'Voir image' %}">
+                      <img src="{{ im.image.url }}" alt="{{ product.name }}">
+                    </button>
+                  {% endfor %}
+                {% else %}
+                  <button type="button" class="pd-thumb active" data-src="{{ product.image.url }}">
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                  </button>
+                {% endif %}
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Trust / Shipping -->
+        <div class="pd-card card border-0 shadow-sm mt-3">
+          <div class="card-body">
+            <div class="pd-trust row g-2 text-center">
+              <div class="col-4">
+                <i class="fas fa-shield-alt"></i>
+                <div class="t1">{% trans "Paiement sécurisé" %}</div>
+              </div>
+              <div class="col-4">
+                <i class="fas fa-truck"></i>
+                <div class="t1">{% trans "Livraison fiable" %}</div>
+              </div>
+              <div class="col-4">
+                <i class="fas fa-headset"></i>
+                <div class="t1">{% trans "Support pro" %}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: Info / Buy box -->
+      <div class="col-lg-7">
+        <div class="pd-card card border-0 shadow-sm">
+          <div class="card-body">
+
+            <div class="d-flex flex-wrap justify-content-between align-items-start gap-2">
+              <div>
+                <h1 class="pd-title mb-1">{{ product.name }}</h1>
+                <div class="pd-meta small text-muted">
+                  <span class="me-2">
+                    <i class="fas fa-tag me-1"></i>{{ product.category.name }}
+                  </span>
+
+                  <span class="me-2">
+                    <span class="pd-stars">
+                      {% for i in "12345"|make_list %}
+                        {% if product.rating|floatformat:0 >= i %}★{% else %}☆{% endif %}
+                      {% endfor %}
+                    </span>
+                    <span class="ms-1">({{ product.reviews_count }})</span>
+                  </span>
+
+                  <span>
+                    <i class="fas fa-fire me-1"></i>{{ product.sold_count|default:0 }} {% trans "ventes" %}
+                  </span>
+                </div>
+              </div>
+
+              <div class="pd-actions d-flex gap-2">
+                <button type="button" class="btn btn-outline-secondary btn-sm" id="pdShareBtn">
+                  <i class="fas fa-share-alt me-1"></i> {% trans "Partager" %}
+                </button>
+                <button type="button" class="btn btn-outline-danger btn-sm" id="pdWishBtn">
+                  <i class="far fa-heart"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Price -->
+            <div class="pd-price mt-3">
+              {% if product.has_promo %}
+                <div class="d-flex align-items-baseline gap-2 flex-wrap">
+                  <div class="pd-price-main text-danger fw-bold">
+                    {{ product.discounted_price|floatformat:0 }} XOF
+                  </div>
+                  <div class="pd-price-old text-muted">
+                    <s>{{ product.price|floatformat:0 }} XOF</s>
+                  </div>
+                  <div class="pd-save badge bg-danger-subtle text-danger">
+                    {% trans "Économie" %} {{ product.promo_percent }}%
+                  </div>
+                </div>
+              {% else %}
+                <div class="pd-price-main text-primary fw-bold">
+                  {{ product.price|floatformat:0 }} XOF
+                </div>
+              {% endif %}
+            </div>
+
+            <!-- Stock -->
+            <div class="pd-stock mt-2">
+              {% if product.in_stock %}
+                <span class="badge bg-success">{% trans "En stock" %}</span>
+                <span class="small text-muted ms-2">
+                  {{ product.stock }} {% trans "disponibles" %}
+                </span>
+              {% else %}
+                <span class="badge bg-secondary">{% trans "Rupture de stock" %}</span>
+              {% endif %}
+            </div>
+
+            <!-- Short description -->
+            {% if product.short_description %}
+            <div class="pd-short mt-3">
+              {{ product.short_description }}
+            </div>
+            {% endif %}
+
+            <!-- Buy box -->
+            <div class="pd-buybox mt-4">
+
+              <div class="row g-2 align-items-end">
+                <div class="col-6 col-md-4">
+                  <label class="form-label small fw-semibold mb-1">{% trans "Quantité" %}</label>
+                  <div class="pd-qty">
+                    <button type="button" class="btn btn-outline-secondary" data-qty="-1">−</button>
+                    <input type="number" min="1" value="1" id="pdQtyInput" class="form-control text-center">
+                    <button type="button" class="btn btn-outline-secondary" data-qty="+1">+</button>
+                  </div>
+                </div>
+
+                <div class="col-12 col-md-8">
+                  <div class="d-flex gap-2">
+                    <form method="post" action="{% url 'econ:add_to_cart' product.slug %}" class="flex-grow-1">
+                      {% csrf_token %}
+                      <input type="hidden" name="qty" id="pdQtyHidden" value="1">
+                      <button type="submit" class="btn btn-warning fw-semibold w-100" {% if not product.in_stock %}disabled{% endif %}>
+                        <i class="fas fa-cart-plus me-1"></i> {% trans "Ajouter au panier" %}
+                      </button>
+                    </form>
+
+                    <a href="{% url 'econ:buynow' product.slug %}" class="btn btn-primary fw-semibold" {% if not product.in_stock %}aria-disabled="true"{% endif %}>
+                      <i class="fas fa-bolt me-1"></i> {% trans "Acheter maintenant" %}
+                    </a>
+                  </div>
+
+                  <div class="pd-buy-meta small text-muted mt-2">
+                    <i class="fas fa-undo me-1"></i> {% trans "Retours simplifiés" %} •
+                    <i class="fas fa-lock me-1"></i> {% trans "Protection acheteur" %} •
+                    <i class="fas fa-truck me-1"></i> {% trans "Suivi livraison" %}
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Tabs: Description / Specs / Reviews -->
+        <div class="pd-card card border-0 shadow-sm mt-3">
+          <div class="card-body">
+            <ul class="nav nav-tabs" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#pdDesc" type="button" role="tab">
+                  {% trans "Description" %}
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pdSpecs" type="button" role="tab">
+                  {% trans "Spécifications" %}
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pdReviews" type="button" role="tab">
+                  {% trans "Avis" %}
+                </button>
+              </li>
+            </ul>
+
+            <div class="tab-content pt-3">
+              <div class="tab-pane fade show active" id="pdDesc" role="tabpanel">
+                <div class="pd-rich">
+                  {{ product.description|safe }}
+                </div>
+              </div>
+
+              <div class="tab-pane fade" id="pdSpecs" role="tabpanel">
+                <div class="pd-rich">
+                  {{ product.specifications|safe }}
+                </div>
+              </div>
+
+              <div class="tab-pane fade" id="pdReviews" role="tabpanel">
+                <div class="pd-reviews-empty text-muted">
+                  <i class="far fa-comment-dots me-1"></i>
+                  {% trans "Le module d’avis sera branché ensuite (Review + formulaire + modération)." %}
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Related -->
+    {% if related_products %}
+    <section class="pd-related mt-4">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="fw-bold mb-0">{% trans "Produits similaires" %}</h5>
+        <a class="small" href="{% url 'econ:shop' %}?category={{ product.category.slug }}">
+          {% trans "Voir plus" %} →
+        </a>
+      </div>
+
+      <div class="row g-2 g-md-3">
+        {% for p in related_products %}
+        <div class="col-6 col-md-4 col-lg-3 col-xxl-2 d-flex">
+          <a href="{% url 'econ:product_detail' p.slug %}" class="pd-related-card card border-0 shadow-sm text-decoration-none text-reset flex-fill">
+            <div class="pd-related-img">
+              <img src="{{ p.image.url }}" alt="{{ p.name }}">
+              {% if p.has_promo %}
+                <span class="pd-mini-badge">-{{ p.promo_percent }}%</span>
+              {% endif %}
+            </div>
+            <div class="card-body py-2">
+              <div class="small fw-semibold">{{ p.name|truncatechars:42 }}</div>
+              <div class="small text-muted">
+                {% if p.has_promo %}
+                  <span class="text-danger fw-bold">{{ p.discounted_price|floatformat:0 }} XOF</span>
+                  <span class="ms-1"><s>{{ p.price|floatformat:0 }}</s></span>
+                {% else %}
+                  <span class="text-primary fw-bold">{{ p.price|floatformat:0 }} XOF</span>
+                {% endif %}
+              </div>
+            </div>
+          </a>
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'economic/js/product_detail.js' %}"></script>
+{% endblock %}

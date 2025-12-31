@@ -1,0 +1,55 @@
+{% load static i18n %}
+
+<div class="shop-toolbar d-flex flex-wrap justify-content-between align-items-center mb-3 py-2 px-2 border-bottom rounded shadow-sm bg-white">
+
+  {# Résultats / total produits #}
+  <div class="toolbar-left small text-muted mb-2 mb-md-0">
+    {% if products %}
+      {% trans "Affichage de" %} {{ products.start_index }} - {{ products.end_index }} {% trans "sur" %} {{ products.paginator.count }} {% trans "produits" %}
+    {% else %}
+      {% trans "Aucun produit trouvé" %}
+    {% endif %}
+  </div>
+
+  {# Options de tri et d'affichage #}
+  <div class="toolbar-right d-flex align-items-center gap-2">
+
+    {# Tri #}
+    <form method="get" class="d-flex align-items-center gap-1">
+      {% if active_category %}<input type="hidden" name="category" value="{{ active_category.slug }}">{% endif %}
+      {% if search %}<input type="hidden" name="search" value="{{ search }}">{% endif %}
+
+      <select name="sort" class="form-select form-select-sm" onchange="this.form.submit()">
+        <option value="latest" {% if sort == 'latest' %}selected{% endif %}>{% trans "Derniers arrivés" %}</option>
+        <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>{% trans "Prix croissant" %}</option>
+        <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>{% trans "Prix décroissant" %}</option>
+        <option value="popular" {% if sort == 'popular' %}selected{% endif %}>{% trans "Les plus populaires" %}</option>
+      </select>
+    </form>
+
+    {# Vue Grid/List #}
+    <div class="btn-group btn-group-sm ms-2" role="group" aria-label="{% trans 'Vue du catalogue' %}">
+      <a href="?view=grid{% if sort %}&sort={{ sort }}{% endif %}" class="btn btn-outline-secondary {% if view == 'grid' or not view %}active{% endif %}" title="{% trans 'Vue en grille' %}">
+        <i class="fas fa-th"></i>
+      </a>
+      <a href="?view=list{% if sort %}&sort={{ sort }}{% endif %}" class="btn btn-outline-secondary {% if view == 'list' %}active{% endif %}" title="{% trans 'Vue en liste' %}">
+        <i class="fas fa-list"></i>
+      </a>
+    </div>
+
+    {# Nombre de produits par page #}
+    <form method="get" class="ms-2 d-flex align-items-center gap-1">
+      {% if active_category %}<input type="hidden" name="category" value="{{ active_category.slug }}">{% endif %}
+      {% if search %}<input type="hidden" name="search" value="{{ search }}">{% endif %}
+      {% if sort %}<input type="hidden" name="sort" value="{{ sort }}">{% endif %}
+
+      <select name="per_page" class="form-select form-select-sm" onchange="this.form.submit()" title="{% trans 'Produits par page' %}">
+        <option value="12" {% if per_page == 12 %}selected{% endif %}>12</option>
+        <option value="24" {% if per_page == 24 %}selected{% endif %}>24</option>
+        <option value="48" {% if per_page == 48 %}selected{% endif %}>48</option>
+        <option value="96" {% if per_page == 96 %}selected{% endif %}>96</option>
+      </select>
+    </form>
+
+  </div>
+</div>

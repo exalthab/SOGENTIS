@@ -1,0 +1,48 @@
+{% extends "dashboard/social/base_social.html" %}
+{% load i18n humanize %}
+
+{% block title %}{% trans "Mon impact social" %}{% endblock %}
+
+{% block content %}
+<h2>📊 {% trans "Mon impact social" %}</h2>
+
+{% if impact %}
+<div class="impact-list">
+
+    {% for item in impact %}
+    <div class="impact-card">
+        <h4>{{ item.project_name }}</h4>
+
+        <p>
+            💰 {{ item.total_amount|intcomma }} FCFA —
+            {{ item.donations_count }} {% trans "dons" %}
+        </p>
+
+        {% if item.goal_amount %}
+            <div class="progress">
+                <div
+                    class="progress-bar"
+                    style="width: {{ item.percent }}%;"
+                >
+                    {{ item.percent }}%
+                </div>
+            </div>
+            <small>
+                {% trans "Objectif" %} :
+                {{ item.goal_amount|intcomma }} FCFA
+            </small>
+        {% endif %}
+
+        <p class="mt-2">
+            <a href="{% url 'social:project_detail' item.project_slug %}" target="_blank">
+                🔎 {% trans "Voir le projet" %}
+            </a>
+        </p>
+    </div>
+    {% endfor %}
+
+</div>
+{% else %}
+<p>{% trans "Vous n'avez pas encore soutenu de projet." %}</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,141 @@
+{# templates/economic/ecommerce/cart.html #}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}
+{% trans "Mon panier" %} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'economic/css/ecommerce_cart.css' %}">
+<link rel="stylesheet" href="{% static 'economic/css/ecommerce_navbar.css' %}">
+{% endblock %}
+
+{% block section_menu %}
+  {% include 'economic/ecommerce/partials/_ecommerce_navbar.html' %}
+{% endblock %}
+
+{% block content %}
+
+<section class="container py-4">
+
+  <h1 class="mb-4">🛒 {% trans "Mon panier" %}</h1>
+
+  {% if cart_items %}
+  <div class="row">
+
+    <!-- ================= LISTE PRODUITS ================= -->
+    <div class="col-lg-8">
+
+      {% for item in cart_items %}
+      <div class="cart-item mb-3 p-3 border rounded">
+
+        <div class="row align-items-center g-3">
+
+          <div class="col-3 col-md-2">
+            {% if item.product.image %}
+              <img src="{{ item.product.image.url }}" class="img-fluid rounded">
+            {% else %}
+              <img src="{% static 'global/image/product-placeholder.png' %}" class="img-fluid rounded">
+            {% endif %}
+          </div>
+
+          <div class="col-9 col-md-4">
+            <h6 class="mb-1">{{ item.product.name }}</h6>
+            <small class="text-muted">
+              {{ item.product.price }} {{ CURRENCY|default:"€" }}
+            </small>
+          </div>
+
+          <!-- QUANTITÉ -->
+          <div class="col-md-3">
+            <form method="post"
+                  action="{% url 'economic:ecommerce:update_cart' item.id %}"
+                  class="d-flex">
+              {% csrf_token %}
+              <input type="number"
+                     name="quantity"
+                     value="{{ item.quantity }}"
+                     min="1"
+                     class="form-control form-control-sm me-2">
+              <button class="btn btn-sm btn-outline-secondary">
+                {% trans "OK" %}
+              </button>
+            </form>
+          </div>
+
+          <!-- TOTAL -->
+          <div class="col-md-2 text-end fw-bold">
+            {{ item.total_price }} {{ CURRENCY|default:"€" }}
+          </div>
+
+          <!-- SUPPRIMER -->
+          <div class="col-md-1 text-end">
+            <a href="{% url 'economic:ecommerce:remove_from_cart' item.id %}"
+               class="btn btn-sm btn-outline-danger"
+               aria-label="{% trans 'Supprimer' %}">
+              ✕
+            </a>
+          </div>
+
+        </div>
+
+      </div>
+      {% endfor %}
+
+    </div>
+
+    <!-- ================= RÉCAP ================= -->
+    <div class="col-lg-4">
+
+      <div class="card shadow-sm">
+        <div class="card-body">
+
+          <h5 class="mb-3">{% trans "Récapitulatif" %}</h5>
+
+          <div class="d-flex justify-content-between mb-2">
+            <span>{% trans "Sous-total" %}</span>
+            <strong>{{ cart_total }} {{ CURRENCY|default:"€" }}</strong>
+          </div>
+
+          <div class="d-flex justify-content-between mb-2">
+            <span>{% trans "Livraison" %}</span>
+            <span class="text-muted">{% trans "Calculée à l’étape suivante" %}</span>
+          </div>
+
+          <hr>
+
+          <div class="d-flex justify-content-between fs-5">
+            <strong>{% trans "Total" %}</strong>
+            <strong>{{ cart_total }} {{ CURRENCY|default:"€" }}</strong>
+          </div>
+
+          <a href="{% url 'economic:ecommerce:checkout' %}"
+             class="btn btn-primary w-100 mt-3">
+            💳 {% trans "Passer à la caisse" %}
+          </a>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  {% else %}
+  <!-- PANIER VIDE -->
+  <div class="text-center py-5">
+    <h4>{% trans "Votre panier est vide" %}</h4>
+    <p class="text-muted">
+      {% trans "Ajoutez des produits pour commencer vos achats." %}
+    </p>
+    <a href="{% url 'economic:ecommerce:index' %}"
+       class="btn btn-outline-primary">
+      ← {% trans "Retour à la boutique" %}
+    </a>
+  </div>
+  {% endif %}
+
+</section>
+
+{% endblock %}

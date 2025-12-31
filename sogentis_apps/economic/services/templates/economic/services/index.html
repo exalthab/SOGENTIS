@@ -1,0 +1,225 @@
+{# templates/economic/services/index.html #}
+{% extends "economic/services/base_services.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Pôle services" %} | SOGENTIS{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- HERO PRINCIPAL -->
+  <section class="services-hero mb-4">
+    <div class="row align-items-center g-3">
+      <div class="col-lg-7">
+        <h1 class="services-hero-title">
+          {% trans "Des services numériques au service de vos projets" %}
+        </h1>
+        <p class="services-hero-subtitle">
+          {% trans "SOGENTIS vous accompagne dans la conception, le développement et le déploiement de solutions digitales adaptées à votre réalité." %}
+        </p>
+
+        <div class="d-flex flex-wrap gap-2 mt-3">
+          {# Le catalogue = vue index elle-même #}
+          <a href="{% url 'economic:services:index' %}" class="btn btn-primary">
+            {% trans "Voir le catalogue de services" %}
+          </a>
+          {# On envoie vers la page tickets comme point d'entrée pour les demandes #}
+          <a href="{% url 'economic:services:tickets' %}" class="btn btn-outline-secondary">
+            {% trans "Demander un devis" %}
+          </a>
+        </div>
+      </div>
+
+      <div class="col-lg-5">
+        <div class="services-hero-card">
+          <h5 class="mb-2">{% trans "Nous intervenons sur" %}</h5>
+          <ul class="services-hero-list">
+            <li>{% trans "Sites web institutionnels et vitrines" %}</li>
+            <li>{% trans "Plateformes e-commerce et services en ligne" %}</li>
+            <li>{% trans "Outils internes (intranet, gestion, reporting)" %}</li>
+            <li>{% trans "Accompagnement, maintenance et support" %}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PETITES STATS (OPTIONNEL) -->
+  <section class="mb-4">
+    <div class="row g-3">
+      <div class="col-6 col-md-3">
+        <div class="service-info-card text-center">
+          <div class="fw-bold mb-0">
+            {{ service_stats.projects_count|default:"25+" }}
+          </div>
+          <div class="small text-muted">
+            {% trans "Projets livrés" %}
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="service-info-card text-center">
+          <div class="fw-bold mb-0">
+            {{ service_stats.clients_count|default:"15+" }}
+          </div>
+          <div class="small text-muted">
+            {% trans "Clients accompagnés" %}
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="service-info-card text-center">
+          <div class="fw-bold mb-0">
+            {{ service_stats.satisfaction_rate|default:"95%" }}
+          </div>
+          <div class="small text-muted">
+            {% trans "Satisfaction" %}
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="service-info-card text-center">
+          <div class="fw-bold mb-0">
+            {{ service_stats.years_experience|default:"5+" }}
+          </div>
+          <div class="small text-muted">
+            {% trans "Années d’expérience" %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATEGORIES PRINCIPALES (optionnel) -->
+  {% if categories %}
+    <section class="mb-4">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h2 class="h6 mb-0">
+          {% trans "Domaines d’intervention" %}
+        </h2>
+        <a href="{% url 'economic:services:index' %}" class="small text-decoration-none">
+          {% trans "Voir tous les services" %} →
+        </a>
+      </div>
+
+      <div class="row g-3">
+        {% for category in categories %}
+          <div class="col-6 col-md-3">
+            <a href="{% url 'economic:services:index' %}?category={{ category.slug }}"
+               class="text-decoration-none">
+              <div class="service-info-card h-100">
+                <div class="fw-semibold small mb-1">
+                  {{ category.name }}
+                </div>
+                {% if category.short_description %}
+                  <div class="small text-muted">
+                    {{ category.short_description|truncatechars:80 }}
+                  </div>
+                {% endif %}
+              </div>
+            </a>
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+
+  <!-- SERVICES MIS EN AVANT -->
+  <section class="mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h2 class="h6 mb-0">
+        {% trans "Services mis en avant" %}
+      </h2>
+      <a href="{% url 'economic:services:index' %}" class="small text-decoration-none">
+        {% trans "Voir le catalogue complet" %} →
+      </a>
+    </div>
+
+    {% if featured_services %}
+      <div class="row g-3 g-md-4">
+        {% for service in featured_services %}
+          <div class="col-md-6 col-lg-4">
+            <article class="service-card h-100">
+              <div class="service-card-body">
+                <div class="service-card-header">
+                  {% if service.category %}
+                    <span class="service-category-badge">
+                      {{ service.category }}
+                    </span>
+                  {% endif %}
+                  {% if service.base_price %}
+                    <span class="service-price">
+                      {{ service.base_price }} {{ DEFAULT_CURRENCY|default:"XOF" }}
+                    </span>
+                  {% endif %}
+                </div>
+
+                <h3 class="service-title">
+                  <a href="{% url 'economic:services:detail' slug=service.slug %}">
+                    {{ service.name }}
+                  </a>
+                </h3>
+
+                {% if service.short_description %}
+                  <p class="service-excerpt">
+                    {{ service.short_description|truncatechars:120 }}
+                  </p>
+                {% endif %}
+
+                <div class="service-meta">
+                  <span class="badge bg-warning text-dark me-1">
+                    ⭐ {% trans "Recommandé" %}
+                  </span>
+                  {% if service.delivery_time_label %}
+                    <span class="badge bg-light text-muted border">
+                      ⏱ {{ service.delivery_time_label }}
+                    </span>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="service-card-footer">
+                <a href="{% url 'economic:services:detail' slug=service.slug %}"
+                   class="btn btn-sm btn-outline-primary">
+                  {% trans "Voir le détail" %}
+                </a>
+                <a href="{% url 'economic:services:quote' slug=service.slug %}"
+                   class="btn btn-sm btn-primary ms-2">
+                  {% trans "Demander ce service" %}
+                </a>
+              </div>
+            </article>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="text-muted small">
+        {% trans "Aucun service mis en avant pour le moment. Les prochains seront affichés ici." %}
+      </div>
+    {% endif %}
+  </section>
+
+  <!-- CTA FINAL -->
+  <section class="mb-3">
+    <div class="service-contact-card d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+      <div class="mb-2 mb-md-0">
+        <div class="fw-semibold small mb-1">
+          {% trans "Un projet spécifique en tête ?" %}
+        </div>
+        <div class="small text-muted">
+          {% trans "Expliquez-nous votre besoin, nous co-construisons avec vous la meilleure solution." %}
+        </div>
+      </div>
+      <div class="d-flex flex-wrap gap-2">
+        <a href="{% url 'economic:services:tickets' %}" class="btn btn-primary btn-sm">
+          {% trans "Envoyer une demande" %}
+        </a>
+        <a href="{% url 'economic:services:index' %}" class="btn btn-outline-secondary btn-sm">
+          {% trans "Parcourir les services" %}
+        </a>
+      </div>
+    </div>
+  </section>
+
+</div>
+{% endblock %}

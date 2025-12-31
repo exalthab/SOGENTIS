@@ -1,0 +1,63 @@
+{% extends "dashboard/base_dashboard.html" %}
+{% load static i18n %}
+
+{% block content %}
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h4">
+            <i class="fas fa-box me-2"></i>
+            {% trans "Mes produits" %}
+        </h1>
+
+        <a href="{% url 'dashboard:vendor:product_add' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> {% trans "Ajouter" %}
+        </a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>{% trans "Produit" %}</th>
+                        <th>{% trans "Prix" %}</th>
+                        <th>{% trans "Stock" %}</th>
+                        <th>{% trans "Statut" %}</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for product in products %}
+                    <tr>
+                        <td>{{ product }}</td>
+                        <td>{{ product.price }} XOF</td>
+                        <td>{{ product.stock }}</td>
+                        <td>
+                            {% if product.is_active %}
+                                <span class="badge bg-success">{% trans "Actif" %}</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{% trans "Inactif" %}</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            <a href="{% url 'dashboard:vendor:product_edit' product.id %}"
+                               class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-3">
+                            {% trans "Aucun produit enregistré." %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

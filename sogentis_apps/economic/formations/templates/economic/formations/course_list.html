@@ -1,0 +1,106 @@
+{# templates/economic/formations/course_list.html #}
+{% extends "economic/formations/base_formations.html" %}
+{% load i18n %}
+
+{% block formations_title %}{% trans "Catalogue des formations" %}{% endblock %}
+
+{% block formations_content %}
+
+<section class="mb-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <h1 class="h4 mb-0">
+      {% trans "Catalogue des formations" %}
+    </h1>
+
+    <form method="get" class="d-flex gap-2 align-items-center">
+      <input type="search"
+             name="q"
+             value="{{ request.GET.q }}"
+             class="form-control form-control-sm"
+             placeholder="{% trans 'Rechercher une formation' %}">
+      <button class="btn btn-sm btn-outline-primary" type="submit">
+        {% trans "Filtrer" %}
+      </button>
+    </form>
+  </div>
+
+  {% if categories %}
+    <div class="mb-3">
+      <div class="small text-muted mb-1">
+        {% trans "Filtrer par domaine" %} :
+      </div>
+      <div class="d-flex flex-wrap gap-2">
+        <a href="{% url 'economic:formations:course_list' %}"
+           class="badge {% if not request.GET.category %}bg-primary{% else %}bg-light text-dark border{% endif %}">
+          {% trans "Tous" %}
+        </a>
+        {% for category in categories %}
+          <a href="{% url 'economic:formations:course_list' %}?category={{ category.slug }}"
+             class="badge {% if request.GET.category == category.slug %}bg-primary{% else %}bg-light text-dark border{% endif %}">
+            {{ category.name }}
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+</section>
+
+<section>
+  {% if courses %}
+    <div class="row g-3 g-md-4">
+      {% for course in courses %}
+        <div class="col-md-6 col-lg-4">
+          <article class="p-3 bg-white border rounded-3 h-100 d-flex flex-column">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              {% if course.category %}
+                <span class="badge bg-light text-dark border small">
+                  {{ course.category }}
+                </span>
+              {% endif %}
+              {% if course.price %}
+                <span class="fw-semibold small">
+                  {{ course.price }} {{ FORMATIONS_CURRENCY|default:"XOF" }}
+                </span>
+              {% else %}
+                <span class="fw-semibold small text-success">
+                  {% trans "Gratuit" %}
+                </span>
+              {% endif %}
+            </div>
+
+            <h2 class="h6 mb-1">
+              <a href="{% url 'economic:formations:course_detail' slug=course.slug %}"
+                 class="text-decoration-none">
+                {{ course.title }}
+              </a>
+            </h2>
+
+            {% if course.short_description %}
+              <p class="small text-muted mb-3">
+                {{ course.short_description|truncatechars:140 }}
+              </p>
+            {% endif %}
+
+            <div class="mt-auto d-flex justify-content-between align-items-center">
+              {% if course.level_label %}
+                <span class="badge bg-light text-muted border small">
+                  {{ course.level_label }}
+                </span>
+              {% endif %}
+              <a href="{% url 'economic:formations:course_detail' slug=course.slug %}"
+                 class="btn btn-sm btn-outline-primary">
+                {% trans "Voir le détail" %}
+              </a>
+            </div>
+          </article>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-muted">
+      {% trans "Aucune formation disponible pour le moment." %}
+    </p>
+  {% endif %}
+</section>
+
+{% endblock %}

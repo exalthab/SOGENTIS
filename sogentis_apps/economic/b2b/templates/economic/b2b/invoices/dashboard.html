@@ -1,0 +1,88 @@
+{% extends "main.html" %}
+{% load i18n humanize %}
+
+{% block content %}
+<h1 class="mb-4">{{ page_title }}</h1>
+
+<!-- KPIs -->
+<div class="row g-3 mb-4">
+  <div class="col-md-3">
+    <div class="card p-3">
+      <small>{% trans "Factures" %}</small>
+      <h3>{{ stats.count }}</h3>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="card p-3">
+      <small>{% trans "Montant total" %}</small>
+      <h3>{{ stats.total|intcomma }}</h3>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="card p-3">
+      <small>{% trans "Payé" %}</small>
+      <h3 class="text-success">{{ stats.paid|intcomma }}</h3>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="card p-3">
+      <small>{% trans "En attente" %}</small>
+      <h3 class="text-warning">{{ stats.pending|intcomma }}</h3>
+    </div>
+  </div>
+</div>
+
+<!-- Alert -->
+{% if stats.overdue %}
+<div class="alert alert-danger">
+  {% blocktrans count stats.overdue as count %}
+    {{ count }} facture échue
+  {% plural %}
+    {{ count }} factures échues
+  {% endblocktrans %}
+</div>
+{% endif %}
+
+<!-- Factures récentes -->
+<div class="card">
+  <div class="card-header d-flex justify-content-between">
+    <strong>{% trans "Factures récentes" %}</strong>
+    <a href="{% url 'b2b:invoices' %}">
+      {% trans "Voir toutes" %}
+    </a>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-striped mb-0">
+      <thead>
+        <tr>
+          <th>{% trans "Numéro" %}</th>
+          <th>{% trans "Statut" %}</th>
+          <th>{% trans "Montant" %}</th>
+          <th>{% trans "Échéance" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for invoice in recent_invoices %}
+          <tr>
+            <td>{{ invoice.invoice_number }}</td>
+            <td>{{ invoice.get_status_display }}</td>
+            <td>{{ invoice.amount|intcomma }}</td>
+            <td>{{ invoice.due_date|default:"—" }}</td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="4" class="text-center">
+              {% trans "Aucune facture" %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "main.html" %}
+{% load i18n %}
+{% block title %}{% trans "Erreur paiement" %} | {{ PROJECT_NAME }}{% endblock %}
+{% block content %}
+<section class="container py-5">
+  <h1 class="mb-3">⚠️ {% trans "Paiement impossible" %}</h1>
+  <p class="text-danger">{{ error }}</p>
+  <a class="btn btn-outline-primary" href="{% url 'economic:ecommerce:choose_payment' order.uuid %}">
+    {% trans "Retour" %}
+  </a>
+</section>
+{% endblock %}

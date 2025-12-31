@@ -1,0 +1,27 @@
+/* ================= REVIEWS ================= */
+.product-reviews {
+    border-top: 1px solid #eee;
+    padding-top: 2rem;
+}
+
+.review-card {
+    background: #fff;
+    border-radius: .6rem;
+    padding: 1rem 1.2rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,.05);
+}
+
+.review-user {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+}
+
+.review-title {
+    font-weight: 600;
+}
+
+.review-content {
+    font-size: .9rem;
+}

@@ -1,0 +1,9 @@
+<header class="dashboard-topbar">
+    <div class="topbar-left">
+        <strong>SOGENTIS</strong> — Social
+    </div>
+
+    <div class="topbar-right">
+        👤 {{ request.user.get_full_name|default:request.user.email }}
+    </div>
+</header>

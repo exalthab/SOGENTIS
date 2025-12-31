@@ -1,0 +1,91 @@
+{# templates/dashboard/admin/_menu.html #}
+{% load static i18n %}
+
+<ul class="nav flex-column dashboard-menu">
+
+  {# HOME ADMIN #}
+  <li class="nav-item">
+    <a class="nav-link {% if request.resolver_match.namespace == 'admin' and request.resolver_match.url_name == 'home' %}active{% endif %}"
+       href="{% url 'dashboard:admin:home' %}">
+      🛠 {% trans "Administration" %}
+    </a>
+  </li>
+
+  {# UTILISATEURS #}
+  <li class="nav-item">
+    <a class="nav-link {% if request.resolver_match.namespace == 'admin' and request.resolver_match.url_name == 'users' %}active{% endif %}"
+       href="{% url 'dashboard:admin:users' %}">
+      👥 {% trans "Utilisateurs" %}
+    </a>
+  </li>
+
+  {# MODÉRATION #}
+  <li class="nav-item">
+    <a class="nav-link {% if request.resolver_match.namespace == 'admin' and request.resolver_match.url_name == 'moderation' %}active{% endif %}"
+       href="{% url 'dashboard:admin:moderation' %}">
+      🛡 {% trans "Modération" %}
+    </a>
+  </li>
+
+  {# RAPPORTS #}
+  <li class="nav-item">
+    <a class="nav-link {% if request.resolver_match.namespace == 'admin' and request.resolver_match.url_name == 'reports' %}active{% endif %}"
+       href="{% url 'dashboard:admin:reports' %}">
+      📊 {% trans "Rapports & statistiques" %}
+    </a>
+  </li>
+
+  {# PARAMÈTRES #}
+  <li class="nav-item">
+    <a class="nav-link {% if request.resolver_match.namespace == 'admin' and request.resolver_match.url_name == 'settings' %}active{% endif %}"
+       href="{% url 'dashboard:admin:settings' %}">
+      ⚙️ {% trans "Paramètres" %}
+    </a>
+  </li>
+
+  <li class="nav-item mt-3">
+    <hr class="my-2">
+  </li>
+
+  {# RETOUR DASHBOARD USER #}
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'dashboard:home' %}">
+      🔙 {% trans "Retour au dashboard utilisateur" %}
+    </a>
+  </li>
+
+  {# RETOUR AU SITE #}
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'core:home' %}">
+      🌐 {% trans "Retour au site" %}
+    </a>
+  </li>
+
+</ul>
+
+
+
+
+
+{% comment %} {# dashboard/admin/_menu.html #}
+{% load i18n %}
+
+<ul class="nav flex-column dashboard-menu">
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'dashboard:admin:home' %}">
+            🛠 {% trans "Administration" %}
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'dashboard:admin:users' %}">
+            👥 {% trans "Utilisateurs" %}
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" href="#">
+            📋 {% trans "Logs & actions" %}
+        </a>
+    </li>
+</ul> {% endcomment %}

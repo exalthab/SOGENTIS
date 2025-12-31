@@ -1,0 +1,72 @@
+{# templates/economic/services/base_services.html #}
+{% load static i18n %}
+<!doctype html>
+<html lang="{{ LANGUAGE_CODE|default:'fr' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>{% block title %}SOGENTIS — Services{% endblock %}</title>
+
+  {# CSS principal du pôle services #}
+  <link rel="stylesheet" href="{% static 'services/css/services.css' %}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<div class="services-shell">
+
+  {# TOPBAR SERVICES #}
+  <header class="services-topbar">
+    <div class="services-topbar-inner">
+      <div class="services-brand">
+        <span class="dot"></span>
+        <div>
+          <strong>{% trans "Services SOGENTIS" %}</strong>
+          <small class="text-muted d-block">
+            {% trans "Solutions numériques, accompagnement et support professionnel" %}
+          </small>
+        </div>
+      </div>
+
+      <nav class="services-nav">
+        {# Catalogue / page index #}
+        <a href="{% url 'economic:services:index' %}"
+           class="services-nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}">
+          {% trans "Catalogue" %}
+        </a>
+
+        {# Demandes / tickets côté services #}
+        <a href="{% url 'economic:services:tickets' %}"
+           class="services-nav-link {% if request.resolver_match.url_name == 'tickets' %}active{% endif %}">
+          {% trans "Mes demandes" %}
+        </a>
+
+        {# Support global économique (si app support active) #}
+        <a href="{% url 'economic:support:ticket_list' %}" class="services-nav-link">
+          {% trans "Support" %}
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  {# CONTENU PRINCIPAL #}
+  <main class="services-main">
+    {% block content %}{% endblock %}
+  </main>
+
+  {# FOOTER SIMPLE #}
+  <footer class="services-footer">
+    <small>
+      &copy; {{ PROJECT_NAME|default:"SOGENTIS" }} — {% now "Y" %}.
+      {% trans "Pôle économique — Services" %}
+    </small>
+  </footer>
+
+</div>
+
+{# JS principal du pôle services #}
+<script src="{% static 'services/js/services.js' %}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

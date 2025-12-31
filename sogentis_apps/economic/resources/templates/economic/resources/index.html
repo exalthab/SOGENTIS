@@ -1,0 +1,202 @@
+{# economic/resources/index.html #}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{{ page_title }} | {{ PROJECT_NAME }}{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+
+  <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+    <div>
+      <h1 class="mb-1">📚 {% trans "Ressources" %}</h1>
+      <p class="text-muted mb-0">
+        {% trans "Documents, guides, supports, fichiers téléchargeables." %}
+      </p>
+    </div>
+
+    <div class="d-flex gap-2 flex-wrap">
+      <a class="btn btn-sm {% if not current_category %}btn-primary{% else %}btn-outline-primary{% endif %}"
+         href="{% url 'economic:resources:index' %}">
+        {% trans "Toutes" %}
+      </a>
+
+      {% for c in categories %}
+        <a class="btn btn-sm {% if current_category and current_category.id == c.id %}btn-primary{% else %}btn-outline-primary{% endif %}"
+           href="{% url 'economic:resources:index' %}?cat={{ c.slug }}">
+          {{ c.name }}
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+
+  {% if resources %}
+    <div class="row g-3">
+      {% for r in resources %}
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="card h-100 shadow-sm">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start gap-2">
+                <h5 class="mb-1">{{ r.title }}</h5>
+                {% if r.category %}
+                  <span class="badge bg-secondary">{{ r.category.name }}</span>
+                {% endif %}
+              </div>
+
+              {% if r.summary %}
+                <p class="text-muted mt-2 mb-2">
+                  {{ r.summary|truncatechars:140 }}
+                </p>
+              {% endif %}
+
+              {% with count=r.documents.count %}
+                {% if count %}
+                  <p class="small text-muted mb-3">
+                    {% blocktrans count count=count %}
+                      {{ count }} document associé
+                    {% plural %}
+                      {{ count }} documents associés
+                    {% endblocktrans %}
+                  </p>
+                {% endif %}
+              {% endwith %}
+
+              <div class="d-flex gap-2 flex-wrap">
+                <a href="{% url 'economic:resources:detail' r.slug %}"
+                   class="btn btn-sm btn-outline-primary">
+                  {% trans "Voir la ressource" %}
+                </a>
+              </div>
+            </div>
+
+            <div class="card-footer small text-muted d-flex justify-content-between">
+              <span>{% trans "Publié" %}</span>
+              <span>{{ r.created_at|date:"d/m/Y" }}</span>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="alert alert-info">
+      {% trans "Aucune ressource disponible pour le moment." %}
+    </div>
+  {% endif %}
+
+</section>
+{% endblock %}
+
+
+
+
+
+
+
+{% comment %} {# economic/resources/index.html #}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{{ page_title }} | {{ PROJECT_NAME }}{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+
+  <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+    <div>
+      <h1 class="mb-1">📚 {% trans "Ressources" %}</h1>
+      <p class="text-muted mb-0">{% trans "Documents, guides, supports, fichiers téléchargeables." %}</p>
+    </div>
+
+    <div class="d-flex gap-2 flex-wrap">
+      <a class="btn btn-sm {% if not current_category %}btn-primary{% else %}btn-outline-primary{% endif %}"
+         href="{% url 'economic:resources:index' %}">
+        {% trans "Toutes" %}
+      </a>
+
+      {% for c in categories %}
+        <a class="btn btn-sm {% if current_category and current_category.id == c.id %}btn-primary{% else %}btn-outline-primary{% endif %}"
+           href="{% url 'economic:resources:index' %}?cat={{ c.slug }}">
+          {{ c.name }}
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+
+  {% if resources %}
+    <div class="row g-3">
+      {% for r in resources %}
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="card h-100 shadow-sm">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start gap-2">
+                <h5 class="mb-1">{{ r.title }}</h5>
+                {% if r.category %}
+                  <span class="badge bg-secondary">{{ r.category.name }}</span>
+                {% endif %}
+              </div>
+
+              {% if r.summary %}
+                <p class="text-muted mt-2 mb-3">{{ r.summary|truncatechars:140 }}</p>
+              {% endif %}
+
+              <div class="d-flex gap-2 flex-wrap">
+                <a href="{% url 'economic:resources:detail' r.slug %}"
+                   class="btn btn-sm btn-outline-primary">
+                  {% trans "Voir" %}
+                </a>
+
+                {% if r.file %}
+                  <a href="{{ r.file.url }}" class="btn btn-sm btn-primary" download>
+                    ⬇ {% trans "Télécharger" %}
+                  </a>
+                {% elif r.external_url %}
+                  <a href="{{ r.external_url }}" class="btn btn-sm btn-primary" target="_blank" rel="noopener">
+                    🔗 {% trans "Ouvrir" %}
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="card-footer small text-muted d-flex justify-content-between">
+              <span>{% trans "Publié" %}</span>
+              <span>{{ r.created_at|date:"d/m/Y" }}</span>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="alert alert-info">
+      {% trans "Aucune ressource disponible pour le moment." %}
+    </div>
+  {% endif %}
+
+</section>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+{% comment %} {% extends "main.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Ressources" %} | {{ PROJECT_NAME }}{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+  <h1 class="mb-4">{% trans "Ressources & Documents" %}</h1>
+
+  <div class="row g-4">
+    {% for resource in resources %}
+      <div class="col-md-4">
+        {% include "economic/resources/partials/_resource_card.html" %}
+      </div>
+    {% empty %}
+      <p class="text-muted">{% trans "Aucune ressource disponible." %}</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %} {% endcomment %}

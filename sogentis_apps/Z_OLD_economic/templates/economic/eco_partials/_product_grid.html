@@ -1,0 +1,111 @@
+{# eco_partials/_product_grid.html #}
+{% load static i18n %}
+
+<div id="shop-grid" class="shop-grid-wrapper">
+  {% if products %}
+  <div class="row g-2 g-md-3 g-xl-4">
+    {% for product in products %}
+    <div class="col-6 col-md-4 col-lg-3 col-xxl-2 d-flex">
+      <article class="product-card-premium flex-fill">
+
+        <div class="product-media position-relative">
+          <a href="{% url 'econ:product_detail' product.slug %}">
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-img-main">
+          </a>
+          <div class="badges-top position-absolute top-0 start-0 p-1">
+            {% if product.has_promo %}
+              <span class="badge badge-discount">-{{ product.promo_percent }}%</span>
+            {% endif %}
+            {% if product.is_new %}
+              <span class="badge badge-new">{% trans "Nouveau" %}</span>
+            {% endif %}
+            {% if product.is_flash_sale %}
+              <span class="badge badge-flash"><i class="fas fa-bolt"></i></span>
+            {% endif %}
+            {% if product.badge_text %}
+              <span class="badge badge-custom">{{ product.badge_text }}</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="product-body px-2 pb-2 pt-1 pt-md-2">
+          <h6 class="product-title mb-1">
+            <a href="{% url 'econ:product_detail' product.slug %}">{{ product.name|truncatechars:55 }}</a>
+          </h6>
+
+          <div class="product-price-zone mb-1">
+            {% if product.has_promo %}
+            <div class="d-flex align-items-baseline gap-1">
+              <span class="price-main text-danger fw-bold">{{ product.discounted_price|floatformat:0 }} XOF</span>
+              <span class="price-old text-muted small"><s>{{ product.price|floatformat:0 }} XOF</s></span>
+            </div>
+            {% else %}
+            <div class="price-main text-primary fw-bold">{{ product.price|floatformat:0 }} XOF</div>
+            {% endif %}
+          </div>
+
+          <div class="product-meta-row d-flex justify-content-between align-items-center mb-1 small">
+            <div class="rating-zone text-warning">
+              {% for i in "12345"|make_list %}
+                {% if product.rating|floatformat:0 >= i %}★{% else %}☆{% endif %}
+              {% endfor %}
+              <span class="text-muted ms-1">({{ product.reviews_count }})</span>
+            </div>
+            <div class="sales-zone text-muted">{{ product.sold_count|default:0 }} {% trans "ventes" %}</div>
+          </div>
+
+          <div class="product-footer d-flex align-items-center gap-1">
+            <form method="post" action="{% url 'econ:add_to_cart' product.slug %}" class="flex-grow-1">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm btn-warning w-100 fw-semibold">
+                <i class="fas fa-cart-plus me-1"></i> {% trans "Ajouter" %}
+              </button>
+            </form>
+            <button type="button" class="btn btn-sm btn-outline-secondary">
+              <i class="far fa-heart"></i>
+            </button>
+          </div>
+
+          {% if not product.in_stock %}
+            <div class="mt-1">
+              <span class="badge bg-secondary w-100">{% trans "Rupture de stock" %}</span>
+            </div>
+          {% endif %}
+        </div>
+      </article>
+    </div>
+    {% endfor %}
+  </div>
+
+  {# Pagination #}
+  {% if products.paginator.num_pages > 1 %}
+  <nav class="mt-4">
+    <ul class="pagination justify-content-center pagination-sm">
+      {% if products.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ products.previous_page_number }}{% if active_category %}&category={{ active_category.slug }}{% endif %}{% if search %}&search={{ search }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}">&laquo;</a>
+        </li>
+      {% endif %}
+      {% for num in products.paginator.page_range %}
+        <li class="page-item {% if products.number == num %}active{% endif %}">
+          <a class="page-link" href="?page={{ num }}{% if active_category %}&category={{ active_category.slug }}{% endif %}{% if search %}&search={{ search }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}">{{ num }}</a>
+        </li>
+      {% endfor %}
+      {% if products.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ products.next_page_number }}{% if active_category %}&category={{ active_category.slug }}{% endif %}{% if search %}&search={{ search }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}">&raquo;</a>
+        </li>
+      {% endif %}
+    </ul>
+  </nav>
+  {% endif %}
+
+  {% else %}
+  <div class="text-center py-5">
+    <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+    <h5 class="fw-bold mb-1">{% trans "Aucun produit trouvé" %}</h5>
+    <p class="text-muted mb-3">{% trans "Essayez de modifier les filtres, la catégorie ou les mots-clés de recherche." %}</p>
+    <a href="?" class="btn btn-outline-primary btn-sm">{% trans "Réinitialiser les filtres" %}</a>
+  </div>
+  {% endif %}
+</div>

@@ -1,0 +1,113 @@
+{# templates/accounts_users/auth/choice.html #}
+{% extends "main.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="container py-5 text-center">
+
+    <h1 class="mb-4">{% trans "Se connecter ou s’inscrire" %}</h1>
+
+    {% if login_context == "social" %}
+        <p class="text-muted">
+            {% trans "Connexion – Engagement social" %}
+        </p>
+    {% elif login_context == "economic" %}
+        <p class="text-muted">
+            {% trans "Connexion – Pôle économique" %}
+        </p>
+    {% endif %}
+
+    <div class="row justify-content-center g-4 mt-4">
+
+        <!-- ENGAGEMENT SOCIAL -->
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">
+                        {% trans "Engagement social" %}
+                    </h5>
+                    <p class="card-text flex-grow-1">
+                        {% trans "Donateurs, membres, volontaires." %}
+                    </p>
+                    <a href="{% url 'accounts_users_web:social_login' %}"
+                       class="btn btn-primary w-100 mb-2">
+                        {% trans "Se connecter" %}
+                    </a>
+                    <a href="{% url 'accounts_users_web:social_register' %}"
+                       class="btn btn-outline-primary w-100">
+                        {% trans "S’inscrire" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- PÔLE ÉCONOMIQUE -->
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">
+                        {% trans "Pôle économique" %}
+                    </h5>
+                    <p class="card-text flex-grow-1">
+                        {% trans "Clients, vendeurs, entreprises." %}
+                    </p>
+                    <a href="{% url 'accounts_users_web:login_economic' %}"
+                       class="btn btn-success w-100 mb-2">
+                        {% trans "Se connecter" %}
+                    </a>
+                    <a href="{% url 'accounts_users_web:register_economic_choice' %}"
+                       class="btn btn-outline-success w-100">
+                        {% trans "S’inscrire" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+
+
+
+
+{% comment %} {% extends "accounts_users/base_auth.html" %}
+{% load i18n static %}
+
+{% block title %}
+{% trans "Créer un compte" %}
+{% endblock %}
+
+{% block content %}
+<div class="signup-choice-container">
+
+    <h1 class="signup-title">
+        {% trans "Créer un compte SOGENTIS" %}
+    </h1>
+
+    <p class="signup-subtitle">
+        {% trans "Choisissez le type de compte que vous souhaitez créer." %}
+    </p>
+
+    <div class="signup-cards">
+
+        {% include "accounts_users/signup/_signup_card.html"
+            with
+            title=_("Rejoindre la communauté")
+            description=_("Donateur, membre, volontaire ou institution")
+            icon="🟣"
+            url="/accounts/web/signup/social/"
+        %}
+
+        {% include "accounts_users/signup/_signup_card.html"
+            with
+            title=_("Créer un compte économique")
+            description=_("Client, vendeur ou entreprise")
+            icon="🔵"
+            url="/accounts/web/signup/economic/"
+        %}
+
+    </div>
+
+</div>
+{% endblock %} {% endcomment %}

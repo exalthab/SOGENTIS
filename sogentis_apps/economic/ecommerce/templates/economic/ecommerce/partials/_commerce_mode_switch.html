@@ -1,0 +1,71 @@
+{# economic/ecommerce/partials/_commerce_mode_switch.html #}
+{% load i18n %}
+
+{# Valeur par défaut si le context_processor n'injecte pas commerce_mode #}
+{% with current_mode=commerce_mode|default:"B2C" %}
+<div class="commerce-mode-switch"
+     role="group"
+     aria-label="{% trans 'Mode de commerce' %}">
+
+  <a href="{% url 'economic:ecommerce:switch_mode' 'B2C' %}"
+     class="mode-btn {% if current_mode == 'B2C' %}active{% endif %}"
+     {% if current_mode == 'B2C' %}aria-current="page"{% endif %}
+     title="{% trans 'Passer en mode particulier (B2C)' %}">
+    🛒 <span class="mode-label">{% trans "Particulier (B2C)" %}</span>
+  </a>
+
+  <a href="{% url 'economic:ecommerce:switch_mode' 'B2B' %}"
+     class="mode-btn {% if current_mode == 'B2B' %}active{% endif %}"
+     {% if current_mode == 'B2B' %}aria-current="page"{% endif %}
+     title="{% trans 'Passer en mode entreprise (B2B)' %}">
+    🏢 <span class="mode-label">{% trans "Entreprise (B2B)" %}</span>
+  </a>
+
+</div>
+{% endwith %}
+
+
+
+
+
+
+
+{% comment %} {# economic/ecommerce/partials/_commerce_mode_switch.html #}
+{% load static i18n %}
+
+<div class="commerce-mode-switch">
+
+  <a href="{% url 'economic:ecommerce:switch_mode' 'B2C' %}"
+     class="mode-btn {% if commerce_mode == 'B2C' %}active{% endif %}"
+     title="{% trans 'Passer en mode particulier (B2C)' %}">
+    🛒 {% trans "Particulier (B2C)" %}
+  </a>
+
+  <a href="{% url 'economic:ecommerce:switch_mode' 'B2B' %}"
+     class="mode-btn {% if commerce_mode == 'B2B' %}active{% endif %}"
+     title="{% trans 'Passer en mode entreprise (B2B)' %}">
+    🏢 {% trans "Entreprise (B2B)" %}
+  </a>
+
+</div> {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/economic/ecommerce/partials/_commerce_mode_switch.html #}
+{% load static i18n %}
+
+<div class="commerce-mode-switch">
+
+  <a href="{% url 'economic:ecommerce:switch_mode' 'B2C' %}"
+     class="mode-btn {% if commerce_mode == 'B2C' %}active{% endif %}">
+    🛒 {% trans "Particulier (B2C)" %}
+  </a>
+
+  <a href="{% url 'economic:ecommerce:switch_mode' 'B2B' %}"
+     class="mode-btn {% if commerce_mode == 'B2B' %}active{% endif %}">
+    🏢 {% trans "Entreprise (B2B)" %}
+  </a>
+
+</div> {% endcomment %}

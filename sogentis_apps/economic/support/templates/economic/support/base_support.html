@@ -1,0 +1,152 @@
+{# templates/economic/support/base_support.html #}
+{% load static i18n %}
+
+{# ✅ Base réutilisable : peut être EXTENDU par index.html, tickets.html, faq.html, etc. #}
+{# ✅ CSS/JS chargés une seule fois ici + blocs extra_css / extra_js #}
+
+<!doctype html>
+<html lang="{{ LANGUAGE_CODE|default:'fr' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{% trans "Support" %} | {{ PROJECT_NAME }}{% endblock %}</title>
+
+  {# ✅ CSS global support (réutilisable) #}
+  <link rel="stylesheet" href="{% static 'support/css/support.css' %}">
+
+  {# ✅ CSS spécifique à une page (optionnel) #}
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body class="{% block body_class %}support-body{% endblock %}">
+
+  <div class="support-shell">
+
+    <!-- Topbar -->
+    <header class="support-topbar" role="banner">
+      <div class="support-brand">
+        <span class="dot" aria-hidden="true"></span>
+        <div class="support-brand-text">
+          <strong class="support-brand-title">{% trans "Support" %}</strong>
+          <span class="support-brand-sub muted">
+            {% block brand_subtitle %}{% trans "Assistance & centre d’aide" %}{% endblock %}
+          </span>
+        </div>
+      </div>
+
+      <nav class="support-nav" aria-label="{% trans 'Navigation support' %}">
+        <a href="{% url 'economic:support:index' %}"
+           class="{% if request.resolver_match and request.resolver_match.url_name == 'index' %}active{% endif %}">
+          {% trans "Accueil" %}
+        </a>
+
+        <a href="{% url 'economic:support:ticket_list' %}"
+           class="{% if request.resolver_match and request.resolver_match.url_name == 'ticket_list' %}active{% endif %}">
+          {% trans "Mes tickets" %}
+        </a>
+
+        <a href="{% url 'economic:support:ticket_create' %}"
+           class="{% if request.resolver_match and request.resolver_match.url_name == 'ticket_create' %}active{% endif %}">
+          {% trans "Nouveau ticket" %}
+        </a>
+
+        <a href="{% url 'economic:support:faq_list' %}"
+           class="{% if request.resolver_match and request.resolver_match.url_name == 'faq_list' %}active{% endif %}">
+          {% trans "FAQ" %}
+        </a>
+      </nav>
+    </header>
+
+    <!-- Main -->
+    <main class="support-container" role="main">
+
+      {% if messages %}
+        <div class="support-flashes" aria-live="polite" aria-atomic="true">
+          {% for message in messages %}
+            <div class="flash {{ message.tags }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% block content %}{% endblock %}
+    </main>
+
+    {# ✅ Footer optionnel si besoin #}
+    {% block footer %}
+      <footer class="support-footer muted" style="padding: 18px 16px 26px; text-align:center;">
+        <small>
+          © {{ PROJECT_NAME }} — {% trans "Centre d’assistance" %}
+        </small>
+      </footer>
+    {% endblock %}
+
+  </div>
+
+  {# ✅ JS global support (réutilisable) #}
+  <script src="{% static 'support/js/support.js' %}"></script>
+
+  {# ✅ JS spécifique à une page (optionnel) #}
+  {% block extra_js %}{% endblock %}
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/support/base_support.html #}
+{% load static i18n %}
+<!doctype html>
+<html lang="{{ LANGUAGE_CODE|default:'fr' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Support{% endblock %}</title>
+
+  <link rel="stylesheet" href="{% static 'economic/support/css/support.css' %}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+  <div class="support-shell">
+    <header class="support-topbar">
+      <div class="support-brand">
+        <span class="dot"></span>
+        <strong>{% trans "Support" %}</strong>
+      </div>
+
+      <nav class="support-nav">
+        <a href="{% url 'economic:support:ticket_list' %}" class="{% if request.resolver_match.url_name == 'ticket_list' %}active{% endif %}">
+          {% trans "Mes tickets" %}
+        </a>
+        <a href="{% url 'economic:support:ticket_create' %}" class="{% if request.resolver_match.url_name == 'ticket_create' %}active{% endif %}">
+          {% trans "Nouveau ticket" %}
+        </a>
+        <a href="{% url 'economic:support:faq_list' %}" class="{% if request.resolver_match.url_name == 'faq_list' %}active{% endif %}">
+          {% trans "FAQ" %}
+        </a>
+      </nav>
+    </header>
+
+    <main class="support-container">
+      {% if messages %}
+        <div class="support-flashes">
+          {% for message in messages %}
+            <div class="flash {{ message.tags }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+  <script src="{% static 'economic/support/js/support.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html> {% endcomment %}

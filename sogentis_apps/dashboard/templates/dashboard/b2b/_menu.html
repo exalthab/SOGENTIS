@@ -1,0 +1,27 @@
+{% load i18n %}
+
+<ul class="nav flex-column dashboard-menu">
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'dashboard:b2b:home' %}">
+            🏢 {% trans "Vue entreprise" %}
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" href="#">
+            📑 {% trans "Commandes pro" %}
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" href="#">
+            🤝 {% trans "Contrats" %}
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" href="#">
+            📊 {% trans "Reporting" %}
+        </a>
+    </li>
+</ul>

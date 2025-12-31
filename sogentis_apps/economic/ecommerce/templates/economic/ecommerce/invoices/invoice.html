@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Facture {{ invoice.uuid }}</title>
+
+  <style>
+    @page {
+      size: A4;
+      margin: 2cm;
+    }
+
+    body {
+      font-family: DejaVu Sans, sans-serif;
+      font-size: 12px;
+      color: #222;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #0d6efd;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+
+    header img {
+      height: 60px;
+    }
+
+    h1 {
+      font-size: 22px;
+      margin: 0;
+    }
+
+    .company-info {
+      text-align: right;
+      font-size: 11px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+    }
+
+    th {
+      background: #f5f7fa;
+      text-align: left;
+    }
+
+    .right {
+      text-align: right;
+    }
+
+    .total {
+      margin-top: 15px;
+      font-size: 14px;
+      font-weight: bold;
+      text-align: right;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 1.5cm;
+      left: 2cm;
+      right: 2cm;
+      font-size: 10px;
+      color: #666;
+      border-top: 1px solid #ccc;
+      padding-top: 6px;
+    }
+
+    .signature-box {
+      margin-top: 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .signature-box img {
+      height: 80px;
+    }
+
+    .stamp img {
+      height: 90px;
+      opacity: 0.85;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <img src="{{ STATIC_ROOT }}/invoices/logo.png" alt="SOGENTIS">
+  <div class="company-info">
+    <strong>SOGENTIS</strong><br>
+    Organisation sociale & économique<br>
+    Dakar – Sénégal<br>
+    support@sogentis.org
+  </div>
+</header>
+
+<h1>Facture</h1>
+
+<p>
+  <strong>Facture :</strong> {{ invoice.uuid }}<br>
+  <strong>Commande :</strong> {{ order.uuid }}<br>
+  <strong>Date :</strong> {{ invoice.created_at|date:"d/m/Y" }}
+</p>
+
+<hr>
+
+<h3>Client</h3>
+<p>
+  {{ order.user.get_full_name|default:order.user.email }}
+</p>
+
+<h3>Détails de la commande</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Produit</th>
+      <th class="right">Qté</th>
+      <th class="right">Prix unitaire</th>
+      <th class="right">Total</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in order.items.all %}
+    <tr>
+      <td>{{ item.product.name }}</td>
+      <td class="right">{{ item.quantity }}</td>
+      <td class="right">{{ item.unit_price }}</td>
+      <td class="right">{{ item.total_price }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<div class="total">
+  Total à payer : {{ order.total_amount }}
+</div>
+
+<div class="signature-box">
+  <div>
+    <p>
+      Fait à Dakar, le {{ invoice.created_at|date:"d/m/Y" }}<br>
+      <strong>Pour SOGENTIS</strong>
+    </p>
+    <img src="{{ STATIC_ROOT }}/invoices/signature.png" alt="Signature">
+  </div>
+
+  <div class="stamp">
+    <img src="{{ STATIC_ROOT }}/invoices/stamp.png" alt="Cachet">
+  </div>
+</div>
+
+<footer>
+  Facture générée automatiquement – valable sans signature manuscrite.<br>
+  SOGENTIS – Organisation à but social et économique – Tous droits réservés.
+</footer>
+
+</body>
+</html>

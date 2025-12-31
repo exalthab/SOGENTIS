@@ -1,195 +1,597 @@
 # accounts_users/web/views/registration_views.py
-from django.contrib.auth import get_user_model, login
-from django.contrib.auth.tokens import default_token_generator
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.utils.translation import gettext_lazy as _
+from django.contrib.auth import get_user_model
+from django.urls import reverse
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
-from django.urls import reverse
-from django.core.mail import send_mail, mail_admins
-from django.contrib import messages
-from django.shortcuts import render, redirect
-from django.utils.translation import gettext as _
+from django.core.mail import send_mail
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.utils.timezone import now
-from datetime import timedelta
 
-from accounts_users.forms.signup_forms import UserSignupForm, UserProfileForm
-from accounts_users.forms.resend_activation_form import ResendActivationEmailForm
-from accounts_users.models.user_role import UserRole
-from accounts_users.models.users_profile import UserProfile
-from accounts_users.tokens import account_activation_token  # ✅ ton token personnalisé
+from accounts_users.forms.signup_forms import UserSignupForm
+from accounts_users.forms.social.social_registration_form import SocialRegistrationForm
+from accounts_users.tokens import account_activation_token
+from accounts_users.models.social.social_profile import SocialProfile
 
 User = get_user_model()
 
-def generate_registration_code(role_code):
-    prefix = {
-        'MEMBER': 'M',
-        'VOLUNTEER': 'V',
-        'SPONSOR': 'D',
-        'INSTITUTION': 'I',
-    }.get(role_code, 'U')
-    count = UserProfile.objects.filter(membership_role__code=role_code).count() + 1
+# ======================================================
+# 🔵 GÉNÉRATION DU CODE SOCIAL
+# ======================================================
+def generate_social_code(role_code: str) -> str:
+    prefix_map = {
+        "MEMBER": "M",
+        "VOLUNTEER": "V",
+        "SPONSOR": "D",
+        "INSTITUTION": "I",
+    }
+
+    prefix = prefix_map.get(role_code, "U")
+
+    count = SocialProfile.objects.filter(
+        membership_role__code=role_code
+    ).count() + 1
+
     return f"{prefix}{count:03}"
 
-# --- Vue d'inscription ---
-def signup_view(request):
-    if request.method == 'POST':
-        user_form = UserSignupForm(request.POST)
-        profile_form = UserProfileForm(request.POST, request.FILES)
 
-        if user_form.is_valid() and profile_form.is_valid():
+# ======================================================
+# 🔵 INSCRIPTION SOCIALE PUBLIQUE
+# ======================================================
+def signup_view(request):
+    if request.method == "POST":
+        user_form = UserSignupForm(request.POST)
+        social_form = SocialRegistrationForm(request.POST, request.FILES)
+
+        if user_form.is_valid() and social_form.is_valid():
+            # ----------------------------
+            # 1️⃣ USER
+            # ----------------------------
             user = user_form.save(commit=False)
-            user.set_password(user_form.cleaned_data['password'])
+            user.set_password(user_form.cleaned_data["password"])
             user.is_active = False
             user.save()
 
-            profile = profile_form.save(commit=False)
-            profile.user = user
+            # ----------------------------
+            # 2️⃣ SOCIAL PROFILE
+            # ----------------------------
+            social_profile = social_form.save(commit=False)
+            social_profile.user = user
 
-            # Génére code d’inscription basé sur le rôle
-            role_code = profile.membership_role.code if profile.membership_role else None
-            profile.registration_code = generate_registration_code(role_code)
-
-            # Gestion du rôle d’adhésion
-            role_selected = profile_form.cleaned_data.get("role")
-            if isinstance(role_selected, str):
-                try:
-                    role_selected = UserRole.objects.get(role=role_selected)
-                except UserRole.DoesNotExist:
-                    messages.error(request, _("Le rôle sélectionné n'existe pas."))
-                    return render(request, 'accounts_users/registration/signup.html', {
-                        'form': user_form,
-                        'profile_form': profile_form,
-                    })
-            if isinstance(role_selected, UserRole):
-                profile.role = role_selected
-
-            profile.save()
-
-            # Notifie l’admin d’un nouveau casier judiciaire (si besoin)
-            mail_admins(
-                subject="📥 Nouveau casier judiciaire soumis",
-                message=f"Un nouveau casier judiciaire a été soumis par {user.email}.",
-                fail_silently=True,
+            role_code = (
+                social_profile.membership_role.code
+                if social_profile.membership_role else None
             )
 
-            # Génération du lien d’activation
+            social_profile.social_registration_code = generate_social_code(role_code)
+            social_profile.save()
+
+            # ----------------------------
+            # 3️⃣ EMAIL ACTIVATION
+            # ----------------------------
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             token = account_activation_token.make_token(user)
+
             activation_url = request.build_absolute_uri(
-                reverse('accounts_users_web:activate', kwargs={'uidb64': uid, 'token': token})
+                reverse(
+                    "accounts_users_web:activate",
+                    kwargs={"uidb64": uid, "token": token},
+                )
             )
-            context = {
-                'user': user,
-                'activation_url': activation_url,
-                'year': now().year
-            }
-            subject = _("Activation de votre compte SOGENTIS")
-            message_txt = _(
-                f"Bonjour,\n\nMerci pour votre inscription sur SOGENTIS.\n"
-                f"Veuillez activer votre compte via le lien suivant :\n{activation_url}"
+
+            html_message = render_to_string(
+                "accounts_users/emails/account_activation_email.html",
+                {
+                    "user": user,
+                    "activation_url": activation_url,
+                    "year": now().year,
+                },
             )
-            html_message = render_to_string('accounts_users/emails/account_activation_email.html', context)
 
             send_mail(
-                subject=subject,
-                message=message_txt,
+                subject=_("Activation de votre compte SOGENTIS"),
+                message=_("Veuillez activer votre compte via le lien reçu."),
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[user.email],
                 html_message=html_message,
-                fail_silently=False,
             )
 
-            messages.success(request, _("Un lien de confirmation vous a été envoyé par e-mail."))
-            return redirect('accounts_users_web:login')
+            messages.success(
+                request,
+                _("Un lien d’activation vous a été envoyé par e-mail.")
+            )
+            return redirect("accounts_users_web:login")
 
-        else:
-            messages.error(request, _("Merci de corriger les erreurs ci-dessous."))
+        messages.error(request, _("Merci de corriger les erreurs ci-dessous."))
+
     else:
         user_form = UserSignupForm()
-        profile_form = UserProfileForm()
+        social_form = SocialRegistrationForm()
 
-    return render(request, 'accounts_users/registration/signup.html', {
-        'form': user_form,
-        'profile_form': profile_form,
-    })
+    return render(
+        request,
+        "accounts_users/registration/signup.html",
+        {
+            "form": user_form,
+            "profile_form": social_form,
+        },
+    )
 
-# --- Vue d’activation ---
-def activate_view(request, uidb64, token):
-    try:
-        uid = urlsafe_base64_decode(uidb64).decode()
-        user = User.objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-        user = None
 
-    if user and account_activation_token.check_token(user, token):
-        if user.is_active:
-            messages.info(request, _("Ce compte est déjà activé."))
-        else:
-            user.is_active = True
-            user.save()
-            login(request, user)
-            send_mail(
-                subject=_("Bienvenue sur SOGENTIS"),
-                message=_("Bonjour,\n\nVotre compte a bien été activé.\nBienvenue sur SOGENTIS !"),
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[user.email],
-                fail_silently=False,
-            )
-            messages.success(request, _("Votre compte a été activé avec succès."))
-        return redirect('dashboard:index')
-    else:
-        messages.error(request, _("Le lien d’activation est invalide ou a expiré."))
-        return render(request, 'accounts_users/registration/activation_invalid.html')
 
-# --- Réexpédition du lien d'activation ---
-def resend_activation_view(request):
-    if request.method == 'POST':
-        form = ResendActivationEmailForm(request.POST)
-        if form.is_valid():
-            email = form.cleaned_data['email']
-            try:
-                user = User.objects.get(email=email)
-            except User.DoesNotExist:
-                messages.error(request, _("Aucun utilisateur avec cet e-mail."))
-                return redirect('accounts_users_web:resend_activation')
 
-            last_sent = request.session.get('last_activation_sent')
-            # Contrôle anti-abus : 10 minutes avant nouvel envoi
-            if last_sent and now() < last_sent + timedelta(minutes=10):
-                messages.warning(request, _("Veuillez patienter avant de redemander un lien."))
-                return redirect('accounts_users_web:resend_activation')
 
-            uid = urlsafe_base64_encode(force_bytes(user.pk))
-            token = account_activation_token.make_token(user)
-            activation_url = request.build_absolute_uri(
-                reverse('accounts_users_web:activate', kwargs={'uidb64': uid, 'token': token})
-            )
-            context = {
-                'user': user,
-                'activation_url': activation_url,
-                'year': now().year
-            }
-            subject = _("Nouveau lien d’activation")
-            message_txt = _("Bonjour,\n\nVoici un nouveau lien pour activer votre compte :\n") + activation_url
-            html_message = render_to_string('accounts_users/emails/account_activation_email.html', context)
+# # accounts_users/web/views/registration_views.py
 
-            send_mail(
-                subject=subject,
-                message=message_txt,
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[user.email],
-                html_message=html_message,
-                fail_silently=False,
-            )
+# from django.shortcuts import render, redirect
+# from django.contrib import messages
+# from django.utils.translation import gettext as _
+# from django.contrib.auth import login, get_user_model
+# from django.urls import reverse
+# from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+# from django.utils.encoding import force_bytes
+# from django.core.mail import send_mail
+# from django.conf import settings
+# from django.template.loader import render_to_string
+# from django.utils.timezone import now
+# from datetime import timedelta
 
-            request.session['last_activation_sent'] = now()
-            messages.success(request, _("Un nouveau lien d'activation vous a été envoyé."))
-            return redirect('accounts_users_web:login')
-    else:
-        form = ResendActivationEmailForm()
+# from accounts_users.forms.signup_forms import UserSignupForm
+# from accounts_users.forms.resend_activation_form import ResendActivationEmailForm
+# from accounts_users.models.users_profile import UserProfile
+# from accounts_users.models.user_role import UserRole
+# from accounts_users.tokens import account_activation_token
+# from accounts_users.forms.social.social_registration_form import SocialRegistrationForm
 
-    return render(request, 'accounts_users/registration/resend_activation.html', {'form': form})
+
+# User = get_user_model()
+
+# # =====================================================================
+# #  🔵 GÉNÉRATION DU CODE MEMBRE
+# # =====================================================================
+# def generate_registration_code(role_code):
+#     prefix = {
+#         'MEMBER': 'M',
+#         'VOLUNTEER': 'V',
+#         'SPONSOR': 'D',
+#         'INSTITUTION': 'I',
+#     }.get(role_code, 'U')
+
+#     count = UserProfile.objects.filter(
+#         membership_role__code=role_code
+#     ).count() + 1
+
+#     return f"{prefix}{count:03}"
+
+
+# # =====================================================================
+# #  🔵 INSCRIPTION UTILISATEUR (Formulaire)
+# # =====================================================================
+# def signup_view(request):
+#     if request.method == "POST":
+#         user_form = UserSignupForm(request.POST)
+#         profile_form = SocialRegistrationForm(request.POST, request.FILES)
+
+#         # Valider les deux formulaires
+#         if user_form.is_valid() and profile_form.is_valid():
+#             # ----- Création du USER -----
+#             user = user_form.save(commit=False)
+#             user.set_password(user_form.cleaned_data["password"])
+#             user.is_active = False  # activation obligatoire
+#             user.save()
+
+#             # ----- Création du PROFILE -----
+#             profile = profile_form.save(commit=False)
+#             profile.user = user
+
+#             role_code = (
+#                 profile.membership_role.code
+#                 if profile.membership_role else None
+#             )
+#             profile.registration_code = generate_registration_code(role_code)
+
+#             # Fix rôle public si le field “role” existe
+#             selected_role = profile_form.cleaned_data.get("role")
+#             if isinstance(selected_role, str):
+#                 try:
+#                     membership_role = UserRole.objects.get(role=selected_role)
+#                     profile.role = membership_role
+#                 except UserRole.DoesNotExist:
+#                     pass
+
+#             profile.save()
+
+#             # ----- Email d'activation -----
+#             uid = urlsafe_base64_encode(force_bytes(user.pk))
+#             token = account_activation_token.make_token(user)
+#             activation_url = request.build_absolute_uri(
+#                 reverse("accounts_users_web:activate",
+#                         kwargs={"uidb64": uid, "token": token})
+#             )
+
+#             html_message = render_to_string(
+#                 "accounts_users/emails/account_activation_email.html",
+#                 {
+#                     "user": user,
+#                     "activation_url": activation_url,
+#                     "year": now().year
+#                 }
+#             )
+
+#             send_mail(
+#                 subject=_("Activation de votre compte SOGENTIS"),
+#                 message=_("Veuillez activer votre compte en cliquant sur le lien envoyé par email."),
+#                 from_email=settings.DEFAULT_FROM_EMAIL,
+#                 recipient_list=[user.email],
+#                 html_message=html_message,
+#                 fail_silently=False,
+#             )
+
+#             messages.success(request, _("Un lien d’activation vous a été envoyé."))
+#             return redirect("accounts_users_web:login")
+
+#         # Form invalid → réaffichage avec erreurs
+#         messages.error(request, _("Merci de corriger les erreurs ci-dessous."))
+
+#     else:
+#         user_form = UserSignupForm()
+#         profile_form = SocialRegistrationForm()
+
+#     return render(request, "accounts_users/registration/signup.html", {
+#         "form": user_form,
+#         "profile_form": profile_form,
+#     })
+
+
+# # =====================================================================
+# #  🔵 ACTIVATION DU COMPTE (Lien email)
+# # =====================================================================
+# def activate_view(request, uidb64, token):
+#     """
+#     Activation d’un compte utilisateur via lien email.
+#     """
+#     try:
+#         uid = urlsafe_base64_decode(uidb64).decode()
+#         user = User.objects.get(pk=uid)
+#     except Exception:
+#         user = None
+
+#     if user is not None and account_activation_token.check_token(user, token):
+#         if not user.is_active:
+#             user.is_active = True
+#             user.save()
+#             messages.success(request, _("Votre compte a été activé avec succès."))
+#         else:
+#             messages.info(request, _("Ce compte est déjà activé."))
+
+#         return redirect("accounts_users_web:login")
+
+#     # Token incorrect ou expiré
+#     messages.error(request, _("Lien d’activation invalide ou expiré."))
+#     return render(request, "accounts_users/registration/activation_invalid.html")
+
+
+# # =====================================================================
+# #  🔵 RÉ-ENVOI DU LIEN D’ACTIVATION
+# # =====================================================================
+# def resend_activation_view(request):
+#     if request.method == "POST":
+#         form = ResendActivationEmailForm(request.POST)
+
+#         if form.is_valid():
+#             email = form.cleaned_data["email"]
+
+#             # Vérifier existence user
+#             try:
+#                 user = User.objects.get(email=email)
+#             except User.DoesNotExist:
+#                 messages.error(request, _("Aucun compte associé à cet e-mail."))
+#                 return redirect("accounts_users_web:resend_activation")
+
+#             # Contrôle anti-abus : limiter envoi trop fréquent
+#             last_sent = request.session.get("last_activation_sent")
+#             if last_sent and now() < last_sent + timedelta(minutes=10):
+#                 messages.warning(request, _("Veuillez attendre avant de redemander un lien."))
+#                 return redirect("accounts_users_web:resend_activation")
+
+#             # Génération lien activation
+#             uid = urlsafe_base64_encode(force_bytes(user.pk))
+#             token = account_activation_token.make_token(user)
+#             activation_url = request.build_absolute_uri(
+#                 reverse("accounts_users_web:activate",
+#                         kwargs={"uidb64": uid, "token": token})
+#             )
+
+#             html_message = render_to_string(
+#                 "accounts_users/emails/account_activation_email.html",
+#                 {
+#                     "user": user,
+#                     "activation_url": activation_url,
+#                     "year": now().year
+#                 }
+#             )
+
+#             send_mail(
+#                 subject=_("Nouveau lien d’activation"),
+#                 message=_("Voici votre nouveau lien d’activation :\n") + activation_url,
+#                 from_email=settings.DEFAULT_FROM_EMAIL,
+#                 recipient_list=[user.email],
+#                 html_message=html_message,
+#             )
+
+#             # Anti-abus memory
+#             request.session["last_activation_sent"] = now()
+#             messages.success(request, _("Un nouveau lien d’activation vous a été envoyé."))
+#             return redirect("accounts_users_web:login")
+
+#     else:
+#         form = ResendActivationEmailForm()
+
+#     return render(request, "accounts_users/registration/resend_activation.html", {"form": form})
+
+
+
+
+
+
+
+
+
+# # accounts_users/web/views/registration_views.py
+# from django.shortcuts import render, redirect
+# from django.contrib import messages
+# from django.utils.translation import gettext as _
+# from django.contrib.auth import login
+# from django.urls import reverse
+# from django.core.mail import send_mail
+# from django.conf import settings
+# from django.template.loader import render_to_string
+
+# from accounts_users.views.registration import create_user_and_profile
+# from accounts_users.forms.signup_forms import UserSignupForm, UserProfileForm
+
+# def signup_view(request):
+#     if request.method == "POST":
+#         user, profile, uid, token = create_user_and_profile(
+#             request.POST, request.POST, files=request.FILES
+#         )
+
+#         # Erreurs de formulaire → affichage template
+#         if user is None:
+#             return render(request, "accounts_users/registration/signup.html", {
+#                 "form": UserSignupForm(request.POST),
+#                 "profile_form": UserProfileForm(request.POST, request.FILES)
+#             })
+
+#         # Génération du lien
+#         activation_url = request.build_absolute_uri(
+#             reverse("accounts_users_web:activate",
+#                     kwargs={"uidb64": uid, "token": token})
+#         )
+
+#         # email HTML
+#         html_message = render_to_string(
+#             "accounts_users/emails/account_activation_email.html",
+#             {"user": user, "activation_url": activation_url}
+#         )
+
+#         send_mail(
+#             subject=_("Activation de votre compte"),
+#             message=_("Veuillez cliquer sur le lien pour activer votre compte."),
+#             from_email=settings.DEFAULT_FROM_EMAIL,
+#             recipient_list=[user.email],
+#             html_message=html_message
+#         )
+
+#         messages.success(request, _("Un email d’activation vous a été envoyé."))
+#         return redirect("accounts_users_web:login")
+
+#     return render(request, "accounts_users/registration/signup.html", {
+#         "form": UserSignupForm(),
+#         "profile_form": UserProfileForm(),
+#     })
+
+
+
+
+
+
+
+# # accounts_users/web/views/registration_views.py
+# from django.contrib.auth import get_user_model, login
+# from django.contrib.auth.tokens import default_token_generator
+# from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+# from django.utils.encoding import force_bytes
+# from django.urls import reverse
+# from django.core.mail import send_mail, mail_admins
+# from django.contrib import messages
+# from django.shortcuts import render, redirect
+# from django.utils.translation import gettext as _
+# from django.conf import settings
+# from django.template.loader import render_to_string
+# from django.utils.timezone import now
+# from datetime import timedelta
+
+# from accounts_users.forms.signup_forms import UserSignupForm, UserProfileForm
+# from accounts_users.forms.resend_activation_form import ResendActivationEmailForm
+# from accounts_users.models.user_role import UserRole
+# from accounts_users.models.users_profile import UserProfile
+# from accounts_users.tokens import account_activation_token  # ✅ ton token personnalisé
+
+# User = get_user_model()
+
+# def generate_registration_code(role_code):
+#     prefix = {
+#         'MEMBER': 'M',
+#         'VOLUNTEER': 'V',
+#         'SPONSOR': 'D',
+#         'INSTITUTION': 'I',
+#     }.get(role_code, 'U')
+#     count = UserProfile.objects.filter(membership_role__code=role_code).count() + 1
+#     return f"{prefix}{count:03}"
+
+# # --- Vue d'inscription ---
+# def signup_view(request):
+#     if request.method == 'POST':
+#         user_form = UserSignupForm(request.POST)
+#         profile_form = UserProfileForm(request.POST, request.FILES)
+
+#         if user_form.is_valid() and profile_form.is_valid():
+#             user = user_form.save(commit=False)
+#             user.set_password(user_form.cleaned_data['password'])
+#             user.is_active = False
+#             user.save()
+
+#             profile = profile_form.save(commit=False)
+#             profile.user = user
+
+#             # Génére code d’inscription basé sur le rôle
+#             role_code = profile.membership_role.code if profile.membership_role else None
+#             profile.registration_code = generate_registration_code(role_code)
+
+#             # Gestion du rôle d’adhésion
+#             role_selected = profile_form.cleaned_data.get("role")
+#             if isinstance(role_selected, str):
+#                 try:
+#                     role_selected = UserRole.objects.get(role=role_selected)
+#                 except UserRole.DoesNotExist:
+#                     messages.error(request, _("Le rôle sélectionné n'existe pas."))
+#                     return render(request, 'accounts_users/registration/signup.html', {
+#                         'form': user_form,
+#                         'profile_form': profile_form,
+#                     })
+#             if isinstance(role_selected, UserRole):
+#                 profile.role = role_selected
+
+#             profile.save()
+
+#             # Notifie l’admin d’un nouveau casier judiciaire (si besoin)
+#             mail_admins(
+#                 subject="📥 Nouveau casier judiciaire soumis",
+#                 message=f"Un nouveau casier judiciaire a été soumis par {user.email}.",
+#                 fail_silently=True,
+#             )
+
+#             # Génération du lien d’activation
+#             uid = urlsafe_base64_encode(force_bytes(user.pk))
+#             token = account_activation_token.make_token(user)
+#             activation_url = request.build_absolute_uri(
+#                 reverse('accounts_users_web:activate', kwargs={'uidb64': uid, 'token': token})
+#             )
+#             context = {
+#                 'user': user,
+#                 'activation_url': activation_url,
+#                 'year': now().year
+#             }
+#             subject = _("Activation de votre compte SOGENTIS")
+#             message_txt = _(
+#                 f"Bonjour,\n\nMerci pour votre inscription sur SOGENTIS.\n"
+#                 f"Veuillez activer votre compte via le lien suivant :\n{activation_url}"
+#             )
+#             html_message = render_to_string('accounts_users/emails/account_activation_email.html', context)
+
+#             send_mail(
+#                 subject=subject,
+#                 message=message_txt,
+#                 from_email=settings.DEFAULT_FROM_EMAIL,
+#                 recipient_list=[user.email],
+#                 html_message=html_message,
+#                 fail_silently=False,
+#             )
+
+#             messages.success(request, _("Un lien de confirmation vous a été envoyé par e-mail."))
+#             return redirect('accounts_users_web:login')
+
+#         else:
+#             messages.error(request, _("Merci de corriger les erreurs ci-dessous."))
+#     else:
+#         user_form = UserSignupForm()
+#         profile_form = UserProfileForm()
+
+#     return render(request, 'accounts_users/registration/signup.html', {
+#         'form': user_form,
+#         'profile_form': profile_form,
+#     })
+
+# # --- Vue d’activation ---
+# def activate_view(request, uidb64, token):
+#     try:
+#         uid = urlsafe_base64_decode(uidb64).decode()
+#         user = User.objects.get(pk=uid)
+#     except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+#         user = None
+
+#     if user and account_activation_token.check_token(user, token):
+#         if user.is_active:
+#             messages.info(request, _("Ce compte est déjà activé."))
+#         else:
+#             user.is_active = True
+#             user.save()
+#             login(request, user)
+#             send_mail(
+#                 subject=_("Bienvenue sur SOGENTIS"),
+#                 message=_("Bonjour,\n\nVotre compte a bien été activé.\nBienvenue sur SOGENTIS !"),
+#                 from_email=settings.DEFAULT_FROM_EMAIL,
+#                 recipient_list=[user.email],
+#                 fail_silently=False,
+#             )
+#             messages.success(request, _("Votre compte a été activé avec succès."))
+#         return redirect('dashboard:index')
+#     else:
+#         messages.error(request, _("Le lien d’activation est invalide ou a expiré."))
+#         return render(request, 'accounts_users/registration/activation_invalid.html')
+
+# # --- Réexpédition du lien d'activation ---
+# def resend_activation_view(request):
+#     if request.method == 'POST':
+#         form = ResendActivationEmailForm(request.POST)
+#         if form.is_valid():
+#             email = form.cleaned_data['email']
+#             try:
+#                 user = User.objects.get(email=email)
+#             except User.DoesNotExist:
+#                 messages.error(request, _("Aucun utilisateur avec cet e-mail."))
+#                 return redirect('accounts_users_web:resend_activation')
+
+#             last_sent = request.session.get('last_activation_sent')
+#             # Contrôle anti-abus : 10 minutes avant nouvel envoi
+#             if last_sent and now() < last_sent + timedelta(minutes=10):
+#                 messages.warning(request, _("Veuillez patienter avant de redemander un lien."))
+#                 return redirect('accounts_users_web:resend_activation')
+
+#             uid = urlsafe_base64_encode(force_bytes(user.pk))
+#             token = account_activation_token.make_token(user)
+#             activation_url = request.build_absolute_uri(
+#                 reverse('accounts_users_web:activate', kwargs={'uidb64': uid, 'token': token})
+#             )
+#             context = {
+#                 'user': user,
+#                 'activation_url': activation_url,
+#                 'year': now().year
+#             }
+#             subject = _("Nouveau lien d’activation")
+#             message_txt = _("Bonjour,\n\nVoici un nouveau lien pour activer votre compte :\n") + activation_url
+#             html_message = render_to_string('accounts_users/emails/account_activation_email.html', context)
+
+#             send_mail(
+#                 subject=subject,
+#                 message=message_txt,
+#                 from_email=settings.DEFAULT_FROM_EMAIL,
+#                 recipient_list=[user.email],
+#                 html_message=html_message,
+#                 fail_silently=False,
+#             )
+
+#             request.session['last_activation_sent'] = now()
+#             messages.success(request, _("Un nouveau lien d'activation vous a été envoyé."))
+#             return redirect('accounts_users_web:login')
+#     else:
+#         form = ResendActivationEmailForm()
+
+#     return render(request, 'accounts_users/registration/resend_activation.html', {'form': form})
 
 
 

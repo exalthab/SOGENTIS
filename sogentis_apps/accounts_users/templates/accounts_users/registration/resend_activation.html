@@ -1,3 +1,78 @@
+{# accounts_users/registration/resend_activation.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Renvoyer le lien d’activation" %} | SOGENTIS{% endblock %}
+
+{% block auth_title %}
+  📩 {% trans "Renvoyer le lien d’activation" %}
+{% endblock %}
+
+{% block auth_subtitle %}
+  {% trans "Entrez votre adresse e-mail pour recevoir un nouveau lien d’activation." %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/resend_activation.css' %}">
+{% endblock %}
+
+{% block content %}
+
+{# Messages Django #}
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-{{ message.tags|default:'info' }} text-center">
+      {{ message }}
+    </div>
+  {% endfor %}
+{% endif %}
+
+<form method="post" novalidate>
+  {% csrf_token %}
+
+  {# Erreurs globales #}
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger text-center">
+      {{ form.non_field_errors.0 }}
+    </div>
+  {% endif %}
+
+  {# Champ email #}
+  <div class="mb-3">
+    <label for="{{ form.email.id_for_label }}" class="form-label fw-semibold">
+      {{ form.email.label }}
+    </label>
+    {{ form.email }}
+    {% for error in form.email.errors %}
+      <div class="text-danger small">{{ error }}</div>
+    {% endfor %}
+  </div>
+
+  <div class="d-grid">
+    <button type="submit" class="btn btn-primary fw-semibold py-2">
+      <i class="fas fa-paper-plane me-1"></i>
+      {% trans "Renvoyer le lien" %}
+    </button>
+  </div>
+</form>
+
+<div class="text-center mt-4 small">
+  <a href="{% url 'accounts_users_web:login' %}">
+    {% trans "Retour à la connexion" %}
+  </a>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/resend_activation.js' %}"></script>
+{% endblock %}
+
+
+
+
+
+{% comment %} {# accounts_users/registration/resend_activation.html #}
 {% extends "accounts_users/registration/base_auth.html" %}
 {% load static i18n %}
 
@@ -56,4 +131,4 @@
 
 {% block extra_js %}
 <script src="{% static 'accounts_users/js/resend_activation.js' %}"></script>
-{% endblock %}
+{% endblock %} {% endcomment %}

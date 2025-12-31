@@ -1,0 +1,54 @@
+{% extends "main.html" %}
+{% load i18n money %}
+
+{% block title %}
+{% trans "Commande confirmée" %} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block section_menu %}
+  {% include "economic/ecommerce/partials/_ecommerce_navbar.html" %}
+{% endblock %}
+
+{% block content %}
+<section class="container py-5 text-center">
+
+  <h1 class="mb-3">🎉 {% trans "Merci pour votre commande !" %}</h1>
+
+  <p class="lead mb-4">
+    {% trans "Votre paiement a été confirmé avec succès." %}
+  </p>
+
+  <div class="card mx-auto mb-4" style="max-width: 480px;">
+    <div class="card-body">
+
+      <p>
+        <strong>{% trans "Commande" %} :</strong><br>
+        {{ order.uuid }}
+      </p>
+
+      <p>
+        <strong>{% trans "Montant total" %} :</strong><br>
+        {{ order.total_amount|money:ECOMMERCE_CURRENCY }}
+      </p>
+
+      <span class="badge bg-success">
+        {{ order.get_status_display }}
+      </span>
+
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-center gap-3">
+    <a href="{% url 'economic:ecommerce:order_detail' order.uuid %}"
+       class="btn btn-outline-primary">
+      {% trans "Voir la commande" %}
+    </a>
+
+    <a href="{% url 'economic:ecommerce:index' %}"
+       class="btn btn-primary">
+      {% trans "Retour à la boutique" %}
+    </a>
+  </div>
+
+</section>
+{% endblock %}

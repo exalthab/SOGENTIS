@@ -1,0 +1,103 @@
+{% extends "main.html" %}
+{% load i18n money %}
+
+{% block title %}
+{% trans "Commande" %} {{ order.uuid }} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block section_menu %}
+  {% include "economic/ecommerce/partials/_ecommerce_navbar.html" %}
+{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+
+  <h1 class="mb-3">
+    📄 {% trans "Commande" %} {{ order.uuid }}
+  </h1>
+
+  <div class="mb-4">
+    <span class="badge
+      {% if order.status == 'paid' %}bg-success
+      {% elif order.status == 'pending' %}bg-warning text-dark
+      {% elif order.status == 'cancelled' %}bg-danger
+      {% else %}bg-secondary{% endif %}
+    ">
+      {{ order.get_status_display }}
+    </span>
+    <span class="text-muted ms-3">
+      {{ order.created_at|date:"d/m/Y H:i" }}
+    </span>
+  </div>
+
+  <div class="row">
+
+    <!-- ================= ARTICLES ================= -->
+    <div class="col-lg-8">
+      <div class="card mb-4">
+        <div class="card-body">
+
+          <h5 class="mb-3">{% trans "Articles commandés" %}</h5>
+
+          {% for item in order.items.all %}
+            <div class="d-flex justify-content-between mb-2">
+              <span>
+                {{ item.product.name }} × {{ item.quantity }}
+              </span>
+              <strong>
+                {{ item.total_price|money:ECOMMERCE_CURRENCY }}
+              </strong>
+            </div>
+          {% endfor %}
+
+          <hr>
+
+          <div class="d-flex justify-content-between fs-5">
+            <strong>{% trans "Total" %}</strong>
+            <strong>
+              {{ order.total_amount|money:ECOMMERCE_CURRENCY }}
+            </strong>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= PAIEMENT ================= -->
+    <div class="col-lg-4">
+      <div class="card shadow-sm">
+        <div class="card-body">
+
+          <h5 class="mb-3">{% trans "Paiement" %}</h5>
+
+          {% if order.is_paid %}
+            <div class="alert alert-success mb-0">
+              ✅ {% trans "Paiement confirmé" %}
+            </div>
+          {% else %}
+            <div class="alert alert-warning">
+              ⏳ {% trans "Paiement en attente" %}
+            </div>
+
+            {% if order.invoice %}
+              <a href="{% url 'economic:ecommerce:invoice_download' order.invoice.uuid %}"
+                class="btn btn-outline-secondary w-100 mt-2">
+                📄 Télécharger la facture
+              </a>
+            {% endif %}
+
+
+            <a href="{% url 'economic:ecommerce:payment_checkout' 'stripe' order.uuid %}"
+               class="btn btn-outline-primary w-100 mt-2">
+              {% trans "Payer maintenant" %}
+            </a>
+          {% endif %}
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+{% endblock %}

@@ -1,0 +1,185 @@
+{# dashboard/orders.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Mes commandes" %} — SOGENTIS{% endblock %}
+
+{% block dashboard_header %}
+<h1 class="fw-bold">
+  <i class="fas fa-shopping-cart text-primary me-2"></i>
+  {% trans "Mes commandes" %}
+</h1>
+<p class="text-muted">{% trans "Liste de vos commandes avec statut et montant." %}</p>
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="card shadow-sm border-0">
+  <div class="card-header bg-light fw-semibold">
+    <i class="fas fa-list me-2"></i> {% trans "Historique des commandes" %}
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-striped align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>ID</th>
+          <th>{% trans "Date" %}</th>
+          <th>{% trans "Statut" %}</th>
+          <th>{% trans "Montant" %}</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for order in orders %}
+        <tr>
+          <td>#{{ order.id }}</td>
+          <td>{{ order.created_at|date:"d/m/Y H:i" }}</td>
+
+          <td>
+            {% if order.status == "pending" %}
+              <span class="badge bg-warning text-dark">{% trans "En attente" %}</span>
+            {% elif order.status == "processing" %}
+              <span class="badge bg-primary">{% trans "En cours" %}</span>
+            {% elif order.status == "completed" %}
+              <span class="badge bg-success">{% trans "Livré" %}</span>
+            {% else %}
+              <span class="badge bg-secondary">{{ order.status }}</span>
+            {% endif %}
+          </td>
+
+          <td><strong>{{ order.amount }} FCFA</strong></td>
+        </tr>
+
+        {% empty %}
+        <tr>
+          <td colspan="4" class="text-center text-muted py-4">
+            <i class="fas fa-info-circle"></i>
+            {% trans "Aucune commande trouvée." %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+
+    </table>
+  </div>
+
+  {# Pagination #}
+  <div class="card-footer bg-white d-flex justify-content-center py-3">
+    <nav>
+      <ul class="pagination mb-0">
+        {% if orders.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page={{ orders.previous_page_number }}">&laquo;</a></li>
+        {% endif %}
+
+        {% for num in orders.paginator.page_range %}
+        <li class="page-item {% if orders.number == num %}active{% endif %}">
+          <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+        </li>
+        {% endfor %}
+
+        {% if orders.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ orders.next_page_number }}">&raquo;</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+  </div>
+
+</div>
+
+{% endblock %}
+
+
+
+
+
+{% comment %} {# dashboard/orders.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Mes commandes" %} — SOGENTIS{% endblock %}
+
+{% block dashboard_header %}
+  <i class="fas fa-shopping-cart text-primary me-2"></i>
+  {% trans "Mes commandes" %}
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="card shadow-sm border-0">
+  <div class="card-body">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 class="mb-0">{% trans "Historique des commandes" %}</h5>
+      <span class="badge bg-secondary">
+        {% blocktrans %}Total : {{ orders|length }} commande(s){% endblocktrans %}
+      </span>
+    </div>
+
+    {% if orders %}
+      <div class="table-responsive">
+        <table class="table table-hover align-middle">
+          <thead class="table-light">
+          <tr>
+            <th>#</th>
+            <th>{% trans "Client" %}</th>
+            <th>{% trans "Montant" %}</th>
+            <th>{% trans "Statut" %}</th>
+            <th>{% trans "Date" %}</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for order in orders %}
+            <tr>
+              <td>{{ order.id }}</td>
+              <td>{{ order.client }}</td>
+              <td>
+                {% if order.amount %}
+                  {{ order.amount|floatformat:0 }} FCFA
+                {% else %}
+                  —
+                {% endif %}
+              </td>
+              <td>
+                {% with status=order.status|lower %}
+                  {% if status == "en cours" or status == "pending" %}
+                    <span class="badge bg-warning text-dark">
+                      {{ order.status }}
+                    </span>
+                  {% elif status == "livré" or status == "completed" %}
+                    <span class="badge bg-success">
+                      {{ order.status }}
+                    </span>
+                  {% elif status == "annulé" or status == "cancelled" %}
+                    <span class="badge bg-danger">
+                      {{ order.status }}
+                    </span>
+                  {% else %}
+                    <span class="badge bg-secondary">
+                      {{ order.status|default:_("Inconnu") }}
+                    </span>
+                  {% endif %}
+                {% endwith %}
+              </td>
+              <td>
+                {% if order.date %}
+                  {{ order.date }}
+                {% else %}
+                  —
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="text-muted mb-0">
+        {% trans "Aucune commande pour le moment." %}
+      </p>
+    {% endif %}
+
+  </div>
+</div>
+
+{% endblock %} {% endcomment %}

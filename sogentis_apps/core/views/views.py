@@ -55,6 +55,9 @@ def contact_view(request):
 # Handlers d’erreurs HTTP
 # ------------------------
 
+def handler400(request, exception=None):
+    return render(request, "400.html", status=400)
+
 def handler404(request, exception):
     """Page d’erreur 404 : page non trouvée."""
     return render(request, "404.html", status=404)

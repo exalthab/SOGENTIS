@@ -1,0 +1,26 @@
+{# templates/economic/formations/base_formations.html #}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}
+{% block formations_title %}{% trans "Pôle formations" %}{% endblock %} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'economic/formations/css/formations.css' %}">
+{% block formations_extra_css %}{% endblock %}
+{% endblock %}
+
+{% block section_menu %}
+  {% include "economic/formations/partials/_formations_navbar.html" %}
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  {% block formations_content %}{% endblock %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% block formations_extra_js %}{% endblock %}
+{% endblock %}

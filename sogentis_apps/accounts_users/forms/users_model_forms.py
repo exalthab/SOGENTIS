@@ -1,6 +1,6 @@
 # accounts_users/forms/users_model_forms.py
 from django import forms
-from accounts_users.models.users import CustomUser
+from accounts_users.models.custom_users import CustomUser
 from django.utils.translation import gettext_lazy as _
 
 class CustomUserModelForm(forms.ModelForm):

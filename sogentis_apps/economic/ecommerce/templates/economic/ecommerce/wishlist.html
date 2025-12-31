@@ -1,0 +1,25 @@
+{# economic/ecommerce/templates/ecommerce/wishlist.html #}
+{% extends "main.html" %}
+{% load i18n %}
+
+{% block content %}
+<h1>{% trans "Ma liste de souhaits" %}</h1>
+
+{% if wishlist.items.exists %}
+  <ul>
+    {% for item in wishlist.items.all %}
+      <li>
+        <a href="{% url 'ecommerce:product_detail' item.product.slug %}">
+          {{ item.product.name }}
+        </a>
+        <a href="{% url 'ecommerce:wishlist_remove' item.product.id %}">
+          {% trans "Retirer" %}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>{% trans "Votre liste est vide." %}</p>
+{% endif %}
+{% endblock %}
+

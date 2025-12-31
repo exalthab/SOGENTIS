@@ -7,6 +7,10 @@ STRIPE_SECRET_KEY = config("STRIPE_SECRET_KEY", default="")
 STRIPE_PUBLISHABLE_KEY = config("STRIPE_PUBLISHABLE_KEY", default="")
 STRIPE_WEBHOOK_SECRET = config("STRIPE_WEBHOOK_SECRET", default="")
 
+# PayPal
+PAYPAL_CLIENT_ID = config("PAYPAL_CLIENT_ID", default="")
+PAYPAL_SECRET = config("PAYPAL_SECRET", default="")
+PAYPAL_BASE_URL = config("PAYPAL_BASE_URL", default="https://api-m.sandbox.paypal.com")
 # === Project Domain ===
 DOMAIN = config("DOMAIN", default="localhost")
 
@@ -37,6 +41,26 @@ if USE_S3:
     AWS_STORAGE_BUCKET_NAME = config("AWS_STORAGE_BUCKET_NAME", default="")
     AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
     AWS_QUERYSTRING_AUTH = config("AWS_QUERYSTRING_AUTH", cast=bool, default=False)
+
+
+# ==============================
+# reCAPTCHA v3 Settings
+# ==============================
+
+# Google reCAPTCHA v3 site key (public)
+RECAPTCHA_PUBLIC_KEY = "your-google-site-key"
+
+# Google reCAPTCHA v3 secret key (private)
+RECAPTCHA_PRIVATE_KEY = "your-google-secret-key"
+
+# Minimum score threshold for v3 validation (0.0 – 1.0)
+# 0.85 is usually a good balance between security and usability
+RECAPTCHA_REQUIRED_SCORE = 0.85
+
+# Optional: to log errors during captcha validation
+# Useful for debugging in development
+# (Requires setting up logging)
+RECAPTCHA_PROXY = None  # e.g., 'http://proxyserver:port' if behind a proxy
 
 # === Firebase (optionnel) ===
 # FIREBASE_API_KEY = config("FIREBASE_API_KEY", default="")

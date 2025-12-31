@@ -1,0 +1,37 @@
+{% extends "economic/support/base_support.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Mes tickets" %}{% endblock %}
+
+{% block content %}
+  <div class="support-head">
+    <h1>{% trans "Mes tickets" %}</h1>
+    <a class="btn primary" href="{% url 'economic:support:ticket_create' %}">{% trans "Créer un ticket" %}</a>
+  </div>
+
+  <div class="card">
+    {% if tickets %}
+      <div class="table">
+        <div class="tr th">
+          <div>{% trans "Sujet" %}</div>
+          <div>{% trans "Statut" %}</div>
+          <div>{% trans "Priorité" %}</div>
+          <div>{% trans "Créé" %}</div>
+          <div></div>
+        </div>
+
+        {% for t in tickets %}
+          <div class="tr">
+            <div class="strong">{{ t.subject }}</div>
+            <div><span class="pill status {{ t.status|lower }}">{{ t.get_status_display }}</span></div>
+            <div><span class="pill prio {{ t.priority|lower }}">{{ t.get_priority_display }}</span></div>
+            <div class="muted">{{ t.created_at|date:"d/m/Y H:i" }}</div>
+            <div><a class="btn" href="{% url 'support:ticket_detail' t.id %}">{% trans "Ouvrir" %}</a></div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="muted">{% trans "Vous n'avez aucun ticket pour le moment." %}</p>
+    {% endif %}
+  </div>
+{% endblock %}

@@ -42,6 +42,8 @@ from social.views.volunteers import engagement_view
 # ✅ Nouvel import pour gérer les codes de téléchargement
 from social.views import download as download_views
 
+from social.views.donations import receipt_verify_view
+
 
 app_name = "social"
 
@@ -60,6 +62,8 @@ urlpatterns = [
     path("public-donations/", public_donations_view, name="public_donations"),
     path("donation/history/", donation_history_view, name="donation_history"),
     path("donation/<int:donation_id>/receipt/", download_receipt_view, name="download_receipt"),
+    path("donation/receipt/<str:receipt_uid>/verify/", receipt_verify_view, name="receipt_verify"),
+
     # URLs distinctes pour enfant et mère
     path('donate/child/<int:child_id>/', donation_view, name='donation_child'),
     path('donate/mother/<int:mother_id>/', donation_view, name='donation_mother'),

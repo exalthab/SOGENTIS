@@ -1,0 +1,49 @@
+{% extends "economic/support/base_support.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Ressources" %}{% endblock %}
+
+{% block content %}
+  <div class="support-head">
+    <h1>{% trans "Ressources" %}</h1>
+    <a class="btn" href="{% url 'support:ticket_create' %}">{% trans "Contacter le support" %}</a>
+  </div>
+
+  <div class="card">
+    <p class="muted">
+      {% trans "Retrouvez ici des guides et documents utiles. (Vous pouvez connecter ceci à ton module documents plus tard.)" %}
+    </p>
+
+    {% if resources %}
+      <div class="table" style="margin-top:12px;">
+        <div class="tr th">
+          <div>{% trans "Titre" %}</div>
+          <div>{% trans "Type" %}</div>
+          <div>{% trans "Mise à jour" %}</div>
+          <div></div>
+        </div>
+
+        {% for r in resources %}
+          <div class="tr">
+            <div class="strong">{{ r.title }}</div>
+            <div class="muted">{{ r.kind|default:"-" }}</div>
+            <div class="muted">{{ r.updated_at|default:"-" }}</div>
+            <div>
+              {% if r.url %}
+                <a class="btn" href="{{ r.url }}" target="_blank" rel="noopener">{% trans "Ouvrir" %}</a>
+              {% else %}
+                <span class="muted">—</span>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="card" style="margin-top:12px;">
+        <p class="muted" style="margin:0;">
+          {% trans "Aucune ressource pour le moment." %}
+        </p>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

@@ -44,11 +44,8 @@
     <link rel="stylesheet" href="{% static 'global/css/vendors/fontawesome/css/all.min.css' %}">
     <link rel="stylesheet" href="{% static 'global/css/vendors/bootstrap/css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'global/css/sogentis/bootstrap/css/main_sogentis.css' %}">
-    <link rel="stylesheet" href="{% static 'global/css/contact.css' %}">
-    <link rel="stylesheet" href="{% static 'global/css/soci_index.css' %}">
     <link rel="stylesheet" href="{% static 'global/css/users_menu.css' %}">
-    <link rel="stylesheet" href="{% static 'core/css/old_topbar.css' %}">
-    <link rel="stylesheet" href="{% static 'core/css/_login_custom.css' %}">
+    <link rel="stylesheet" href="{% static 'core/css/new_topbar.css' %}">
     <link rel="stylesheet" href="{% static 'core/css/_mobile.css' %}">
     <link rel="stylesheet" href="{% static 'core/css/language_custom.css' %}">
 
@@ -132,6 +129,10 @@
 <script src="{% static 'global/js/theme.js' %}"></script>
 <script src="{% static 'global/js/main.js' %}"></script>
 
+{# ➜ charger topbar.js après theme.js, et seulement si la topbar est présente #}
+{% if request.resolver_match and request.resolver_match.namespace == 'core' and request.resolver_match.url_name == 'home' %}
+  <script src="{% static 'core/js/_topbar.js' %}"></script>
+{% endif %}
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         document.querySelectorAll(".toast").forEach(el => new bootstrap.Toast(el).show());

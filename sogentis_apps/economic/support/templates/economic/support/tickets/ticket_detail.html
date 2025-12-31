@@ -1,0 +1,88 @@
+{% extends "economic/support/base_support.html" %}
+{% load i18n %}
+
+{% block title %}{{ ticket.subject }}{% endblock %}
+
+{% block content %}
+  <div class="support-head">
+    <div>
+      <h1>{{ ticket.subject }}</h1>
+      <div class="meta">
+        <span class="pill status {{ ticket.status|lower }}">{{ ticket.get_status_display }}</span>
+        <span class="pill prio {{ ticket.priority|lower }}">{{ ticket.get_priority_display }}</span>
+        {% if ticket.order_ref %}<span class="pill">{% trans "Commande" %}: {{ ticket.order_ref }}</span>{% endif %}
+        <span class="muted">{{ ticket.created_at|date:"d/m/Y H:i" }}</span>
+      </div>
+    </div>
+
+    <div class="head-actions">
+      <a class="btn" href="{% url 'support:ticket_list' %}">{% trans "Retour" %}</a>
+      {% if ticket.status != "CLOSED" %}
+        <form method="post" action="{% url 'support:ticket_close' ticket.id %}">
+          {% csrf_token %}
+          <button class="btn danger" type="submit">{% trans "Clôturer" %}</button>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 class="h3">{% trans "Description" %}</h3>
+    <p class="pre">{{ ticket.description }}</p>
+  </div>
+
+  <div class="card">
+    <h3 class="h3">{% trans "Messages" %}</h3>
+
+    <div class="thread">
+      {% for m in ticket.messages.all %}
+        <div class="bubble {% if m.is_staff_reply %}staff{% else %}user{% endif %}">
+          <div class="bubble-top">
+            <strong>
+              {% if m.is_staff_reply %}{% trans "Support" %}{% else %}{% trans "Vous" %}{% endif %}
+            </strong>
+            <span class="muted">{{ m.created_at|date:"d/m/Y H:i" }}</span>
+          </div>
+          <div class="bubble-msg pre">{{ m.message }}</div>
+
+          {% if m.attachment %}
+            <div class="attach">
+              <a href="{{ m.attachment.url }}" target="_blank" rel="noopener">
+                {% trans "Télécharger la pièce jointe" %}
+              </a>
+            </div>
+          {% endif %}
+        </div>
+      {% empty %}
+        <p class="muted">{% trans "Aucun message." %}</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 class="h3">{% trans "Répondre" %}</h3>
+
+    {% if ticket.status == "CLOSED" %}
+      <p class="muted">{% trans "Ce ticket est clôturé." %}</p>
+    {% else %}
+      <form method="post" action="{% url 'economic:support:ticket_add_message' ticket.id %}" enctype="multipart/form-data" class="form">
+        {% csrf_token %}
+        <div class="field">
+          <label>{{ msg_form.message.label }}</label>
+          {{ msg_form.message }}
+          {% if msg_form.message.errors %}<div class="err">{{ msg_form.message.errors }}</div>{% endif %}
+        </div>
+
+        <div class="field">
+          <label>{{ msg_form.attachment.label }}</label>
+          {{ msg_form.attachment }}
+          {% if msg_form.attachment.errors %}<div class="err">{{ msg_form.attachment.errors }}</div>{% endif %}
+        </div>
+
+        <div class="actions">
+          <button class="btn primary" type="submit">{% trans "Envoyer" %}</button>
+        </div>
+      </form>
+    {% endif %}
+  </div>
+{% endblock %}

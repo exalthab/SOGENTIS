@@ -1,0 +1,60 @@
+{% extends "dashboard/social/base_social.html" %}
+{% load i18n humanize %}
+
+{% block title %}{% trans "Dashboard Donateur" %}{% endblock %}
+
+{% block content %}
+<h2>💝 {% trans "Espace Donateur" %}</h2>
+
+<div class="cards-grid">
+
+    <div class="card">
+        <h4>{% trans "Total des dons" %}</h4>
+        <strong>{{ total_donations }}</strong>
+    </div>
+
+    <div class="card">
+        <h4>{% trans "Montant total donné" %}</h4>
+        <strong>{{ total_amount|intcomma }} FCFA</strong>
+    </div>
+
+</div>
+
+<hr>
+
+<h3>📄 {% trans "Derniers dons" %}</h3>
+
+{% if recent_donations %}
+<table class="table">
+    <thead>
+        <tr>
+            <th>{% trans "Date" %}</th>
+            <th>{% trans "Projet" %}</th>
+            <th>{% trans "Montant" %}</th>
+            <th>{% trans "Reçu" %}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for donation in recent_donations %}
+        <tr>
+            <td>{{ donation.created_at|date:"d/m/Y" }}</td>
+            <td>{{ donation.project|default:"—" }}</td>
+            <td>{{ donation.amount|intcomma }} FCFA</td>
+            <td>
+                {% if donation.receipt_pdf %}
+                    <a href="{% url 'dashboard:social_donor_receipt_download' donation.id %}">
+                        📄 {% trans "Télécharger" %}
+                    </a>
+                {% else %}
+                    —
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>{% trans "Aucun don enregistré pour le moment." %}</p>
+{% endif %}
+
+{% endblock %}

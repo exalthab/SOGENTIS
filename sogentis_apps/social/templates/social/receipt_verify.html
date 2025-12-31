@@ -1,0 +1,54 @@
+{# templates/social/receipt_verify.html #}
+{% load i18n %}
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% trans "Vérification du reçu" %} | SOGENTIS</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#f6f7fb; padding:24px; }
+    .card { max-width:720px; margin:auto; background:#fff; border-radius:14px; padding:18px 18px; box-shadow:0 8px 26px rgba(0,0,0,.06); }
+    .badge { display:inline-block; padding:6px 10px; border-radius:999px; background:#e7f7ee; color:#147a3d; font-size:12px; font-weight:700; }
+    .row { display:flex; gap:12px; flex-wrap:wrap; margin-top:10px; }
+    .item { flex:1; min-width:220px; background:#f7f7f7; border-radius:12px; padding:10px 12px; }
+    .k { color:#666; font-size:12px; margin-bottom:3px; }
+    .v { font-weight:700; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2 style="margin:0 0 8px;">{% trans "Reçu vérifié" %}</h2>
+    <span class="badge">{% trans "Authentique" %}</span>
+
+    <div class="row">
+      <div class="item">
+        <div class="k">{% trans "UID reçu" %}</div>
+        <div class="v">{{ donation.receipt_uid }}</div>
+      </div>
+      <div class="item">
+        <div class="k">{% trans "Date" %}</div>
+        <div class="v">{{ donation.created_at|date:"d/m/Y H:i" }}</div>
+      </div>
+      <div class="item">
+        <div class="k">{% trans "Montant" %}</div>
+        <div class="v">{{ donation.amount }} FCFA</div>
+      </div>
+      <div class="item">
+        <div class="k">{% trans "Statut" %}</div>
+        <div class="v">{{ donation.get_status_display }}</div>
+      </div>
+    </div>
+
+    {% if donation.project %}
+      <p style="margin:12px 0 0;">
+        <strong>{% trans "Projet" %}</strong> : {{ donation.project.title }}
+      </p>
+    {% endif %}
+
+    <p style="margin:12px 0 0; color:#666; font-size:13px;">
+      {% trans "Ce reçu correspond à un don enregistré dans la plateforme SOGENTIS." %}
+    </p>
+  </div>
+</body>
+</html>

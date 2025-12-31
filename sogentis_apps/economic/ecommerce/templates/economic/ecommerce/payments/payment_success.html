@@ -1,0 +1,14 @@
+{% extends "main.html" %}
+{% load i18n %}
+{% block title %}{% trans "Paiement reçu" %} | {{ PROJECT_NAME }}{% endblock %}
+{% block content %}
+<section class="container py-5">
+  <h1>✅ {% trans "Paiement reçu" %}</h1>
+  <p class="text-muted">
+    {% trans "Merci. Votre paiement est en cours de confirmation." %}
+  </p>
+  <a class="btn btn-primary" href="{% url 'economic:ecommerce:orders' %}">
+    {% trans "Voir mes commandes" %}
+  </a>
+</section>
+{% endblock %}

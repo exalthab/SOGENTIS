@@ -1,0 +1,9 @@
+{% extends "economic/support/base_support.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "FAQ" %}{% endblock %}
+
+{% block content %}
+  {# Alias: réutilise le template principal #}
+  {% include "economic/support/faq/faq_list.html" %}
+{% endblock %}

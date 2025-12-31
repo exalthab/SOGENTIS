@@ -1,44 +1,104 @@
 # accounts_users/web/views/password_views.py
-from django.contrib.auth.views import (
-    PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
-)
-from django.urls import reverse_lazy
 from django.contrib import messages
-from accounts_users.forms.password_forms import CustomPasswordResetForm, CustomSetPasswordForm
+from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
-# Demande de reset (étape 1)
+from django.contrib.auth.views import (
+    PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView,
+    PasswordResetCompleteView
+)
+
+from accounts_users.forms.password_forms import CustomPasswordResetForm, CustomSetPasswordForm
+
+
+# ==================================================================
+# 1. Demande de réinitialisation par email
+# ==================================================================
+
 class CustomPasswordResetView(PasswordResetView):
+    template_name = "accounts_users/registration/password_reset_form.html"
     email_template_name = "accounts_users/registration/password_reset_email.html"
     subject_template_name = "accounts_users/registration/password_reset_subject.txt"
-    template_name = "accounts_users/registration/password_reset_form.html"
     success_url = reverse_lazy('accounts_users_web:password_reset_done')
     form_class = CustomPasswordResetForm
 
     def form_valid(self, form):
         messages.success(
             self.request,
-            _("Si cette adresse existe, un email de réinitialisation a été envoyé. Vérifiez vos spams si besoin.")
+            _("Si cette adresse existe, un email de réinitialisation a été envoyé.")
         )
         return super().form_valid(form)
 
-# Confirmation lien envoyé
+
 class CustomPasswordResetDoneView(PasswordResetDoneView):
     template_name = "accounts_users/registration/password_reset_done.html"
 
-# Saisie nouveau mot de passe (après clic sur lien email)
+
+# ==================================================================
+# 2. Saisie du nouveau mot de passe
+# ==================================================================
+
 class CustomPasswordResetConfirmView(PasswordResetConfirmView):
     template_name = "accounts_users/registration/password_reset_confirm.html"
     form_class = CustomSetPasswordForm
     success_url = reverse_lazy('accounts_users_web:password_reset_complete')
 
     def form_valid(self, form):
-        messages.success(self.request, _("Votre mot de passe a été modifié avec succès !"))
+        messages.success(self.request, _("Votre mot de passe a bien été modifié !"))
         return super().form_valid(form)
 
-# Confirmation fin de process
+
 class CustomPasswordResetCompleteView(PasswordResetCompleteView):
     template_name = "accounts_users/registration/password_reset_complete.html"
+
+
+
+
+
+
+
+
+# # accounts_users/web/views/password_views.py
+# from django.contrib.auth.views import (
+#     PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
+# )
+# from django.urls import reverse_lazy
+# from django.contrib import messages
+# from accounts_users.forms.password_forms import CustomPasswordResetForm, CustomSetPasswordForm
+# from django.utils.translation import gettext_lazy as _
+
+# # Demande de reset (étape 1)
+# class CustomPasswordResetView(PasswordResetView):
+#     email_template_name = "accounts_users/registration/password_reset_email.html"
+#     subject_template_name = "accounts_users/registration/password_reset_subject.txt"
+#     template_name = "accounts_users/registration/password_reset_form.html"
+#     success_url = reverse_lazy('accounts_users_web:password_reset_done')
+#     form_class = CustomPasswordResetForm
+
+#     def form_valid(self, form):
+#         messages.success(
+#             self.request,
+#             _("Si cette adresse existe, un email de réinitialisation a été envoyé. Vérifiez vos spams si besoin.")
+#         )
+#         return super().form_valid(form)
+
+# # Confirmation lien envoyé
+# class CustomPasswordResetDoneView(PasswordResetDoneView):
+#     template_name = "accounts_users/registration/password_reset_done.html"
+
+# # Saisie nouveau mot de passe (après clic sur lien email)
+# class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+#     template_name = "accounts_users/registration/password_reset_confirm.html"
+#     form_class = CustomSetPasswordForm
+#     success_url = reverse_lazy('accounts_users_web:password_reset_complete')
+
+#     def form_valid(self, form):
+#         messages.success(self.request, _("Votre mot de passe a été modifié avec succès !"))
+#         return super().form_valid(form)
+
+# # Confirmation fin de process
+# class CustomPasswordResetCompleteView(PasswordResetCompleteView):
+#     template_name = "accounts_users/registration/password_reset_complete.html"
 
 
 

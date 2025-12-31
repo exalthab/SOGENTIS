@@ -4,7 +4,7 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.conf import settings
 from django.utils.translation import gettext as _
-from accounts_users.models.users_profile import UserProfile
+from accounts_users.models.users_economic_profile import UserProfile
 
 @receiver(pre_save, sender=UserProfile)
 def cache_old_status(sender, instance, **kwargs):

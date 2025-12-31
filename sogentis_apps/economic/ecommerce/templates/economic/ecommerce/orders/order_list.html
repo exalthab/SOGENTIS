@@ -1,0 +1,71 @@
+{% extends "main.html" %}
+{% load static i18n money %}
+
+{% block title %}
+{% trans "Mes commandes" %} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block section_menu %}
+  {% include "economic/ecommerce/partials/_ecommerce_navbar.html" %}
+{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+
+  <h1 class="mb-4">📦 {% trans "Mes commandes" %}</h1>
+
+  {% if orders %}
+    <div class="card">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead>
+            <tr>
+              <th>{% trans "Commande" %}</th>
+              <th>{% trans "Date" %}</th>
+              <th>{% trans "Statut" %}</th>
+              <th class="text-end">{% trans "Total" %}</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for order in orders %}
+              <tr>
+                <td>
+                  <strong>{{ order.uuid }}</strong>
+                </td>
+                <td>
+                  {{ order.created_at|date:"d/m/Y H:i" }}
+                </td>
+                <td>
+                  <span class="badge
+                    {% if order.status == 'paid' %}bg-success
+                    {% elif order.status == 'pending' %}bg-warning text-dark
+                    {% elif order.status == 'cancelled' %}bg-danger
+                    {% else %}bg-secondary{% endif %}
+                  ">
+                    {{ order.get_status_display }}
+                  </span>
+                </td>
+                <td class="text-end">
+                  {{ order.total_amount|money:ECOMMERCE_CURRENCY }}
+                </td>
+                <td class="text-end">
+                  <a href="{% url 'economic:ecommerce:order_detail' order.uuid %}"
+                     class="btn btn-sm btn-outline-primary">
+                    {% trans "Détails" %}
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  {% else %}
+    <div class="alert alert-info">
+      {% trans "Vous n’avez encore passé aucune commande." %}
+    </div>
+  {% endif %}
+
+</section>
+{% endblock %}

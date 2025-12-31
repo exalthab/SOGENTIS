@@ -1,0 +1,357 @@
+{# dashboard/donations.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Mes dons" %} — SOGENTIS{% endblock %}
+
+{% block dashboard_header %}
+<h1 class="fw-bold mb-2">
+  <i class="fas fa-hand-holding-heart text-danger me-2"></i>
+  {% trans "Mes dons" %}
+</h1>
+<p class="text-muted">{% trans "Historique de vos contributions avec reçus et détails." %}</p>
+{% endblock %}
+
+{% block dashboard_content %}
+
+{# ===================== RÉSUMÉ ===================== #}
+<div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <div class="card shadow-sm p-3 border-0">
+      <div class="d-flex align-items-center">
+        <i class="fas fa-wallet text-danger fs-2 me-3"></i>
+        <div>
+          <h6 class="text-muted mb-1">{% trans "Total des dons" %}</h6>
+          <h3 class="fw-bold">{{ total_donations }} FCFA</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card shadow-sm p-3 border-0">
+      <div class="d-flex align-items-center">
+        <i class="fas fa-gift text-primary fs-2 me-3"></i>
+        <div>
+          <h6 class="text-muted mb-1">{% trans "Nombre de dons" %}</h6>
+          <h3 class="fw-bold">{{ donations_count }}</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card shadow-sm p-3 border-0">
+      <div class="d-flex align-items-center">
+        <i class="fas fa-file-pdf text-success fs-2 me-3"></i>
+        <div>
+          <h6 class="text-muted mb-1">{% trans "Reçus disponibles" %}</h6>
+          <h3 class="fw-bold">{{ receipts_count }}</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# ===================== GRAPHIQUE ===================== #}
+<div class="card shadow-sm border-0 mb-4">
+  <div class="card-header bg-light fw-semibold">
+    <i class="fas fa-chart-line me-2"></i> {% trans "Évolution des dons" %}
+  </div>
+  <div class="card-body">
+    <canvas id="donationsChart" height="90"></canvas>
+  </div>
+</div>
+
+{# ===================== FILTRES ===================== #}
+<div class="card shadow-sm border-0 mb-4">
+  <div class="card-header bg-light fw-semibold">
+    <i class="fas fa-filter me-2"></i> {% trans "Filtres" %}
+  </div>
+
+  <div class="card-body">
+    <form method="get" class="row g-3 align-items-end">
+
+      <div class="col-md-4">
+        <label class="form-label">{% trans "Statut" %}</label>
+        <select name="status" class="form-select">
+          <option value="">{% trans "Tous" %}</option>
+          <option value="completed" {% if filter_status == "completed" %}selected{% endif %}>
+            {% trans "Validé" %}
+          </option>
+          <option value="pending" {% if filter_status == "pending" %}selected{% endif %}>
+            {% trans "En attente" %}
+          </option>
+          <option value="failed" {% if filter_status == "failed" %}selected{% endif %}>
+            {% trans "Échoué" %}
+          </option>
+        </select>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">{% trans "Type de don" %}</label>
+        <select name="type" class="form-select">
+          <option value="">{% trans "Tous" %}</option>
+          <option value="once" {% if filter_type == "once" %}selected{% endif %}>
+            {% trans "Ponctuel" %}
+          </option>
+          <option value="monthly" {% if filter_type == "monthly" %}selected{% endif %}>
+            {% trans "Mensuel" %}
+          </option>
+        </select>
+      </div>
+
+      <div class="col-md-4">
+        <button class="btn btn-primary w-100">
+          <i class="fas fa-search me-2"></i> {% trans "Appliquer" %}
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+{# ===================== TABLE DES DONS ===================== #}
+<div class="card shadow-sm border-0">
+  <div class="card-header bg-light fw-semibold">
+    <i class="fas fa-list me-2"></i> {% trans "Historique détaillé" %}
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-striped align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>{% trans "Date" %}</th>
+          <th>{% trans "Montant" %}</th>
+          <th>{% trans "Type" %}</th>
+          <th>{% trans "Statut" %}</th>
+          <th>{% trans "Reçu" %}</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for don in donations %}
+        <tr>
+          <td>{{ don.created_at|date:"d/m/Y H:i" }}</td>
+          <td><strong>{{ don.amount }} FCFA</strong></td>
+
+          <td>
+            {% if don.donation_type == "once" %}
+              <span class="badge bg-primary">{% trans "Ponctuel" %}</span>
+            {% else %}
+              <span class="badge bg-warning text-dark">{% trans "Mensuel" %}</span>
+            {% endif %}
+          </td>
+
+          <td>
+            {% if don.status == "completed" %}
+              <span class="badge bg-success">{% trans "Validé" %}</span>
+            {% elif don.status == "pending" %}
+              <span class="badge bg-warning text-dark">{% trans "En attente" %}</span>
+            {% else %}
+              <span class="badge bg-danger">{% trans "Échoué" %}</span>
+            {% endif %}
+          </td>
+
+          <td>
+            {% if don.receipt_pdf %}
+              <a href="{{ don.receipt_pdf.url }}" class="btn btn-sm btn-outline-primary" target="_blank">
+                <i class="fas fa-file-pdf"></i> {% trans "Télécharger" %}
+              </a>
+            {% else %}
+              <span class="text-muted">—</span>
+            {% endif %}
+          </td>
+
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" class="text-center text-muted py-4">
+            <i class="fas fa-info-circle"></i>
+            {% trans "Aucun don trouvé." %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {# PAGINATION #}
+  <div class="card-footer bg-white d-flex justify-content-center py-3">
+    <nav>
+      <ul class="pagination mb-0">
+
+        {% if donations.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ donations.previous_page_number }}">&laquo;</a>
+        </li>
+        {% endif %}
+
+        {% for num in donations.paginator.page_range %}
+          <li class="page-item {% if donations.number == num %}active{% endif %}">
+            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+          </li>
+        {% endfor %}
+
+        {% if donations.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ donations.next_page_number }}">&raquo;</a>
+        </li>
+        {% endif %}
+
+      </ul>
+    </nav>
+  </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'dashboard/js/chart.min.js' %}"></script>
+
+<script>
+const ctx = document.getElementById("donationsChart");
+new Chart(ctx, {
+  type: "line",
+  data: {
+    labels: {{ chart_labels|safe }},
+    datasets: [{
+      label: "{{ _('Montant des dons') }}",
+      data: {{ chart_amounts|safe }},
+      borderWidth: 3,
+      tension: 0.3
+    }]
+  }
+});
+</script>
+{% endblock %}
+
+
+
+
+
+
+
+
+{% comment %} {#dashboard/donations.html #}
+{% extends 'dashboard/base.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Mes Dons" %} | SOGENTIS{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="h4 mb-0">{% trans "Mes Dons" %}</h2>
+  </div>
+
+  <!-- Filtres -->
+  <form method="get" class="mb-3">
+    <div class="row g-2 align-items-end">
+      <div class="col-md-4">
+        <label for="project" class="form-label">{% trans "Projet" %}</label>
+        <select name="project" id="project" class="form-select">
+          <option value="">{% trans "Tous les projets" %}</option>
+          {% for project in projects %}
+            <option value="{{ project.id }}" {% if project.id|stringformat:"s" == project_filter %}selected{% endif %}>
+              {{ project.title }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label for="date" class="form-label">{% trans "À partir de la date" %}</label>
+        <input type="date" name="date" id="date" value="{{ date_filter }}" class="form-control" />
+      </div>
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-primary w-100">{% trans "Filtrer" %}</button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Tableau des dons -->
+  <div class="card shadow-sm">
+    <div class="card-header bg-light">
+      <strong>{% trans "Historique de mes dons" %}</strong>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-striped mb-0 align-middle">
+          <thead class="table-dark">
+            <tr>
+              <th>{% trans "Montant" %}</th>
+              <th>{% trans "Date" %}</th>
+              <th>{% trans "Projet" %}</th>
+              <th>{% trans "Méthode de paiement" %}</th>
+              <th>{% trans "Statut" %}</th>
+              <th>{% trans "Reçu" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for don in dons %}
+            <tr>
+              <td><strong>{{ don.amount|floatformat:0 }} {{ don.currency }}</strong></td>
+              <td>{{ don.date|date:"d/m/Y" }}</td>
+              <td>{% if don.project %}{{ don.project.title }}{% else %}—{% endif %}</td>
+              <td>{{ don.payment_method }}</td>
+              <td>{{ don.status }}</td>
+              <td>
+                {% if don.pdf_receipt %}
+                  <a href="{{ don.pdf_receipt.url }}" class="btn btn-sm btn-success">{% trans "Reçu PDF" %}</a>
+                {% else %}
+                  <span class="text-muted">—</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="6" class="text-center text-muted py-4">{% trans "Aucun don enregistré." %}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  {% if dons.has_other_pages %}
+  <nav class="mt-3">
+    <ul class="pagination justify-content-center">
+      {% if dons.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ dons.previous_page_number }}&project={{ project_filter }}&date={{ date_filter }}" aria-label="Précédent">
+            &laquo;
+          </a>
+        </li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+      {% endif %}
+
+      {% for i in dons.paginator.page_range %}
+        {% if dons.number == i %}
+          <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+        {% else %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ i }}&project={{ project_filter }}&date={{ date_filter }}">{{ i }}</a>
+          </li>
+        {% endif %}
+      {% endfor %}
+
+      {% if dons.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ dons.next_page_number }}&project={{ project_filter }}&date={{ date_filter }}" aria-label="Suivant">
+            &raquo;
+          </a>
+        </li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+      {% endif %}
+    </ul>
+  </nav>
+  {% endif %}
+
+</div>
+{% endblock %} {% endcomment %}

@@ -1,3 +1,119 @@
+{# accounts_users/emails/profile_refused.html #}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{% trans "Profil refusé" %}</title>
+</head>
+
+<body style="margin:0; padding:0; background-color:#f4f4f7; font-family:Arial, sans-serif;">
+
+    <div style="width:100%; padding:30px 0; background-color:#f4f4f7;">
+        <div style="
+            max-width:600px;
+            margin:0 auto;
+            background:white;
+            padding:25px 30px;
+            border-radius:8px;
+            box-shadow:0 2px 8px rgba(0,0,0,0.05);
+        ">
+
+            <!-- Titre -->
+            <h2 style="color:#e74c3c; margin-top:0; text-align:center;">
+                {% trans "Profil refusé" %}
+            </h2>
+
+            <!-- Message -->
+            <p style="font-size:15px; color:#333; line-height:1.6;">
+                {% trans "Bonjour" %} {{ user.get_full_name|default:user.username }},
+                <br><br>
+                {% trans "Nous vous informons que votre profil SOGENTIS n’a pas été validé." %}
+                <br>
+                {% trans "Pour plus d’informations ou pour régulariser votre situation, merci de contacter l’équipe SOGENTIS." %}
+            </p>
+
+            <p style="font-size:15px; color:#333; line-height:1.6;">
+                {% trans "Merci de votre compréhension." %}
+            </p>
+
+            <hr style="margin:30px 0; border:none; border-top:1px solid #e5e5e5;">
+
+            <!-- Signature -->
+            <p style="font-size:14px; color:#555;">
+                — SOGENTIS
+            </p>
+
+        </div>
+    </div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+{% comment %} {# accounts_users/emails/profile_refused.html #}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{% trans "Profil refusé" %}</title>
+</head>
+
+<body style="margin:0; padding:0; background-color:#f4f4f7; font-family:Arial, sans-serif;">
+
+    <div style="width:100%; padding:30px 0; background-color:#f4f4f7;">
+        <div style="
+            max-width:600px;
+            margin:0 auto;
+            background:white;
+            padding:25px 30px;
+            border-radius:8px;
+            box-shadow:0 2px 8px rgba(0,0,0,0.05);
+        ">
+
+            <!-- Titre -->
+            <h2 style="color:#e74c3c; margin-top:0; text-align:center;">
+                {% trans "Profil refusé" %}
+            </h2>
+
+            <!-- Message -->
+            <p style="font-size:15px; color:#333; line-height:1.6;">
+                {% trans "Bonjour" %} {{ user.get_full_name|default:user.username }},
+                <br><br>
+                {% trans "Nous vous informons que votre profil SOGENTIS n’a pas été validé." %}
+                <br>
+                {% trans "Pour plus d’informations ou pour regulariser votre situation, merci de contacter l’équipe SOGENTIS." %}
+            </p>
+
+            <p style="font-size:15px; color:#333; line-height:1.6;">
+                {% trans "Merci de votre compréhension." %}
+            </p>
+
+            <hr style="margin:30px 0; border:none; border-top:1px solid #e5e5e5;">
+
+            <!-- Signature -->
+            <p style="font-size:14px; color:#555;">
+                — SOGENTIS
+            </p>
+
+        </div>
+    </div>
+
+</body>
+</html> {% endcomment %}
+
+
+
+
+
+{% comment %} {# accounts_users/emails/profile_refused.html #}
 {% load i18n %}
 <!DOCTYPE html>
 <html lang="fr">
@@ -22,4 +138,4 @@
     </p>
   </div>
 </body>
-</html>
+</html> {% endcomment %}

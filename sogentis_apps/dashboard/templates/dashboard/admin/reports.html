@@ -1,0 +1,199 @@
+{# templates/dashboard/admin/reports.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Rapports & statistiques" %} | SOGENTIS{% endblock %}
+
+{% block dashboard_header %}
+  <i class="fas fa-chart-line me-2 text-info"></i>
+  {% trans "Rapports & statistiques globales" %}
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="container-fluid">
+
+  <div class="row g-4">
+
+    <div class="col-lg-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h5 class="fw-bold mb-3">
+            {% trans "Vue rapide" %}
+          </h5>
+          <ul class="list-group list-group-flush small">
+            <li class="list-group-item d-flex justify-content-between">
+              <span>{% trans "Nouveaux utilisateurs (30j)" %}</span>
+              <strong>{{ stats.new_users_30d|default:"0" }}</strong>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <span>{% trans "Dons reçus (30j)" %}</span>
+              <strong>{{ stats.donations_30d|default:"0" }} FCFA</strong>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <span>{% trans "Engagements créés (30j)" %}</span>
+              <strong>{{ stats.engagements_30d|default:"0" }}</strong>
+            </li>
+          </ul>
+          <p class="small text-muted mt-3">
+            {% trans "Ces indicateurs pourront être reliés plus tard à vos modèles et requêtes réels." %}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-8">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h5 class="fw-bold mb-3">
+            {% trans "Graphiques d’activité" %}
+          </h5>
+
+          <canvas id="adminReportsChart" height="120"></canvas>
+
+          <p class="small text-muted mt-3">
+            {% trans "Exemple de graphique – brancher ici les données agrégées (dons, inscriptions, etc.)." %}
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  if (typeof Chart === "undefined") {
+    return;
+  }
+
+  const ctx = document.getElementById("adminReportsChart");
+  if (!ctx) return;
+
+  new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: ["S1","S2","S3","S4","S5","S6"],
+      datasets: [{
+        label: "{% trans 'Activité globale' %}",
+        data: [5, 7, 3, 9, 6, 10],
+        borderColor: "#0dcaf0",
+        borderWidth: 2,
+        tension: 0.3,
+        fill: false
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: { beginAtZero: true }
+      }
+    }
+  });
+});
+</script>
+{% endblock %}
+
+
+
+
+
+{% comment %} {# templates/dashboard/admin/reports.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Rapports & statistiques" %} | SOGENTIS{% endblock %}
+
+{% block dashboard_header %}
+  <i class="fas fa-chart-line me-2 text-info"></i>
+  {% trans "Rapports & statistiques globales" %}
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="container-fluid">
+
+  <div class="row g-4">
+
+    <div class="col-lg-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h5 class="fw-bold mb-3">
+            {% trans "Vue rapide" %}
+          </h5>
+          <ul class="list-group list-group-flush small">
+            <li class="list-group-item d-flex justify-content-between">
+              <span>{% trans "Nouveaux utilisateurs (30j)" %}</span>
+              <strong>{{ stats.new_users_30d|default:"0" }}</strong>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <span>{% trans "Dons reçus (30j)" %}</span>
+              <strong>{{ stats.donations_30d|default:"0" }} FCFA</strong>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <span>{% trans "Engagements créés (30j)" %}</span>
+              <strong>{{ stats.engagements_30d|default:"0" }}</strong>
+            </li>
+          </ul>
+          <p class="small text-muted mt-3">
+            {% trans "Ces indicateurs pourront être reliés plus tard à vos modèles et requêtes réels." %}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-8">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h5 class="fw-bold mb-3">
+            {% trans "Graphiques d’activité" %}
+          </h5>
+
+          <canvas id="adminReportsChart" height="120"></canvas>
+
+          <p class="small text-muted mt-3">
+            {% trans "Exemple de graphique – brancher ici les données agrégées (dons, inscriptions, etc.)." %}
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  if (typeof Chart === "undefined") {
+    return;
+  }
+
+  const ctx = document.getElementById("adminReportsChart");
+  if (!ctx) return;
+
+  new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: ["S1","S2","S3","S4","S5","S6"],
+      datasets: [{
+        label: "{% trans 'Activité globale' %}",
+        data: [5, 7, 3, 9, 6, 10],
+        borderColor: "#0dcaf0",
+        borderWidth: 2,
+        tension: 0.3,
+        fill: false
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: { beginAtZero: true }
+      }
+    }
+  });
+});
+</script>
+{% endblock %} {% endcomment %}

@@ -65,3 +65,7 @@ django-parler==2.3
 qrcode==8.2
 django-reversion==6.0.0
 django-ckeditor-5==0.2.18
+weasyprint==67.0
+phonenumbers==9.0.21
+django-recaptcha==4.1.0
+django-reversion==6.0.0

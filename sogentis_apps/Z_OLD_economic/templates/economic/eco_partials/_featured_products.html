@@ -1,0 +1,45 @@
+{% load static i18n %}
+
+{% if featured_products %}
+<div class="featured-strip card border-0 shadow-sm mb-3 mb-md-4">
+  <div class="card-body py-3 py-md-3">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <div class="d-flex align-items-center gap-2">
+        <span class="badge bg-danger text-white fw-semibold">
+          <i class="fas fa-bolt me-1"></i> {% trans "Flash Deals & Vedettes" %}
+        </span>
+        <span class="small text-muted d-none d-md-inline">
+          {% trans "Produits mis en avant pour leur rapport qualité / impact." %}
+        </span>
+      </div>
+      <div class="small text-muted">{% trans "Sélection dynamique SOGENTIS" %}</div>
+    </div>
+
+    <div class="featured-scroll d-flex gap-3 overflow-auto pt-1">
+      {% for product in featured_products %}
+      <article class="featured-card-mini flex-shrink-0">
+        <a href="{% url 'econ:product_detail' product.slug %}" class="d-block text-decoration-none text-reset">
+          <div class="img-wrap position-relative">
+            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+            {% if product.is_flash_sale %}
+              <span class="badge badge-flash">FLASH</span>
+            {% endif %}
+          </div>
+          <div class="mini-body">
+            <div class="mini-title small fw-semibold">{{ product.name|truncatechars:40 }}</div>
+            <div class="mini-price">
+              {% if product.has_promo %}
+                <span class="price-main text-danger fw-bold">{{ product.discounted_price|floatformat:0 }} XOF</span>
+                <span class="price-old text-muted small"><s>{{ product.price|floatformat:0 }} XOF</s></span>
+              {% else %}
+                <span class="price-main text-primary fw-bold">{{ product.price|floatformat:0 }} XOF</span>
+              {% endif %}
+            </div>
+          </div>
+        </a>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endif %}

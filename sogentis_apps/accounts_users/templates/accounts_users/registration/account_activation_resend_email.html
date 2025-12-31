@@ -1,3 +1,136 @@
+{# accounts_users/registration/account_activation_resend_email.html #}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:'fr' }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>{% trans "Activation de votre compte SOGENTIS" %}</title>
+
+  <style>
+    /* ---- RESET ---- */
+    body {
+      margin: 0;
+      padding: 0;
+      background: #f4f4f4;
+      font-family: Arial, sans-serif;
+      color: #333;
+      -webkit-text-size-adjust: none;
+    }
+
+    /* ---- CONTAINER ---- */
+    .email-wrapper {
+      width: 100%;
+      background: #f4f4f4;
+      padding: 30px 10px;
+    }
+
+    .email-container {
+      max-width: 620px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 32px;
+      border: 1px solid #e5e5e5;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      margin-top: 0;
+      margin-bottom: 1.2rem;
+      color: #222;
+      text-align: center;
+    }
+
+    p {
+      font-size: 1rem;
+      line-height: 1.55;
+      margin: 0 0 1rem;
+    }
+
+    /* ---- BUTTON ---- */
+    .btn-primary {
+      display: inline-block;
+      background: #0069d9;
+      color: #ffffff !important;
+      padding: 12px 22px;
+      border-radius: 6px;
+      text-decoration: none !important;
+      font-weight: bold;
+      margin-top: 12px;
+    }
+
+    /* ---- URL VISIBLE ---- */
+    .plain-link {
+      word-break: break-all;
+      font-size: 0.94rem;
+      color: #555;
+      margin-top: 6px;
+      margin-bottom: 16px;
+    }
+
+    /* ---- FOOTER ---- */
+    .footer {
+      margin-top: 30px;
+      font-size: 0.85rem;
+      color: #888;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="email-wrapper">
+
+    <div class="email-container">
+
+      <h2>{% trans "Activation de votre compte SOGENTIS" %}</h2>
+
+      <p>
+        {% blocktrans %}
+        Bonjour,<br><br>
+        Vous recevez cet e-mail car vous avez demandé un nouveau lien d’activation pour votre compte sur <strong>SOGENTIS</strong>.
+        {% endblocktrans %}
+      </p>
+
+      <p>{% trans "Pour activer votre compte, cliquez sur le bouton ci-dessous :" %}</p>
+
+      <p style="text-align:center;">
+        <a href="{{ activation_url }}" class="btn-primary">
+          {% trans "Activer mon compte" %}
+        </a>
+      </p>
+
+      <p style="font-size:0.92rem; color:#666;">
+        {% trans "Ou copiez-collez ce lien dans votre navigateur :" %}
+      </p>
+
+      <div class="plain-link">{{ activation_url }}</div>
+
+      <p>
+        {% trans "Ce lien est valable pour une durée limitée et ne peut être utilisé qu’une seule fois." %}
+      </p>
+
+      <p>
+        {% trans "Si vous n’êtes pas à l’origine de cette demande, vous pouvez ignorer cet e-mail." %}
+      </p>
+
+      <div class="footer">
+        &copy; {% now "Y" %} SOGENTIS — {% trans "Tous droits réservés." %}
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>
+
+
+
+
+
+
+{% comment %} {# accounts_users/registration/account_activation_resend_email.html #}
 {% load i18n %}
 <!DOCTYPE html>
 <html lang="fr">
@@ -81,4 +214,4 @@
     </div>
   </div>
 </body>
-</html>
+</html> {% endcomment %}

@@ -1,0 +1,19 @@
+.commerce-mode-switch {
+    display: flex;
+    gap: .4rem;
+}
+
+.mode-btn {
+    padding: .35rem .9rem;
+    border-radius: 999px;
+    font-size: .8rem;
+    text-decoration: none;
+    background: #e5e7eb;
+    color: #111;
+    font-weight: 600;
+}
+
+.mode-btn.active {
+    background: #111;
+    color: #fff;
+}

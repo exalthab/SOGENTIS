@@ -1,0 +1,120 @@
+{# templates/economic/services/service_detail.html #}
+{% extends "economic/services/base_services.html" %}
+{% load static i18n %}
+
+{% block title %}{{ service.name }} | {% trans "Services SOGENTIS" %}{% endblock %}
+
+{% block content %}
+<div class="container py-4 service-detail-page">
+
+  <nav class="mb-3 small">
+    <a href="{% url 'economic:services:service_list' %}" class="text-decoration-none">
+      ← {% trans "Retour au catalogue" %}
+    </a>
+  </nav>
+
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <article class="service-detail-card">
+        <header class="service-detail-header">
+          {% if service.category %}
+            <span class="service-category-badge">
+              {{ service.category }}
+            </span>
+          {% endif %}
+          <h1 class="service-detail-title">
+            {{ service.name }}
+          </h1>
+          {% if service.short_description %}
+            <p class="service-detail-subtitle">
+              {{ service.short_description }}
+            </p>
+          {% endif %}
+        </header>
+
+        {# ZONE PRINCIPALE : DESCRIPTION RICHE #}
+        <section class="service-description">
+          {% if service.description %}
+            {{ service.description|safe }}
+          {% else %}
+            <p class="text-muted">
+              {% trans "La description détaillée de ce service sera bientôt disponible." %}
+            </p>
+          {% endif %}
+        </section>
+
+        {# POINTS CLÉS, SI FOURNIS DANS LE CONTEXTE #}
+        {% if key_points %}
+          <section class="service-keypoints mt-4">
+            <h5 class="mb-2">{% trans "Ce que nous vous apportons" %}</h5>
+            <ul class="service-keypoints-list">
+              {% for point in key_points %}
+                <li>{{ point }}</li>
+              {% endfor %}
+            </ul>
+          </section>
+        {% endif %}
+      </article>
+    </div>
+
+    <div class="col-lg-4">
+      <aside class="service-sidebar">
+
+        <div class="service-pricing-card mb-3">
+          <h5 class="mb-2">{% trans "Tarification" %}</h5>
+
+          {% if service.base_price %}
+            <p class="service-price-lg mb-0">
+              {{ service.base_price }} {{ DEFAULT_CURRENCY|default:"XOF" }}
+            </p>
+            <p class="small text-muted mb-2">
+              {% trans "Prix indicatif, ajusté selon vos besoins." %}
+            </p>
+          {% else %}
+            <p class="text-muted mb-2">
+              {% trans "Tarification sur devis en fonction de votre projet." %}
+            </p>
+          {% endif %}
+
+          <a href="{% url 'economic:services:service_request' %}?service={{ service.slug }}"
+             class="btn btn-primary w-100 mb-2">
+            {% trans "Demander un devis" %}
+          </a>
+
+          <p class="small text-muted mb-0">
+            {% trans "Réponse sous 24 à 48 heures ouvrées." %}
+          </p>
+        </div>
+
+        {# PACKS ASSOCIÉS (optionnel) #}
+        {% if packages %}
+          <div class="service-packages-card">
+            <h6 class="mb-2">{% trans "Packs disponibles" %}</h6>
+            <ul class="list-unstyled mb-0">
+              {% for package in packages %}
+                <li class="service-package-item mb-2">
+                  <div class="d-flex justify-content-between">
+                    <span class="fw-semibold">{{ package.name }}</span>
+                    {% if package.price %}
+                      <span class="text-nowrap">
+                        {{ package.price }} {{ DEFAULT_CURRENCY|default:"XOF" }}
+                      </span>
+                    {% endif %}
+                  </div>
+                  {% if package.description %}
+                    <p class="small text-muted mb-0">
+                      {{ package.description }}
+                    </p>
+                  {% endif %}
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+
+      </aside>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

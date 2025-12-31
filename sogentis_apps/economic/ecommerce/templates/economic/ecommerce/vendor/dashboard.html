@@ -1,0 +1,23 @@
+{% extends "main.html" %}
+{% load i18n %}
+
+{% block content %}
+<h1>{% trans "Tableau de bord vendeur" %}</h1>
+
+<p><strong>{{ vendor.company_name }}</strong></p>
+
+<ul>
+  <li>{% trans "Produits" %}: {{ stats.products_count }}</li>
+  <li>{% trans "Commandes" %}: {{ stats.orders_count }}</li>
+  <li>{% trans "Chiffre d'affaires" %}: {{ stats.total_sales }}</li>
+</ul>
+
+<h3>{% trans "Produits récents" %}</h3>
+<ul>
+  {% for product in products %}
+    <li>{{ product }}</li>
+  {% empty %}
+    <li>{% trans "Aucun produit" %}</li>
+  {% endfor %}
+</ul>
+{% endblock %}

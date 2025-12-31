@@ -1,3 +1,43 @@
+{# accounts_users/registration/activation_success.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Compte activé" %} | SOGENTIS{% endblock %}
+
+{% block auth_title %}
+  {% if already_active %}
+    ✅ {% trans "Compte déjà activé" %}
+  {% else %}
+    🎉 {% trans "Activation réussie !" %}
+  {% endif %}
+{% endblock %}
+
+{% block auth_subtitle %}
+  {% if already_active %}
+    {% trans "Votre compte est déjà actif. Vous pouvez vous connecter." %}
+  {% else %}
+    {% trans "Votre compte a été activé avec succès. Vous pouvez maintenant vous connecter à SOGENTIS." %}
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="text-center">
+
+  <a href="{% url 'accounts_users_web:login' %}"
+     class="btn btn-primary fw-semibold py-2 px-4">
+    <i class="fas fa-sign-in-alt me-1"></i>
+    {% trans "Se connecter" %}
+  </a>
+
+</div>
+{% endblock %}
+
+
+
+
+
+
+{% comment %} {# accounts_users/registration/activation_success.html #}
 {% extends "accounts_users/registration/base_auth.html" %}
 {% load static i18n %}
 
@@ -22,4 +62,4 @@
     </div>
   </div>
 </div>
-{% endblock %}
+{% endblock %} {% endcomment %}

@@ -1,0 +1,20 @@
+{% extends "main.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Catégories de ressources" %}{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+  <h1>{% trans "Catégories" %}</h1>
+
+  <ul class="list-group">
+    {% for category in categories %}
+      <li class="list-group-item">
+        <a href="{% url 'economic:resources:category' category.slug %}">
+          {{ category.safe_translation_getter:"name" }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endblock %}

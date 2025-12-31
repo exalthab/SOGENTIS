@@ -1,0 +1,124 @@
+{# templates/dashboard/social/home.html #}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Espace social" %}{% endblock %}
+
+{% block content %}
+<div class="dashboard-social">
+
+    {% include "dashboard/social/partials/topbar.html" %}
+
+    <div class="dashboard-wrapper">
+
+        {% include "dashboard/social/partials/sidebar.html" %}
+
+        <main class="dashboard-content container-fluid py-4">
+
+            <div class="mb-4">
+                <h1 class="h3">{% trans "Espace social" %}</h1>
+                <p class="text-muted">
+                    {% trans "Consultez votre historique de dons, engagements et actions sociales." %}
+                </p>
+            </div>
+
+            <div class="row g-4">
+
+                <!-- Dons -->
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">{% trans "Mes dons" %}</h5>
+                            <p class="card-text text-muted">
+                                {% trans "Historique et suivi de vos contributions solidaires." %}
+                            </p>
+                            <a href="#" class="btn btn-sm btn-primary">
+                                {% trans "Voir mes dons" %}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Engagements -->
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">{% trans "Engagements" %}</h5>
+                            <p class="card-text text-muted">
+                                {% trans "Actions, promesses et projets auxquels vous participez." %}
+                            </p>
+                            <a href="#" class="btn btn-sm btn-primary">
+                                {% trans "Voir mes engagements" %}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Impact -->
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">{% trans "Mon impact" %}</h5>
+                            <p class="card-text text-muted">
+                                {% trans "Visualisez l’impact social de vos actions." %}
+                            </p>
+                            <a href="#" class="btn btn-sm btn-primary">
+                                {% trans "Voir mon impact" %}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+</div>
+{% endblock %}
+
+
+
+
+
+{% comment %} {% extends "main.html" %}
+
+{% load static i18n %}
+
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}Dashboard Social{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'dashboard/css/social.css' %}">
+</head>
+<body class="dashboard-social">
+
+    {% include "dashboard/social/partials/topbar.html" %}
+
+    <div class="dashboard-wrapper">
+        {% include "dashboard/social/partials/sidebar.html" %}
+
+        <main class="dashboard-content">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+</body>
+</html> {% endcomment %}
+
+
+
+
+{% comment %} {% extends "main.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="container py-5">
+    <h1>{% trans "Espace Social" %}</h1>
+    <p class="text-muted">
+        {% trans "Bienvenue dans votre espace personnel social." %}
+    </p>
+</div>
+{% endblock %} {% endcomment %}

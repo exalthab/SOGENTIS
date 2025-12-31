@@ -1,0 +1,29 @@
+{% extends "economic/support/base_support.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "FAQ" %}{% endblock %}
+
+{% block content %}
+  <div class="support-head">
+    <h1>{% trans "FAQ" %}</h1>
+    <a class="btn" href="{% url 'economic:support:ticket_create' %}">{% trans "Contacter le support" %}</a>
+  </div>
+
+  <div class="card">
+    {% if faqs %}
+      <div class="faq">
+        {% for f in faqs %}
+          <details class="faq-item">
+            <summary>
+              <span class="q">{{ f.question }}</span>
+              {% if f.category %}<span class="cat">{{ f.category.name }}</span>{% endif %}
+            </summary>
+            <div class="a pre">{{ f.answer }}</div>
+          </details>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="muted">{% trans "Aucune FAQ disponible." %}</p>
+    {% endif %}
+  </div>
+{% endblock %}

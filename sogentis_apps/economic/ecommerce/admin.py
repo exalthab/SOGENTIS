@@ -1,35 +1,19 @@
-print("economic.ecommerce.admin loaded !")
+# economic/ecommerce/admin.py
+# Django charge ce fichier automatiquement. Il sert de "pont" vers l'admin modulaire.
 
 from django.contrib import admin
-from .models import Product, Category, Order, OrderItem
 
-@admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
-    list_display = ("name", "slug")
-    prepopulated_fields = {"slug": ("name",)}
-    search_fields = ("name",)
-    ordering = ("name",)
+from .admin.category_admin import *  # noqa
+from .admin.product_admin import *   # noqa
+from .admin.order_admin import *     # noqa
+from .admin.vendor_admin import *    # noqa
+from .admin.review_admin import *    # noqa
+from .admin.cart_admin import *          # noqa
+from .admin.order_item_admin import *    # noqa
+from .admin.payment_admin import *       # noqa
+from .admin.invoice_admin import *       # noqa
 
+admin.site.site_header = "SOGENTIS — E-Commerce Admin"
+admin.site.site_title = "SOGENTIS Admin"
+admin.site.index_title = "Gestion Marketplace & Commandes"
 
-@admin.register(Product)
-class ProductAdmin(admin.ModelAdmin):
-    list_display = ("name", "category", "price", "is_new", "created_at", "stock_display")
-    list_filter = ("category", "is_new", "created_at")
-    search_fields = ("name", "description")
-    prepopulated_fields = {"slug": ("name",)}
-    date_hierarchy = "created_at"
-
-    readonly_fields = ("created_at",)
-
-    def stock_display(self, obj):
-        return obj.stock if hasattr(obj, "stock") else "-"
-    stock_display.short_description = "Stock"
-
-@admin.register(Order)
-class OrderAdmin(admin.ModelAdmin):
-    list_display = ("tracking_code", "full_name", "status", "created_at")
-    search_fields = ("tracking_code", "full_name", "email")
-
-@admin.register(OrderItem)
-class OrderItemAdmin(admin.ModelAdmin):
-    list_display = ("order", "product", "quantity", "price")

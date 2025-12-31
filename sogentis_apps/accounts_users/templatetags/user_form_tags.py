@@ -9,3 +9,7 @@ def add_class(field, css_class):
         **field.field.widget.attrs,  # conserve les attributs déjà existants
         'class': f"{field.field.widget.attrs.get('class', '')} {css_class}".strip()
     })
+
+@register.filter
+def split(value, sep=" "):
+    return value.split(sep)

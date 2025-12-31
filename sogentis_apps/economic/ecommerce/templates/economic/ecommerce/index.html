@@ -1,0 +1,494 @@
+{# templates/economic/ecommerce/index.html #}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}
+{% trans "Boutique" %} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'economic/css/ecommerce_marketplace.css' %}">
+<link rel="stylesheet" href="{% static 'economic/css/ecommerce_navbar.css' %}">
+<link rel="stylesheet" href="{% static 'economic/css/ecommerce_navbar_pro.css' %}">
+<link rel="stylesheet" href="{% static 'economic/css/_commerce_mode_switch.css' %}">
+{% endblock %}
+
+{% block section_menu %}
+  {% include 'economic/ecommerce/partials/_ecommerce_navbar.html' %}
+{% endblock %}
+
+{% block content %}
+
+<!-- ===================================================== -->
+<!-- TOP BAR : RÉSULTATS / TRI -->
+<!-- ===================================================== -->
+<section class="ecommerce-topbar container-fluid py-3 mb-3">
+    <div class="container d-flex flex-wrap justify-content-between align-items-center gap-3">
+
+        <div class="results-count">
+            <strong>{{ page_obj.paginator.count|default:products|length }}</strong>
+            {% trans "produits trouvés" %}
+        </div>
+
+        <!-- TRI -->
+        <form method="get" class="sort-box">
+            {% if request.GET.q %}
+                <input type="hidden" name="q" value="{{ request.GET.q }}">
+            {% endif %}
+
+            <select name="sort" class="form-select form-select-sm" onchange="this.form.submit()">
+                <option value="">{% trans "Trier par" %}</option>
+                <option value="price_asc" {% if request.GET.sort == "price_asc" %}selected{% endif %}>
+                    {% trans "Prix croissant" %}
+                </option>
+                <option value="price_desc" {% if request.GET.sort == "price_desc" %}selected{% endif %}>
+                    {% trans "Prix décroissant" %}
+                </option>
+                <option value="new" {% if request.GET.sort == "new" %}selected{% endif %}>
+                    {% trans "Nouveautés" %}
+                </option>
+                <option value="best" {% if request.GET.sort == "best" %}selected{% endif %}>
+                    {% trans "Meilleures ventes" %}
+                </option>
+            </select>
+        </form>
+
+    </div>
+</section>
+
+<!-- ===================================================== -->
+<!-- MAIN MARKETPLACE -->
+<!-- ===================================================== -->
+<section class="container-fluid">
+    <div class="container">
+        <div class="row">
+
+            <!-- ================= SIDEBAR FILTRES ================= -->
+            <aside class="col-lg-2 d-none d-lg-block ecommerce-sidebar">
+
+                <!-- CATÉGORIES -->
+                <h6 class="sidebar-title">{% trans "Catégories" %}</h6>
+                <ul class="sidebar-list">
+                    {% for category in categories %}
+                        <li>
+                            <a href="?category={{ category.slug }}"
+                               class="{% if request.GET.category == category.slug %}active{% endif %}">
+                                {{ category.name }}
+                            </a>
+                        </li>
+                    {% empty %}
+                        <li class="text-muted small">{% trans "Aucune catégorie" %}</li>
+                    {% endfor %}
+                </ul>
+
+                <hr>
+
+                <!-- PRIX -->
+                <h6 class="sidebar-title">{% trans "Prix" %}</h6>
+                <form method="get">
+                    <input type="range"
+                           name="price_max"
+                           class="form-range"
+                           min="0"
+                           max="{{ max_price|default:1000 }}"
+                           value="{{ request.GET.price_max|default:max_price }}">
+                    <button class="btn btn-sm btn-outline-secondary w-100 mt-2">
+                        {% trans "Appliquer" %}
+                    </button>
+                </form>
+
+                <hr>
+
+                <!-- ÉVALUATIONS -->
+                <h6 class="sidebar-title">{% trans "Évaluations" %}</h6>
+                <ul class="sidebar-list rating-filter">
+                    <li><a href="?rating=5">⭐⭐⭐⭐⭐</a></li>
+                    <li><a href="?rating=4">⭐⭐⭐⭐</a></li>
+                    <li><a href="?rating=3">⭐⭐⭐</a></li>
+                </ul>
+
+            </aside>
+
+            <!-- ================= GRID PRODUITS ================= -->
+            <div class="col-lg-10">
+
+                {% if products %}
+                <div class="row g-3 ecommerce-grid">
+
+                    {% for product in products %}
+                    <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+
+                        <article class="product-card h-100">
+
+                            <!-- IMAGE -->
+                            <a href="{% url 'economic:ecommerce:product_detail' product.slug %}"
+                               class="product-image">
+
+                                {% if product.image %}
+                                    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                                {% else %}
+                                    <img src="{% static 'global/image/product-placeholder.png' %}"
+                                         alt="{% trans 'Produit' %}">
+                                {% endif %}
+
+                                <!-- BADGES -->
+                                <div class="product-badges">
+                                    {% if product.is_featured %}
+                                        <span class="badge bg-danger">{% trans "Promo" %}</span>
+                                    {% endif %}
+                                    {% if product.is_new %}
+                                        <span class="badge bg-success">{% trans "Nouveau" %}</span>
+                                    {% endif %}
+                                </div>
+                            </a>
+
+                            <!-- INFOS -->
+                            <div class="product-body">
+
+                                <div class="product-price">
+                                    {{ product.price }} {{ CURRENCY|default:"€" }}
+                                </div>
+
+                                <h6 class="product-title">
+                                    <a href="{% url 'economic:ecommerce:product_detail' product.slug %}">
+                                        {{ product.name|truncatechars:45 }}
+                                    </a>
+                                </h6>
+
+                                <div class="product-rating">
+                                    ⭐ {{ product.average_rating|default:"4.0" }}/5
+                                    <span class="text-muted small">
+                                        ({{ product.review_count|default:"0" }})
+                                    </span>
+                                </div>
+
+                                <div class="product-actions">
+                                    <a href="{% url 'economic:ecommerce:product_detail' product.slug %}"
+                                       class="btn btn-sm btn-outline-primary w-100">
+                                        {% trans "Voir le produit" %}
+                                    </a>
+                                </div>
+
+                            </div>
+
+                        </article>
+
+                    </div>
+                    {% endfor %}
+
+                </div>
+
+                <!-- PAGINATION -->
+                {% if is_paginated %}
+                <nav class="mt-4">
+                    <ul class="pagination justify-content-center">
+
+                        {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                                &laquo;
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        <li class="page-item disabled">
+                            <span class="page-link">
+                                {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+                            </span>
+                        </li>
+
+                        {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                                &raquo;
+                            </a>
+                        </li>
+                        {% endif %}
+
+                    </ul>
+                </nav>
+                {% endif %}
+
+                {% else %}
+                <!-- EMPTY STATE -->
+                <div class="text-center py-5">
+                    <h4>{% trans "Aucun produit disponible" %}</h4>
+                    <p class="text-muted">
+                        {% trans "Les produits seront bientôt disponibles." %}
+                    </p>
+                </div>
+                {% endif %}
+
+            </div>
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/ecommerce/index.html #}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}
+{% trans "Boutique" %} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'economic/css/ecommerce_marketplace.css' %}">
+<link rel="stylesheet" href="{% static 'economic/css/ecommerce_navbar.css' %}">
+<link rel="stylesheet" href="{% static 'economic/css/ecommerce_navbar_pro.css' %}">
+<link rel="stylesheet" href="{% static 'economic/css/_commerce_mode_switch.css' %}">
+
+{% endblock %}
+
+{% block section_menu %}
+  {% include 'economic/ecommerce/partials/_ecommerce_navbar.html' %}
+
+{% endblock %}
+
+{% block content %}
+
+<!-- ===================================================== -->
+<!-- TOP BAR : RESULTATS / TRI -->
+<!-- ===================================================== -->
+<section class="ecommerce-topbar container-fluid py-3 mb-3">
+    <div class="container d-flex flex-wrap justify-content-between align-items-center gap-3">
+
+        <div class="results-count">
+            <strong>{{ products|length }}</strong>
+            {% trans "produits trouvés" %}
+        </div>
+
+        <div class="sort-box">
+            <select class="form-select form-select-sm">
+                <option>{% trans "Trier par" %}</option>
+                <option>{% trans "Prix croissant" %}</option>
+                <option>{% trans "Prix décroissant" %}</option>
+                <option>{% trans "Nouveautés" %}</option>
+                <option>{% trans "Meilleures ventes" %}</option>
+            </select>
+        </div>
+
+    </div>
+</section>
+
+<!-- ===================================================== -->
+<!-- MAIN MARKETPLACE -->
+<!-- ===================================================== -->
+<section class="container-fluid">
+    <div class="container">
+        <div class="row">
+
+            <!-- ================= SIDEBAR FILTRES ================= -->
+            <aside class="col-lg-2 d-none d-lg-block ecommerce-sidebar">
+
+                <h6 class="sidebar-title">{% trans "Catégories" %}</h6>
+                <ul class="sidebar-list">
+                    <li><a href="#">Électronique</a></li>
+                    <li><a href="#">Services</a></li>
+                    <li><a href="#">Formations</a></li>
+                    <li><a href="#">Accessoires</a></li>
+                </ul>
+
+                <hr>
+
+                <h6 class="sidebar-title">{% trans "Prix" %}</h6>
+                <input type="range" class="form-range">
+
+                <hr>
+
+                <h6 class="sidebar-title">{% trans "Évaluations" %}</h6>
+                <ul class="sidebar-list">
+                    <li>⭐⭐⭐⭐⭐</li>
+                    <li>⭐⭐⭐⭐</li>
+                    <li>⭐⭐⭐</li>
+                </ul>
+
+            </aside>
+
+            <!-- ================= GRID PRODUITS ================= -->
+            <div class="col-lg-10">
+
+                {% if products %}
+                <div class="row g-3 ecommerce-grid">
+
+                    {% for product in products %}
+                    <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+
+                        <div class="product-card">
+
+                            <!-- IMAGE -->
+                            <div class="product-image">
+                                {% if product.image %}
+                                    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                                {% else %}
+                                    <img src="{% static 'global/image/product-placeholder.png' %}">
+                                {% endif %}
+
+                                <!-- BADGES -->
+                                <div class="product-badges">
+                                    {% if product.is_featured %}
+                                        <span class="badge bg-danger">{% trans "Promo" %}</span>
+                                    {% endif %}
+                                    {% if product.is_new %}
+                                        <span class="badge bg-success">{% trans "Nouveau" %}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- INFOS -->
+                            <div class="product-body">
+                                <div class="product-price">
+                                    {{ product.price }} {{ CURRENCY|default:"€" }}
+                                </div>
+
+                                <h6 class="product-title">
+                                    {{ product.name|truncatechars:45 }}
+                                </h6>
+
+                                <div class="product-rating">
+                                    ⭐⭐⭐⭐☆ <span>(124)</span>
+                                </div>
+
+                                <div class="product-actions">
+                                    <a href="{% url 'economic:ecommerce:product_detail' product.slug %}"
+                                       class="btn btn-sm btn-outline-primary w-100">
+                                        {% trans "Voir" %}
+                                    </a>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                    {% endfor %}
+
+                </div>
+
+                {% else %}
+                <!-- EMPTY STATE -->
+                <div class="text-center py-5">
+                    <h4>{% trans "Aucun produit disponible" %}</h4>
+                    <p class="text-muted">
+                        {% trans "Les produits seront bientôt disponibles." %}
+                    </p>
+                </div>
+                {% endif %}
+
+            </div>
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+ {% endcomment %}
+
+
+
+
+
+{% comment %} {% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}
+{% trans "Boutique" %} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block content %}
+
+<!-- ===================================================== -->
+<!-- HERO BOUTIQUE -->
+<!-- ===================================================== -->
+<section class="ecommerce-hero mb-5">
+    <div class="container text-center">
+        <h1 class="mb-2">{% trans "Notre Boutique" %}</h1>
+        <p class="text-muted">
+            {% trans "Découvrez nos produits sélectionnés avec soin." %}
+        </p>
+    </div>
+</section>
+
+<!-- ===================================================== -->
+<!-- LISTING PRODUITS -->
+<!-- ===================================================== -->
+<section class="container">
+
+    {% if products %}
+    <div class="row g-4">
+
+        {% for product in products %}
+        <div class="col-sm-6 col-md-4 col-lg-3">
+            <div class="card product-card h-100">
+
+                <!-- IMAGE -->
+                <div class="product-image">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}"
+                             class="card-img-top"
+                             alt="{{ product.name }}">
+                    {% else %}
+                        <img src="{% static 'global/image/product-placeholder.png' %}"
+                             class="card-img-top"
+                             alt="{% trans 'Image indisponible' %}">
+                    {% endif %}
+                </div>
+
+                <!-- BODY -->
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">
+                        {{ product.name }}
+                    </h5>
+
+                    <p class="card-text text-muted small">
+                        {{ product.description|truncatewords:18 }}
+                    </p>
+
+                    {% if product.price %}
+                    <div class="product-price mt-auto mb-2">
+                        <strong>{{ product.price }} {{ CURRENCY|default:"€" }}</strong>
+                    </div>
+                    {% endif %}
+
+                    <a href="{% url 'economic:ecommerce:product_detail' product.slug %}"
+                       class="btn btn-primary btn-sm w-100">
+                        {% trans "Voir le produit" %}
+                    </a>
+                </div>
+
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+    <!-- ===================================================== -->
+    <!-- EMPTY STATE -->
+    <!-- ===================================================== -->
+    <div class="text-center py-5">
+        <img src="{% static 'global/image/empty-cart.svg' %}"
+             alt="{% trans 'Aucun produit' %}"
+             style="max-width:180px"
+             class="mb-3">
+
+        <h4>{% trans "Aucun produit disponible" %}</h4>
+        <p class="text-muted">
+            {% trans "La boutique sera bientôt disponible. Revenez plus tard." %}
+        </p>
+    </div>
+    {% endif %}
+
+</section>
+
+{% endblock %} {% endcomment %}

@@ -21,6 +21,11 @@ BASE_CONTEXT_PROCESSORS = [
     "core.context_processors.global_context.seo_context",
     "core.context_processors.global_context.social_links",
     "dashboard.context_processors.dashboard_context.dashboard_info",
+    "dashboard.context_processors.dashboard_context.dashboard_roles",
+    # "economic.context_processors.economic_context",
+    "economic.context_processors.context_processors.economic_context",
+    # "economic.context_processors.commerce.commerce_mode",
+    
 ]
 
 if USE_TEMPLATE_CACHING:

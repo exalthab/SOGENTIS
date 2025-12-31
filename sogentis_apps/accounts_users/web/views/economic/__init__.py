@@ -1,0 +1,1 @@
+from .registration_economic import register_economic_view, register_economic_choice_view

@@ -1,0 +1,225 @@
+{# templates/dashboard/admin/settings.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Paramètres" %} | SOGENTIS{% endblock %}
+
+{% block dashboard_header %}
+  <i class="fas fa-cog me-2 text-secondary"></i>
+  {% trans "Paramètres de la plateforme" %}
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="container-fluid">
+
+  <div class="row g-4">
+
+    {% comment %} Paramètres généraux {% endcomment %}
+    <div class="col-lg-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-header">
+          <h5 class="mb-0 fw-bold">
+            {% trans "Paramètres généraux" %}
+          </h5>
+        </div>
+        <div class="card-body">
+          <form method="post">
+            {% csrf_token %}
+
+            <div class="mb-3">
+              <label class="form-label">
+                {% trans "Nom de la plateforme" %}
+              </label>
+              <input type="text"
+                     name="site_name"
+                     class="form-control"
+                     value="{{ settings.site_name|default:'SOGENTIS' }}">
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">
+                {% trans "Email de support" %}
+              </label>
+              <input type="email"
+                     name="support_email"
+                     class="form-control"
+                     value="{{ settings.support_email|default:'support@example.com' }}">
+            </div>
+
+            <div class="form-check form-switch mb-3">
+              <input class="form-check-input"
+                     type="checkbox"
+                     name="maintenance_mode"
+                     id="maintenanceMode"
+                     {% if settings.maintenance_mode %}checked{% endif %}>
+              <label class="form-check-label" for="maintenanceMode">
+                {% trans "Activer le mode maintenance" %}
+              </label>
+            </div>
+
+            <button class="btn btn-primary">
+              <i class="fas fa-save me-1"></i>
+              {% trans "Enregistrer" %}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    {% comment %} Intégrations / Info {% endcomment %}
+    <div class="col-lg-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-header">
+          <h5 class="mb-0 fw-bold">
+            {% trans "Intégrations & informations système" %}
+          </h5>
+        </div>
+        <div class="card-body">
+
+          <p class="text-muted small">
+            {% trans "Cette section peut accueillir la configuration des passerelles de paiement, d’emailing, de SMS, etc." %}
+          </p>
+
+          <ul class="list-group list-group-flush small mb-3">
+            <li class="list-group-item d-flex justify-content-between">
+              <span>{% trans "Stripe" %}</span>
+              <span class="badge bg-success">{% trans "Connecté (exemple)" %}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <span>{% trans "PayPal" %}</span>
+              <span class="badge bg-secondary">{% trans "Non configuré" %}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <span>{% trans "Wave / Mobile Money" %}</span>
+              <span class="badge bg-secondary">{% trans "À configurer" %}</span>
+            </li>
+          </ul>
+
+          <div class="small text-muted">
+            <i class="fas fa-info-circle me-1"></i>
+            {% trans "Les données affichées ici sont des exemples ; connectez-les plus tard à vos vrais modèles et paramètres." %}
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}
+
+
+
+
+{% comment %} {# templates/dashboard/admin/settings.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Paramètres" %} | SOGENTIS{% endblock %}
+
+{% block dashboard_header %}
+  <i class="fas fa-cog me-2 text-secondary"></i>
+  {% trans "Paramètres de la plateforme" %}
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="container-fluid">
+
+  <div class="row g-4">
+
+    <!-- Paramètres généraux -->
+    <div class="col-lg-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-header">
+          <h5 class="mb-0 fw-bold">
+            {% trans "Paramètres généraux" %}
+          </h5>
+        </div>
+        <div class="card-body">
+          <form method="post">
+            {% csrf_token %}
+            {# brancher plus tard sur un vrai form : settings_form #}
+
+            <div class="mb-3">
+              <label class="form-label">
+                {% trans "Nom de la plateforme" %}
+              </label>
+              <input type="text"
+                     name="site_name"
+                     class="form-control"
+                     value="{{ settings.site_name|default:'SOGENTIS' }}">
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">
+                {% trans "Email de support" %}
+              </label>
+              <input type="email"
+                     name="support_email"
+                     class="form-control"
+                     value="{{ settings.support_email|default:'support@example.com' }}">
+            </div>
+
+            <div class="form-check form-switch mb-3">
+              <input class="form-check-input"
+                     type="checkbox"
+                     name="maintenance_mode"
+                     id="maintenanceMode"
+                     {% if settings.maintenance_mode %}checked{% endif %}>
+              <label class="form-check-label" for="maintenanceMode">
+                {% trans "Activer le mode maintenance" %}
+              </label>
+            </div>
+
+            <button class="btn btn-primary">
+              <i class="fas fa-save me-1"></i>
+              {% trans "Enregistrer" %}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Intégrations / Info -->
+    <div class="col-lg-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-header">
+          <h5 class="mb-0 fw-bold">
+            {% trans "Intégrations & informations système" %}
+          </h5>
+        </div>
+        <div class="card-body">
+
+          <p class="text-muted small">
+            {% trans "Cette section peut accueillir la configuration des passerelles de paiement, d’emailing, de SMS, etc." %}
+          </p>
+
+          <ul class="list-group list-group-flush small mb-3">
+            <li class="list-group-item d-flex justify-content-between">
+              <span>{% trans "Stripe" %}</span>
+              <span class="badge bg-success">{% trans "Connecté (exemple)" %}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <span>{% trans "PayPal" %}</span>
+              <span class="badge bg-secondary">{% trans "Non configuré" %}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <span>{% trans "Wave / Mobile Money" %}</span>
+              <span class="badge bg-secondary">{% trans "À configurer" %}</span>
+            </li>
+          </ul>
+
+          <div class="small text-muted">
+            <i class="fas fa-info-circle me-1"></i>
+            {% trans "Les données affichées ici sont des exemples ; connectez-les plus tard à vos vrais modèles et paramètres." %}
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %} {% endcomment %}

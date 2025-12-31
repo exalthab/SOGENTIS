@@ -1,0 +1,29 @@
+{% load static i18n %}
+
+<div class="purchase-block">
+
+  {# ================= B2B MODE ================= #}
+  {% if commerce_mode == "B2B" %}
+
+    <p class="text-muted small mb-2">
+      {% trans "Prix dégressif selon volume" %}
+    </p>
+
+    <a href="{% url 'economic:ecommerce:request_quote' %}"
+       class="btn btn-outline-primary w-100">
+      <i class="bi bi-file-earmark-text me-1"></i>
+      {% trans "Demander un devis" %}
+    </a>
+
+  {# ================= B2C MODE ================= #}
+  {% else %}
+
+    <a href="{% url 'economic:ecommerce:add_to_cart' product.id %}"
+       class="btn btn-primary w-100">
+      <i class="bi bi-cart-plus me-1"></i>
+      {% trans "Ajouter au panier" %}
+    </a>
+
+  {% endif %}
+
+</div>

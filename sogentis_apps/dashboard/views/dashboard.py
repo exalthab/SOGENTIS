@@ -1,7 +1,7 @@
 # dashboard/views/dashboard.py
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from accounts_users.models.users_profile import UserProfile
+from accounts_users.models.users_economic_profile import UserProfile
 from dashboard.services.stats_services import get_dashboard_stats
 from django.contrib import messages
 from django.utils.translation import gettext_lazy as _

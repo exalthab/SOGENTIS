@@ -1,4 +1,708 @@
+{# templates/dashboard/base_dashboard.html #}
 {% load static i18n %}
+
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:'fr' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>
+    {% block title %}
+      {% block page_title %}
+        {{ page_title|default:_("Dashboard") }}
+      {% endblock %}
+      | SOGENTIS
+    {% endblock %}
+  </title>
+
+  <!-- Vendors (local) -->
+  <link rel="stylesheet" href="{% static 'global/vendors/bootstrap/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'global/vendors/fontawesome/css/all.min.css' %}">
+
+  <!-- Dashboard CSS -->
+  <link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
+
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body class="bg-light dashboard-layout">
+
+{% with rm=request.resolver_match %}
+<div class="d-flex">
+
+  <!-- SIDEBAR -->
+  <aside class="dashboard-sidebar bg-dark text-white">
+
+    <!-- LOGO -->
+    <div class="sidebar-header text-center py-3 border-bottom">
+      <a href="{% url 'dashboard:router' %}" class="text-white text-decoration-none fw-bold">
+        SOGENTIS
+      </a>
+    </div>
+
+    <!-- NAVIGATION -->
+    <nav class="sidebar-nav px-3 py-4">
+      <ul class="nav flex-column gap-1">
+
+        <!-- GLOBAL -->
+        <li class="nav-item">
+          <a class="nav-link text-white {% if rm and rm.url_name == 'hub' %}active{% endif %}"
+             href="{% url 'dashboard:hub' %}">
+            <i class="fas fa-home me-2"></i>
+            {% trans "Tableau de bord" %}
+          </a>
+        </li>
+
+        <!-- USER -->
+        {% if not is_vendor and not is_b2b_user %}
+          <li class="nav-item">
+            <a class="nav-link text-white {% if rm and rm.namespace == 'user' %}active{% endif %}"
+               href="{% url 'dashboard:user:home' %}">
+              <i class="fas fa-user me-2"></i>
+              {% trans "Mon espace" %}
+            </a>
+          </li>
+        {% endif %}
+
+        <!-- VENDOR -->
+        {% if is_vendor %}
+          <li class="nav-item mt-3 text-uppercase small text-muted">
+            {% trans "Marketplace" %}
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link text-white {% if rm and rm.namespace == 'vendor' and rm.url_name == 'home' %}active{% endif %}"
+               href="{% url 'dashboard:vendor:home' %}">
+              <i class="fas fa-store me-2"></i>
+              {% trans "Espace vendeur" %}
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link text-white {% if rm and rm.namespace == 'vendor' and rm.url_name == 'products' %}active{% endif %}"
+               href="{% url 'dashboard:vendor:products' %}">
+              <i class="fas fa-box me-2"></i>
+              {% trans "Mes produits" %}
+            </a>
+          </li>
+        {% endif %}
+
+        <!-- B2B -->
+        {% if is_b2b_user %}
+          <li class="nav-item mt-3 text-uppercase small text-muted">
+            {% trans "Entreprise" %}
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link text-white {% if rm and rm.namespace == 'b2b' and rm.url_name == 'home' %}active{% endif %}"
+               href="{% url 'dashboard:b2b:home' %}">
+              <i class="fas fa-building me-2"></i>
+              {% trans "Espace entreprise" %}
+            </a>
+          </li>
+
+          {% with company_user=request.user.company_user|default:None %}
+            {% if company_user and company_user.role == "ADMIN" %}
+              <li class="nav-item">
+                <a class="nav-link text-white {% if rm and rm.namespace == 'b2b' and rm.url_name == 'users' %}active{% endif %}"
+                   href="{% url 'dashboard:b2b:users' %}">
+                  <i class="fas fa-users me-2"></i>
+                  {% trans "Utilisateurs B2B" %}
+                </a>
+              </li>
+            {% endif %}
+          {% endwith %}
+        {% endif %}
+
+        <!-- ADMIN DASHBOARD -->
+        {% if request.user.is_staff %}
+          <li class="nav-item mt-3 text-uppercase small text-muted">
+            {% trans "Administration" %}
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link text-white {% if rm and rm.namespace == 'admin' %}active{% endif %}"
+               href="{% url 'dashboard:admin:home' %}">
+              <i class="fas fa-shield-alt me-2"></i>
+              {% trans "Admin dashboard" %}
+            </a>
+          </li>
+        {% endif %}
+
+        <!-- ACCOUNT -->
+        <li class="nav-item mt-3 text-uppercase small text-muted">
+          {% trans "Compte" %}
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link text-white {% if rm and rm.url_name == 'profile' %}active{% endif %}"
+             href="{% url 'dashboard:profile' %}">
+            <i class="fas fa-id-card me-2"></i>
+            {% trans "Mon profil" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link text-danger" href="{% url 'logout' %}">
+            <i class="fas fa-sign-out-alt me-2"></i>
+            {% trans "Déconnexion" %}
+          </a>
+        </li>
+
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="dashboard-main flex-grow-1">
+
+    <!-- TOPBAR -->
+    <header class="dashboard-topbar bg-white border-bottom px-4 py-3 d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">
+        {% block dashboard_header %}
+          {% block header_title %}
+            {{ page_title|default:_("Tableau de bord") }}
+          {% endblock %}
+        {% endblock %}
+      </h5>
+
+      <div class="d-flex align-items-center gap-2">
+        <span class="text-muted small">
+          {{ request.user.get_full_name|default:request.user.email }}
+        </span>
+        <i class="fas fa-user-circle fa-lg text-secondary"></i>
+      </div>
+    </header>
+
+    <!-- CONTENT -->
+    <section class="dashboard-content p-4">
+      {% block dashboard_content %}
+        {% block content %}{% endblock %}
+      {% endblock %}
+    </section>
+
+  </main>
+
+</div>
+{% endwith %}
+
+<!-- JS -->
+<script src="{% static 'global/vendors/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'dashboard/js/dashboard.js' %}"></script>
+{% block extra_js %}{% endblock %}
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+{% comment %} {# templates/dashboard/base_dashboard.html #}
+{% load static i18n %}
+
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:'fr' }}">
+<head>
+    <meta charset="utf-8">
+
+    <title>
+        {% block page_title %}
+            {{ page_title|default:_("Dashboard") }}
+        {% endblock %}
+        | SOGENTIS
+    </title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Vendors -->
+    <link href="{% static 'global/vendors/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'global/vendors/fontawesome/css/all.min.css' %}" rel="stylesheet">
+
+    <!-- Dashboard CSS -->
+    <link href="{% static 'dashboard/css/dashboard.css' %}" rel="stylesheet">
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="bg-light dashboard-layout">
+
+<div class="d-flex">
+
+    <!-- SIDEBAR -->
+    <aside class="dashboard-sidebar bg-dark text-white">
+
+        <!-- LOGO -->
+        <div class="sidebar-header text-center py-3 border-bottom">
+            <a href="{% url 'dashboard:hub' %}" class="text-white text-decoration-none fw-bold">
+                SOGENTIS
+            </a>
+        </div>
+
+        <!-- NAVIGATION -->
+        <nav class="sidebar-nav px-3 py-4">
+            <ul class="nav flex-column gap-1">
+
+                <!-- GLOBAL -->
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{% url 'dashboard:hub' %}">
+                        <i class="fas fa-home me-2"></i>
+                        {% trans "Tableau de bord" %}
+                    </a>
+                </li>
+
+                <!-- USER -->
+                {% if not is_vendor and not is_b2b_user %}
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{% url 'dashboard:user:home' %}">
+                        <i class="fas fa-user me-2"></i>
+                        {% trans "Mon espace" %}
+                    </a>
+                </li>
+                {% endif %}
+
+                <!-- VENDOR -->
+                {% if is_vendor %}
+                <li class="nav-item mt-3 text-uppercase small text-muted">
+                    {% trans "Marketplace" %}
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{% url 'dashboard:vendor:home' %}">
+                        <i class="fas fa-store me-2"></i>
+                        {% trans "Espace vendeur" %}
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{% url 'dashboard:vendor:products' %}">
+                        <i class="fas fa-box me-2"></i>
+                        {% trans "Mes produits" %}
+                    </a>
+                </li>
+                {% endif %}
+
+                <!-- B2B -->
+                {% if is_b2b_user %}
+                <li class="nav-item mt-3 text-uppercase small text-muted">
+                    {% trans "Entreprise" %}
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{% url 'dashboard:b2b:home' %}">
+                        <i class="fas fa-building me-2"></i>
+                        {% trans "Espace entreprise" %}
+                    </a>
+                </li>
+
+                {% if request.user.company_user.role == "ADMIN" %}
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{% url 'dashboard:b2b:users' %}">
+                        <i class="fas fa-users me-2"></i>
+                        {% trans "Utilisateurs B2B" %}
+                    </a>
+                </li>
+                {% endif %}
+                {% endif %}
+
+                <!-- ACCOUNT -->
+                <li class="nav-item mt-3 text-uppercase small text-muted">
+                    {% trans "Compte" %}
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{% url 'accounts_users_web:profile' %}">
+                        <i class="fas fa-id-card me-2"></i>
+                        {% trans "Mon profil" %}
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-danger" href="{% url 'logout' %}">
+                        <i class="fas fa-sign-out-alt me-2"></i>
+                        {% trans "Déconnexion" %}
+                    </a>
+                </li>
+
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="dashboard-main flex-grow-1">
+
+        <!-- TOPBAR -->
+        <header class="dashboard-topbar bg-white border-bottom px-4 py-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                {% block header_title %}
+                    {{ page_title|default:_("Tableau de bord") }}
+                {% endblock %}
+            </h5>
+
+            <div class="d-flex align-items-center gap-2">
+                <span class="text-muted small">
+                    {{ request.user.get_full_name|default:request.user.username }}
+                </span>
+                <i class="fas fa-user-circle fa-lg text-secondary"></i>
+            </div>
+        </header>
+
+        <!-- CONTENT -->
+        <section class="dashboard-content p-4">
+            {% block content %}{% endblock %}
+        </section>
+
+    </main>
+
+</div>
+
+<!-- JS -->
+<script src="{% static 'global/vendors/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'dashboard/js/dashboard.js' %}"></script>
+
+{% block extra_js %}{% endblock %}
+</body>
+</html> {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# dashboard/base_dashboard.html #}
+{% load static i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="utf-8">
+    <title>
+        {% block page_title %}{% trans "Dashboard" %}{% endblock %} | SOGENTIS
+    </title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap / Icons -->
+    <link href="{% static 'global/vendors/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'global/vendors/fontawesome/css/all.min.css' %}" rel="stylesheet">
+
+    <!-- Dashboard CSS -->
+    <link href="{% static 'dashboard/css/dashboard.css' %}" rel="stylesheet">
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="bg-light">
+
+<div class="d-flex">
+
+    <!-- SIDEBAR -->
+    <aside class="dashboard-sidebar bg-dark text-white">
+
+        <!-- LOGO -->
+        <div class="sidebar-header text-center py-3 border-bottom">
+            <a href="{% url 'dashboard:hub' %}" class="text-white text-decoration-none">
+                <strong>SOGENTIS</strong>
+            </a>
+        </div>
+
+        <!-- NAV -->
+        <nav class="sidebar-nav px-3 py-4">
+            <ul class="nav flex-column gap-1">
+
+                <!-- Dashboard -->
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{% url 'dashboard:hub' %}">
+                        <i class="fas fa-home me-2"></i>
+                        {% trans "Tableau de bord" %}
+                    </a>
+                </li>
+
+                <!-- ================= USER ================= -->
+                {% if not is_vendor and not is_b2b_user %}
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{% url 'dashboard:user:home' %}">
+                        <i class="fas fa-user me-2"></i>
+                        {% trans "Mon espace" %}
+                    </a>
+                </li>
+                {% endif %}
+
+                <!-- ================= VENDOR ================= -->
+                {% if is_vendor %}
+                <li class="nav-item mt-3 text-uppercase small text-muted">
+                    {% trans "Marketplace" %}
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{% url 'dashboard:vendor:home' %}">
+                        <i class="fas fa-store me-2"></i>
+                        {% trans "Dashboard vendeur" %}
+                    </a>
+                </li>
+                {% endif %}
+
+                {% if is_vendor %}
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{% url 'dashboard:vendor:products' %}">
+                        <i class="fas fa-box me-2"></i>
+                        {% trans "Mes produits" %}
+                    </a>
+                </li>
+                {% endif %}
+
+                <!-- ================= B2B ================= -->
+                {% if is_b2b_user %}
+                <li class="nav-item mt-3 text-uppercase small text-muted">
+                    {% trans "Entreprise" %}
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{% url 'dashboard:b2b:home' %}">
+                        <i class="fas fa-building me-2"></i>
+                        {% trans "Dashboard B2B" %}
+                    </a>
+                </li>
+                {% endif %}
+
+                
+                {% if is_b2b_user and request.user.company_user.role == "ADMIN" %}
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{% url 'dashboard:b2b:users' %}">
+                        <i class="fas fa-users me-2"></i>
+                        {% trans "Utilisateurs B2B" %}
+                    </a>
+                </li>
+                {% endif %}
+
+
+                <!-- ================= COMMON ================= -->
+                <li class="nav-item mt-3 text-uppercase small text-muted">
+                    {% trans "Compte" %}
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{% url 'accounts_users_web:profile' %}">
+                        <i class="fas fa-id-card me-2"></i>
+                        {% trans "Mon profil" %}
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-danger" href="{% url 'logout' %}">
+                        <i class="fas fa-sign-out-alt me-2"></i>
+                        {% trans "Déconnexion" %}
+                    </a>
+                </li>
+
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="dashboard-main flex-grow-1">
+
+        <!-- TOPBAR -->
+        <header class="dashboard-topbar bg-white border-bottom px-4 py-3 d-flex justify-content-between align-items-center">
+            <div>
+                <h5 class="mb-0">
+                    {% block header_title %}
+                        {% trans "Tableau de bord" %}
+                    {% endblock %}
+                </h5>
+            </div>
+
+            <div class="d-flex align-items-center gap-3">
+                <span class="text-muted small">
+                    {{ request.user.get_full_name|default:request.user.username }}
+                </span>
+                <i class="fas fa-user-circle fa-lg text-secondary"></i>
+            </div>
+        </header>
+
+        <!-- PAGE CONTENT -->
+        <section class="dashboard-content p-4">
+            {% block content %}{% endblock %}
+        </section>
+
+    </main>
+
+</div>
+
+<!-- JS -->
+<script src="{% static 'global/vendors/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'dashboard/js/chart.js' %}"></script>
+<script src="{% static 'dashboard/js/dashboard.js' %}"></script>
+
+{% block extra_js %}{% endblock %}
+</body>
+</html> {% endcomment %}
+
+
+
+
+
+{% comment %} {% load static i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="utf-8">
+    <title>
+        {% block page_title %}{% trans "Dashboard" %}{% endblock %} | SOGENTIS
+    </title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap / Icons -->
+    <link href="{% static 'global/vendors/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'global/vendors/fontawesome/css/all.min.css' %}" rel="stylesheet">
+
+    <!-- Dashboard CSS -->
+    <link href="{% static 'dashboard/css/dashboard.css' %}" rel="stylesheet">
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="bg-light">
+
+<div class="d-flex">
+
+    <!-- SIDEBAR -->
+    <aside class="dashboard-sidebar bg-dark text-white">
+
+        <!-- LOGO -->
+        <div class="sidebar-header text-center py-3 border-bottom">
+            <a href="{% url 'dashboard:router' %}" class="text-white text-decoration-none">
+                <strong>SOGENTIS</strong>
+            </a>
+        </div>
+
+        <!-- NAV -->
+        <nav class="sidebar-nav px-3 py-4">
+            <ul class="nav flex-column gap-1">
+
+                <!-- Dashboard -->
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{% url 'dashboard:router' %}">
+                        <i class="fas fa-home me-2"></i>
+                        {% trans "Tableau de bord" %}
+                    </a>
+                </li>
+
+                <!-- ================= USER ================= -->
+                {% if not is_vendor and not is_b2b_user %}
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{% url 'dashboard:user_home' %}">
+                        <i class="fas fa-user me-2"></i>
+                        {% trans "Mon espace" %}
+                    </a>
+                </li>
+                {% endif %}
+
+                <!-- ================= VENDOR ================= -->
+                {% if is_vendor %}
+                <li class="nav-item mt-3 text-uppercase small text-muted">
+                    {% trans "Marketplace" %}
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{% url 'dashboard:vendor_home' %}">
+                        <i class="fas fa-store me-2"></i>
+                        {% trans "Dashboard vendeur" %}
+                    </a>
+                </li>
+                {% endif %}
+
+                <!-- ================= B2B ================= -->
+                {% if is_b2b_user %}
+                <li class="nav-item mt-3 text-uppercase small text-muted">
+                    {% trans "Entreprise" %}
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{% url 'dashboard:b2b_home' %}">
+                        <i class="fas fa-building me-2"></i>
+                        {% trans "Espace B2B" %}
+                    </a>
+                </li>
+                {% endif %}
+
+                <!-- ================= COMMON ================= -->
+                <li class="nav-item mt-3 text-uppercase small text-muted">
+                    {% trans "Compte" %}
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{% url 'accounts_users:profile' %}">
+                        <i class="fas fa-id-card me-2"></i>
+                        {% trans "Mon profil" %}
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-danger" href="{% url 'logout' %}">
+                        <i class="fas fa-sign-out-alt me-2"></i>
+                        {% trans "Déconnexion" %}
+                    </a>
+                </li>
+
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="dashboard-main flex-grow-1">
+
+        <!-- TOPBAR -->
+        <header class="dashboard-topbar bg-white border-bottom px-4 py-3 d-flex justify-content-between align-items-center">
+            <div>
+                <h5 class="mb-0">
+                    {% block header_title %}
+                        {% trans "Tableau de bord" %}
+                    {% endblock %}
+                </h5>
+            </div>
+
+            <div class="d-flex align-items-center gap-3">
+                <span class="text-muted small">
+                    {{ request.user.get_full_name|default:request.user.username }}
+                </span>
+                <i class="fas fa-user-circle fa-lg text-secondary"></i>
+            </div>
+        </header>
+
+        <!-- PAGE CONTENT -->
+        <section class="dashboard-content p-4">
+            {% block content %}{% endblock %}
+        </section>
+
+    </main>
+
+</div>
+
+<!-- JS -->
+<script src="{% static 'global/vendors/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'dashboard/js/chart.js' %}"></script>
+<script src="{% static 'dashboard/js/dashboard.js' %}"></script>
+
+{% block extra_js %}{% endblock %}
+</body>
+</html>
+ {% endcomment %}
+
+
+
+
+
+
+
+
+
+
+{% comment %} {% load static i18n %}
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -27,7 +731,7 @@
     <!-- SIDEBAR -->
     <aside class="sidebar">
         <div class="brand mb-4 text-center">
-            <a href="{% url 'dashboard:index' %}" class="navbar-brand text-white fw-bold fs-4" style="letter-spacing:2px;">
+            <a href="{% url 'dashboard:router' %}" class="navbar-brand text-white fw-bold fs-4" style="letter-spacing:2px;">
                 <img src="{% static 'dashboard/img/logo-mini.png' %}" alt="Logo" style="width:32px;vertical-align:middle;margin-right:7px;"> SOGENTIS
             </a>
         </div>
@@ -38,7 +742,7 @@
         </div>
         <nav class="flex-grow-1">
             <ul class="nav flex-column gap-2">
-                <li class="nav-item"><a class="nav-link text-white" href="{% url 'dashboard:index' %}"><i class="fas fa-home"></i> Tableau de bord</a></li>
+                <li class="nav-item"><a class="nav-link text-white" href="{% url 'dashboard:router' %}"><i class="fas fa-home"></i> Tableau de bord</a></li>
                 <li class="nav-item"><a class="nav-link text-white" href="{% url 'dashboard:profile' %}"><i class="fas fa-user"></i> Mon profil</a></li>
                 <li class="nav-item"><a class="nav-link text-white" href="{% url 'dashboard:notes_list' %}"><i class="fas fa-sticky-note"></i> Mes notes</a></li>
                 <!-- Ajoute d'autres liens -->
@@ -73,4 +777,4 @@
     <script src="{% static 'dashboard/js/dashboard.js' %}"></script>
     {% block extra_js %}{% endblock %}
 </body>
-</html>
+</html> {% endcomment %}

@@ -1,3 +1,632 @@
+{# templates/dashboard/base.html #}
+{% load static i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:'fr' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>{% block title %}Dashboard | SOGENTIS{% endblock %}</title>
+
+    {# CSS GLOBAL DASHBOARD #}
+    <link rel="stylesheet" href="{% static 'dashboard/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/css/fontawesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/leaflet/leaflet.css' %}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="bg-light">
+
+<div class="dashboard-layout d-flex min-vh-100">
+
+    {# ===================== SIDEBAR (OVERRIDABLE) ===================== #}
+    {% block dashboard_sidebar %}
+    <aside class="sidebar bg-dark text-white flex-shrink-0">
+        <div class="p-3">
+
+            {# BRAND #}
+            <div class="brand mb-4 fs-4 text-center fw-bold">
+                SOGENTIS
+            </div>
+
+            {# USER MINI BOX #}
+            <div class="user mb-4 text-center">
+                <img src="{% static 'dashboard/img/avatar.jpg' %}"
+                     class="avatar mb-2 rounded-circle shadow"
+                     width="64" height="64" alt="Avatar">
+                <div>
+                    <small class="text-white-50">{% trans "Bienvenue" %},</small><br>
+                    <span class="fw-bold">
+                        {{ user.get_full_name|default:user.username }}
+                    </span>
+                </div>
+            </div>
+
+            {# MENU PRINCIPAL DASHBOARD (UTILISATEUR) #}
+            <nav>
+                <ul class="nav flex-column gap-1">
+
+                    {# DASHBOARD (hub / home) #}
+                    <li class="nav-item">
+                        <a class="nav-link text-white
+                                  {% if request.resolver_match.url_name in 'hub home' %}active{% endif %}"
+                           href="{% url 'dashboard:hub' %}">
+                            <i class="fas fa-home me-2"></i>
+                            {% trans "Tableau de bord" %}
+                        </a>
+                    </li>
+
+                    {# STATISTIQUES #}
+                    <li class="nav-item">
+                        <a class="nav-link text-white
+                                {% if request.resolver_match.url_name == 'stats' %}active{% endif %}"
+                        href="{% url 'dashboard:stats' %}">
+                            <i class="fas fa-chart-bar me-2"></i>
+                            {% trans "Statistiques" %}
+                        </a>
+                    </li>
+
+                    {# COMMANDES #}
+                    <li class="nav-item">
+                        <a class="nav-link text-white
+                                  {% if request.resolver_match.url_name == 'orders' %}active{% endif %}"
+                           href="{% url 'dashboard:orders' %}">
+                            <i class="fas fa-shopping-cart me-2"></i>
+                            {% trans "Commandes" %}
+                        </a>
+                    </li>
+
+                    {# DONS (vue donations) #}
+                    <li class="nav-item">
+                        <a class="nav-link text-white
+                                  {% if request.resolver_match.url_name == 'donations' %}active{% endif %}"
+                           href="{% url 'dashboard:donations' %}">
+                            <i class="fas fa-donate me-2"></i>
+                            {% trans "Dons" %}
+                        </a>
+                    </li>
+
+                    {# NOTES (name = notes_list) #}
+                    <li class="nav-item">
+                        <a class="nav-link text-white
+                                  {% if request.resolver_match.url_name == 'notes_list' %}active{% endif %}"
+                           href="{% url 'dashboard:notes_list' %}">
+                            <i class="fas fa-sticky-note me-2"></i>
+                            {% trans "Notes" %}
+                        </a>
+                    </li>
+
+                    {# PROFIL #}
+                    <li class="nav-item">
+                        <a class="nav-link text-white
+                                  {% if request.resolver_match.url_name in 'profile profile_edit' %}active{% endif %}"
+                           href="{% url 'dashboard:profile' %}">
+                            <i class="fas fa-user me-2"></i>
+                            {% trans "Mon Profil" %}
+                        </a>
+                    </li>
+
+                    {# LIEN ADMIN SI STAFF #}
+                    {% if user.is_staff or user.is_superuser %}
+                    <li class="nav-item mt-3">
+                        <hr class="border-secondary my-2">
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white"
+                           href="{% url 'dashboard:admin:home' %}">
+                            <i class="fas fa-tools me-2"></i>
+                            {% trans "Admin dashboard" %}
+                        </a>
+                    </li>
+                    {% endif %}
+
+                </ul>
+            </nav>
+        </div>
+
+        {# FOOTER MENU #}
+        <div class="sidebar-footer mt-auto text-center py-3 border-top border-secondary">
+            <a href="#" class="text-white me-3">
+                <i class="fas fa-cog fa-lg"></i>
+            </a>
+            <a href="{% url 'accounts_users_web:logout' %}" class="text-white">
+                <i class="fas fa-sign-out-alt fa-lg"></i>
+            </a>
+        </div>
+    </aside>
+    {% endblock dashboard_sidebar %}
+
+    {# ===================== MAIN ===================== #}
+    <div class="dashboard-main d-flex flex-column flex-grow-1">
+
+        {# TOPBAR #}
+        <header class="dashboard-header d-flex align-items-center justify-content-between px-4 py-3 bg-white border-bottom shadow-sm">
+            <h1 class="dashboard-title fs-4 fw-bold mb-0">
+                {% block dashboard_header %}{% trans "Tableau de bord" %}{% endblock %}
+            </h1>
+
+            <div class="user-actions d-flex align-items-center gap-3">
+                <span>{{ user.get_full_name|default:user.username }}</span>
+                <img src="{% static 'dashboard/img/avatar.jpg' %}"
+                     class="rounded-circle shadow avatar-sm"
+                     width="36" height="36" alt="Avatar">
+            </div>
+        </header>
+
+        {# CONTENT #}
+        <main class="dashboard-content flex-grow-1 p-4">
+            {% block dashboard_content %}{% endblock %}
+        </main>
+
+    </div>
+</div>
+
+{# JS GLOBAL #}
+<script src="{% static 'dashboard/js/chart.min.js' %}"></script>
+<script src="{% static 'dashboard/leaflet/leaflet.js' %}"></script>
+
+{% block extra_js %}{% endblock %}
+
+</body>
+</html>
+
+
+
+
+
+{% comment %} {# templates/dashboard/base.html #}
+{% load static i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:'fr' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>{% block title %}Dashboard | SOGENTIS{% endblock %}</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="{% static 'dashboard/css/bootstrap.min.css' %}">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="{% static 'dashboard/css/fontawesome.min.css' %}">
+    <!-- Dashboard Global CSS -->
+    <link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="{% static 'dashboard/leaflet/leaflet.css' %}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="bg-light">
+
+<div class="dashboard-layout d-flex min-vh-100">
+
+    {# ===================== SIDEBAR ===================== #}
+    <aside class="sidebar bg-dark text-white flex-shrink-0">
+        <div class="p-3">
+
+            {# BRAND #}
+            <div class="brand mb-4 fs-4 text-center fw-bold">
+                SOGENTIS
+            </div>
+
+            {# USER MINI BOX #}
+            <div class="user mb-4 text-center">
+                <img src="{% static 'dashboard/img/avatar.jpg' %}"
+                     class="avatar mb-2 rounded-circle shadow"
+                     width="64" height="64" alt="Avatar">
+                <div>
+                    <small class="text-white-50">{% trans "Bienvenue" %},</small><br>
+                    <span class="fw-bold">
+                        {{ user.get_full_name|default:user.username }}
+                    </span>
+                </div>
+            </div>
+
+            {# MENU #}
+            <nav>
+                <ul class="nav flex-column gap-1">
+
+                    {# DASHBOARD (hub) #}
+                    <li class="nav-item">
+                        <a class="nav-link text-white {% if request.resolver_match.url_name == 'hub' or request.resolver_match.url_name == 'home' %}active{% endif %}"
+                           href="{% url 'dashboard:hub' %}">
+                            <i class="fas fa-home me-2"></i>
+                            {% trans "Tableau de bord" %}
+                        </a>
+                    </li>
+
+                    {# STATISTIQUES #}
+                    <li class="nav-item">
+                        <a class="nav-link text-white {% if request.resolver_match.url_name == 'stats' %}active{% endif %}"
+                           href="{% url 'dashboard:stats' %}">
+                            <i class="fas fa-chart-bar me-2"></i>
+                            {% trans "Statistiques" %}
+                        </a>
+                    </li>
+
+                    {# COMMANDES #}
+                    <li class="nav-item">
+                        <a class="nav-link text-white {% if request.resolver_match.url_name == 'orders' %}active{% endif %}"
+                           href="{% url 'dashboard:orders' %}">
+                            <i class="fas fa-shopping-cart me-2"></i>
+                            {% trans "Commandes" %}
+                        </a>
+                    </li>
+
+                    {# DONS (vue donations) #}
+                    <li class="nav-item">
+                        <a class="nav-link text-white {% if request.resolver_match.url_name == 'donations' %}active{% endif %}"
+                           href="{% url 'dashboard:donations' %}">
+                            <i class="fas fa-donate me-2"></i>
+                            {% trans "Dons" %}
+                        </a>
+                    </li>
+
+                    {# NOTES (ATTENTION: name dans urls = "notes_list") #}
+                    <li class="nav-item">
+                        <a class="nav-link text-white {% if request.resolver_match.url_name == 'notes_list' %}active{% endif %}"
+                           href="{% url 'dashboard:notes_list' %}">
+                            <i class="fas fa-sticky-note me-2"></i>
+                            {% trans "Notes" %}
+                        </a>
+                    </li>
+
+                    {# PROFIL #}
+                    <li class="nav-item">
+                        <a class="nav-link text-white {% if request.resolver_match.url_name == 'profile' %}active{% endif %}"
+                           href="{% url 'dashboard:profile' %}">
+                            <i class="fas fa-user me-2"></i>
+                            {% trans "Mon Profil" %}
+                        </a>
+                    </li>
+
+                </ul>
+            </nav>
+        </div>
+
+        {# FOOTER MENU #}
+        <div class="sidebar-footer mt-auto text-center py-3 border-top border-secondary">
+            <a href="#" class="text-white me-3">
+                <i class="fas fa-cog fa-lg"></i>
+            </a>
+            <a href="{% url 'accounts_users_web:logout' %}" class="text-white">
+                <i class="fas fa-sign-out-alt fa-lg"></i>
+            </a>
+        </div>
+    </aside>
+
+    {# ===================== MAIN ===================== #}
+    <div class="dashboard-main d-flex flex-column flex-grow-1">
+
+        {# TOPBAR #}
+        <header class="dashboard-header d-flex align-items-center justify-content-between px-4 py-3 bg-white border-bottom shadow-sm">
+            <h1 class="dashboard-title fs-4 fw-bold mb-0">
+                {% block dashboard_header %}{% trans "Tableau de bord" %}{% endblock %}
+            </h1>
+
+            <div class="user-actions d-flex align-items-center gap-3">
+                <span>{{ user.get_full_name|default:user.username }}</span>
+                <img src="{% static 'dashboard/img/avatar.jpg' %}"
+                     class="rounded-circle shadow avatar-sm"
+                     width="36" height="36" alt="Avatar">
+            </div>
+        </header>
+
+        {# CONTENT #}
+        <main class="dashboard-content flex-grow-1 p-4">
+            {% block dashboard_content %}{% endblock %}
+        </main>
+
+    </div>
+</div>
+
+{# JS #}
+<script src="{% static 'dashboard/js/chart.min.js' %}"></script>
+<script src="{% static 'dashboard/leaflet/leaflet.js' %}"></script>
+
+{% block extra_js %}{% endblock %}
+
+</body>
+</html>
+ {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# dashboard/base.html #}
+{% load static i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>{% block title %}Dashboard | SOGENTIS{% endblock %}</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="{% static 'dashboard/css/bootstrap.min.css' %}">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="{% static 'dashboard/css/fontawesome.min.css' %}">
+    <!-- Dashboard Global CSS -->
+    <link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="{% static 'dashboard/leaflet/leaflet.css' %}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="bg-light">
+
+<div class="dashboard-layout d-flex min-vh-100">
+
+    <!-- ===================== SIDEBAR ===================== -->
+    <aside class="sidebar bg-dark text-white flex-shrink-0">
+        <div class="p-3">
+
+            <!-- BRAND -->
+            <div class="brand mb-4 fs-4 text-center fw-bold">
+                SOGENTIS
+            </div>
+
+            <!-- USER MINI BOX -->
+            <div class="user mb-4 text-center">
+                <img src="{% static 'dashboard/img/avatar.jpg' %}" class="avatar mb-2 rounded-circle shadow"
+                     width="64" height="64" alt="Avatar">
+                <div>
+                    <small class="text-white-50">{% trans "Bienvenue" %},</small><br>
+                    <span class="fw-bold">{{ user.get_full_name|default:user.username }}</span>
+                </div>
+            </div>
+
+            <!-- MENU -->
+            <nav>
+                <ul class="nav flex-column gap-1">
+
+                    <!-- DASHBOARD -->
+                    <li class="nav-item">
+                        <a class="nav-link text-white {% if request.resolver_match.url_name == 'index' %}active{% endif %}"
+                           href="{% url 'dashboard:hub' %}">
+                            <i class="fas fa-home me-2"></i> {% trans "Tableau de bord" %}
+                        </a>
+                    </li>
+
+                    <!-- STATISTIQUES -->
+                    <li class="nav-item">
+                        <a class="nav-link text-white {% if request.resolver_match.url_name == 'stats' %}active{% endif %}"
+                           href="{% url 'dashboard:stats' %}">
+                            <i class="fas fa-chart-bar me-2"></i> {% trans "Statistiques" %}
+                        </a>
+                    </li>
+
+                    <!-- COMMANDES -->
+                    <li class="nav-item">
+                        <a class="nav-link text-white {% if request.resolver_match.url_name == 'orders' %}active{% endif %}"
+                           href="{% url 'dashboard:orders' %}">
+                            <i class="fas fa-shopping-cart me-2"></i> {% trans "Commandes" %}
+                        </a>
+                    </li>
+
+                    <!-- DONS -->
+                    <li class="nav-item">
+                        <a class="nav-link text-white {% if request.resolver_match.url_name == 'donations' %}active{% endif %}"
+                           href="{% url 'dashboard:donations' %}">
+                            <i class="fas fa-donate me-2"></i> {% trans "Dons" %}
+                        </a>
+                    </li>
+
+                    <!-- NOTES -->
+                    <li class="nav-item">
+                        <a class="nav-link text-white {% if request.resolver_match.url_name == 'notes' %}active{% endif %}"
+                           href="{% url 'dashboard:notes' %}">
+                            <i class="fas fa-sticky-note me-2"></i> {% trans "Notes" %}
+                        </a>
+                    </li>
+
+                    <!-- PROFIL -->
+                    <li class="nav-item">
+                        <a class="nav-link text-white {% if request.resolver_match.url_name == 'profile' %}active{% endif %}"
+                           href="{% url 'dashboard:profile' %}">
+                            <i class="fas fa-user me-2"></i> {% trans "Mon Profil" %}
+                        </a>
+                    </li>
+
+                </ul>
+            </nav>
+        </div>
+
+        <!-- FOOTER MENU -->
+        <div class="sidebar-footer mt-auto text-center py-3 border-top border-secondary">
+            <a href="#" class="text-white me-3">
+                <i class="fas fa-cog fa-lg"></i>
+            </a>
+            <a href="{% url 'accounts_users_web:logout' %}" class="text-white">
+                <i class="fas fa-sign-out-alt fa-lg"></i>
+            </a>
+        </div>
+    </aside>
+
+    <!-- ===================== MAIN ===================== -->
+    <div class="dashboard-main d-flex flex-column flex-grow-1">
+
+        <!-- TOPBAR -->
+        <header class="dashboard-header d-flex align-items-center justify-content-between px-4 py-3 bg-white border-bottom shadow-sm">
+            <h1 class="dashboard-title fs-4 fw-bold mb-0">
+                {% block dashboard_header %}{% trans "Tableau de bord" %}{% endblock %}
+            </h1>
+
+            <div class="user-actions d-flex align-items-center gap-3">
+                <span>{{ user.get_full_name|default:user.username }}</span>
+                <img src="{% static 'dashboard/img/avatar.jpg' %}" class="rounded-circle shadow avatar-sm"
+                     width="36" height="36" alt="Avatar">
+            </div>
+        </header>
+
+        <!-- CONTENT -->
+        <main class="dashboard-content flex-grow-1 p-4">
+            {% block dashboard_content %}{% endblock %}
+        </main>
+
+    </div>
+</div>
+
+<!-- JS -->
+<script src="{% static 'dashboard/js/chart.min.js' %}"></script>
+<script src="{% static 'dashboard/leaflet/leaflet.js' %}"></script>
+
+{% block extra_js %}{% endblock %}
+
+</body>
+</html>
+
+
+ {% endcomment %}
+
+
+
+{% comment %} {# dashboard/base.html #}
+{% load static i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>{% block title %}Dashboard | SOGENTIS{% endblock %}</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="{% static 'dashboard/css/bootstrap.min.css' %}">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="{% static 'dashboard/css/fontawesome.min.css' %}">
+    <!-- Dashboard Global CSS -->
+    <link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
+    <!-- Leaflet (si carte utilisée) -->
+    <link rel="stylesheet" href="{% static 'dashboard/leaflet/leaflet.css' %}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="bg-light">
+
+<div class="dashboard-layout d-flex min-vh-100">
+
+    <!-- ========== SIDEBAR ========== -->
+    <aside class="sidebar bg-dark text-white flex-shrink-0">
+        <div class="p-3">
+
+            <!-- Brand -->
+            <div class="brand mb-4 fs-4 text-center fw-bold">
+                SOGENTIS
+            </div>
+
+            <!-- User info mini -->
+            <div class="user mb-4 text-center">
+                <img src="{% static 'dashboard/img/avatar.jpg' %}" class="avatar mb-2 rounded-circle shadow"
+                     width="64" height="64" alt="Avatar">
+                <div>
+                    <small class="text-white-50">{% trans "Bienvenue" %},</small><br>
+                    <span class="fw-bold">{{ user.get_full_name|default:user.username }}</span>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <nav>
+                <ul class="nav flex-column gap-1">
+
+                    <li class="nav-item">
+                        <a class="nav-link text-white {% if request.resolver_match.url_name == 'index' %}active{% endif %}"
+                           href="{% url 'dashboard:index' %}">
+                            <i class="fas fa-home me-2"></i> {% trans "Tableau de bord" %}
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#">
+                            <i class="fas fa-chart-bar me-2"></i> {% trans "Statistiques" %}
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#">
+                            <i class="fas fa-user me-2"></i> {% trans "Mon Profil" %}
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#">
+                            <i class="fas fa-table me-2"></i> {% trans "Données" %}
+                        </a>
+                    </li>
+
+                </ul>
+            </nav>
+        </div>
+
+        <!-- Footer of sidebar -->
+        <div class="sidebar-footer mt-auto text-center py-3 border-top border-secondary">
+            <a href="#" class="text-white me-3">
+                <i class="fas fa-cog fa-lg"></i>
+            </a>
+            <a href="{% url 'accounts_users_web:logout' %}" class="text-white">
+                <i class="fas fa-sign-out-alt fa-lg"></i>
+            </a>
+        </div>
+    </aside>
+
+    <!-- ========== MAIN CONTAINER ========== -->
+    <div class="dashboard-main d-flex flex-column flex-grow-1">
+
+        <!-- ===== TOPBAR ===== -->
+        <header class="dashboard-header d-flex align-items-center justify-content-between px-4 py-3 bg-white border-bottom shadow-sm">
+
+            <!-- Page Title (Header block) -->
+            <div>
+                <h1 class="dashboard-title fs-4 fw-bold mb-0">
+                    {% block dashboard_header %}
+                        {% trans "Tableau de bord" %}
+                    {% endblock %}
+                </h1>
+            </div>
+
+            <!-- User actions -->
+            <div class="user-actions d-flex align-items-center gap-3">
+                <span>{{ user.get_full_name|default:user.username }}</span>
+                <img src="{% static 'dashboard/img/avatar.jpg' %}"
+                     class="rounded-circle shadow avatar-sm" width="36" height="36" alt="Avatar">
+            </div>
+        </header>
+
+        <!-- ===== MAIN CONTENT ===== -->
+        <main class="dashboard-content flex-grow-1 p-4">
+
+            {% block dashboard_content %}
+            {% endblock %}
+
+        </main>
+
+    </div>
+</div>
+
+<!-- Global JS -->
+<script src="{% static 'dashboard/js/chart.min.js' %}"></script>
+<script src="{% static 'dashboard/leaflet/leaflet.js' %}"></script>
+
+{% block extra_js %}{% endblock %}
+
+</body>
+</html>
+
+
+ {% endcomment %}
+
+
+
+
+
+{% comment %} {# dashboard/base.html #}
 {% load static i18n %}
 <!DOCTYPE html>
 <html lang="fr">
@@ -67,7 +696,7 @@
   <script src="{% static 'dashboard/leaflet/leaflet.js' %}"></script>
   {% block extra_js %}{% endblock %}
 </body>
-</html>
+</html> {% endcomment %}
 
 
 

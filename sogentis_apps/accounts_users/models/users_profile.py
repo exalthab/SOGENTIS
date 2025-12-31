@@ -1,246 +1,149 @@
 # accounts_users/models/users_profile.py
-from django.db import models
+
 from django.conf import settings
+from django.db import models
 from django.utils.translation import gettext_lazy as _
+from phonenumber_field.modelfields import PhoneNumberField
 
-from accounts_users.models.membership_role import MembershipRole
-from accounts_users.models.user_role import UserRole
+from accounts_users.models.base import TimeStampedModel
 
-# Ajout pour la gestion des pays
-from django_countries.fields import CountryField
 
-def judicial_record_upload_path(instance, filename):
-    return f"users/judicial_records/{instance.user.id}/{filename}"
+class UserProfile(TimeStampedModel):
+    """
+    Profil utilisateur SOCIAL – identité de base.
 
-def profile_picture_upload_path(instance, filename):
-    return f"users/profile_pictures/{instance.user.id}/{filename}"
+    - Informations personnelles
+    - Téléphone principal normalisé
+    - AUCUNE logique de workflow (validation, statut, codes)
+    """
 
-class UserProfile(models.Model):
-    class Status(models.TextChoices):
-        PENDING = 'pending', _("En attente")
-        APPROVED = 'approved', _("Approuvé")
-        REJECTED = 'rejected', _("Refusé")
-
+    # ======================================================
+    # LIEN UTILISATEUR
+    # ======================================================
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="userprofile",
-        verbose_name=_("Utilisateur")
+        related_name="profile",
+        verbose_name=_("Utilisateur"),
     )
 
-    full_name = models.CharField(_("Nom complet"), max_length=255)
-    phone = models.CharField(_("Téléphone"), max_length=30)
-    # Remplace le CharField par le CountryField
-    country = CountryField(verbose_name=_("Pays"))
-    message = models.TextField(_("Message"), blank=True)
-
-    profile_picture = models.ImageField(
-        _("Photo de profil"),
-        upload_to=profile_picture_upload_path,
-        blank=True, null=True
-    )
-    judicial_record = models.FileField(
-        _("Casier judiciaire"),
-        upload_to=judicial_record_upload_path,
-        blank=True, null=True
+    # ======================================================
+    # CONTACT PRINCIPAL
+    # ======================================================
+    phone_number = PhoneNumberField(
+        _("Numéro de téléphone"),
+        region="SN",  # Sénégal par défaut (plus cohérent)
+        blank=False,
+        default="",
+        help_text=_(
+            "Numéro avec indicatif international. Exemple : +221771234567"
+        ),
     )
 
-    role = models.ForeignKey(
-        UserRole,
-        on_delete=models.SET_NULL,
-        null=True, blank=True,
-        verbose_name=_("Rôle administratif")
-    )
-    membership_role = models.ForeignKey(
-        MembershipRole,
-        on_delete=models.SET_NULL,
-        null=True, blank=True,
-        verbose_name=_("Type d’adhésion")
-    )
+    # ======================================================
+    # IDENTITÉ
+    # ======================================================
+    last_name = models.CharField(_("Nom"), max_length=100, blank=True, default="")
+    first_name = models.CharField(_("Prénom"), max_length=100, blank=True, default="")
+    middle_names = models.CharField(_("Autres prénoms"), max_length=150, blank=True, default="")
+    nickname = models.CharField(_("Surnom"), max_length=100, blank=True, default="")
 
-    registration_code = models.CharField(
-        _("Code d'inscription"),
-        max_length=10,
-        unique=True,
-        blank=True,
-        null=True,
-        help_text=_("Code unique par type d’adhésion (ex: M001, V001, D001)")
-    )
+    # ======================================================
+    # MESSAGE LIBRE
+    # ======================================================
+    message = models.TextField(_("Message"), blank=True, default="")
 
-    status = models.CharField(
-        _("Statut"),
-        max_length=20,
-        choices=Status.choices,
-        default=Status.PENDING
-    )
-
-    created_at = models.DateTimeField(_("Créé le"), auto_now_add=True)
-    updated_at = models.DateTimeField(_("Mis à jour le"), auto_now=True)
-
+    # ======================================================
+    # META
+    # ======================================================
     class Meta:
-        verbose_name = _("Profil utilisateur")
-        verbose_name_plural = _("Profils utilisateur")
-        ordering = ['-created_at']
+        verbose_name = _("Profil utilisateur (social)")
+        verbose_name_plural = _("Profils utilisateurs (sociaux)")
+        ordering = ["-created_at"]
+        indexes = [
+            models.Index(fields=["phone_number"]),
+        ]
 
     def __str__(self):
-        return self.full_name or str(self.user)
-
-    def save(self, *args, **kwargs):
-        if not self.registration_code and self.membership_role:
-            prefix_map = {
-                'MEMBER': 'M',
-                'VOLUNTEER': 'V',
-                'SPONSOR': 'D',
-                'INSTITUTION': 'I',
-            }
-            prefix = prefix_map.get(self.membership_role.code.upper(), 'X')
-            existing = UserProfile.objects.filter(
-                membership_role__code=self.membership_role.code
-            ).count() + 1
-            self.registration_code = f"{prefix}{str(existing).zfill(3)}"
-        super().save(*args, **kwargs)
+        full_name = " ".join(filter(None, [self.last_name, self.first_name]))
+        return full_name or self.user.get_username()
 
 
 
 
-
-
-
-
-
-
-
-
-# # accounts_users/models/users_profile.py ->01/07
-
-# from django.db import models
+# # accounts_users/models/users_profile.py
 # from django.conf import settings
+# from django.db import models
+# from phonenumber_field.modelfields import PhoneNumberField
+
 # from django.utils.translation import gettext_lazy as _
-# from accounts_users.models.membership_role import MembershipRole
+
+# from accounts_users.models.base import TimeStampedModel
 
 
-# class ValidationStatus(models.TextChoices):
-#     PENDING = 'pending', _("En attente")
-#     APPROVED = 'approved', _("Validé")
-#     REJECTED = 'rejected', _("Refusé")
+# class UserProfile(TimeStampedModel):
+#     """
+#     Profil utilisateur SOCIAL / ONG
+#     (membre, volontaire, donateur, institution).
+#     """
 
-
-# class UserProfile(models.Model):
-#     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-#     full_name = models.CharField(_("Nom complet"), max_length=255)
-#     phone = models.CharField(_("Téléphone"), max_length=30)
-#     country = models.CharField(_("Pays"), max_length=100)
-#     message = models.TextField(_("Message"), blank=True)
-
-#     judicial_record = models.FileField(
-#         _("Casier judiciaire"),
-#         upload_to='judicial_records/',
-#         blank=False,
-#         null=False
+#     user = models.OneToOneField(
+#         settings.AUTH_USER_MODEL,
+#         on_delete=models.CASCADE,
+#         related_name="profile",
+#         verbose_name=_("Utilisateur"),
 #     )
-#     profile_picture = models.ImageField(
-#         _("Photo de profil"),
-#         upload_to='profile_pictures/',
-#         blank=False,
-#         null=False
-#     )
+#     phone_number = PhoneNumberField(region="FR", blank=True, null=True)  # `region` par défaut à "FR" (France)
 
-#     role = models.ForeignKey(
-#         MembershipRole,
-#         verbose_name=_("Rôle"),
-#         null=True,
-#         blank=True,
-#         on_delete=models.SET_NULL,
-#         related_name="userprofile_role"
-#     )
+#     # ======================================================
+#     # IDENTITÉ
+#     # ======================================================
+#     last_name = models.CharField(_("Nom"), max_length=100, blank=True, null=True)
+#     first_name = models.CharField(_("Prénom"), max_length=100, blank=True, null=True)
+#     middle_names = models.CharField(_("Autres prénoms"), max_length=150, blank=True, null=True)
+#     nickname = models.CharField(_("Surnom"), max_length=100, blank=True, null=True)
+
+#     # ======================================================
+#     # CONTACT
+#     # ======================================================
+#     phone = models.CharField(_("Téléphone"), max_length=30, blank=True,null=True)
+#     message = models.TextField(_("Message"), blank=True, null=True)
+
+#     # ======================================================
+#     # RÔLES & STATUT
+#     # ======================================================
 #     membership_role = models.ForeignKey(
-#         MembershipRole,
-#         verbose_name=_("Type d’adhésion"),
+#         "accounts_users.MembershipRole",
+#         on_delete=models.SET_NULL,
 #         null=True,
 #         blank=True,
-#         on_delete=models.SET_NULL,
-#         related_name="userprofile_membership"
+#         related_name="profiles",
+#         verbose_name=_("Rôle d’adhésion"),
 #     )
 
-#     # ✅ Nouveau champ de statut avec enum
 #     status = models.CharField(
-#         _("Statut du profil"),
-#         max_length=10,
-#         choices=ValidationStatus.choices,
-#         default=ValidationStatus.PENDING
+#         _("Statut"),
+#         max_length=30,
+#         choices=[
+#             ("pending", _("En attente")),
+#             ("active", _("Actif")),
+#             ("suspended", _("Suspendu")),
+#         ],
+#         default="pending",
 #     )
 
-#     created_at = models.DateTimeField(_("Date de création"), auto_now_add=True)
-#     updated_at = models.DateTimeField(_("Dernière modification"), auto_now=True)
-
-#     def __str__(self):
-#         return self.user.email
-
-
-
-
-# from django.db import models
-# from django.conf import settings
-# from django.utils.translation import gettext_lazy as _
-# from accounts_users.models.membership_role import MembershipRole  # ✅ correction claire
-
-# class UserProfile(models.Model):
-#     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-#     full_name = models.CharField(max_length=255)
-#     phone = models.CharField(max_length=30)
-#     country = models.CharField(max_length=100)
-#     message = models.TextField(blank=True)
-#     judicial_record = models.FileField(upload_to='judicial_records/', blank=False, null=False)
-#     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=False, null=False)
-
-#     # ✅ Deux types de rôles différenciés
-#     role = models.ForeignKey(
-#         MembershipRole,
-#         null=True,
+#     # ======================================================
+#     # CODES SYSTÈME
+#     # ======================================================
+#     social_registration_code = models.CharField(
+#         _("Code d’enregistrement social"),
+#         max_length=50,
+#         unique=True,
 #         blank=True,
-#         on_delete=models.SET_NULL,
-#         related_name="userprofile_role"
-#     )
-#     membership_role = models.ForeignKey(
-#         MembershipRole,
 #         null=True,
-#         blank=True,
-#         on_delete=models.SET_NULL,
-#         related_name="userprofile_membership"
+#         editable=False,
 #     )
 
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     updated_at = models.DateTimeField(auto_now=True)
-
 #     def __str__(self):
-#         return self.user.email
-
-
-
-
-
-
-
-# # MODELE : accounts_users/models/users_profile.py
-# from django.db import models
-# from django.conf import settings
-# from accounts_users.models.role import UserRole
-# from accounts_users.models.membership_role import MembershipRole
-# from django.utils.translation import gettext_lazy as _
-
-# class UserProfile(models.Model):
-#     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-#     full_name = models.CharField(max_length=255)
-#     phone = models.CharField(max_length=30)
-#     country = models.CharField(max_length=100)
-#     message = models.TextField(blank=True)
-#     judicial_record = models.FileField(upload_to='judicial_records/', blank=True, null=True)
-#     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
-#     role = models.ForeignKey(UserRole, null=True, blank=True, on_delete=models.SET_NULL, related_name="dashboard_user_profiles")
-#     membership_role = models.ForeignKey(MembershipRole, null=True, blank=True, on_delete=models.SET_NULL, related_name="membership_profiles")
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     updated_at = models.DateTimeField(auto_now=True)
-
-#     def __str__(self):
-#         return self.user.email
-
+#         full = f"{self.last_name} {self.first_name}".strip()
+#         return full or str(self.user)

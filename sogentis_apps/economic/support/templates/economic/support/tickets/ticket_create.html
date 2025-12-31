@@ -1,0 +1,47 @@
+{% extends "economic/support/base_support.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Nouveau ticket" %}{% endblock %}
+
+{% block content %}
+  <div class="support-head">
+    <h1>{% trans "Créer un ticket support" %}</h1>
+    <a class="btn" href="{% url 'economic:support:ticket_list' %}">{% trans "Retour" %}</a>
+  </div>
+
+  <div class="card">
+    <form method="post" class="form">
+      {% csrf_token %}
+
+      <div class="grid">
+        <div class="field">
+          <label>{{ form.subject.label }}</label>
+          {{ form.subject }}
+          {% if form.subject.errors %}<div class="err">{{ form.subject.errors }}</div>{% endif %}
+        </div>
+
+        <div class="field">
+          <label>{{ form.priority.label }}</label>
+          {{ form.priority }}
+          {% if form.priority.errors %}<div class="err">{{ form.priority.errors }}</div>{% endif %}
+        </div>
+
+        <div class="field">
+          <label>{{ form.order_ref.label }}</label>
+          {{ form.order_ref }}
+          {% if form.order_ref.errors %}<div class="err">{{ form.order_ref.errors }}</div>{% endif %}
+        </div>
+
+        <div class="field span-2">
+          <label>{{ form.description.label }}</label>
+          {{ form.description }}
+          {% if form.description.errors %}<div class="err">{{ form.description.errors }}</div>{% endif %}
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn primary" type="submit">{% trans "Envoyer" %}</button>
+      </div>
+    </form>
+  </div>
+{% endblock %}

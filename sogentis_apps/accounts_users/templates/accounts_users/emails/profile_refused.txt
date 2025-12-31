@@ -1,5 +1,6 @@
-Bonjour {{ user.get_full_name|default:user.username }},
+Bonjour {{ user.userprofile.last_name|default_if_none:"" }} {{ user.userprofile.first_name|default_if_none:"" }},
 
-Votre profil SOGENTIS n'a pas été validé. Pour plus d'informations, contactez l'équipe SOGENTIS.
+Votre profil SOGENTIS n'a pas été validé.
+Pour plus d'informations, veuillez contacter l'équipe SOGENTIS.
 
 Merci de votre compréhension.

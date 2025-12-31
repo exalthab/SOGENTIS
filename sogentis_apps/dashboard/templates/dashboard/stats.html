@@ -1,4 +1,190 @@
+{#dashboard/stats.html #}
 {% extends "dashboard/base.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Statistiques" %} — SOGENTIS{% endblock %}
+
+{% block dashboard_header %}
+  <i class="fas fa-chart-bar text-primary me-2"></i>
+  {% trans "Statistiques personnelles" %}
+{% endblock %}
+
+{% block dashboard_content %}
+
+<!-- ======================= SUMMARY CARDS ======================= -->
+<div class="row g-3 mb-4">
+
+  {% for card in summary_cards %}
+    <div class="col-6 col-md-4 col-lg-3">
+      <div class="card shadow-sm text-center p-3 border-0">
+        <div class="fs-1 text-{{ card.color }}">
+          <i class="{{ card.icon }}"></i>
+        </div>
+        <h6 class="mt-2 mb-1 fw-bold">{{ card.label }}</h6>
+        <div class="fs-4 fw-semibold text-{{ card.color }}">{{ card.value }}</div>
+      </div>
+    </div>
+  {% endfor %}
+
+</div>
+
+<!-- ======================= CHART DONATIONS ======================= -->
+<div class="row g-4 mb-4">
+
+  <div class="col-lg-8">
+    <div class="card shadow-sm p-4 h-100">
+      <h5 class="fw-bold mb-3">
+        <i class="fas fa-chart-line text-primary me-2"></i>
+        {% trans "Évolution des dons par mois" %}
+      </h5>
+
+      {% if chart_labels %}
+        <canvas id="donationChart" height="100"></canvas>
+      {% else %}
+        <p class="text-muted">{% trans "Aucune donnée disponible pour l'instant." %}</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- INFO BOX RIGHT -->
+  <div class="col-lg-4">
+    <div class="card shadow-sm p-4 h-100">
+
+      <h5 class="fw-bold mb-3">
+        <i class="fas fa-info-circle text-secondary me-2"></i>
+        {% trans "Résumé" %}
+      </h5>
+
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item d-flex justify-content-between">
+          <span>{% trans "Total des dons" %}</span>
+          <strong>{{ donation_total|floatformat:2 }} FCFA</strong>
+        </li>
+        <li class="list-group-item d-flex justify-content-between">
+          <span>{% trans "Nombre d'engagements" %}</span>
+          <strong>{{ engagement_count }}</strong>
+        </li>
+      </ul>
+
+      <div class="mt-4 small text-muted">
+        <i class="fas fa-clock"></i> {% trans "Mise à jour automatique chaque jour." %}
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ======================= MORE SECTIONS ======================= -->
+<div class="row g-4">
+
+  <!-- DONATION DISTRIBUTION -->
+  <div class="col-lg-6">
+    <div class="card shadow-sm p-4 h-100">
+      <h5 class="fw-bold mb-3">
+        <i class="fas fa-chart-pie text-warning me-2"></i>
+        {% trans "Répartition des dons" %}
+      </h5>
+
+      <canvas id="donationPieChart" height="120"></canvas>
+
+      <p class="small text-muted mt-3">
+        {% trans "Données fictives pour exemple — connecte avec tes catégories réelles plus tard." %}
+      </p>
+    </div>
+  </div>
+
+  <!-- ENGAGEMENT ACTIVITY -->
+  <div class="col-lg-6">
+    <div class="card shadow-sm p-4 h-100">
+      <h5 class="fw-bold mb-3">
+        <i class="fas fa-people-arrows text-info me-2"></i>
+        {% trans "Activité d'engagement" %}
+      </h5>
+
+      <canvas id="engagementChart" height="120"></canvas>
+
+      <p class="small text-muted mt-3">
+        {% trans "Indicateur d'activité basé sur le nombre d'engagements." %}
+      </p>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+<script src="{% static 'dashboard/js/chart.min.js' %}"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  // ============================
+  //  DONATIONS BAR CHART
+  // ============================
+  const labels = {{ chart_labels|safe }};
+  const values = {{ chart_values|safe }};
+
+  if (labels.length > 0) {
+    new Chart(document.getElementById('donationChart'), {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: "{% trans 'Montant des dons (FCFA)' %}",
+          data: values,
+          backgroundColor: "#0d6efd",
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+  }
+
+  // ============================
+  //  PIE CHART (don range example)
+  // ============================
+  new Chart(document.getElementById('donationPieChart'), {
+    type: 'pie',
+    data: {
+      labels: ["1K - 10K FCFA", "10K - 50K", "+50K"],
+      datasets: [{
+        data: [45, 35, 20],
+        backgroundColor: ["#ffc107", "#0dcaf0", "#198754"],
+      }]
+    }
+  });
+
+  // ============================
+  //  ENGAGEMENT ACTIVITY (Fake)
+  // ============================
+  new Chart(document.getElementById('engagementChart'), {
+    type: 'line',
+    data: {
+      labels: ["S1","S2","S3","S4","S5"],
+      datasets: [{
+        label: "{% trans 'Engagements' %}",
+        data: [2, 3, 2, 4, 5],
+        borderColor: "#6610f2",
+        borderWidth: 2,
+        tension: 0.3
+      }]
+    }
+  });
+
+});
+</script>
+{% endblock %}
+
+
+
+{% comment %} {% extends "dashboard/base.html" %}
 {% load static i18n %}
 
 {% block title %}{% trans "Statistiques" %} | SOGENTIS{% endblock %}
@@ -82,7 +268,7 @@
       });
     });
   </script>
-{% endblock %}
+{% endblock %} {% endcomment %}
 
 
 

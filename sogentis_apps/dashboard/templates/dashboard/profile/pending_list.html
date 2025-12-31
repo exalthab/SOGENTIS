@@ -1,0 +1,191 @@
+{# dashboard/profile/pending_list.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Profils en attente de validation" %}{% endblock %}
+
+{% block dashboard_header %}
+  <h1 class="fw-bold mb-2">
+    <i class="fas fa-user-clock text-warning me-2"></i>
+    {% trans "Profils en attente de validation" %}
+  </h1>
+  <p class="text-muted">
+    {% trans "Voici la liste des utilisateurs qui doivent encore être vérifiés avant activation." %}
+  </p>
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="card shadow-sm border-0">
+  <div class="card-body p-0">
+
+    {% if profiles %}
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>{% trans "Nom complet" %}</th>
+              <th>Email</th>
+              <th>{% trans "Téléphone" %}</th>
+              <th>{% trans "Rôle" %}</th>
+              <th class="text-end">{% trans "Actions" %}</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for profile in profiles %}
+              <tr>
+                <td>
+                  <strong>{{ profile.full_name|default:"—" }}</strong>
+                </td>
+
+                <td>{{ profile.user.email }}</td>
+
+                <td>{{ profile.phone|default:"—" }}</td>
+
+                <td>
+                  <span class="badge bg-info text-dark">
+                    {{ profile.membership_role.label|default:"—" }}
+                  </span>
+                </td>
+
+                <td class="text-end">
+
+                  {# ➤ Voir détails profil #}
+                  <a href="{% url 'dashboard:profile_detail' profile.id %}"
+                     class="btn btn-sm btn-primary me-1">
+                    <i class="fas fa-eye me-1"></i> {% trans "Voir" %}
+                  </a>
+
+                  {# ➤ Valider #}
+                  <a href="{% url 'dashboard:profile_approve' profile.id %}"
+                     class="btn btn-sm btn-success me-1">
+                    <i class="fas fa-check me-1"></i> {% trans "Valider" %}
+                  </a>
+
+                  {# ➤ Refuser #}
+                  <a href="{% url 'dashboard:profile_refuse' profile.id %}"
+                     class="btn btn-sm btn-danger">
+                    <i class="fas fa-times me-1"></i> {% trans "Refuser" %}
+                  </a>
+
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+    {% else %}
+
+      <div class="p-4 text-center text-muted">
+        <i class="fas fa-user-check fa-2x mb-3"></i>
+        <p class="mb-0">{% trans "Aucun profil en attente." %}</p>
+      </div>
+
+    {% endif %}
+
+  </div>
+</div>
+
+{% endblock %}
+
+
+
+
+
+
+{% comment %} {# dashboard/profile/pending_list.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Profils en attente de validation" %}{% endblock %}
+
+{% block dashboard_header %}
+  <h1 class="fw-bold mb-2">
+    <i class="fas fa-user-clock text-warning me-2"></i>
+    {% trans "Profils en attente" %}
+  </h1>
+  <p class="text-muted">
+    {% trans "Voici la liste des utilisateurs dont le profil doit encore être vérifié et validé." %}
+  </p>
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="card shadow-sm border-0">
+  <div class="card-body p-0">
+
+    {% if profiles %}
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>{% trans "Nom complet" %}</th>
+              <th>Email</th>
+              <th>{% trans "Téléphone" %}</th>
+              <th>{% trans "Rôle" %}</th>
+              <th class="text-end">{% trans "Actions" %}</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for profile in profiles %}
+              <tr>
+                <td>
+                  <strong>{{ profile.full_name|default:"—" }}</strong>
+                </td>
+
+                <td>{{ profile.user.email }}</td>
+
+                <td>{{ profile.phone|default:"—" }}</td>
+
+                <td>
+                  <span class="badge bg-info text-dark">
+                    {{ profile.membership_role.label|default:"—" }}
+                  </span>
+                </td>
+
+                <td class="text-end">
+                  <a href="{% url 'dashboard:profile_detail' profile.id %}"
+                     class="btn btn-sm btn-primary">
+                    <i class="fas fa-eye me-1"></i> {% trans "Voir" %}
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+    {% else %}
+
+      <div class="p-4 text-center text-muted">
+        <i class="fas fa-user-check fa-2x mb-3"></i>
+        <p class="mb-0">{% trans "Aucun profil en attente." %}</p>
+      </div>
+
+    {% endif %}
+
+  </div>
+</div>
+
+{% endblock %}
+ {% endcomment %}
+
+
+
+
+
+
+
+
+{% comment %} {# dashboard/profile/pending_list.html #}
+<h3>Profils en attente</h3>
+<ul>
+  {% for profile in profiles %}
+    <li>{{ profile.full_name }} - {{ profile.user.email }}</li>
+  {% empty %}
+    <li>Aucun profil en attente.</li>
+  {% endfor %}
+</ul> {% endcomment %}

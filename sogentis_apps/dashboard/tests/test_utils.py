@@ -2,7 +2,7 @@ import pytest
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
-from accounts_users.models.users_profile import UserProfile
+from accounts_users.models.users_economic_profile import UserProfile
 from social.models import Donation, Engagement, Project
 from sogentis_apps.dashboard.views.utils import get_dashboard_stats
 

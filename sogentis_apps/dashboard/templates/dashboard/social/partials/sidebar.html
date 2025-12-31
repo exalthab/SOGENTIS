@@ -1,0 +1,60 @@
+{% load i18n %}
+
+<aside class="dashboard-sidebar">
+
+    <h4 class="sidebar-title">🟣 {% trans "Pôle Social" %}</h4>
+
+    <ul class="sidebar-menu">
+
+        {% if user.profile.membership_role.code == "DONOR" %}
+            <li><a href="{% url 'dashboard:social_donor_home' %}">💝 {% trans "Mes dons" %}</a></li>
+            <li><a href="#">📄 {% trans "Mes reçus" %}</a></li>
+            <li><a href="#">📊 {% trans "Impact" %}</a></li>
+        {% endif %}
+
+        {% if user.profile.membership_role.code == "MEMBER" %}
+            <li><a href="{% url 'dashboard:social_member_home' %}">🧑‍🤝‍🧑 {% trans "Mon espace membre" %}</a></li>
+            <li><a href="#">📁 {% trans "Documents" %}</a></li>
+        {% endif %}
+
+        {% if user.profile.membership_role.code == "VOLUNTEER" %}
+            <li><a href="{% url 'dashboard:social_volunteer_home' %}">🤝 {% trans "Mes missions" %}</a></li>
+            <li><a href="#">🗓 {% trans "Planning" %}</a></li>
+        {% endif %}
+
+        {% if user.profile.membership_role.code == "INSTITUTION" %}
+            <li><a href="{% url 'dashboard:social_institution_home' %}">🏛 {% trans "Mon institution" %}</a></li>
+            <li><a href="#">📊 {% trans "Rapports" %}</a></li>
+        {% endif %}
+
+        {% if user.is_staff %}
+            <li class="divider"></li>
+            <li><a href="{% url 'dashboard:social_admin_home' %}">🛠 {% trans "Admin social" %}</a></li>
+        {% endif %}
+
+        {% if user.profile.membership_role.code == "DONOR" %}
+            <li>
+                <a href="{% url 'dashboard:social_donor_home' %}">
+                    💝 {% trans "Tableau de bord" %}
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'dashboard:social_donor_donations' %}">
+                    📄 {% trans "Mes dons" %}
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'dashboard:social_donor_impact' %}">
+                    📊 {% trans "Mon impact" %}
+                </a>
+            </li>
+        {% endif %}
+
+
+    </ul>
+
+    <div class="sidebar-footer">
+        <a href="{% url 'dashboard:hub' %}">⬅ {% trans "Retour au hub" %}</a>
+    </div>
+
+</aside>

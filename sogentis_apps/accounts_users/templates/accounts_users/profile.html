@@ -1,0 +1,164 @@
+{% extends "dashboard/base_dashboard.html" %}
+{% load i18n static %}
+
+{% block title %}
+    {% trans "Mon profil" %}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-1">
+                <i class="fas fa-id-card me-2"></i>
+                {% trans "Mon profil" %}
+            </h1>
+            <p class="text-muted mb-0">
+                {% trans "Gérez vos informations personnelles et vos préférences." %}
+            </p>
+        </div>
+    </div>
+
+    <!-- PROFIL CARD -->
+    <div class="row">
+        <div class="col-lg-8 col-xl-7">
+
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+
+                    <!-- USER INFO -->
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="me-3">
+                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
+                                 style="width:64px;height:64px;font-size:1.5rem;">
+                                {{ request.user.get_initials|default:request.user.username|slice:":2"|upper }}
+                            </div>
+                        </div>
+
+                        <div>
+                            <h5 class="mb-0">
+                                {{ request.user.get_full_name|default:request.user.username }}
+                            </h5>
+                            <div class="text-muted small">
+                                {{ request.user.email }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- INFOS -->
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                {% trans "Nom d'utilisateur" %}
+                            </label>
+                            <div class="form-control-plaintext">
+                                {{ request.user.username }}
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                {% trans "Adresse email" %}
+                            </label>
+                            <div class="form-control-plaintext">
+                                {{ request.user.email }}
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                {% trans "Dernière connexion" %}
+                            </label>
+                            <div class="form-control-plaintext">
+                                {{ request.user.last_login|date:"DATETIME_FORMAT" }}
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                {% trans "Date d'inscription" %}
+                            </label>
+                            <div class="form-control-plaintext">
+                                {{ request.user.date_joined|date:"DATE_FORMAT" }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- ACTIONS -->
+                    <div class="d-flex flex-wrap gap-2">
+                        {% comment %} <a href="{% url 'accounts_users:password_change' %}"
+                           class="btn btn-outline-secondary">
+                            <i class="fas fa-key me-1"></i>
+                            {% trans "Changer le mot de passe" %}
+                        </a> {% endcomment %}
+
+                        {% comment %} <a href="{% url 'accounts_users:profile_edit' %}"
+                           class="btn btn-primary">
+                            <i class="fas fa-edit me-1"></i>
+                            {% trans "Modifier mon profil" %}
+                        </a> {% endcomment %}
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- SIDEBAR -->
+        <div class="col-lg-4 col-xl-5 mt-4 mt-lg-0">
+
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-2">
+                        {% trans "Statut du compte" %}
+                    </h6>
+
+                    {% if request.user.is_active %}
+                        <span class="badge bg-success">
+                            {% trans "Compte actif" %}
+                        </span>
+                    {% else %}
+                        <span class="badge bg-warning text-dark">
+                            {% trans "Compte en attente" %}
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if is_vendor %}
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-2">
+                        {% trans "Espace vendeur" %}
+                    </h6>
+                    <a href="{% url 'dashboard:vendor_home' %}" class="btn btn-sm btn-outline-primary">
+                        {% trans "Accéder au dashboard vendeur" %}
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if is_b2b_user %}
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-2">
+                        {% trans "Espace entreprise (B2B)" %}
+                    </h6>
+                    <a href="{% url 'dashboard:b2b_home' %}" class="btn btn-sm btn-outline-dark">
+                        {% trans "Accéder au dashboard B2B" %}
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,1212 @@
+{% extends "main.html" %}
+{% load static i18n %}
+
+{# ================== SEO ================== #}
+{% block seo_title %}
+SOGENTIS — Marketplace Professionnelle & Solutions Business
+{% endblock %}
+
+{% block seo_description %}
+Marketplace professionnelle SOGENTIS : produits, services, packs digitaux,
+formations et solutions business pour entrepreneurs, ONG et organisations.
+{% endblock %}
+
+{# ================== CSS ================== #}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'economic/css/shop.css' %}">
+{% endblock %}
+
+{# ================== MENU E-COM ================== #}
+{% block section_menu %}
+  {% include "economic/eco_partials/_ecommerce_navbar.html" %}
+{% endblock %}
+
+{% block content %}
+<div class="shop-page-wrapper py-3 py-md-4">
+  <div class="container-fluid">
+
+    {# ======================================================= #}
+    {# HERO PRINCIPAL                                          #}
+    {# ======================================================= #}
+    <section class="shop-hero row g-3 align-items-stretch mb-4">
+
+      <div class="col-lg-8">
+        <div class="shop-hero-main h-100 p-4 p-md-5 rounded-4 position-relative overflow-hidden">
+          <div class="hero-overlay"></div>
+
+          <div class="hero-content position-relative text-light">
+            <div class="hero-badge mb-2">
+              <span class="badge bg-warning text-dark me-2">PRO</span>
+              <span class="badge bg-light text-dark">
+                <i class="fas fa-leaf text-success me-1"></i>
+                {% trans "Business & Impact social" %}
+              </span>
+            </div>
+
+            <h1 class="fw-bold mb-2">
+              {% trans "Marketplace professionnelle SOGENTIS" %}
+            </h1>
+
+            <p class="hero-subtitle mb-3">
+              {% trans "Produits, services et solutions pour équiper, former et développer vos projets." %}
+            </p>
+
+            <div class="d-flex flex-wrap gap-2">
+              <a href="#shop-grid" class="btn btn-warning fw-semibold px-4">
+                <i class="fas fa-shopping-cart me-2"></i>
+                {% trans "Voir les produits" %}
+              </a>
+              <a href="#pro-services" class="btn btn-outline-light fw-semibold px-4">
+                <i class="fas fa-briefcase me-2"></i>
+                {% trans "Solutions pro" %}
+              </a>
+            </div>
+
+            <div class="small mt-3">
+              <i class="fas fa-lock text-success me-1"></i>
+              {% trans "Paiement sécurisé • Livraison fiable • Support professionnel" %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4 d-flex flex-column gap-3">
+
+        <div class="card border-0 shadow-sm flex-fill">
+          <div class="card-body text-center">
+            <div class="fw-semibold text-muted small mb-2">
+              {% trans "Indicateurs marketplace" %}
+            </div>
+            <div class="row g-2">
+              <div class="col-6">
+                <div class="stat-value">{{ products.paginator.count|default:0 }}</div>
+                <div class="stat-label">{% trans "Produits" %}</div>
+              </div>
+              <div class="col-6">
+                <div class="stat-value">{{ categories|length|default:0 }}</div>
+                <div class="stat-label">{% trans "Catégories" %}</div>
+              </div>
+              <div class="col-6 mt-2">
+                <div class="stat-value">{{ promo_count|default:0 }}</div>
+                <div class="stat-label">{% trans "Promotions" %}</div>
+              </div>
+              <div class="col-6 mt-2">
+                <div class="stat-value">+500</div>
+                <div class="stat-label">{% trans "Clients pro" %}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card border-0 shadow-sm flex-fill">
+          <div class="card-body">
+            <div class="text-danger fw-bold small mb-1">
+              <i class="fas fa-bolt"></i> {% trans "Offres flash" %}
+            </div>
+            <h5 class="fw-bold">
+              {% trans "Jusqu’à -40 % sur les packs digitaux" %}
+            </h5>
+            <p class="small text-muted">
+              {% trans "Sites web, e-commerce, branding et formations." %}
+            </p>
+            <a href="#shop-grid" class="btn btn-sm btn-danger fw-semibold">
+              {% trans "Découvrir" %}
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    {# ======================================================= #}
+    {# BARRE USP                                              #}
+    {# ======================================================= #}
+    <section class="shop-usp mb-4">
+      <div class="row text-center g-3">
+        <div class="col-md-3">
+          <i class="fas fa-truck fa-2x text-primary"></i>
+          <div class="fw-semibold">{% trans "Livraison fiable" %}</div>
+        </div>
+        <div class="col-md-3">
+          <i class="fas fa-shield-alt fa-2x text-success"></i>
+          <div class="fw-semibold">{% trans "Paiement sécurisé" %}</div>
+        </div>
+        <div class="col-md-3">
+          <i class="fas fa-headset fa-2x text-warning"></i>
+          <div class="fw-semibold">{% trans "Support pro" %}</div>
+        </div>
+        <div class="col-md-3">
+          <i class="fas fa-leaf fa-2x text-info"></i>
+          <div class="fw-semibold">{% trans "Impact social" %}</div>
+        </div>
+      </div>
+    </section>
+
+    {# ======================================================= #}
+    {# TOOLBAR                                                #}
+    {# ======================================================= #}
+    {% include "economic/eco_partials/_shop_toolbar.html" %}
+
+    {# ======================================================= #}
+    {# LAYOUT PRINCIPAL                                       #}
+    {# ======================================================= #}
+    <section class="shop-layout row g-4">
+
+      <aside class="col-lg-3 col-xl-2">
+        {% include "economic/eco_partials/_shop_sidebar.html" %}
+      </aside>
+
+      <section class="col-lg-9 col-xl-10">
+
+        {# ===== PRODUITS VEDETTES ===== #}
+        {% if featured_products %}
+          {% include "economic/eco_partials/_featured_products.html" %}
+        {% endif %}
+
+        {# ===== GRILLE PRODUITS ===== #}
+        <div id="shop-grid" class="shop-grid-wrapper">
+
+          {% if products %}
+          <div class="row g-2 g-md-3 g-xl-4">
+
+            {% for product in products %}
+              <div class="col-6 col-md-4 col-lg-3 col-xxl-2 d-flex">
+                {% include "economic/eco_partials/_product_card.html" with product=product %}
+              </div>
+            {% endfor %}
+
+          </div>
+
+          {# ===== PAGINATION ===== #}
+          {% if products.paginator.num_pages > 1 %}
+          <nav class="mt-4">
+            <ul class="pagination justify-content-center pagination-sm">
+              {% for num in products.paginator.page_range %}
+                <li class="page-item {% if products.number == num %}active{% endif %}">
+                  <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+              {% endfor %}
+            </ul>
+          </nav>
+          {% endif %}
+
+          {% else %}
+          <div class="text-center py-5">
+            <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+            <h5 class="fw-bold">{% trans "Aucun produit trouvé" %}</h5>
+            <p class="text-muted">{% trans "Essayez de modifier vos filtres." %}</p>
+          </div>
+          {% endif %}
+        </div>
+
+        {# ===== SERVICES PRO ===== #}
+        {% include "economic/eco_partials/_pro_services.html" %}
+
+        {# ===== VIDEO (FIN) ===== #}
+        <section class="shop-video my-5">
+          <div class="row align-items-center g-4">
+            <div class="col-md-6">
+              <h3 class="fw-bold">{% trans "SOGENTIS en action" %}</h3>
+              <p class="text-muted">
+                {% trans "Découvrez l’impact réel de nos solutions sur le terrain." %}
+              </p>
+            </div>
+            <div class="col-md-6">
+              <video controls class="w-100 rounded shadow">
+                <source src="{% static 'economic/videos/sogentis_marketplace.mp4' %}" type="video/mp4">
+              </video>
+            </div>
+          </div>
+        </section>
+
+      </section>
+    </section>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'economic/js/shop.js' %}"></script>
+{% endblock %}
+
+
+
+
+
+{% comment %} {# economic/shop.html #}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{# ================== SEO ================== #}
+{% block seo_title %}SOGENTIS — Marketplace Professionnelle & Solutions Business{% endblock %}
+{% block seo_description %}
+Marketplace professionnelle SOGENTIS : produits, services, packs digitaux, formations, solutions
+pour entrepreneurs, ONG, écoles et organisations. Qualité, impact et accompagnement.
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'economic/css/shop.css' %}">
+{% endblock %}
+
+{% block section_menu %}
+  {% include "economic/eco_partials/_ecommerce_navbar.html" %}
+{% endblock %}
+
+{% block content %}
+<div class="shop-page-wrapper py-4">
+  <div class="container-fluid">
+
+    {# ======================================================= #}
+    {# HERO PRINCIPAL                                           #}
+    {# ======================================================= #}
+    <section class="shop-hero row g-3 align-items-stretch mb-4">
+
+      <div class="col-lg-8">
+        <div class="shop-hero-main h-100 p-5 rounded-4 position-relative overflow-hidden">
+          <div class="hero-overlay"></div>
+
+          <div class="hero-content position-relative text-light">
+            <div class="hero-badge mb-2">
+              <span class="badge bg-warning text-dark me-2">PRO</span>
+              <span class="badge bg-light text-dark">
+                <i class="fas fa-leaf text-success me-1"></i>
+                {% trans "Business & Impact social" %}
+              </span>
+            </div>
+
+            <h1 class="hero-title fw-bold mb-3">
+              {% trans "La marketplace professionnelle SOGENTIS" %}
+            </h1>
+
+            <p class="hero-subtitle mb-4">
+              {% trans "Achetez, équipez-vous, formez-vous et développez vos projets avec des solutions fiables et responsables." %}
+            </p>
+
+            <div class="hero-cta d-flex flex-wrap gap-2">
+              <a href="#shop-grid" class="btn btn-warning fw-semibold px-4">
+                <i class="fas fa-shopping-cart me-2"></i>
+                {% trans "Voir les produits" %}
+              </a>
+              <a href="#pro-services" class="btn btn-outline-light fw-semibold px-4">
+                <i class="fas fa-briefcase me-2"></i>
+                {% trans "Solutions professionnelles" %}
+              </a>
+            </div>
+
+            <div class="hero-meta small mt-3">
+              <i class="fas fa-lock text-success me-1"></i>
+              {% trans "Paiement sécurisé • Livraison fiable • Support professionnel" %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {# STATS & FLASH #}
+      <div class="col-lg-4 d-flex flex-column gap-3">
+
+        <div class="hero-stats card border-0 shadow-sm flex-fill">
+          <div class="card-body">
+            <h6 class="small fw-semibold text-muted mb-3">
+              {% trans "Indicateurs marketplace" %}
+            </h6>
+            <div class="row g-2 text-center">
+              <div class="col-6 stat-pill">
+                <div class="label">{% trans "Produits" %}</div>
+                <div class="value">{{ products.paginator.count|default:0 }}</div>
+              </div>
+              <div class="col-6 stat-pill">
+                <div class="label">{% trans "Catégories" %}</div>
+                <div class="value">{{ categories|length|default:0 }}</div>
+              </div>
+              <div class="col-6 stat-pill mt-1">
+                <div class="label">{% trans "Promotions" %}</div>
+                <div class="value">{{ promo_count|default:0 }}</div>
+              </div>
+              <div class="col-6 stat-pill mt-1">
+                <div class="label">{% trans "Clients pro" %}</div>
+                <div class="value">+500</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-flash card border-0 shadow-sm flex-fill">
+          <div class="card-body">
+            <div class="small text-danger fw-bold mb-1">
+              <i class="fas fa-bolt"></i> {% trans "Offres flash" %}
+            </div>
+            <h5 class="fw-bold">
+              {% trans "Jusqu’à -40 % sur les solutions digitales" %}
+            </h5>
+            <p class="small text-muted">
+              {% trans "Sites web, e-commerce, branding, formation et accompagnement." %}
+            </p>
+            <a href="#shop-grid" class="btn btn-sm btn-danger fw-semibold">
+              {% trans "Découvrir" %}
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    {# ======================================================= #}
+    {# BARRE AVANTAGES / USP                                   #}
+    {# ======================================================= #}
+    <section class="shop-usp mb-4">
+      <div class="row g-3 text-center">
+        <div class="col-md-3">
+          <i class="fas fa-truck fa-2x text-primary mb-2"></i>
+          <div class="fw-semibold">{% trans "Livraison fiable" %}</div>
+          <small class="text-muted">{% trans "Suivi & transparence" %}</small>
+        </div>
+        <div class="col-md-3">
+          <i class="fas fa-shield-alt fa-2x text-success mb-2"></i>
+          <div class="fw-semibold">{% trans "Paiement sécurisé" %}</div>
+          <small class="text-muted">{% trans "Protection acheteur" %}</small>
+        </div>
+        <div class="col-md-3">
+          <i class="fas fa-headset fa-2x text-warning mb-2"></i>
+          <div class="fw-semibold">{% trans "Support pro" %}</div>
+          <small class="text-muted">{% trans "Accompagnement humain" %}</small>
+        </div>
+        <div class="col-md-3">
+          <i class="fas fa-leaf fa-2x text-info mb-2"></i>
+          <div class="fw-semibold">{% trans "Impact social" %}</div>
+          <small class="text-muted">{% trans "Achats responsables" %}</small>
+        </div>
+      </div>
+    </section>
+
+    {# ======================================================= #}
+    {# TOOLBAR + LAYOUT                                        #}
+    {# ======================================================= #}
+    {% include "economic/eco_partials/_shop_toolbar.html" %}
+
+    <section class="shop-layout row g-4">
+
+      <aside class="col-lg-3 col-xl-2">
+        {% include "economic/eco_partials/_shop_sidebar.html" %}
+      </aside>
+
+      <section class="col-lg-9 col-xl-10">
+
+        {% include "economic/eco_partials/_featured_products.html" %}
+        {% include "economic/eco_partials/_product_grid.html" %}
+        {% include "economic/eco_partials/_pro_services.html" %}
+
+        {# Packs business #}
+        {% include "economic/eco_partials/_business_packs.html" %}
+
+        {# Avis clients #}
+        {% include "economic/eco_partials/_trust_reviews.html" %}
+
+      </section>
+    </section>
+
+    {# ======================================================= #}
+    {# VIDÉO & STORYTELLING (FIN)                               #}
+    {# ======================================================= #}
+    <section class="shop-video container my-5">
+      <div class="row align-items-center g-4">
+        <div class="col-md-6">
+          <h3 class="fw-bold">{% trans "SOGENTIS en action" %}</h3>
+          <p class="text-muted">
+            {% trans "Découvrez comment nos solutions transforment des projets économiques et sociaux sur le terrain." %}
+          </p>
+        </div>
+        <div class="col-md-6">
+          <video controls class="w-100 rounded shadow">
+            <source src="{% static 'economic/videos/sogentis_marketplace.mp4' %}" type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'economic/js/shop.js' %}"></script>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# economic/shop.html #}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{# ================== SEO ================== #}
+{% block seo_title %}SOGENTIS — Marketplace Pro & Solutions{% endblock %}
+{% block seo_description %}
+Découvrez les produits, services et solutions professionnelles du pôle économique SOGENTIS :
+équipements, formation, digital, énergie, packs business et plus encore.
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'economic/css/shop.css' %}">
+{% endblock %}
+
+{% block section_menu %}
+{% include "economic/eco_partials/_ecommerce_navbar.html" %}
+{% endblock %}
+
+{% block content %}
+<div class="shop-page-wrapper py-4">
+
+  <div class="container-fluid">
+
+    {# ======================================================= #}
+    {#  HERO PRINCIPAL + STATS CATALOGUE                        #}
+    {# ======================================================= #}
+    <section class="shop-hero row g-3 align-items-stretch mb-4">
+
+      {# HERO MAIN #}
+      <div class="col-lg-8">
+        <div class="shop-hero-main h-100 p-5 rounded-4 position-relative overflow-hidden">
+          <div class="hero-overlay"></div>
+          <div class="hero-content position-relative text-light">
+
+            <div class="hero-badge mb-2">
+              <span class="badge bg-warning text-dark me-2">PRO</span>
+              <span class="badge bg-light text-dark">
+                <i class="fas fa-leaf text-success me-1"></i> {% trans "Économie & Impact social" %}
+              </span>
+            </div>
+
+            <h1 class="hero-title fw-bold mb-3">
+              {% trans "Marketplace professionnelle SOGENTIS" %}
+            </h1>
+
+            <p class="hero-subtitle mb-4">
+              {% trans "Produits, services et solutions pour entrepreneurs, ONG, écoles et organisations." %}
+            </p>
+
+            <div class="hero-cta d-flex flex-wrap gap-2">
+              <a href="#shop-grid" class="btn btn-warning fw-semibold px-4">
+                <i class="fas fa-shopping-cart me-2"></i> {% trans "Commencer mes achats" %}
+              </a>
+              <a href="#pro-services" class="btn btn-outline-light fw-semibold px-4">
+                <i class="fas fa-briefcase me-2"></i> {% trans "Découvrir les services pro" %}
+              </a>
+            </div>
+
+            <div class="hero-meta small mt-3">
+              <i class="fas fa-check-circle text-success me-1"></i>
+              {% trans "Paiements sécurisés, accompagnement personnalisé, impact mesurable." %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {# HERO STATS & FLASH DEALS #}
+      <div class="col-lg-4 d-flex flex-column gap-3">
+
+        {# Stats catalogue #}
+        <div class="hero-stats card border-0 shadow-sm flex-fill">
+          <div class="card-body">
+            <h6 class="small fw-semibold text-muted mb-3">{% trans "Aperçu du catalogue" %}</h6>
+            <div class="row g-2 text-center">
+              <div class="col-6 stat-pill">
+                <div class="label">{% trans "Produits vedettes" %}</div>
+                <div class="value">{{ featured_products|length|default:0 }}</div>
+              </div>
+              <div class="col-6 stat-pill">
+                <div class="label">{% trans "Catégories" %}</div>
+                <div class="value">{{ categories|length|default:0 }}</div>
+              </div>
+              <div class="col-6 stat-pill mt-1">
+                <div class="label">{% trans "En promo" %}</div>
+                <div class="value">{{ products.paginator.count|default:0 }}</div>
+              </div>
+              <div class="col-6 stat-pill mt-1">
+                <div class="label">{% trans "Flash deals" %}</div>
+                <div class="value">∞</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {# Flash deals #}
+        <div class="hero-flash card border-0 shadow-sm flex-fill position-relative overflow-hidden">
+          <div class="card-body d-flex flex-column justify-content-center">
+            <div class="small text-danger fw-bold text-uppercase mb-1">
+              <i class="fas fa-bolt me-1"></i> {% trans "Flash deals aujourd'hui" %}
+            </div>
+            <h5 class="fw-bold mb-1">{% trans "- Jusqu’à 40% sur les packs digitaux" %}</h5>
+            <p class="small text-muted mb-3">{% trans "Sites web, e-commerce, branding, formations en ligne et accompagnement." %}</p>
+            <a href="#shop-grid" class="btn btn-sm btn-danger fw-semibold px-3">
+              {% trans "Voir les offres" %}
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    {# ======================================================= #}
+    {# TOOLBAR FILTRES + RECHERCHE                               #}
+    {# ======================================================= #}
+    {% include "economic/eco_partials/_shop_toolbar.html" %}
+
+    {# ======================================================= #}
+    {# LAYOUT PRINCIPAL : SIDEBAR + GRILLE PRODUITS             #}
+    {# ======================================================= #}
+    <section class="shop-layout row g-3 g-md-4">
+
+      {# SIDEBAR FILTRES #}
+      <aside class="col-lg-3 col-xl-2">
+        {% include "economic/eco_partials/_shop_sidebar.html" %}
+      </aside>
+
+      {# CONTENU PRODUITS #}
+      <section class="col-lg-9 col-xl-10">
+
+        {# Flash deals / produits vedettes #}
+        {% include "economic/eco_partials/_featured_products.html" %}
+
+        {# Grille produits #}
+        {% include "economic/eco_partials/_product_grid.html" %}
+
+        {# Section services pro #}
+        {% include "economic/eco_partials/_pro_services.html" %}
+
+      </section>
+
+    </section>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'economic/js/shop.js' %}"></script>
+{% endblock %}
+ {% endcomment %}
+
+
+
+
+
+{% comment %} {# economic/shop.html #}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{# ================== SEO ================== #}
+{% block seo_title %}SOGENTIS — Marketplace Pro & Solutions{% endblock %}
+{% block seo_description %}
+    Découvrez les produits, services et solutions professionnelles du pôle économique SOGENTIS :
+    équipements, formation, digital, énergie, packs business et plus encore.
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'economic/css/shop.css' %}">
+{% endblock %}
+
+{# ================== MENU SECONDAIRE (NAVBAR E-COM) ================== #}
+{% block section_menu %}
+    {% include "economic/eco_partials/_ecommerce_navbar.html" %}
+{% endblock %}
+
+{% block content %}
+<div class="shop-page-wrapper py-3 py-md-4">
+
+  <div class="container-fluid">
+
+    {# ======================================================= #}
+    {#  HERO + BARRE D'INFOS (style marketplace premium)       #}
+    {# ======================================================= #}
+    <section class="shop-hero row g-3 align-items-stretch mb-4">
+
+      <div class="col-lg-8">
+        <div class="shop-hero-main h-100 p-4 p-md-5 rounded-4 position-relative overflow-hidden">
+          <div class="hero-overlay"></div>
+
+          <div class="hero-content position-relative">
+            <div class="hero-badge mb-2">
+              <span class="badge bg-warning text-dark me-2">PRO</span>
+              <span class="badge bg-light text-dark">
+                <i class="fas fa-leaf text-success me-1"></i>
+                {% trans "Économie & Impact social" %}
+              </span>
+            </div>
+
+            <h1 class="hero-title fw-bold mb-2">
+              {% trans "Marketplace professionnelle SOGENTIS" %}
+            </h1>
+
+            <p class="hero-subtitle mb-3 mb-md-4">
+              {% trans "Produits, services et solutions pour entrepreneurs, ONG, écoles et organisations." %}
+            </p>
+
+            <div class="hero-cta d-flex flex-wrap gap-2">
+              <a href="#shop-grid" class="btn btn-warning fw-semibold px-4">
+                <i class="fas fa-shopping-cart me-2"></i> {% trans "Commencer mes achats" %}
+              </a>
+              <a href="#pro-services" class="btn btn-outline-light fw-semibold px-4">
+                <i class="fas fa-briefcase me-2"></i> {% trans "Découvrir les services pro" %}
+              </a>
+            </div>
+
+            <div class="hero-meta small text-light mt-3">
+              <i class="fas fa-check-circle me-1 text-success"></i>
+              {% trans "Paiements sécurisés, accompagnement personnalisé, impact mesurable." %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {# Colonne droite : mini-stats & flash deal #}
+      <div class="col-lg-4">
+        <div class="shop-hero-side h-100 d-flex flex-column gap-3">
+
+          <div class="hero-stats card border-0 shadow-sm h-50">
+            <div class="card-body d-flex flex-column justify-content-center">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <div class="fw-semibold small text-muted text-uppercase">{% trans "Aperçu du catalogue" %}</div>
+                <span class="badge bg-primary-subtle text-primary fw-semibold">
+                  {{ products.paginator.count }} {% trans "produits" %}
+                </span>
+              </div>
+              <div class="row g-2 small">
+                <div class="col-6">
+                  <div class="stat-pill">
+                    <div class="label">{% trans "Produits vedettes" %}</div>
+                    <div class="value">{{ featured_products|length|default:0 }}</div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="stat-pill">
+                    <div class="label">{% trans "Catégories" %}</div>
+                    <div class="value">{{ categories|length|default:0 }}</div>
+                  </div>
+                </div>
+                <div class="col-6 mt-1">
+                  <div class="stat-pill">
+                    <div class="label">{% trans "En promo" %}</div>
+                    <div class="value">
+                      {% with promo_count=products.paginator.count %}
+                        ~{{ promo_count|default:0 }}
+                      {% endwith %}
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6 mt-1">
+                  <div class="stat-pill">
+                    <div class="label">{% trans "Flash deals" %}</div>
+                    <div class="value">∞</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {# Flash deal / bannière promo #}
+          <div class="hero-flash card border-0 shadow-sm h-50 position-relative overflow-hidden">
+            <div class="card-body d-flex flex-column justify-content-center">
+              <div class="small text-danger fw-bold text-uppercase mb-1">
+                <i class="fas fa-bolt me-1"></i> {% trans "Flash deals aujourd'hui" %}
+              </div>
+              <h5 class="fw-bold mb-1">
+                {% trans "- Jusqu’à 40% sur les packs digitaux" %}
+              </h5>
+              <p class="small text-muted mb-3">
+                {% trans "Sites web, e-commerce, branding, formations en ligne et accompagnement." %}
+              </p>
+              <a href="#shop-grid" class="btn btn-sm btn-danger px-3 fw-semibold">
+                {% trans "Voir les offres" %}
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
+    {# ======================================================= #}
+    {#        BARRE CATEGORIES & RECHERCHE AVANCÉE            #}
+    {# ======================================================= #}
+    <section class="shop-toolbar mb-3 mb-md-4">
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+
+        {# chips catégories #}
+        <div class="d-flex flex-wrap gap-2 flex-grow-1">
+          <a href="?"
+             class="chip-category {% if not active_category %}active{% endif %}">
+            <i class="fas fa-globe"></i> {% trans "Tout" %}
+          </a>
+          {% for cat in categories %}
+            <a href="?category={{ cat.slug }}"
+               class="chip-category {% if active_category and active_category.slug == cat.slug %}active{% endif %}">
+              <span class="chip-dot"></span> {{ cat.name }}
+            </a>
+          {% endfor %}
+        </div>
+
+        {# Recherche + tri #}
+        <div class="toolbar-right d-flex flex-wrap gap-2">
+
+          <form method="get" class="d-flex flex-nowrap gap-1">
+            {# on conserve la catégorie si déjà filtrée #}
+            {% if active_category %}
+              <input type="hidden" name="category" value="{{ active_category.slug }}">
+            {% endif %}
+
+            <input type="text"
+                   name="search"
+                   value="{{ search }}"
+                   class="form-control form-control-sm"
+                   placeholder="{% trans 'Rechercher un produit, un service…' %}">
+            <button type="submit" class="btn btn-sm btn-outline-secondary">
+              <i class="fas fa-search"></i>
+            </button>
+          </form>
+
+          <form method="get" class="d-flex flex-nowrap gap-1">
+            {% if active_category %}
+              <input type="hidden" name="category" value="{{ active_category.slug }}">
+            {% endif %}
+            {% if search %}
+              <input type="hidden" name="search" value="{{ search }}">
+            {% endif %}
+            <select name="sort" class="form-select form-select-sm" onchange="this.form.submit()">
+              <option value="">{% trans "Tri : recommandés" %}</option>
+              <option value="price_asc"  {% if sort == "price_asc" %}selected{% endif %}>
+                {% trans "Prix croissant" %}
+              </option>
+              <option value="price_desc" {% if sort == "price_desc" %}selected{% endif %}>
+                {% trans "Prix décroissant" %}
+              </option>
+              <option value="newest" {% if sort == "newest" %}selected{% endif %}>
+                {% trans "Nouveautés" %}
+              </option>
+              <option value="rating" {% if sort == "rating" %}selected{% endif %}>
+                {% trans "Mieux notés" %}
+              </option>
+              <option value="sold" {% if sort == "sold" %}selected{% endif %}>
+                {% trans "Top ventes" %}
+              </option>
+            </select>
+          </form>
+
+        </div>
+      </div>
+    </section>
+
+    {# ======================================================= #}
+    {#          LAYOUT PRINCIPAL : SIDEBAR + GRID             #}
+    {# ======================================================= #}
+    <section class="shop-layout row g-3 g-md-4">
+
+      {# ====================== SIDEBAR ====================== #}
+      <aside class="col-lg-3 col-xl-2">
+
+        <div class="filters-card card border-0 shadow-sm mb-3">
+          <div class="card-header bg-white border-0 pb-0">
+            <h6 class="fw-bold mb-0">
+              <i class="fas fa-sliders-h me-2 text-primary"></i>
+              {% trans "Filtres avancés" %}
+            </h6>
+          </div>
+          <div class="card-body">
+
+            <form method="get" class="filters-form">
+
+              {% if active_category %}
+                <input type="hidden" name="category" value="{{ active_category.slug }}">
+              {% endif %}
+              {% if search %}
+                <input type="hidden" name="search" value="{{ search }}">
+              {% endif %}
+              {% if sort %}
+                <input type="hidden" name="sort" value="{{ sort }}">
+              {% endif %}
+
+              {# Prix #}
+              <div class="mb-3">
+                <label class="form-label small fw-semibold">
+                  {% trans "Fourchette de prix (XOF)" %}
+                </label>
+                <div class="d-flex gap-2">
+                  <input type="number" name="min" class="form-control form-control-sm"
+                         placeholder="{% trans 'Min' %}" value="{{ min_price }}">
+                  <input type="number" name="max" class="form-control form-control-sm"
+                         placeholder="{% trans 'Max' %}" value="{{ max_price }}">
+                </div>
+              </div>
+
+              {# Promo #}
+              <div class="mb-3">
+                <label class="form-label small fw-semibold d-block">
+                  {% trans "Promotions" %}
+                </label>
+                <div class="form-check small">
+                  <input class="form-check-input" type="checkbox" value="1" id="promo"
+                         name="promo" {% if promo_only %}checked{% endif %}>
+                  <label class="form-check-label" for="promo">
+                    {% trans "Uniquement les produits en promotion" %}
+                  </label>
+                </div>
+              </div>
+
+              {# Nouveautés #}
+              <div class="mb-3">
+                <label class="form-label small fw-semibold d-block">
+                  {% trans "Nouveautés" %}
+                </label>
+                <div class="form-check small">
+                  <input class="form-check-input" type="checkbox" value="1" id="new"
+                         name="new" {% if new_only %}checked{% endif %}>
+                  <label class="form-check-label" for="new">
+                    {% trans "Afficher uniquement les nouveautés" %}
+                  </label>
+                </div>
+              </div>
+
+              {# Notes #}
+              <div class="mb-3">
+                <label class="form-label small fw-semibold d-block">
+                  {% trans "Note minimale" %}
+                </label>
+                <div class="rating-filter d-flex flex-column gap-1 small">
+                  {% for r in "5,4,3,2,1"|cut:"," %}
+                    <label class="form-check-label">
+                      <input type="radio" name="min_rating" value="{{ r }}"
+                             class="form-check-input me-1"
+                             {% if request.GET.min_rating == r %}checked{% endif %}>
+                      {% for i in "12345"|make_list %}
+                        {% if i|add:"0" <= r %}
+                          <span class="text-warning">★</span>
+                        {% else %}
+                          <span class="text-muted">★</span>
+                        {% endif %}
+                      {% endfor %}
+                      <span class="text-muted"> {% trans "et plus" %}</span>
+                    </label>
+                  {% endfor %}
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-sm w-100 mt-1">
+                <i class="fas fa-filter me-1"></i> {% trans "Appliquer" %}
+              </button>
+
+            </form>
+          </div>
+        </div>
+
+        {# bloc suggestion pro #}
+        <div class="card border-0 shadow-sm d-none d-lg-block">
+          <div class="card-body small">
+            <h6 class="fw-bold mb-2">
+              <i class="fas fa-briefcase me-1 text-success"></i>
+              {% trans "Solutions professionnelles" %}
+            </h6>
+            <ul class="list-unstyled mb-0">
+              <li>• {% trans "Pack e-commerce complet" %}</li>
+              <li>• {% trans "Création de site institutionnel" %}</li>
+              <li>• {% trans "Formation marketing digital" %}</li>
+            </ul>
+          </div>
+        </div>
+
+      </aside>
+
+      {# ====================== CONTENU PRINCIPAL ====================== #}
+      <section class="col-lg-9 col-xl-10">
+
+        {# ================== SECTION FLASH DEALS / VEDETTES ================== #}
+        {% if featured_products %}
+        <div class="featured-strip card border-0 shadow-sm mb-3 mb-md-4">
+          <div class="card-body py-3 py-md-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <div class="d-flex align-items-center gap-2">
+                <span class="badge bg-danger text-white fw-semibold">
+                  <i class="fas fa-bolt me-1"></i> {% trans "Flash Deals & Vedettes" %}
+                </span>
+                <span class="small text-muted d-none d-md-inline">
+                  {% trans "Produits mis en avant pour leur rapport qualité / impact." %}
+                </span>
+              </div>
+              <div class="small text-muted">
+                {% trans "Sélection dynamique SOGENTIS" %}
+              </div>
+            </div>
+
+            <div class="featured-scroll d-flex gap-3 overflow-auto pt-1">
+              {% for product in featured_products %}
+              <article class="featured-card-mini flex-shrink-0">
+                <a href="{% url 'econ:product_detail' product.slug %}" class="d-block text-decoration-none text-reset">
+                  <div class="img-wrap">
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                    {% if product.is_flash_sale %}
+                      <span class="badge badge-flash">FLASH</span>
+                    {% endif %}
+                  </div>
+                  <div class="mini-body">
+                    <div class="mini-title small fw-semibold">
+                      {{ product.name|truncatechars:40 }}
+                    </div>
+                    <div class="mini-price">
+                      {% if product.has_promo %}
+                        <span class="price-main text-danger fw-bold">
+                          {{ product.discounted_price|floatformat:0 }} XOF
+                        </span>
+                        <span class="price-old text-muted small">
+                          <s>{{ product.price|floatformat:0 }} XOF</s>
+                        </span>
+                      {% else %}
+                        <span class="price-main text-primary fw-bold">
+                          {{ product.price|floatformat:0 }} XOF
+                        </span>
+                      {% endif %}
+                    </div>
+                  </div>
+                </a>
+              </article>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        {% endif %}
+
+        {# ================== GRILLE PRODUITS ================== #}
+        <div id="shop-grid" class="shop-grid-wrapper">
+
+          {% if products %}
+
+          <div class="row g-2 g-md-3 g-xl-4">
+            {% for product in products %}
+
+            <div class="col-6 col-md-4 col-lg-3 col-xxl-2 d-flex">
+              <article class="product-card-premium flex-fill">
+
+                <div class="product-media">
+                  <a href="{% url 'econ:product_detail' product.slug %}">
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-img-main">
+                  </a>
+
+                  {# badges promo / flash / new / custom #}
+                  <div class="badges-top">
+                    {% if product.has_promo %}
+                      <span class="badge badge-discount">
+                        -{{ product.promo_percent }}%
+                      </span>
+                    {% endif %}
+                    {% if product.is_new %}
+                      <span class="badge badge-new">
+                        {% trans "Nouveau" %}
+                      </span>
+                    {% endif %}
+                    {% if product.is_flash_sale %}
+                      <span class="badge badge-flash">
+                        <i class="fas fa-bolt"></i>
+                      </span>
+                    {% endif %}
+                    {% if product.badge_text %}
+                      <span class="badge badge-custom">
+                        {{ product.badge_text }}
+                      </span>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="product-body px-2 pb-2 pt-1 pt-md-2">
+
+                  <h6 class="product-title mb-1">
+                    <a href="{% url 'econ:product_detail' product.slug %}">
+                      {{ product.name|truncatechars:55 }}
+                    </a>
+                  </h6>
+
+                  <div class="product-price-zone mb-1">
+                    {% if product.has_promo %}
+                      <div class="d-flex align-items-baseline gap-1">
+                        <span class="price-main text-danger fw-bold">
+                          {{ product.discounted_price|floatformat:0 }} XOF
+                        </span>
+                        <span class="price-old text-muted small">
+                          <s>{{ product.price|floatformat:0 }} XOF</s>
+                        </span>
+                      </div>
+                    {% else %}
+                      <div class="price-main text-primary fw-bold">
+                        {{ product.price|floatformat:0 }} XOF
+                      </div>
+                    {% endif %}
+                  </div>
+
+                  <div class="product-meta-row d-flex justify-content-between align-items-center mb-1 small">
+                    <div class="rating-zone">
+                      <span class="text-warning">
+                        {% for i in "12345"|make_list %}
+                          {% if product.rating|floatformat:0 >= i %}
+                            ★
+                          {% else %}
+                            ☆
+                          {% endif %}
+                        {% endfor %}
+                      </span>
+                      <span class="text-muted ms-1">
+                        ({{ product.reviews_count }})
+                      </span>
+                    </div>
+                    <div class="sales-zone text-muted">
+                      {{ product.sold_count|default:0 }} {% trans "ventes" %}
+                    </div>
+                  </div>
+
+                  <div class="product-footer d-flex align-items-center gap-1">
+                    <form method="post"
+                          action="{% url 'econ:add_to_cart' product.slug %}"
+                          class="flex-grow-1">
+                      {% csrf_token %}
+                      <button type="submit"
+                              class="btn btn-sm btn-warning w-100 fw-semibold">
+                        <i class="fas fa-cart-plus me-1"></i>
+                        {% trans "Ajouter" %}
+                      </button>
+                    </form>
+
+                    <button type="button" class="btn btn-sm btn-outline-secondary">
+                      <i class="far fa-heart"></i>
+                    </button>
+                  </div>
+
+                  {% if not product.in_stock %}
+                    <div class="mt-1">
+                      <span class="badge bg-secondary w-100">
+                        {% trans "Rupture de stock" %}
+                      </span>
+                    </div>
+                  {% endif %}
+
+                </div>
+              </article>
+            </div>
+
+            {% endfor %}
+          </div>
+
+          {# Pagination #}
+          {% if products.paginator.num_pages > 1 %}
+          <nav class="mt-4">
+            <ul class="pagination justify-content-center pagination-sm">
+              {% if products.has_previous %}
+                <li class="page-item">
+                  <a class="page-link"
+                     href="?page={{ products.previous_page_number }}{% if active_category %}&category={{ active_category.slug }}{% endif %}{% if search %}&search={{ search }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}">
+                    &laquo;
+                  </a>
+                </li>
+              {% endif %}
+
+              {% for num in products.paginator.page_range %}
+                <li class="page-item {% if products.number == num %}active{% endif %}">
+                  <a class="page-link"
+                     href="?page={{ num }}{% if active_category %}&category={{ active_category.slug }}{% endif %}{% if search %}&search={{ search }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}">
+                    {{ num }}
+                  </a>
+                </li>
+              {% endfor %}
+
+              {% if products.has_next %}
+                <li class="page-item">
+                  <a class="page-link"
+                     href="?page={{ products.next_page_number }}{% if active_category %}&category={{ active_category.slug }}{% endif %}{% if search %}&search={{ search }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}">
+                    &raquo;
+                  </a>
+                </li>
+              {% endif %}
+            </ul>
+          </nav>
+          {% endif %}
+
+          {% else %}
+          <div class="text-center py-5">
+            <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+            <h5 class="fw-bold mb-1">
+              {% trans "Aucun produit trouvé" %}
+            </h5>
+            <p class="text-muted mb-3">
+              {% trans "Essayez de modifier les filtres, la catégorie ou les mots-clés de recherche." %}
+            </p>
+            <a href="?" class="btn btn-outline-primary btn-sm">
+              {% trans "Réinitialiser les filtres" %}
+            </a>
+          </div>
+          {% endif %}
+
+        </div>
+
+        {# ================== SECTION SERVICES PRO ================== #}
+        <section id="pro-services" class="pro-services-section py-4">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body">
+              <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold mb-0">
+                  <i class="fas fa-briefcase me-2 text-success"></i>
+                  {% trans "Services professionnels SOGENTIS" %}
+                </h5>
+                <span class="small text-muted">
+                  {% trans "Accompagnement, digitalisation, formation et impact social." %}
+                </span>
+              </div>
+
+              <div class="row g-3">
+                <div class="col-md-4">
+                  <div class="service-pill h-100">
+                    <h6 class="fw-bold mb-1">{% trans "Création de site & e-commerce" %}</h6>
+                    <p class="small text-muted mb-1">
+                      {% trans "Sites modernes, sécurisés, adaptés à vos besoins." %}
+                    </p>
+                    <span class="badge bg-success-subtle text-success small">
+                      {% trans "Pack clé en main" %}
+                    </span>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="service-pill h-100">
+                    <h6 class="fw-bold mb-1">{% trans "Formations & coaching" %}</h6>
+                    <p class="small text-muted mb-1">
+                      {% trans "Digital, entrepreneuriat, gestion de projet, impact." %}
+                    </p>
+                    <span class="badge bg-primary-subtle text-primary small">
+                      {% trans "Programmes sur mesure" %}
+                    </span>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="service-pill h-100">
+                    <h6 class="fw-bold mb-1">{% trans "Solutions solidaires & ONG" %}</h6>
+                    <p class="small text-muted mb-1">
+                      {% trans "Outils pour ONG, écoles, coopératives et associations." %}
+                    </p>
+                    <span class="badge bg-warning-subtle text-warning small">
+                      {% trans "Impact mesurable" %}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+      </section>
+
+    </section>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'economic/js/shop.js' %}"></script>
+{% endblock %} {% endcomment %}

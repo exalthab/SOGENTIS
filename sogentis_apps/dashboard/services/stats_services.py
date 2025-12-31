@@ -1,7 +1,7 @@
 from django.db.models import Count, Sum
 from django.db.models.functions import ExtractYear
 from social.models import Donation, Engagement, Project
-from accounts_users.models.users_profile import UserProfile
+from accounts_users.models.users_economic_profile import UserProfile
 
 def get_dashboard_stats(user=None):
     """

@@ -100,6 +100,10 @@ LANGUAGE_COOKIE_SAMESITE = "Lax"
 #     "django.template.context_processors.i18n",
 # ============================================================
 
+# ============================================================
+# 💱 7) Devise par défaut pour l'e-commerce
+# ============================================================
+ECOMMERCE_CURRENCY = "XOF"   # XOF, EUR, USD, XAF…
 
 
 

@@ -1,0 +1,164 @@
+/* =====================================================
+   ECONOMIC HUB — SOGENTIS
+   ===================================================== */
+
+/* =====================================================
+   HERO
+   ===================================================== */
+
+.eco-hero {
+    position: relative;
+    height: 60vh;
+    min-height: 420px;
+    background: url("/static/global/image/eco-bg.jpg") center / cover no-repeat;
+    display: flex;
+    align-items: center;
+    color: #ffffff;
+}
+
+.eco-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        120deg,
+        rgba(20, 0, 40, 0.88),
+        rgba(76, 29, 149, 0.78)
+    );
+}
+
+.eco-hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+.eco-title {
+    font-size: clamp(2.3rem, 4vw, 3.6rem);
+    font-weight: 700;
+}
+
+.eco-subtitle {
+    max-width: 720px;
+    margin: 1rem auto 0;
+    font-size: 1.15rem;
+    opacity: 0.95;
+}
+
+/* =====================================================
+   CARDS
+   ===================================================== */
+
+.eco-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 2rem;
+    border-radius: 1.4rem;
+    background: #ffffff;
+    text-decoration: none;
+    color: #212529;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.eco-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.14);
+}
+
+/* Icon */
+.eco-card-icon {
+    font-size: 2.6rem;
+    color: #6f42c1;
+    margin-bottom: 1.1rem;
+}
+
+/* Content */
+.eco-card-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 0.6rem;
+}
+
+.eco-card-text {
+    flex-grow: 1;
+    font-size: 0.95rem;
+    color: #555555;
+}
+
+/* Footer */
+.eco-card-footer {
+    margin-top: 1.4rem;
+}
+
+.eco-link {
+    font-weight: 600;
+    color: #6f42c1;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+/* =====================================================
+   LOCKED STATE
+   ===================================================== */
+
+.eco-card-locked {
+    cursor: not-allowed;
+    overflow: hidden;
+}
+
+.eco-card-locked::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(30, 18, 60, 0.65);
+    z-index: 2;
+}
+
+.eco-card-locked::after {
+    content: "🔒 Accès réservé";
+    position: absolute;
+    bottom: 1.2rem;
+    right: 1.2rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #e9d5ff;
+    z-index: 3;
+}
+
+/* Désaturation du contenu */
+.eco-card-locked .eco-card-icon,
+.eco-card-locked .eco-card-body,
+.eco-card-locked .eco-card-footer {
+    opacity: 0.35;
+    filter: grayscale(100%);
+}
+
+/* Désactive le hover */
+.eco-card-locked:hover {
+    transform: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* =====================================================
+   CTA
+   ===================================================== */
+
+.eco-cta {
+    background: linear-gradient(120deg, #4c1d95, #6f42c1);
+    color: #ffffff;
+    padding: 4rem 1rem;
+}
+
+.eco-cta h2 {
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+}
+
+.eco-cta p {
+    opacity: 0.95;
+    margin-bottom: 1.8rem;
+}

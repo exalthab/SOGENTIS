@@ -1,0 +1,29 @@
+{# templates/social/receipt_email.html #}
+{% load i18n %}
+<div style="font-family:Arial,sans-serif; color:#222; line-height:1.6; max-width:640px; margin:auto;">
+  <div style="padding:18px 18px 10px; border:1px solid #eee; border-radius:12px;">
+    <h2 style="margin:0 0 6px; font-size:20px;">{% trans "Merci pour votre don !" %}</h2>
+    <p style="margin:0 0 14px; color:#666;">
+      {% trans "Votre contribution aide directement les actions sociales de SOGENTIS." %}
+    </p>
+
+    <div style="background:#f7f7f7; padding:12px 14px; border-radius:10px; margin:10px 0 14px;">
+      <div><strong>{% trans "Montant" %}</strong> : {{ donation.amount }} FCFA</div>
+      <div><strong>{% trans "Date" %}</strong> : {{ donation.created_at|date:"d/m/Y H:i" }}</div>
+      <div><strong>{% trans "Statut" %}</strong> : {{ donation.get_status_display }}</div>
+      <div><strong>{% trans "Paiement" %}</strong> : {{ donation.get_payment_method_display }}</div>
+      {% if donation.project %}
+        <div><strong>{% trans "Projet" %}</strong> : {{ donation.project.title }}</div>
+      {% endif %}
+    </div>
+
+    <p style="margin:0 0 10px;">{% trans "Votre reçu officiel est en pièce jointe (PDF)." %}</p>
+    <p style="margin:0; color:#666; font-size:12px;">
+      {% trans "Si vous n’êtes pas à l’origine de ce don, merci de nous contacter." %}
+    </p>
+  </div>
+
+  <p style="text-align:center; color:#888; font-size:12px; margin:10px 0 0;">
+    SOGENTIS — Rufisque, Dakar • contact@sogentis.org
+  </p>
+</div>

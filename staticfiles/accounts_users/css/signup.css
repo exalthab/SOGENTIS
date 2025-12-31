@@ -1,35 +1,210 @@
-/* ✅ Signup.css : mise en forme du formulaire d'inscription */
-.auth-form-container {
+/* ----------------------------- *
+          Général
+* ----------------------------- */
+
+/* Card et conteneur principal */
+.auth-shell {
   background-color: #f8f9fa;
   padding: 2rem;
-  border-radius: 8px;
 }
 
-.card {
-  border-radius: 12px;
+.auth-card {
+  max-width: 600px;
+  margin: 0 auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  background-color: white;
+}
+
+.card-body {
+  padding: 2rem;
+}
+
+.text-muted {
+  font-size: 0.875rem;
+}
+
+.text-center {
+  text-align: center;
 }
 
 .form-label {
-  font-weight: 500;
-  color: #333;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
 }
 
-.btn-success {
-  background-color: #198754;
-  border-color: #198754;
+/* Bouton */
+.btn-lg {
+  font-size: 1.25rem;
 }
 
-.btn-success:hover {
-  background-color: #157347;
-  border-color: #146c43;
+/* Message d'alerte */
+.alert {
+  margin-bottom: 1.5rem;
+  border-radius: 0.25rem;
 }
 
-.text-danger.small {
-  font-size: 0.85rem;
+/* Espacement des sections */
+.mt-3 {
+  margin-top: 1rem;
+}
+.mt-4 {
+  margin-top: 1.5rem;
+}
+.mb-3 {
+  margin-bottom: 1rem;
+}
+.mb-4 {
+  margin-bottom: 1.5rem;
 }
 
-.form-control,
-.form-select {
-  border-radius: 6px;
+/* ----------------------------- *
+          Formulaire
+* ----------------------------- */
+
+/* Style de base pour les champs de formulaire */
+.form-control {
+  padding: 0.8rem 1.25rem;
+  font-size: 1rem;
+  border-radius: 0.25rem;
+  border: 1px solid #ced4da;
+  transition: all 0.3s ease;
 }
 
+.form-control:focus {
+  border-color: #66afe9;
+  box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
+}
+
+/* Champs de texte (email, mot de passe, téléphone) */
+.password-strong, .password-confirm, .email-field {
+  background-color: #f9f9f9;
+}
+
+.password-strong:focus, .password-confirm:focus, .email-field:focus {
+  background-color: #fff;
+}
+
+/* Champs avec erreur */
+.form-control.is-invalid {
+  border-color: #dc3545;
+  background-color: #f8d7da;
+}
+
+.form-control.is-valid {
+  border-color: #28a745;
+  background-color: #d4edda;
+}
+
+/* ----------------------------- *
+          Erreurs de validation
+* ----------------------------- */
+
+/* Les erreurs de validation apparaissent sous les champs de formulaire */
+.invalid-feedback {
+  display: block;
+  color: #dc3545;
+  font-size: 0.875rem;
+}
+
+/* ----------------------------- *
+          Fichiers (photo de profil, casier judiciaire)
+* ----------------------------- */
+
+/* Style pour l'aperçu de la photo de profil */
+.profile-preview {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-top: 1rem;
+  border: 2px solid #ced4da;
+}
+
+/* Prévisualisation du PDF (casier judiciaire) */
+#pdf-preview iframe {
+  width: 100%;
+  height: 300px;
+  border: none;
+}
+
+/* ----------------------------- *
+          Conditions d'utilisation
+* ----------------------------- */
+
+/* Case à cocher pour les conditions d'utilisation */
+.form-check-input:checked {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.form-check-label {
+  font-size: 0.875rem;
+}
+
+.form-check {
+  margin-bottom: 1rem;
+}
+
+/* ----------------------------- *
+          Téléphone
+* ----------------------------- */
+
+/* Champ téléphone avec placeholder */
+.form-control[placeholder^="+"] {
+  padding-left: 40px;
+  position: relative;
+}
+
+.form-control[placeholder^="+"]::before {
+  content: attr(placeholder);
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+}
+
+/* ----------------------------- *
+          Photo de profil
+* ----------------------------- */
+
+.form-control-file {
+  padding: 0.5rem;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+}
+
+/* ----------------------------- *
+          Animation des champs validés
+* ----------------------------- */
+
+.form-control.is-valid {
+  border-color: #28a745;
+}
+
+.form-control.is-invalid {
+  border-color: #dc3545;
+}
+
+/* ----------------------------- *
+          Formulaire: Réactivité
+* ----------------------------- */
+
+/* Taille des champs dans les petits écrans */
+@media (max-width: 576px) {
+  .auth-card {
+    max-width: 100%;
+  }
+
+  .form-control {
+    font-size: 0.9rem;
+  }
+}
+
+/* Ajout d'un padding supplémentaire pour la photo de profil sur petit écran */
+@media (max-width: 768px) {
+  .profile-preview {
+    width: 120px;
+    height: 120px;
+  }
+}
