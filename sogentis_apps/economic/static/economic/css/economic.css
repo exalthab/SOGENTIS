@@ -1,0 +1,131 @@
+/* static/economic/css/economic.css */
+
+/* =========================================================
+   ECONOMIC (Hub menu) - Production
+   ========================================================= */
+
+:root{
+  --eco-border: rgba(0,0,0,.08);
+  --eco-shadow: 0 10px 28px rgba(0,0,0,.10);
+  --eco-radius: 999px;
+
+  /* hauteur hub (utilisée par ecommerce.css pour sticky stack) */
+  --eco-hub-height: 56px;
+}
+
+/* ✅ Disabled links (safe-prod) */
+a.disabled,
+.eco-hub-link.disabled,
+.nav-link.disabled,
+.dropdown-item.disabled,
+.btn.disabled{
+  pointer-events:none;
+  opacity:.55;
+  cursor:not-allowed;
+  text-decoration:none !important;
+}
+
+/* =========================================================
+   HUB MENU
+   ========================================================= */
+.eco-hub-menu{
+  border-bottom: 1px solid var(--eco-border) !important;
+  position: sticky;
+  top: 0;
+  z-index: 1100;  /* hub au-dessus de tout */
+  background: #fff;
+}
+
+/* ✅ DESKTOP: pas de scrollbar, WRAP */
+.eco-hub-menu .container{
+  display:flex;
+  align-items:center;
+  gap:.75rem;
+  white-space:normal;
+  overflow:visible;
+  flex-wrap:wrap;
+}
+
+/* Links */
+.eco-hub-link{
+  display:inline-flex;
+  align-items:center;
+  gap:.45rem;
+  padding:.45rem .85rem;
+  border-radius: var(--eco-radius);
+  text-decoration:none;
+  color: inherit;
+  transition: background-color .15s ease, transform .15s ease;
+}
+.eco-hub-link:hover{
+  background: rgba(0,0,0,.04);
+  transform: translateY(-1px);
+}
+.eco-hub-link.active{
+  font-weight:800;
+  background: rgba(0,0,0,.06);
+}
+
+/* =========================================================
+   USER MENU (dropdown)
+   ========================================================= */
+.economic-user-menu .dropdown-toggle{
+  display:inline-flex;
+  align-items:center;
+  gap:.45rem;
+  padding:.45rem .85rem;
+  border-radius: var(--eco-radius);
+  text-decoration:none;
+  color: inherit;
+}
+.economic-user-menu .dropdown-toggle:hover{
+  background: rgba(0,0,0,.04);
+}
+.economic-user-menu .dropdown-menu{
+  border-radius: 14px;
+  border-color: var(--eco-border);
+  box-shadow: var(--eco-shadow);
+}
+.economic-user-menu .dropdown-item{
+  padding:.55rem .9rem;
+}
+
+/* ✅ MOBILE: scroll horizontal sans barre visible */
+@media (max-width: 992px){
+  :root{ --eco-hub-height: 64px; } /* hub plus haut en mobile */
+  .eco-hub-menu .container{
+    flex-wrap:nowrap;
+    white-space:nowrap;
+    overflow-x:auto;
+    overflow-y:hidden;
+  }
+  .eco-hub-menu .container::-webkit-scrollbar{ display:none; }
+}
+
+/* DARK MODE */
+[data-bs-theme="dark"]{
+  --eco-border: rgba(255,255,255,.12);
+  --eco-shadow: 0 14px 34px rgba(0,0,0,.35);
+}
+[data-bs-theme="dark"] .eco-hub-menu{
+  background: rgba(20,20,22,.92) !important;
+}
+[data-bs-theme="dark"] .eco-hub-link{
+  color: rgba(255,255,255,.92);
+}
+[data-bs-theme="dark"] .eco-hub-link:hover{
+  background: rgba(255,255,255,.08);
+}
+[data-bs-theme="dark"] .eco-hub-link.active{
+  background: rgba(255,255,255,.10);
+}
+[data-bs-theme="dark"] .economic-user-menu .dropdown-menu{
+  background: rgba(20,20,22,.98);
+  border-color: var(--eco-border);
+}
+[data-bs-theme="dark"] .economic-user-menu .dropdown-item{
+  color: rgba(255,255,255,.92);
+}
+[data-bs-theme="dark"] .economic-user-menu .dropdown-item:hover{
+  background: rgba(255,255,255,.08);
+}

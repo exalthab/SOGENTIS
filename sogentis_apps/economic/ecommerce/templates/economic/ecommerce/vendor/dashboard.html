@@ -1,3 +1,115 @@
+{# templates/economic/ecommerce/vendor/dashboard.html #}
+{% extends "economic/ecommerce/base_ecommerce.html" %}
+{% load i18n money %}
+
+{% block ecommerce_title %}
+  {% trans "Dashboard vendeur" %} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+  <h1 class="mb-4">📊 {% trans "Dashboard vendeur" %}</h1>
+
+  <div class="row g-3 mb-4">
+    <div class="col-12 col-md-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="text-muted small mb-1">{% trans "Ventes totales" %}</div>
+          <div class="h4 mb-0">
+            {% if stats.total_sales %}
+              {% money stats.total_sales %}
+            {% else %}
+              — 
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="text-muted small mb-1">{% trans "Commandes" %}</div>
+          <div class="h4 mb-0">
+            {{ stats.orders_count|default:0 }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="text-muted small mb-1">{% trans "Produits en ligne" %}</div>
+          <div class="h4 mb-0">
+            {{ stats.products_count|default:0 }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if recent_orders %}
+    <h2 class="h5 mb-3">{% trans "Dernières commandes" %}</h2>
+    <div class="card mb-4">
+      <div class="card-body table-responsive">
+        <table class="table align-middle mb-0">
+          <thead>
+            <tr>
+              <th>{% trans "Commande" %}</th>
+              <th>{% trans "Client" %}</th>
+              <th class="text-end">{% trans "Montant" %}</th>
+              <th>{% trans "Statut" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for o in recent_orders %}
+              <tr>
+                <td>{{ o.uuid }}</td>
+                <td>{{ o.billing_name }}</td>
+                <td class="text-end">{% money o.total_amount %}</td>
+                <td>{{ o.status_display|default:o.status }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  {% endif %}
+
+  {% if top_products %}
+    <h2 class="h5 mb-3">{% trans "Meilleures ventes" %}</h2>
+    <div class="card">
+      <div class="card-body table-responsive">
+        <table class="table align-middle mb-0">
+          <thead>
+            <tr>
+              <th>{% trans "Produit" %}</th>
+              <th class="text-end">{% trans "Ventes" %}</th>
+              <th class="text-end">{% trans "Montant" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in top_products %}
+              <tr>
+                <td>{{ p.name }}</td>
+                <td class="text-end">{{ p.total_quantity|default:0 }}</td>
+                <td class="text-end">{% money p.total_sales %}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}
+
+
+
+
+
+{% comment %} {# templates/economic/ecommerce/vendor/dashboard.html #}
 {% extends "main.html" %}
 {% load i18n %}
 
@@ -20,4 +132,4 @@
     <li>{% trans "Aucun produit" %}</li>
   {% endfor %}
 </ul>
-{% endblock %}
+{% endblock %} {% endcomment %}

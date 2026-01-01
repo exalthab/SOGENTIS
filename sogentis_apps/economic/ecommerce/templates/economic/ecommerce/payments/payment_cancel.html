@@ -1,4 +1,43 @@
-{% extends "main.html" %}
+{# templates/economic/ecommerce/payments/payment_cancel.html #}
+{% extends "economic/ecommerce/base_ecommerce.html" %}
+{% load i18n %}
+
+{% block ecommerce_title %}
+  {% trans "Paiement annulé" %} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block content %}
+<section class="container py-5 text-center">
+  <h1 class="mb-3">⚠️ {% trans "Le paiement a été annulé." %}</h1>
+
+  {% if order %}
+    <p class="mb-3">
+      {% trans "Commande" %} : <strong>{{ order.uuid }}</strong>
+    </p>
+  {% endif %}
+
+  <p class="text-muted mb-4">
+    {% trans "Vous pouvez réessayer le paiement ou choisir un autre moyen de paiement." %}
+  </p>
+
+  <div class="d-flex justify-content-center gap-2">
+    {% if order %}
+      <a href="{% url 'economic:ecommerce:choose_payment' order.uuid %}"
+         class="btn btn-primary">
+        {% trans "Reprendre le paiement" %}
+      </a>
+    {% endif %}
+    <a href="{% url 'economic:ecommerce:product_list' %}"
+       class="btn btn-outline-secondary">
+      {% trans "Retour à la boutique" %}
+    </a>
+  </div>
+</section>
+{% endblock %}
+
+
+
+{% comment %} {% extends "main.html" %}
 {% load i18n %}
 {% block title %}{% trans "Paiement annulé" %} | {{ PROJECT_NAME }}{% endblock %}
 {% block content %}
@@ -9,4 +48,4 @@
     {% trans "Réessayer" %}
   </a>
 </section>
-{% endblock %}
+{% endblock %} {% endcomment %}

@@ -1,4 +1,4 @@
-# sogentis_apps/economic/ecommerce/models/wishlist.py
+# economic/ecommerce/models/wishlist.py
 
 from django.conf import settings
 from django.db import models

@@ -1,3 +1,37 @@
+{# templates/economic/resources/partials/_resource_card.html #}
+{% load i18n %}
+
+{% url 'economic:resources:detail' resource.slug as resource_detail_url %}
+
+<div class="card h-100 shadow-sm">
+  <div class="card-body d-flex flex-column">
+
+    <h5 class="card-title">{{ resource.title }}</h5>
+
+    {% if resource.category %}
+      <span class="badge bg-light text-dark mb-2">
+        {{ resource.category.name }}
+      </span>
+    {% endif %}
+
+    <p class="card-text text-muted">
+      {{ resource.description|default:resource.summary|default:''|striptags|truncatechars:120 }}
+    </p>
+
+    <a href="{{ resource_detail_url|default:'#' }}"
+       class="btn btn-outline-primary mt-auto {% if not resource_detail_url %}disabled{% endif %}">
+      {% trans "Voir plus" %}
+    </a>
+
+  </div>
+</div>
+
+
+
+
+
+
+{% comment %} {# templates/economic/resources/partials/_resource_card.html #}
 {% load i18n %}
 
 <div class="card h-100 shadow-sm">
@@ -21,4 +55,4 @@
     </a>
 
   </div>
-</div>
+</div> {% endcomment %}

@@ -1,4 +1,218 @@
-{# core/partials/_menu_eco.html #}
+{# templates/economic/resources/partials/_menu_resources.html #}
+{% load static i18n %}
+
+{# ✅ URLs SAFE : aucune ne doit casser en prod #}
+{% url 'economic:ecommerce:index' as ecommerce_index_url %}
+{% url 'economic:services:index' as services_index_url %}
+{% url 'economic:formations:index' as formations_index_url %}
+{% url 'economic:b2b:index' as b2b_index_url %}
+{% url 'dashboard:vendor:home' as vendor_home_url %}
+
+{% url 'economic:ecommerce:search' as ecommerce_search_url %}
+{% url 'economic:ecommerce:wishlist' as wishlist_url %}
+{% url 'economic:ecommerce:cart' as cart_url %}
+{% url 'economic:ecommerce:order_list' as order_list_url %}
+
+{% url 'accounts_users_web:profile' as profile_url %}
+{% url 'accounts_users_web:logout' as logout_url %}
+{% url 'accounts_users_web:login' as login_url %}
+
+{% with rm=request.resolver_match %}
+<nav class="navbar navbar-expand-lg bg-white border-bottom shadow-sm sticky-top"
+     aria-label="{% trans 'Menu économique' %}">
+
+  <div class="container-fluid">
+
+    <!-- Branding -->
+    <a class="navbar-brand fw-semibold d-flex align-items-center {% if not ecommerce_index_url %}disabled{% endif %}"
+       href="{{ ecommerce_index_url|default:'#' }}">
+      <i class="fa-solid fa-store me-2"></i>
+      {% trans "Pôle Économique" %}
+    </a>
+
+    <!-- Toggle mobile -->
+    <button class="navbar-toggler" type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#ecoSubnav"
+            aria-controls="ecoSubnav"
+            aria-expanded="false"
+            aria-label="{% trans 'Basculer la navigation' %}">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Menu -->
+    <div class="collapse navbar-collapse" id="ecoSubnav">
+
+      <!-- Liens principaux -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+        <li class="nav-item">
+          <a class="nav-link {% if rm and rm.namespace == 'ecommerce' %}active{% endif %} {% if not ecommerce_index_url %}disabled{% endif %}"
+             href="{{ ecommerce_index_url|default:'#' }}">
+            <i class="fa-solid fa-bag-shopping me-1"></i>
+            {% trans "Boutique" %}
+          </a>
+        </li>
+
+        {# Catégories : si pas de page dédiée => boutique #}
+        <li class="nav-item">
+          <a class="nav-link {% if not ecommerce_index_url %}disabled{% endif %}"
+             href="{{ ecommerce_index_url|default:'#' }}">
+            <i class="fa-solid fa-grid-2 me-1"></i>
+            {% trans "Catégories" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link {% if rm and rm.namespace == 'services' %}active{% endif %} {% if not services_index_url %}disabled{% endif %}"
+             href="{{ services_index_url|default:'#' }}">
+            <i class="fa-solid fa-screwdriver-wrench me-1"></i>
+            {% trans "Services IT" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link {% if rm and rm.namespace == 'formations' %}active{% endif %} {% if not formations_index_url %}disabled{% endif %}"
+             href="{{ formations_index_url|default:'#' }}">
+            <i class="fa-solid fa-chalkboard-user me-1"></i>
+            {% trans "Formations" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link {% if rm and rm.namespace == 'b2b' %}active{% endif %} {% if not b2b_index_url %}disabled{% endif %}"
+             href="{{ b2b_index_url|default:'#' }}">
+            <i class="fa-regular fa-file-lines me-1"></i>
+            {% trans "Publications" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link {% if not vendor_home_url %}disabled{% endif %}"
+             href="{{ vendor_home_url|default:'#' }}">
+            <i class="fa-solid fa-handshake-angle me-1"></i>
+            {% trans "Partenaires / Vendeurs" %}
+          </a>
+        </li>
+
+      </ul>
+
+      <!-- Recherche -->
+      <form class="d-flex me-3"
+            role="search"
+            method="get"
+            action="{{ ecommerce_search_url|default:'#' }}">
+        <input class="form-control"
+               type="search"
+               name="q"
+               value="{{ request.GET.q }}"
+               placeholder="{% trans 'Rechercher un produit…' %}"
+               aria-label="{% trans 'Rechercher' %}"
+               {% if not ecommerce_search_url %}disabled{% endif %}>
+      </form>
+
+      <!-- Icônes & Compte utilisateur -->
+      <ul class="navbar-nav align-items-lg-center">
+
+        <!-- Wishlist -->
+        <li class="nav-item me-lg-2">
+          <a class="nav-link position-relative {% if not wishlist_url %}disabled{% endif %}"
+             href="{{ wishlist_url|default:'#' }}">
+            <i class="fa-regular fa-heart"></i>
+            {% if wishlist_count %}
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary">
+                {{ wishlist_count }}
+              </span>
+            {% endif %}
+            <span class="d-lg-none ms-2">{% trans "Favoris" %}</span>
+          </a>
+        </li>
+
+        <!-- Panier -->
+        <li class="nav-item me-lg-2">
+          <a class="nav-link position-relative {% if not cart_url %}disabled{% endif %}"
+             href="{{ cart_url|default:'#' }}">
+            <i class="fa-solid fa-cart-shopping"></i>
+            {% if cart_items_count %}
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
+                {{ cart_items_count }}
+              </span>
+            {% endif %}
+            <span class="d-lg-none ms-2">{% trans "Panier" %}</span>
+          </a>
+        </li>
+
+        <!-- Menu Compte -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle"
+             href="#"
+             data-bs-toggle="dropdown"
+             aria-expanded="false">
+            <i class="fa-regular fa-user me-1"></i>
+            {% trans "Compte" %}
+          </a>
+
+          <ul class="dropdown-menu dropdown-menu-end">
+
+            {% if user.is_authenticated %}
+
+              <li>
+                <a class="dropdown-item {% if not order_list_url %}disabled{% endif %}"
+                   href="{{ order_list_url|default:'#' }}">
+                  <i class="fa-regular fa-clipboard me-2"></i>
+                  {% trans "Mes commandes" %}
+                </a>
+              </li>
+
+              <li>
+                <a class="dropdown-item {% if not profile_url %}disabled{% endif %}"
+                   href="{{ profile_url|default:'#' }}">
+                  <i class="fa-regular fa-id-card me-2"></i>
+                  {% trans "Mon profil" %}
+                </a>
+              </li>
+
+              <li><hr class="dropdown-divider"></li>
+
+              {# ✅ Déconnexion POST (Django 5+ -> évite 405) #}
+              <li>
+                <form method="post" action="{{ logout_url|default:'#' }}" class="px-2 py-1 m-0">
+                  {% csrf_token %}
+                  <button type="submit" class="dropdown-item" {% if not logout_url %}disabled{% endif %}>
+                    <i class="fa-solid fa-right-from-bracket me-2"></i>
+                    {% trans "Déconnexion" %}
+                  </button>
+                </form>
+              </li>
+
+            {% else %}
+
+              <li>
+                <a class="dropdown-item {% if not login_url %}disabled{% endif %}"
+                   href="{{ login_url|default:'#' }}">
+                  <i class="fa-solid fa-right-to-bracket me-2"></i>
+                  {% trans "Connexion" %}
+                </a>
+              </li>
+
+            {% endif %}
+          </ul>
+        </li>
+
+      </ul>
+
+    </div>
+  </div>
+</nav>
+{% endwith %}
+
+
+
+
+
+
+
+{% comment %} {# economic/resources/partials/_menu_resources.html #}
 {% load i18n %}
 
 <nav class="navbar navbar-expand-lg bg-white border-bottom shadow-sm sticky-top"
@@ -174,7 +388,7 @@
                 </a>
               </li>
 
-              <li>
+             <li>
                 <a class="dropdown-item" href="{% url 'accounts_users_web:signup' %}">
                   <i class="fa-regular fa-circle-user me-2"></i>
                   {% trans "Créer un compte" %}
@@ -189,7 +403,7 @@
 
     </div>
   </div>
-</nav>
+</nav> {% endcomment %}
 
 
 

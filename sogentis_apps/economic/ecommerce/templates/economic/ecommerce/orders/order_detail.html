@@ -1,4 +1,92 @@
-{% extends "main.html" %}
+{# templates/economic/ecommerce/orders/order_detail.html #}
+{% extends "economic/ecommerce/base_ecommerce.html" %}
+{% load i18n money %}
+
+{% block ecommerce_title %}
+  {% trans "Commande" %} {{ order.uuid }} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+
+  <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-4">
+    <div>
+      <h1 class="h4 mb-1">
+        📦 {% trans "Commande" %} {{ order.uuid }}
+      </h1>
+      <div class="text-muted">
+        {% trans "Statut" %} :
+        <strong>{{ order.status_display|default:order.status }}</strong>
+      </div>
+    </div>
+
+    <div class="d-flex flex-wrap gap-2">
+      {% if order.can_pay %}
+        <a href="{% url 'economic:ecommerce:choose_payment' order.uuid %}"
+           class="btn btn-primary">
+          {% trans "Payer cette commande" %}
+        </a>
+      {% endif %}
+      <a href="{% url 'economic:ecommerce:orders' %}"
+         class="btn btn-outline-secondary">
+        {% trans "Retour à mes commandes" %}
+      </a>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <h2 class="h6 mb-3">{% trans "Articles de la commande" %}</h2>
+      <div class="table-responsive">
+        <table class="table align-middle mb-0">
+          <thead>
+            <tr>
+              <th>{% trans "Produit" %}</th>
+              <th class="text-end">{% trans "Prix" %}</th>
+              <th class="text-end">{% trans "Qté" %}</th>
+              <th class="text-end">{% trans "Total" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in order.items.all %}
+              <tr>
+                <td>{{ item.product_name }}</td>
+                <td class="text-end">{% money item.unit_price %}</td>
+                <td class="text-end">{{ item.quantity }}</td>
+                <td class="text-end fw-semibold">{% money item.line_total %}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <hr>
+      <div class="d-flex justify-content-between fw-bold">
+        <span>{% trans "Total" %}</span>
+        <span>{% money order.total_amount %}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <h2 class="h6 mb-3">{% trans "Informations de facturation" %}</h2>
+      <p class="mb-0">
+        {{ order.billing_name }}<br>
+        {{ order.billing_address }}<br>
+        {{ order.billing_zip }} {{ order.billing_city }}{% if order.billing_country %}, {{ order.billing_country }}{% endif %}
+      </p>
+    </div>
+  </div>
+
+</section>
+{% endblock %}
+
+
+
+
+
+{% comment %} {% extends "main.html" %}
 {% load i18n money %}
 
 {% block title %}
@@ -100,4 +188,4 @@
   </div>
 
 </section>
-{% endblock %}
+{% endblock %} {% endcomment %}

@@ -1,0 +1,105 @@
+{# templates/economic/base_economic.html #}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{# ✅ main.html utilise seo_title #}
+{% block seo_title %}
+  {% block economic_title %}{% trans "Pôle économique" %}{% endblock %} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'economic/css/economic.css' %}">
+  {% block economic_extra_css %}{% endblock %}
+{% endblock %}
+
+{% block section_menu %}
+  {% include "economic/partials/_economic_menu.html" %}
+{% endblock %}
+
+{# ✅ Sous-menu spécifique à l’app (ecommerce/services/formations/b2b...) #}
+{% block content %}
+  {% block economic_subnav %}{% endblock %}
+
+  <div class="economic-page">
+    {% block economic_content %}{% endblock %}
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+  {{ block.super }}
+  {% block economic_extra_js %}{% endblock %}
+{% endblock %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/base_economic.html #}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{# --------- TITRE GLOBAL DU PÔLE --------- #}
+{% block title %}
+  {% block economic_title %}{% trans "Pôle économique" %}{% endblock %} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{# --------- CSS GLOBAL DU PÔLE --------- #}
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'economic/css/economic.css' %}">
+  {% block economic_extra_css %}{% endblock %}
+{% endblock %}
+
+{# --------- MENUS EN HAUT DES PAGES ÉCO --------- #}
+{% block section_menu %}
+
+  {# Hub principal : Pôle éco | B2C | Services | Formations | B2B | langue/devise | user | panier #}
+  {% include "economic/partials/_economic_menu.html" %}
+
+  {# Sous-menu propre à l’app (e-commerce, services, formations, B2B…) #}
+  {% block economic_subnav %}{% endblock %}
+
+{% endblock %}
+
+{# --------- CONTENU DES PAGES --------- #}
+{% block content %}
+  {% block economic_content %}{% endblock %}
+{% endblock %}
+
+{# --------- JS SPÉCIFIQUE PÔLE ÉCO --------- #}
+{% block extra_js %}
+  {% block economic_extra_js %}{% endblock %}
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/base_economic.html #}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}
+  {% block economic_title %}{% trans "Pôle économique" %}{% endblock %} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block extra_css %}
+  {# CSS commun à tous les menus economic #}
+  <link rel="stylesheet" href="{% static 'economic/css/economic.css' %}">
+  {# CSS spécifique page (optionnel) #}
+  {% block economic_extra_css %}{% endblock %}
+{% endblock %}
+
+{% block section_menu %}
+  {% include "economic/partials/_economic_menu.html" %}
+{% endblock %}
+
+{% block content %}
+  {% block economic_content %}{% endblock %}
+{% endblock %}
+
+{% block extra_js %}
+  {% block economic_extra_js %}{% endblock %}
+{% endblock %} {% endcomment %}

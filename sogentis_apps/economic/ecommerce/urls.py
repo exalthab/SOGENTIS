@@ -2,9 +2,10 @@
 from django.urls import path, include
 
 from .views.index import ecommerce_index_view
+from .views.search import ecommerce_search_view
 from .views.product_detail import product_detail_view
-
-from .views.invoice import invoice_download_view
+from .views.favorites import favorite_toggle_view
+from .views.favorites_list import favorites_list_view
 
 from .views.cart import (
     cart_view,
@@ -21,6 +22,8 @@ from .views.orders import (
     order_detail_view,
 )
 
+from .views.invoice import invoice_download_view
+
 from .views.wishlist import (
     wishlist_view,
     add_to_wishlist_view,
@@ -30,144 +33,271 @@ from .views.wishlist import (
 from .views.review import add_review_view
 
 from .views.payments import (
+    choose_payment_view,
     provider_checkout_view,
     webhook_generic_view,
-    choose_payment_view,
-
 )
 
 from .views.vendor.vendor_dashboard import vendor_dashboard_view
-from .views.search import search_view
+from .views.order_tracking import order_tracking_view
+
 from .views.switch_mode import switch_mode_view
 
 
 app_name = "ecommerce"
 
 urlpatterns = [
-
     # ==========================
     # Catalogue / Home
     # ==========================
     path("", ecommerce_index_view, name="index"),
-    path("search/", search_view, name="search"),
+    path("search/", ecommerce_search_view, name="search"),
+    path("categorie/<slug:category_slug>/", ecommerce_index_view, name="category"),
+
+    # Articles (module séparé)
     path("articles/", include("economic.ecommerce.articles.urls")),
+    path("favorites/", favorites_list_view, name="favorites_list"),
+    path("favorites/toggle/<int:product_id>/", favorite_toggle_view, name="favorite_toggle"),
 
     # ==========================
     # Produits
     # ==========================
-    path(
-        "products/<slug:slug>/",
-        product_detail_view,
-        name="product_detail",
-    ),
+    path("products/<slug:slug>/", product_detail_view, name="product_detail"),
 
     # ==========================
-    # Panier
+    # Panier (session)
+    # item_id = product_id (par choix : panier session)
     # ==========================
     path("cart/", cart_view, name="cart"),
-    path(
-        "cart/items/add/<int:product_id>/",
-        add_to_cart_view,
-        name="add_to_cart",
-    ),
-    path(
-        "cart/update/<int:item_id>/",
-        update_cart_view,
-        name="update_cart",
-    ),
-    path(
-        "cart/items/remove/<int:item_id>/",
-        remove_from_cart_view,
-        name="remove_from_cart",
-    ),
+    path("cart/items/add/<int:product_id>/", add_to_cart_view, name="add_to_cart"),
+    path("cart/update/<int:item_id>/", update_cart_view, name="update_cart"),
+    path("cart/items/remove/<int:item_id>/", remove_from_cart_view, name="remove_from_cart"),
 
     # ==========================
     # Checkout
     # ==========================
-    path(
-        "checkout/",
-        checkout_view,
-        name="checkout",
-    ),
+    path("checkout/", checkout_view, name="checkout"),
 
     # ==========================
     # Paiements
     # ==========================
-    path(
-      "payments/choose/<uuid:uuid>/",
-       choose_payment_view,
-       name="choose_payment",
-   ),
-    path(
-        "payments/<str:provider>/<uuid:uuid>/",
-        provider_checkout_view,
-        name="payment_checkout",
-    ),
-    path(
-        "payments/webhook/<str:provider>/",
-        webhook_generic_view,
-        name="payment_webhook",
-    ),
+    path("payments/choose/<uuid:uuid>/", choose_payment_view, name="choose_payment"),
+    path("payments/<str:provider>/<uuid:uuid>/", provider_checkout_view, name="payment_checkout"),
+    path("payments/webhook/<str:provider>/", webhook_generic_view, name="payment_webhook"),
 
     # ==========================
     # Commandes
     # ==========================
     path("orders/", orders_view, name="orders"),
     path("orders/list/", order_list_view, name="order_list"),
-    path(
-        "orders/<uuid:uuid>/",
-        order_detail_view,
-        name="order_detail",
-    ),
+    path("orders/<uuid:uuid>/", order_detail_view, name="order_detail"),
 
-    path(
-        "invoices/<uuid:uuid>/download/",
-        invoice_download_view,
-        name="invoice_download",
-    ),
-    
     # ==========================
-    # Wishlist 
+    # Factures
+    # ==========================
+    path("invoices/<uuid:uuid>/download/", invoice_download_view, name="invoice_download"),
+
+    # ==========================
+    # Wishlist
     # ==========================
     path("wishlist/", wishlist_view, name="wishlist"),
-    path(
-        "wishlist/items/add/<int:product_id>/",
-        add_to_wishlist_view,
-        name="wishlist_add",
-    ),
-    path(
-        "wishlist/items/remove/<int:product_id>/",
-        remove_from_wishlist_view,
-        name="wishlist_remove",
-    ),
+    path("wishlist/items/add/<int:product_id>/", add_to_wishlist_view, name="wishlist_add"),
+    path("wishlist/items/remove/<int:product_id>/", remove_from_wishlist_view, name="wishlist_remove"),
 
     # ==========================
     # Avis produits
     # ==========================
-    path(
-        "reviews/add/<int:product_id>/",
-        add_review_view,
-        name="add_review",
-    ),
+    path("reviews/add/<int:product_id>/", add_review_view, name="add_review"),
 
     # ==========================
     # Vendor / Seller
     # ==========================
-    path(
-        "vendor/dashboard/",
-        vendor_dashboard_view,
-        name="vendor_dashboard",
-    ),
+    path("vendor/dashboard/", vendor_dashboard_view, name="vendor_dashboard"),
+    path("orders/track/", order_tracking_view, name="order_track"),
 
     # ==========================
     # Mode B2C / B2B
     # ==========================
-    path(
-        "switch-mode/<str:mode>/",
-        switch_mode_view,
-        name="switch_mode",
-    ),
+    path("switch-mode/<str:mode>/", switch_mode_view, name="switch_mode"),
+
 ]
+
+
+
+
+
+
+# # economic/ecommerce/urls.py
+# from django.urls import path, include
+
+# from .views.index import ecommerce_index_view
+# from .views.product_detail import product_detail_view
+
+# from .views.invoice import invoice_download_view
+
+# from .views.cart import (
+#     cart_view,
+#     add_to_cart_view,
+#     update_cart_view,
+#     remove_from_cart_view,
+# )
+
+# from .views.checkout import checkout_view
+
+# from .views.orders import (
+#     orders_view,
+#     order_list_view,
+#     order_detail_view,
+# )
+
+# from .views.wishlist import (
+#     wishlist_view,
+#     add_to_wishlist_view,
+#     remove_from_wishlist_view,
+# )
+
+# from .views.review import add_review_view
+
+# from .views.payments import (
+#     provider_checkout_view,
+#     webhook_generic_view,
+#     choose_payment_view,
+
+# )
+
+# from .views.vendor.vendor_dashboard import vendor_dashboard_view
+# from .views.search import ecommerce_search_view
+# from .views.switch_mode import switch_mode_view
+
+
+# app_name = "ecommerce"
+
+# urlpatterns = [
+
+#     # ==========================
+#     # Catalogue / Home
+#     # ==========================
+#     path("", ecommerce_index_view, name="index"),
+#     path("search/", ecommerce_search_view, name="search"),
+#     path("articles/", include("economic.ecommerce.articles.urls")),
+#     path("categorie/<slug:category_slug>/", ecommerce_index_view, name="category"),
+
+#     # ==========================
+#     # Produits
+#     # ==========================
+#     path(
+#         "products/<slug:slug>/",
+#         product_detail_view,
+#         name="product_detail",
+#     ),
+
+#     # ==========================
+#     # Panier
+#     # ==========================
+#     path("cart/", cart_view, name="cart"),
+#     path(
+#         "cart/items/add/<int:product_id>/",
+#         add_to_cart_view,
+#         name="add_to_cart",
+#     ),
+#     path(
+#         "cart/update/<int:item_id>/",
+#         update_cart_view,
+#         name="update_cart",
+#     ),
+#     path(
+#         "cart/items/remove/<int:item_id>/",
+#         remove_from_cart_view,
+#         name="remove_from_cart",
+#     ),
+
+#     # ==========================
+#     # Checkout
+#     # ==========================
+#     path(
+#         "checkout/",
+#         checkout_view,
+#         name="checkout",
+#     ),
+
+#     # ==========================
+#     # Paiements
+#     # ==========================
+#     path(
+#       "payments/choose/<uuid:uuid>/",
+#        choose_payment_view,
+#        name="choose_payment",
+#    ),
+#     path(
+#         "payments/<str:provider>/<uuid:uuid>/",
+#         provider_checkout_view,
+#         name="payment_checkout",
+#     ),
+#     path(
+#         "payments/webhook/<str:provider>/",
+#         webhook_generic_view,
+#         name="payment_webhook",
+#     ),
+
+#     # ==========================
+#     # Commandes
+#     # ==========================
+#     path("orders/", orders_view, name="orders"),
+#     path("orders/list/", order_list_view, name="order_list"),
+#     path(
+#         "orders/<uuid:uuid>/",
+#         order_detail_view,
+#         name="order_detail",
+#     ),
+
+#     path(
+#         "invoices/<uuid:uuid>/download/",
+#         invoice_download_view,
+#         name="invoice_download",
+#     ),
+    
+#     # ==========================
+#     # Wishlist 
+#     # ==========================
+#     path("wishlist/", wishlist_view, name="wishlist"),
+#     path(
+#         "wishlist/items/add/<int:product_id>/",
+#         add_to_wishlist_view,
+#         name="wishlist_add",
+#     ),
+#     path(
+#         "wishlist/items/remove/<int:product_id>/",
+#         remove_from_wishlist_view,
+#         name="wishlist_remove",
+#     ),
+
+#     # ==========================
+#     # Avis produits
+#     # ==========================
+#     path(
+#         "reviews/add/<int:product_id>/",
+#         add_review_view,
+#         name="add_review",
+#     ),
+
+#     # ==========================
+#     # Vendor / Seller
+#     # ==========================
+#     path(
+#         "vendor/dashboard/",
+#         vendor_dashboard_view,
+#         name="vendor_dashboard",
+#     ),
+
+#     # ==========================
+#     # Mode B2C / B2B
+#     # ==========================
+#     path(
+#         "switch-mode/<str:mode>/",
+#         switch_mode_view,
+#         name="switch_mode",
+#     ),
+# ]
 
 
 

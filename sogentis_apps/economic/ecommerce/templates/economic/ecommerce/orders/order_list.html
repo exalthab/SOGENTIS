@@ -1,4 +1,64 @@
-{% extends "main.html" %}
+{# templates/economic/ecommerce/orders/order_list.html #}
+{% extends "economic/ecommerce/base_ecommerce.html" %}
+{% load i18n money %}
+
+{% block ecommerce_title %}
+  {% trans "Mes commandes" %} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+  <h1 class="mb-4">📦 {% trans "Mes commandes" %}</h1>
+
+  {% if orders %}
+    <div class="card">
+      <div class="card-body table-responsive">
+        <table class="table align-middle mb-0">
+          <thead>
+            <tr>
+              <th>{% trans "Référence" %}</th>
+              <th>{% trans "Statut" %}</th>
+              <th class="text-end">{% trans "Total" %}</th>
+              <th>{% trans "Date" %}</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for o in orders %}
+              <tr>
+                <td>{{ o.uuid }}</td>
+                <td>
+                  <span class="badge text-bg-light border">
+                    {{ o.status_display|default:o.status }}
+                  </span>
+                </td>
+                <td class="text-end">{% money o.total_amount %}</td>
+                <td>{{ o.created_at|date:"Y-m-d H:i" }}</td>
+                <td class="text-end">
+                  <a href="{% url 'economic:ecommerce:order_detail' o.uuid %}"
+                     class="btn btn-sm btn-outline-primary">
+                    {% trans "Détails" %}
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  {% else %}
+    <div class="alert alert-light border">
+      {% trans "Aucune commande n’a encore été passée." %}
+    </div>
+  {% endif %}
+</section>
+{% endblock %}
+
+
+
+
+
+{% comment %} {% extends "main.html" %}
 {% load static i18n money %}
 
 {% block title %}
@@ -68,4 +128,4 @@
   {% endif %}
 
 </section>
-{% endblock %}
+{% endblock %} {% endcomment %}

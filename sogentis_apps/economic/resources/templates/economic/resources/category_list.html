@@ -1,3 +1,31 @@
+{# templates/economic/resources/category_list.html #}
+{% extends "economic/resources/base_resources.html" %}
+{% load static i18n %}
+
+{% block resources_title %}{% trans "Catégories de ressources" %}{% endblock %}
+
+{% block resources_content %}
+  <h1 class="mb-4">{% trans "Catégories" %}</h1>
+
+  <ul class="list-group">
+    {% for category in categories %}
+      {% url 'economic:resources:category' category.slug as category_url %}
+      <li class="list-group-item">
+        <a href="{{ category_url|default:'#' }}" class="{% if not category_url %}disabled{% endif %}">
+          {{ category.safe_translation_getter("name", any_language=True)|default:category.name }}
+        </a>
+      </li>
+    {% empty %}
+      <li class="list-group-item text-muted">{% trans "Aucune catégorie." %}</li>
+    {% endfor %}
+  </ul>
+{% endblock %}
+
+
+
+
+
+{% comment %} {# templates/economic/resources/category_list.html #}
 {% extends "main.html" %}
 {% load i18n %}
 
@@ -17,4 +45,4 @@
     {% endfor %}
   </ul>
 </section>
-{% endblock %}
+{% endblock %} {% endcomment %}

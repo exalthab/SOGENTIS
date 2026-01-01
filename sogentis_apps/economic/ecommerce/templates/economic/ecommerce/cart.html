@@ -1,4 +1,396 @@
 {# templates/economic/ecommerce/cart.html #}
+{% extends "economic/ecommerce/base_ecommerce.html" %}
+{% load static i18n money %}
+
+{% block ecommerce_title %}
+  {% trans "Panier" %} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block ecommerce_extra_css %}
+  {{ block.super }}
+  <style>
+    /* ==============================
+       CART (Responsive / Mobile-first)
+       ============================== */
+    .cart-title{ font-weight:900; letter-spacing:-.2px; }
+    .cart-muted{ color: rgba(0,0,0,.62); }
+
+    .cart-card{
+      border-radius: 16px;
+      border: 1px solid rgba(0,0,0,.08);
+      overflow: hidden;
+      background:#fff;
+    }
+
+    .cart-item{
+      display:flex;
+      gap: 12px;
+      padding: 14px;
+      border-bottom: 1px solid rgba(0,0,0,.06);
+    }
+    .cart-item:last-child{ border-bottom: 0; }
+
+    .cart-thumb{
+      width: 86px;
+      height: 86px;
+      border-radius: 14px;
+      overflow:hidden;
+      background: rgba(0,0,0,.04);
+      flex: 0 0 auto;
+      border: 1px solid rgba(0,0,0,.06);
+    }
+    .cart-thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+    .cart-main{ flex: 1; min-width: 0; }
+    .cart-name{
+      font-weight: 800;
+      line-height: 1.15;
+      margin: 0 0 6px;
+      font-size: 0.98rem;
+    }
+    .cart-meta{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 10px;
+      align-items:center;
+      font-size: .9rem;
+    }
+    .cart-price{ font-weight:900; }
+    .cart-line{ font-weight:900; }
+
+    .cart-qty{
+      display:flex;
+      align-items:center;
+      gap:.45rem;
+      width: max-content;
+      border: 1px solid rgba(0,0,0,.12);
+      border-radius: 14px;
+      padding: .35rem .45rem;
+      background:#fff;
+    }
+    .cart-qty button{
+      width: 34px; height: 34px;
+      border-radius: 10px;
+      border: 0;
+      background: rgba(0,0,0,.06);
+      font-weight: 900;
+      line-height: 1;
+    }
+    .cart-qty input{
+      width: 46px;
+      border: 0;
+      text-align:center;
+      font-weight: 800;
+      outline:none;
+      background: transparent;
+    }
+
+    .cart-actions{
+      display:flex;
+      gap: 8px;
+      align-items:center;
+      justify-content:flex-end;
+      margin-top: 10px;
+    }
+    .cart-actions .btn{ border-radius: 14px; font-weight: 800; }
+
+    .cart-summary{
+      border-top: 1px solid rgba(0,0,0,.06);
+      padding: 14px;
+      background: rgba(0,0,0,.015);
+    }
+    .cart-summary .btn{ border-radius: 14px; font-weight: 900; padding: .85rem 1rem; }
+
+    /* Desktop table header feel */
+    @media (min-width: 992px){
+      .cart-item{
+        align-items:center;
+      }
+      .cart-actions{
+        margin-top: 0;
+      }
+    }
+
+    /* Dark mode */
+    [data-bs-theme="dark"] .cart-card{
+      background: rgba(20,20,22,.92);
+      border-color: rgba(255,255,255,.12);
+    }
+    [data-bs-theme="dark"] .cart-muted{ color: rgba(255,255,255,.68); }
+    [data-bs-theme="dark"] .cart-item{ border-bottom-color: rgba(255,255,255,.10); }
+    [data-bs-theme="dark"] .cart-thumb{ border-color: rgba(255,255,255,.12); background: rgba(255,255,255,.06); }
+    [data-bs-theme="dark"] .cart-qty{
+      background: rgba(20,20,22,.92);
+      border-color: rgba(255,255,255,.12);
+    }
+    [data-bs-theme="dark"] .cart-qty button{
+      background: rgba(255,255,255,.10);
+      color: rgba(255,255,255,.92);
+    }
+    [data-bs-theme="dark"] .cart-summary{
+      background: rgba(255,255,255,.04);
+      border-top-color: rgba(255,255,255,.10);
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+{% url 'economic:ecommerce:index' as shop_url %}
+{% url 'economic:ecommerce:checkout' as checkout_url %}
+
+<section class="container py-4">
+
+  <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
+    <div>
+      <h1 class="h4 cart-title mb-1">🛒 {% trans "Panier" %}</h1>
+      <div class="cart-muted small">
+        {% trans "Vérifiez vos articles avant de passer la commande." %}
+      </div>
+    </div>
+
+    <div class="d-flex gap-2">
+      <a class="btn btn-outline-primary" href="{{ shop_url|default:'#' }}">
+        <i class="bi bi-shop me-2"></i>{% trans "Continuer les achats" %}
+      </a>
+    </div>
+  </div>
+
+  {% if cart_items %}
+    <div class="cart-card">
+
+      {# ==========================
+         ITEMS
+         ========================== #}
+      {% for item in cart_items %}
+        {% with p=item.product %}
+          {% url 'economic:ecommerce:update_cart' p.id as update_url %}
+          {% url 'economic:ecommerce:remove_from_cart' p.id as remove_url %}
+
+          <div class="cart-item">
+            <div class="cart-thumb">
+              {% with img=p.images.all.0 %}
+                {% if img %}
+                  <img src="{{ img.image.url }}" alt="{{ img.alt_text|default:p.name }}" loading="lazy">
+                {% else %}
+                  <img src="{% static 'global/image/product-placeholder.png' %}" alt="{% trans 'Produit' %}" loading="lazy">
+                {% endif %}
+              {% endwith %}
+            </div>
+
+            <div class="cart-main">
+              <div class="d-flex flex-wrap justify-content-between gap-2">
+                <div class="pe-2" style="min-width: 220px;">
+                  <p class="cart-name mb-1">{{ p.name }}</p>
+                  <div class="cart-meta cart-muted">
+                    <span><i class="bi bi-tag"></i> {{ p.sku }}</span>
+                    {% if p.stock > 0 %}
+                      <span class="badge bg-success">{% trans "En stock" %}</span>
+                    {% else %}
+                      <span class="badge bg-danger">{% trans "Rupture" %}</span>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="text-end">
+                  <div class="cart-muted small">{% trans "Prix" %}</div>
+                  <div class="cart-price">{% money item.unit_price %}</div>
+                </div>
+              </div>
+
+              <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mt-2">
+                <div>
+                  <div class="cart-muted small mb-1">{% trans "Quantité" %}</div>
+
+                  <form method="post" action="{{ update_url|default:'#' }}" class="m-0 d-inline-block">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+
+                    <div class="cart-qty" data-cart-qty>
+                      <button type="button" data-qty-minus aria-label="{% trans 'Réduire' %}">−</button>
+                      <input type="text" name="quantity" value="{{ item.quantity }}" inputmode="numeric" data-qty-input>
+                      <button type="button" data-qty-plus aria-label="{% trans 'Augmenter' %}">+</button>
+
+                      <button type="submit" class="btn btn-sm btn-outline-dark ms-2">
+                        <i class="bi bi-arrow-repeat me-1"></i>{% trans "Mettre à jour" %}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+
+                <div class="text-end">
+                  <div class="cart-muted small">{% trans "Total" %}</div>
+                  <div class="cart-line">{% money item.line_total %}</div>
+
+                  <div class="cart-actions">
+                    <form method="post" action="{{ remove_url|default:'#' }}" class="m-0">
+                      {% csrf_token %}
+                      <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                      <button class="btn btn-sm btn-outline-danger" type="submit">
+                        <i class="bi bi-trash me-1"></i>{% trans "Retirer" %}
+                      </button>
+                    </form>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        {% endwith %}
+      {% endfor %}
+
+      {# ==========================
+         SUMMARY
+         ========================== #}
+      <div class="cart-summary">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+          <div class="h5 mb-0">
+            {% trans "Total" %} :
+            <span class="fw-bold">{% money cart_total %}</span>
+          </div>
+
+          <div class="d-flex flex-column flex-sm-row gap-2">
+            <a class="btn btn-outline-secondary" href="{{ shop_url|default:'#' }}">
+              <i class="bi bi-arrow-left me-2"></i>{% trans "Ajouter d'autres articles" %}
+            </a>
+            <a class="btn btn-primary" href="{{ checkout_url|default:'#' }}">
+              <i class="bi bi-credit-card me-2"></i>{% trans "Passer la commande" %}
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  {% else %}
+    <div class="cart-card p-4">
+      <div class="text-center py-3">
+        <div class="display-6 mb-2">🛒</div>
+        <h2 class="h5 fw-bold mb-2">{% trans "Votre panier est vide" %}</h2>
+        <p class="cart-muted mb-3">{% trans "Ajoutez des produits pour les retrouver ici." %}</p>
+        <a href="{{ shop_url|default:'#' }}" class="btn btn-primary">
+          <i class="bi bi-shop me-2"></i>{% trans "Découvrir la boutique" %}
+        </a>
+      </div>
+    </div>
+  {% endif %}
+
+</section>
+{% endblock %}
+
+{% block ecommerce_extra_js %}
+  <script>
+    (function(){
+      // +/- quantité (ne soumet pas automatiquement, l'utilisateur clique "Mettre à jour")
+      document.querySelectorAll('[data-cart-qty]').forEach(function(wrap){
+        const minus = wrap.querySelector('[data-qty-minus]');
+        const plus = wrap.querySelector('[data-qty-plus]');
+        const input = wrap.querySelector('[data-qty-input]');
+
+        function clamp(v){
+          v = parseInt(v || "1", 10);
+          if (isNaN(v) || v < 1) v = 1;
+          return v;
+        }
+
+        if (!input) return;
+        input.value = clamp(input.value);
+
+        if (minus) minus.addEventListener('click', function(){
+          input.value = clamp(clamp(input.value) - 1);
+        });
+        if (plus) plus.addEventListener('click', function(){
+          input.value = clamp(clamp(input.value) + 1);
+        });
+        input.addEventListener('input', function(){
+          input.value = clamp(input.value);
+        });
+      });
+    })();
+  </script>
+{% endblock %}
+
+
+
+
+
+{% comment %} {# templates/economic/ecommerce/cart.html #}
+{% extends "economic/ecommerce/base_ecommerce.html" %}
+{% load i18n money %}
+
+{% block ecommerce_title %}
+  {% trans "Panier" %} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+  <h1 class="mb-4">🧾 {% trans "Panier" %}</h1>
+
+  {% if cart_items %}
+    <div class="card">
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table align-middle mb-0">
+            <thead>
+              <tr>
+                <th>{% trans "Produit" %}</th>
+                <th class="text-end">{% trans "Prix" %}</th>
+                <th class="text-end">{% trans "Qté" %}</th>
+                <th class="text-end">{% trans "Total" %}</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in cart_items %}
+                <tr>
+                  <td>{{ item.product.name }}</td>
+                  <td class="text-end">{% money item.unit_price %}</td>
+                  <td class="text-end">{{ item.quantity }}</td>
+                  <td class="text-end fw-semibold">{% money item.line_total %}</td>
+                  <td class="text-end">
+                    <form method="post" action="{% url 'economic:ecommerce:cart_remove' item.product.id %}">
+                      {% csrf_token %}
+                      <button class="btn btn-sm btn-outline-danger" type="submit">
+                        {% trans "Retirer" %}
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mt-3">
+          <div class="h5 mb-0">
+            {% trans "Total" %} :
+            <span class="fw-bold">{% money cart_total %}</span>
+          </div>
+          <div class="d-flex gap-2">
+            <a class="btn btn-outline-secondary"
+               href="{% url 'economic:ecommerce:product_list' %}">
+              {% trans "Continuer les achats" %}
+            </a>
+            <a class="btn btn-primary"
+               href="{% url 'economic:ecommerce:checkout' %}">
+              {% trans "Passer la commande" %}
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  {% else %}
+    <div class="alert alert-light border">
+      {% trans "Votre panier est vide." %}
+    </div>
+  {% endif %}
+</section>
+{% endblock %} {% endcomment %}
+
+
+
+
+{% comment %} {# templates/economic/ecommerce/cart.html #}
 {% extends "main.html" %}
 {% load static i18n money %}
 
@@ -138,7 +530,7 @@
 
 </section>
 
-{% endblock %}
+{% endblock %} {% endcomment %}
 
 
 

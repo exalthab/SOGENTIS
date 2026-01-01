@@ -1,0 +1,2169 @@
+{# templates/economic/ecommerce/articles/product_detail.html #}
+{% extends "economic/ecommerce/base_ecommerce.html" %}
+{% load static i18n money %}
+
+{% block ecommerce_title %}
+  {{ product.name }} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block ecommerce_extra_css %}
+  {{ block.super }}
+  <style>
+    /* ============================== */
+    /*  PRODUCT DETAIL (AliExpress-ish) */
+    /* ============================== */
+
+    .pd-shell{ --pd-gap: 18px; }
+    .pd-title{ font-weight: 800; letter-spacing: -.2px; }
+    .pd-muted{ color: rgba(0,0,0,.62); }
+    .pd-card{ border-radius: 16px; border: 1px solid rgba(0,0,0,.08); }
+    .pd-chip{
+      display:inline-flex;align-items:center;gap:.4rem;
+      padding:.25rem .6rem;border-radius:999px;
+      background: rgba(0,0,0,.06);
+      font-size:.82rem;
+    }
+    .pd-deal{
+      border: 1px solid rgba(220,53,69,.35);
+      background: rgba(220,53,69,.06);
+      border-radius: 14px;
+      overflow:hidden;
+    }
+    .pd-deal .pd-deal-head{
+      background: #dc3545;
+      color:#fff;
+      padding: .55rem .9rem;
+      font-weight: 800;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:.75rem;
+      flex-wrap:wrap;
+    }
+    .pd-price{
+      font-size: 2.05rem;
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -.3px;
+    }
+    .pd-old{ text-decoration: line-through; opacity:.55; }
+    .pd-savings{
+      color:#dc3545; font-weight: 800; background: rgba(220,53,69,.10);
+      padding:.25rem .5rem;border-radius: 10px;
+    }
+
+    /* Gallery */
+    .pd-gallery{
+      display:grid;
+      grid-template-columns: 84px 1fr;
+      gap: var(--pd-gap);
+      align-items:start;
+    }
+    .pd-thumbs{
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+      max-height: 520px;
+      overflow:auto;
+      padding-right: 6px;
+    }
+    .pd-thumb-btn{
+      width: 78px; height: 78px;
+      border-radius: 12px;
+      border: 1px solid rgba(0,0,0,.10);
+      background:#fff;
+      padding:0;
+      overflow:hidden;
+      position:relative;
+      transition: transform .12s ease, border-color .12s ease;
+    }
+    .pd-thumb-btn:hover{ transform: translateY(-1px); border-color: rgba(13,110,253,.35); }
+    .pd-thumb-btn.is-active{ border: 2px solid #0d6efd; }
+    .pd-thumb-btn img{ width:100%; height:100%; object-fit:cover; display:block; }
+    .pd-main{
+      border-radius: 18px;
+      border: 1px solid rgba(0,0,0,.08);
+      background: #fff;
+      overflow:hidden;
+      position:relative;
+      min-height: 320px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .pd-main img{ width:100%; height:auto; display:block; }
+    .pd-main .pd-zoom{
+      position:absolute; right: 12px; bottom: 12px;
+      width: 42px; height: 42px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,.12);
+      background: rgba(255,255,255,.92);
+      display:flex; align-items:center; justify-content:center;
+    }
+
+    /* Sticky buy box */
+    .pd-buybox{ position: sticky; top: 92px; }
+    .pd-buybox .pd-buy-actions .btn{
+      border-radius: 14px;
+      font-weight: 800;
+      padding: .85rem 1rem;
+    }
+
+    .pd-qty{
+      display:flex; align-items:center; gap:.5rem;
+      border: 1px solid rgba(0,0,0,.12);
+      border-radius: 14px;
+      padding: .35rem .45rem;
+      width: max-content;
+      background:#fff;
+    }
+    .pd-qty button{
+      width: 34px; height: 34px;
+      border-radius: 10px;
+      border: 0;
+      background: rgba(0,0,0,.06);
+      font-weight: 900;
+    }
+    .pd-qty input{
+      width: 46px;
+      border: 0;
+      text-align:center;
+      font-weight: 800;
+      outline:none;
+      background: transparent;
+    }
+
+    .pd-tabs .nav-link{ border-radius: 999px; font-weight: 800; }
+
+    .pd-related .card{
+      border-radius: 16px;
+      border: 1px solid rgba(0,0,0,.08);
+      overflow:hidden;
+      transition: transform .14s ease;
+    }
+    .pd-related .card:hover{ transform: translateY(-2px); }
+
+    @media (max-width: 992px){
+      .pd-gallery{ grid-template-columns: 1fr; }
+      .pd-thumbs{
+        flex-direction: row;
+        max-height: none;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding-right: 0;
+        padding-bottom: 6px;
+      }
+      .pd-thumb-btn{ width: 74px; height: 74px; }
+      .pd-buybox{ position: static; top:auto; }
+    }
+
+    [data-bs-theme="dark"] .pd-card,
+    [data-bs-theme="dark"] .pd-main,
+    [data-bs-theme="dark"] .pd-thumb-btn{
+      background: rgba(20,20,22,.92);
+      border-color: rgba(255,255,255,.12);
+    }
+    [data-bs-theme="dark"] .pd-muted{ color: rgba(255,255,255,.68); }
+    [data-bs-theme="dark"] .pd-chip{ background: rgba(255,255,255,.08); }
+    [data-bs-theme="dark"] .pd-qty{ background: rgba(20,20,22,.92); border-color: rgba(255,255,255,.12); }
+    [data-bs-theme="dark"] .pd-qty button{ background: rgba(255,255,255,.10); color: rgba(255,255,255,.92); }
+    [data-bs-theme="dark"] .pd-zoom{ background: rgba(20,20,22,.92); border-color: rgba(255,255,255,.12); }
+  </style>
+{% endblock %}
+
+{% block content %}
+{% url 'economic:ecommerce:index' as shop_url %}
+{% url 'economic:ecommerce:add_to_cart' product.id as add_to_cart_url %}
+{% url 'economic:ecommerce:request_quote' as request_quote_url %}
+{% url 'economic:ecommerce:favorite_toggle' product.id as fav_toggle_url %}
+
+<section class="container py-4 pd-shell">
+
+  <div class="mb-3 d-flex flex-wrap align-items-center gap-2 small">
+    <a class="text-decoration-none" href="{{ shop_url|default:'#' }}">
+      ← {% trans "Retour à la boutique" %}
+    </a>
+
+    <span class="pd-muted">|</span>
+
+    <div class="d-flex flex-wrap align-items-center gap-2 pd-muted">
+      <a class="text-decoration-none" href="{{ shop_url|default:'#' }}">
+        {% trans "Boutique" %}
+      </a>
+
+      {% if product.category %}
+        <span>›</span>
+        <span>{{ product.category }}</span>
+      {% endif %}
+
+      <span>›</span>
+      <span class="text-body">{{ product.name }}</span>
+    </div>
+  </div>
+
+  <div class="row g-4 align-items-start">
+
+    <div class="col-12 col-lg-7">
+      <div class="pd-card p-3">
+
+        <div class="pd-gallery">
+
+          <div class="pd-thumbs" aria-label="{% trans 'Galerie' %}">
+            {% if product_images %}
+              {% for img in product_images %}
+                <button
+                  type="button"
+                  class="pd-thumb-btn {% if main_image and img.id == main_image.id %}is-active{% endif %}"
+                  data-src="{{ img.image.url }}"
+                  aria-label="{% trans 'Aperçu image' %}">
+                  <img src="{{ img.image.url }}" alt="{{ img.alt_text|default:product.name }}" loading="lazy">
+                </button>
+              {% endfor %}
+            {% else %}
+              <button type="button" class="pd-thumb-btn is-active" data-src="{% static 'global/image/product-placeholder.png' %}">
+                <img src="{% static 'global/image/product-placeholder.png' %}" alt="{% trans 'Produit' %}">
+              </button>
+            {% endif %}
+          </div>
+
+          <div class="pd-main">
+            {% if main_image %}
+              <img id="pdMainImage"
+                   src="{{ main_image.image.url }}"
+                   alt="{{ main_image.alt_text|default:product.name }}"
+                   loading="eager">
+            {% else %}
+              <img id="pdMainImage"
+                   src="{% static 'global/image/product-placeholder.png' %}"
+                   alt="{% trans 'Produit' %}"
+                   loading="eager">
+            {% endif %}
+
+            {% if main_image %}
+              <a class="pd-zoom text-decoration-none"
+                 href="{{ main_image.image.url }}"
+                 target="_blank" rel="noopener"
+                 aria-label="{% trans 'Ouvrir en grand' %}">
+                <i class="bi bi-zoom-in"></i>
+              </a>
+            {% endif %}
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-5">
+      <div class="pd-card p-3">
+
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+          <div class="small pd-muted">
+            {% if product.vendor %}
+              {% trans "Vendu par" %} <strong class="text-body">{{ product.vendor }}</strong>
+            {% else %}
+              <strong class="text-body">{{ PROJECT_NAME }}</strong>
+            {% endif %}
+          </div>
+
+          {% if product.is_featured %}
+            <span class="pd-chip">🔥 {% trans "Promo" %}</span>
+          {% endif %}
+        </div>
+
+        <h1 class="h5 pd-title mb-2">{{ product.name }}</h1>
+
+        <div class="d-flex flex-wrap align-items-center gap-2 small mb-3">
+          <span class="text-warning">★★★★★</span>
+          <span class="fw-bold">4.6</span>
+          <span class="pd-muted">·</span>
+          <span class="pd-muted">438 {% trans "avis" %}</span>
+          <span class="pd-muted">·</span>
+          <span class="pd-muted">+1000 {% trans "vendus" %}</span>
+        </div>
+
+        <div class="pd-deal mb-3">
+          <div class="pd-deal-head">
+            <span>🎁 {% trans "Offre du jour" %}</span>
+            <span class="small opacity-75">{% trans "Stock limité" %}</span>
+          </div>
+
+          <div class="p-3">
+            <div class="d-flex flex-wrap align-items-end justify-content-between gap-2">
+              <div class="pd-price">{% money product.price %}</div>
+
+              <div class="text-end">
+                <div class="pd-savings">-{% trans "Économisez" %} 10%</div>
+                <div class="pd-old small">{% money product.price %}</div>
+              </div>
+            </div>
+
+            <div class="small pd-muted mt-2">
+              {% trans "Prix indicatif (hors taxes) — paiement sécurisé." %}
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <span class="pd-muted">{% trans "Disponibilité" %}</span>
+          {% if product.stock > 0 %}
+            <span class="badge bg-success">
+              {% blocktrans %}En stock ({{ product.stock }}){% endblocktrans %}
+            </span>
+          {% else %}
+            <span class="badge bg-danger">{% trans "Rupture de stock" %}</span>
+          {% endif %}
+        </div>
+
+        <div class="pd-card p-3 mb-3" style="border-radius:14px;">
+          <div class="d-flex align-items-center justify-content-between gap-2">
+            <div class="fw-bold">{% trans "Livré vers" %}</div>
+            <div class="pd-muted">
+              <i class="bi bi-geo-alt"></i>
+              {{ request.session.ECOMMERCE_COUNTRY|default:"SN" }}
+            </div>
+          </div>
+
+          <div class="mt-2 d-grid gap-2 small">
+            <div class="d-flex align-items-center gap-2">
+              <span class="text-success"><i class="bi bi-truck"></i></span>
+              <div>
+                <strong>{% trans "Livraison" %}:</strong>
+                <span class="pd-muted">{% trans "Gratuite / selon zone" %}</span>
+              </div>
+            </div>
+
+            <div class="d-flex align-items-center gap-2">
+              <span class="text-success"><i class="bi bi-shield-check"></i></span>
+              <div>
+                <strong>{% trans "Protection" %}:</strong>
+                <span class="pd-muted">{% trans "Retour & remboursement" %}</span>
+              </div>
+            </div>
+
+            <div class="d-flex align-items-center gap-2">
+              <span class="text-success"><i class="bi bi-lock"></i></span>
+              <div>
+                <strong>{% trans "Sécurité" %}:</strong>
+                <span class="pd-muted">{% trans "Paiement sécurisé" %}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+          <div>
+            <div class="fw-bold mb-1">{% trans "Quantité" %}</div>
+            <div class="pd-qty">
+              <button type="button" id="pdQtyMinus" aria-label="{% trans 'Réduire' %}">−</button>
+              <input type="text" id="pdQtyInput" value="1" inputmode="numeric">
+              <button type="button" id="pdQtyPlus" aria-label="{% trans 'Augmenter' %}">+</button>
+            </div>
+            {% if product.stock > 0 and product.stock <= 5 %}
+              <div class="small text-danger mt-1">
+                {% blocktrans %}Seulement {{ product.stock }} restants{% endblocktrans %}
+              </div>
+            {% endif %}
+          </div>
+
+          {# ✅ FAVORIS ACTIF #}
+          <form method="post"
+                action="{{ fav_toggle_url|default:'#' }}"
+                class="m-0"
+                id="pdFavForm">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+
+            <button type="submit"
+                    class="btn btn-light"
+                    id="pdFavBtn"
+                    data-url="{{ fav_toggle_url|default:'#' }}"
+                    {% if not fav_toggle_url %}disabled{% endif %}>
+              <i class="bi {% if is_favorited %}bi-heart-fill text-danger{% else %}bi-heart{% endif %} me-2"></i>
+              <span class="pdFavText">
+                {% if is_favorited %}
+                  {% trans "Retirer des favoris" %}
+                {% else %}
+                  {% trans "Ajouter aux favoris" %}
+                {% endif %}
+              </span>
+            </button>
+          </form>
+        </div>
+
+        <div class="pd-buy-actions d-grid gap-2">
+          {% if commerce_mode == "B2B" %}
+            <a href="{{ request_quote_url|default:'#' }}" class="btn btn-danger w-100">
+              <i class="bi bi-file-earmark-text me-2"></i>
+              {% trans "Demander un devis" %}
+            </a>
+          {% else %}
+            <button type="button" class="btn btn-danger w-100" {% if product.stock <= 0 %}disabled{% endif %}>
+              <i class="bi bi-lightning-charge me-2"></i>
+              {% trans "Acheter maintenant" %}
+            </button>
+
+            <a href="{{ add_to_cart_url|default:'#' }}"
+               class="btn btn-outline-dark w-100 {% if not add_to_cart_url or product.stock <= 0 %}disabled{% endif %}">
+              <i class="bi bi-cart-plus me-2"></i>
+              {% trans "Ajouter au panier" %}
+            </a>
+          {% endif %}
+        </div>
+
+        <div class="d-flex gap-2 mt-3">
+          <button type="button" class="btn btn-light w-100">
+            <i class="bi bi-share me-2"></i>{% trans "Partager" %}
+          </button>
+          <button type="button" class="btn btn-light w-100">
+            <i class="bi bi-heart me-2"></i>{% trans "J'aime" %}
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  {# ===== TABS + RELATED (inchangé) ===== #}
+  <div class="row g-4 mt-2">
+    <div class="col-12 col-lg-8">
+      <div class="pd-card p-3">
+        <ul class="nav nav-pills pd-tabs gap-2 mb-3" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#pdDesc" type="button" role="tab">
+              {% trans "Description" %}
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pdSpecs" type="button" role="tab">
+              {% trans "Détails" %}
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pdShip" type="button" role="tab">
+              {% trans "Livraison & retours" %}
+            </button>
+          </li>
+        </ul>
+
+        <div class="tab-content">
+          <div class="tab-pane fade show active" id="pdDesc" role="tabpanel">
+            {% if product.short_description %}
+              <p class="pd-muted mb-3">{{ product.short_description }}</p>
+            {% endif %}
+
+            {% if product.description %}
+              <div class="product-description">
+                {{ product.description|linebreaks }}
+              </div>
+            {% else %}
+              <p class="pd-muted mb-0">{% trans "Aucune description détaillée pour ce produit." %}</p>
+            {% endif %}
+          </div>
+
+          <div class="tab-pane fade" id="pdSpecs" role="tabpanel">
+            <div class="row g-2 small">
+              <div class="col-6">
+                <div class="pd-chip w-100 justify-content-between">
+                  <span>{% trans "SKU" %}</span>
+                  <strong class="text-body">{{ product.sku }}</strong>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="pd-chip w-100 justify-content-between">
+                  <span>{% trans "Catégorie" %}</span>
+                  <strong class="text-body">{{ product.category }}</strong>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="pd-chip w-100 justify-content-between">
+                  <span>{% trans "Stock" %}</span>
+                  <strong class="text-body">{{ product.stock }}</strong>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="pd-chip w-100 justify-content-between">
+                  <span>{% trans "Créé le" %}</span>
+                  <strong class="text-body">{{ product.created_at|date:"d/m/Y" }}</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="pdShip" role="tabpanel">
+            <div class="small">
+              <p class="mb-2">
+                <strong>{% trans "Livraison" %}:</strong>
+                <span class="pd-muted">{% trans "Les délais varient selon la zone. Livraison rapide disponible sur certains articles." %}</span>
+              </p>
+              <p class="mb-2">
+                <strong>{% trans "Retours" %}:</strong>
+                <span class="pd-muted">{% trans "Retour possible selon nos conditions. Contactez le support en cas de problème." %}</span>
+              </p>
+              <p class="mb-0">
+                <strong>{% trans "Paiement" %}:</strong>
+                <span class="pd-muted">{% trans "Paiement sécurisé, informations personnelles protégées." %}</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+      <div class="pd-card p-3">
+        <h3 class="h6 fw-bold mb-3">{% trans "Pourquoi acheter ici ?" %}</h3>
+        <div class="d-grid gap-2 small">
+          <div class="d-flex gap-2">
+            <span class="text-success"><i class="bi bi-shield-check"></i></span>
+            <div>
+              <strong>{% trans "Protection acheteur" %}</strong><br>
+              <span class="pd-muted">{% trans "Remboursement si non livré / non conforme (selon conditions)." %}</span>
+            </div>
+          </div>
+          <div class="d-flex gap-2">
+            <span class="text-success"><i class="bi bi-truck"></i></span>
+            <div>
+              <strong>{% trans "Livraison optimisée" %}</strong><br>
+              <span class="pd-muted">{% trans "Options rapides et suivi dès expédition." %}</span>
+            </div>
+          </div>
+          <div class="d-flex gap-2">
+            <span class="text-success"><i class="bi bi-lock"></i></span>
+            <div>
+              <strong>{% trans "Paiement sécurisé" %}</strong><br>
+              <span class="pd-muted">{% trans "Vos données sont protégées." %}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if related_products %}
+    <div class="mt-5">
+      <h2 class="h5 fw-bold mb-3">{% trans "Articles similaires" %}</h2>
+
+      <div class="row g-3 pd-related">
+        {% for rp in related_products %}
+          {% url 'economic:ecommerce:product_detail' rp.slug as rp_url %}
+
+          <div class="col-6 col-md-4 col-lg-3">
+            <article class="card h-100">
+              {% with rp_img=rp.images.all.0 %}
+                <a href="{{ rp_url|default:'#' }}" class="text-decoration-none">
+                  {% if rp_img %}
+                    <img src="{{ rp_img.image.url }}" class="w-100" style="height:180px;object-fit:cover;" alt="{{ rp_img.alt_text|default:rp.name }}" loading="lazy">
+                  {% else %}
+                    <img src="{% static 'global/image/product-placeholder.png' %}" class="w-100" style="height:180px;object-fit:cover;" alt="{% trans 'Produit' %}" loading="lazy">
+                  {% endif %}
+                </a>
+              {% endwith %}
+
+              <div class="card-body">
+                <h3 class="h6 mb-2" style="min-height: 40px;">
+                  <a href="{{ rp_url|default:'#' }}" class="text-decoration-none">
+                    {{ rp.name|truncatechars:52 }}
+                  </a>
+                </h3>
+
+                <div class="fw-bold">{% money rp.price %}</div>
+                <div class="small pd-muted">★★★★★ 4.6 · 100+ {% trans "vendus" %}</div>
+
+                <a href="{{ rp_url|default:'#' }}" class="btn btn-sm btn-outline-primary w-100 mt-2 {% if not rp_url %}disabled{% endif %}">
+                  {% trans "Voir" %}
+                </a>
+              </div>
+            </article>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+</section>
+{% endblock %}
+
+{% block ecommerce_extra_js %}
+  <script src="{% static 'economic/ecommerce/js/ecommerce.js' %}"></script>
+{% endblock %}
+
+
+
+
+
+{% comment %} {# templates/economic/ecommerce/product_detail.html #}
+{% extends "economic/ecommerce/base_ecommerce.html" %}
+{% load static i18n money %}
+
+{% block ecommerce_title %}
+  {{ product.name }} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block ecommerce_extra_css %}
+  {{ block.super }}
+  <style>
+    /* ============================== */
+    /*  PRODUCT DETAIL (AliExpress-ish) */
+    /* ============================== */
+
+    .pd-shell{ --pd-gap: 18px; }
+    .pd-title{ font-weight: 800; letter-spacing: -.2px; }
+    .pd-muted{ color: rgba(0,0,0,.62); }
+    .pd-card{ border-radius: 16px; border: 1px solid rgba(0,0,0,.08); }
+    .pd-chip{
+      display:inline-flex;align-items:center;gap:.4rem;
+      padding:.25rem .6rem;border-radius:999px;
+      background: rgba(0,0,0,.06);
+      font-size:.82rem;
+    }
+    .pd-deal{
+      border: 1px solid rgba(220,53,69,.35);
+      background: rgba(220,53,69,.06);
+      border-radius: 14px;
+      overflow:hidden;
+    }
+    .pd-deal .pd-deal-head{
+      background: #dc3545;
+      color:#fff;
+      padding: .55rem .9rem;
+      font-weight: 800;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:.75rem;
+      flex-wrap:wrap;
+    }
+    .pd-price{
+      font-size: 2.05rem;
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -.3px;
+    }
+    .pd-price small{ font-size: .9rem; font-weight: 700; }
+    .pd-old{ text-decoration: line-through; opacity:.55; }
+    .pd-savings{
+      color:#dc3545; font-weight: 800; background: rgba(220,53,69,.10);
+      padding:.25rem .5rem;border-radius: 10px;
+    }
+
+    /* Gallery */
+    .pd-gallery{
+      display:grid;
+      grid-template-columns: 84px 1fr;
+      gap: var(--pd-gap);
+      align-items:start;
+    }
+    .pd-thumbs{
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+      max-height: 520px;
+      overflow:auto;
+      padding-right: 6px;
+    }
+    .pd-thumbs::-webkit-scrollbar{ width: 6px; }
+    .pd-thumbs::-webkit-scrollbar-thumb{ background: rgba(0,0,0,.12); border-radius: 999px; }
+    .pd-thumb-btn{
+      width: 78px; height: 78px;
+      border-radius: 12px;
+      border: 1px solid rgba(0,0,0,.10);
+      background:#fff;
+      padding:0;
+      overflow:hidden;
+      position:relative;
+      transition: transform .12s ease, border-color .12s ease;
+    }
+    .pd-thumb-btn:hover{ transform: translateY(-1px); border-color: rgba(13,110,253,.35); }
+    .pd-thumb-btn.is-active{ border: 2px solid #0d6efd; }
+    .pd-thumb-btn img{ width:100%; height:100%; object-fit:cover; display:block; }
+    .pd-main{
+      border-radius: 18px;
+      border: 1px solid rgba(0,0,0,.08);
+      background: #fff;
+      overflow:hidden;
+      position:relative;
+      min-height: 320px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .pd-main img{ width:100%; height:auto; display:block; }
+    .pd-main .pd-zoom{
+      position:absolute; right: 12px; bottom: 12px;
+      width: 42px; height: 42px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,.12);
+      background: rgba(255,255,255,.92);
+      display:flex; align-items:center; justify-content:center;
+    }
+
+    /* Sticky buy box */
+    .pd-buybox{
+      position: sticky;
+      top: 92px; /* hub + subnav */
+    }
+    .pd-buybox .pd-buy-actions .btn{
+      border-radius: 14px;
+      font-weight: 800;
+      padding: .85rem 1rem;
+    }
+
+    .pd-qty{
+      display:flex; align-items:center; gap:.5rem;
+      border: 1px solid rgba(0,0,0,.12);
+      border-radius: 14px;
+      padding: .35rem .45rem;
+      width: max-content;
+      background:#fff;
+    }
+    .pd-qty button{
+      width: 34px; height: 34px;
+      border-radius: 10px;
+      border: 0;
+      background: rgba(0,0,0,.06);
+      font-weight: 900;
+    }
+    .pd-qty input{
+      width: 46px;
+      border: 0;
+      text-align:center;
+      font-weight: 800;
+      outline:none;
+      background: transparent;
+    }
+
+    /* Tabs */
+    .pd-tabs .nav-link{
+      border-radius: 999px;
+      font-weight: 800;
+    }
+
+    /* Related grid */
+    .pd-related .card{
+      border-radius: 16px;
+      border: 1px solid rgba(0,0,0,.08);
+      overflow:hidden;
+      transition: transform .14s ease;
+    }
+    .pd-related .card:hover{ transform: translateY(-2px); }
+
+    /* Mobile */
+    @media (max-width: 992px){
+      .pd-gallery{ grid-template-columns: 1fr; }
+      .pd-thumbs{
+        flex-direction: row;
+        max-height: none;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding-right: 0;
+        padding-bottom: 6px;
+      }
+      .pd-thumb-btn{ width: 74px; height: 74px; }
+      .pd-buybox{ position: static; top:auto; }
+    }
+
+    /* Dark mode */
+    [data-bs-theme="dark"] .pd-card,
+    [data-bs-theme="dark"] .pd-main,
+    [data-bs-theme="dark"] .pd-thumb-btn{
+      background: rgba(20,20,22,.92);
+      border-color: rgba(255,255,255,.12);
+    }
+    [data-bs-theme="dark"] .pd-muted{ color: rgba(255,255,255,.68); }
+    [data-bs-theme="dark"] .pd-chip{ background: rgba(255,255,255,.08); }
+    [data-bs-theme="dark"] .pd-qty{ background: rgba(20,20,22,.92); border-color: rgba(255,255,255,.12); }
+    [data-bs-theme="dark"] .pd-qty button{ background: rgba(255,255,255,.10); color: rgba(255,255,255,.92); }
+    [data-bs-theme="dark"] .pd-zoom{ background: rgba(20,20,22,.92); border-color: rgba(255,255,255,.12); }
+  </style>
+{% endblock %}
+
+{% block content %}
+{% url 'economic:ecommerce:index' as shop_url %}
+{% url 'economic:ecommerce:add_to_cart' product.id as add_to_cart_url %}
+{% url 'economic:ecommerce:request_quote' as request_quote_url %}
+
+<section class="container py-4 pd-shell">
+
+  {# ============================== #}
+  {#  BREADCRUMB / RETOUR           #}
+  {# ============================== #}
+  <div class="mb-3 d-flex flex-wrap align-items-center gap-2 small">
+    <a class="text-decoration-none" href="{{ shop_url|default:'#' }}">
+      ← {% trans "Retour à la boutique" %}
+    </a>
+
+    <span class="pd-muted">|</span>
+
+    <div class="d-flex flex-wrap align-items-center gap-2 pd-muted">
+      <a class="text-decoration-none" href="{{ shop_url|default:'#' }}">
+        {% trans "Boutique" %}
+      </a>
+
+      {% if product.category %}
+        <span>›</span>
+        <span>{{ product.category }}</span>
+      {% endif %}
+
+      <span>›</span>
+      <span class="text-body">{{ product.name }}</span>
+    </div>
+  </div>
+
+  <div class="row g-4 align-items-start">
+    {# ============================== #}
+    {#  GALLERY                       #}
+    {# ============================== #}
+    <div class="col-12 col-lg-7">
+      <div class="pd-card p-3">
+
+        <div class="pd-gallery">
+
+          {# Thumbs #}
+          <div class="pd-thumbs" aria-label="{% trans 'Galerie' %}">
+            {% if product_images %}
+              {% for img in product_images %}
+                <button
+                  type="button"
+                  class="pd-thumb-btn {% if main_image and img.id == main_image.id %}is-active{% endif %}"
+                  data-src="{{ img.image.url }}"
+                  aria-label="{% trans 'Aperçu image' %}">
+                  <img src="{{ img.image.url }}" alt="{{ img.alt_text|default:product.name }}" loading="lazy">
+                </button>
+              {% endfor %}
+            {% else %}
+              <button type="button" class="pd-thumb-btn is-active" data-src="{% static 'global/image/product-placeholder.png' %}">
+                <img src="{% static 'global/image/product-placeholder.png' %}" alt="{% trans 'Produit' %}">
+              </button>
+            {% endif %}
+          </div>
+
+          {# Main image #}
+          <div class="pd-main">
+            {% if main_image %}
+              <img id="pdMainImage"
+                   src="{{ main_image.image.url }}"
+                   alt="{{ main_image.alt_text|default:product.name }}"
+                   loading="eager">
+            {% else %}
+              <img id="pdMainImage"
+                   src="{% static 'global/image/product-placeholder.png' %}"
+                   alt="{% trans 'Produit' %}"
+                   loading="eager">
+            {% endif %}
+
+            {% if main_image %}
+              <a class="pd-zoom text-decoration-none"
+                 href="{{ main_image.image.url }}"
+                 target="_blank" rel="noopener"
+                 aria-label="{% trans 'Ouvrir en grand' %}">
+                <i class="bi bi-zoom-in"></i>
+              </a>
+            {% endif %}
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    {# ============================== #}
+    {#  INFO + BUY BOX                #}
+    {# ============================== #}
+    <div class="col-12 col-lg-5">
+      <div class="pd-card p-3">
+
+        {# Vendor line #}
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+          <div class="small pd-muted">
+            {% if product.vendor %}
+              {% trans "Vendu par" %} <strong class="text-body">{{ product.vendor }}</strong>
+            {% else %}
+              <strong class="text-body">{{ PROJECT_NAME }}</strong>
+            {% endif %}
+          </div>
+
+          {% if product.is_featured %}
+            <span class="pd-chip">🔥 {% trans "Promo" %}</span>
+          {% endif %}
+        </div>
+
+        <h1 class="h5 pd-title mb-2">{{ product.name }}</h1>
+
+        {# Rating / sales placeholders (si tu n’as pas encore le modèle d’avis) #}
+        <div class="d-flex flex-wrap align-items-center gap-2 small mb-3">
+          <span class="text-warning">★★★★★</span>
+          <span class="fw-bold">4.6</span>
+          <span class="pd-muted">·</span>
+          <span class="pd-muted">438 {% trans "avis" %}</span>
+          <span class="pd-muted">·</span>
+          <span class="pd-muted">+1000 {% trans "vendus" %}</span>
+        </div>
+
+        {# Deal box #}
+        <div class="pd-deal mb-3">
+          <div class="pd-deal-head">
+            <span>🎁 {% trans "Offre du jour" %}</span>
+            <span class="small opacity-75">{% trans "Stock limité" %}</span>
+          </div>
+
+          <div class="p-3">
+            <div class="d-flex flex-wrap align-items-end justify-content-between gap-2">
+              <div class="pd-price">
+                {% money product.price %}
+              </div>
+
+              {# si tu ajoutes old_price/sale_price plus tard, ce bloc sera facile à brancher #}
+              <div class="text-end">
+                <div class="pd-savings">-{% trans "Économisez" %} 10%</div>
+                <div class="pd-old small">{% money product.price %}</div>
+              </div>
+            </div>
+
+            <div class="small pd-muted mt-2">
+              {% trans "Prix indicatif (hors taxes) — paiement sécurisé." %}
+            </div>
+          </div>
+        </div>
+
+        {# Stock #}
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <span class="pd-muted">{% trans "Disponibilité" %}</span>
+          {% if product.stock > 0 %}
+            <span class="badge bg-success">
+              {% blocktrans %}En stock ({{ product.stock }}){% endblocktrans %}
+            </span>
+          {% else %}
+            <span class="badge bg-danger">{% trans "Rupture de stock" %}</span>
+          {% endif %}
+        </div>
+
+        {# Shipping / country (session) #}
+        <div class="pd-card p-3 mb-3" style="border-radius:14px;">
+          <div class="d-flex align-items-center justify-content-between gap-2">
+            <div class="fw-bold">{% trans "Livré vers" %}</div>
+            <div class="pd-muted">
+              <i class="bi bi-geo-alt"></i>
+              {{ request.session.ECOMMERCE_COUNTRY|default:"SN" }}
+            </div>
+          </div>
+
+          <div class="mt-2 d-grid gap-2 small">
+            <div class="d-flex align-items-center gap-2">
+              <span class="text-success"><i class="bi bi-truck"></i></span>
+              <div>
+                <strong>{% trans "Livraison" %}:</strong>
+                <span class="pd-muted">{% trans "Gratuite / selon zone" %}</span>
+              </div>
+            </div>
+
+            <div class="d-flex align-items-center gap-2">
+              <span class="text-success"><i class="bi bi-shield-check"></i></span>
+              <div>
+                <strong>{% trans "Protection" %}:</strong>
+                <span class="pd-muted">{% trans "Retour & remboursement" %}</span>
+              </div>
+            </div>
+
+            <div class="d-flex align-items-center gap-2">
+              <span class="text-success"><i class="bi bi-lock"></i></span>
+              <div>
+                <strong>{% trans "Sécurité" %}:</strong>
+                <span class="pd-muted">{% trans "Paiement sécurisé" %}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {# Quantity + buttons #}
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+          <div>
+            <div class="fw-bold mb-1">{% trans "Quantité" %}</div>
+            <div class="pd-qty">
+              <button type="button" id="pdQtyMinus" aria-label="{% trans 'Réduire' %}">−</button>
+              <input type="text" id="pdQtyInput" value="1" inputmode="numeric">
+              <button type="button" id="pdQtyPlus" aria-label="{% trans 'Augmenter' %}">+</button>
+            </div>
+            {% if product.stock > 0 and product.stock <= 5 %}
+              <div class="small text-danger mt-1">
+                {% blocktrans %}Seulement {{ product.stock }} restants{% endblocktrans %}
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="pd-muted small">
+            <i class="bi bi-heart"></i> {% trans "Ajouter aux favoris" %}
+          </div>
+        </div>
+
+        <div class="pd-buy-actions d-grid gap-2">
+          {# Mode B2B: demande devis #}
+          {% if commerce_mode == "B2B" %}
+            <a href="{{ request_quote_url|default:'#' }}" class="btn btn-danger w-100">
+              <i class="bi bi-file-earmark-text me-2"></i>
+              {% trans "Demander un devis" %}
+            </a>
+          {% else %}
+            <button type="button" class="btn btn-danger w-100" {% if product.stock <= 0 %}disabled{% endif %}>
+              <i class="bi bi-lightning-charge me-2"></i>
+              {% trans "Acheter maintenant" %}
+            </button>
+
+            <a href="{{ add_to_cart_url|default:'#' }}"
+               class="btn btn-outline-dark w-100 {% if not add_to_cart_url or product.stock <= 0 %}disabled{% endif %}">
+              <i class="bi bi-cart-plus me-2"></i>
+              {% trans "Ajouter au panier" %}
+            </a>
+          {% endif %}
+        </div>
+
+        <div class="d-flex gap-2 mt-3">
+          <button type="button" class="btn btn-light w-100">
+            <i class="bi bi-share me-2"></i>{% trans "Partager" %}
+          </button>
+          <button type="button" class="btn btn-light w-100">
+            <i class="bi bi-heart me-2"></i>{% trans "J'aime" %}
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  {# ============================== #}
+  {#  DESCRIPTION / TABS            #}
+  {# ============================== #}
+  <div class="row g-4 mt-2">
+    <div class="col-12 col-lg-8">
+      <div class="pd-card p-3">
+        <ul class="nav nav-pills pd-tabs gap-2 mb-3" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#pdDesc" type="button" role="tab">
+              {% trans "Description" %}
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pdSpecs" type="button" role="tab">
+              {% trans "Détails" %}
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pdShip" type="button" role="tab">
+              {% trans "Livraison & retours" %}
+            </button>
+          </li>
+        </ul>
+
+        <div class="tab-content">
+          <div class="tab-pane fade show active" id="pdDesc" role="tabpanel">
+            {% if product.short_description %}
+              <p class="pd-muted mb-3">{{ product.short_description }}</p>
+            {% endif %}
+
+            {% if product.description %}
+              <div class="product-description">
+                {{ product.description|linebreaks }}
+              </div>
+            {% else %}
+              <p class="pd-muted mb-0">{% trans "Aucune description détaillée pour ce produit." %}</p>
+            {% endif %}
+          </div>
+
+          <div class="tab-pane fade" id="pdSpecs" role="tabpanel">
+            <div class="row g-2 small">
+              <div class="col-6">
+                <div class="pd-chip w-100 justify-content-between">
+                  <span>{% trans "SKU" %}</span>
+                  <strong class="text-body">{{ product.sku }}</strong>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="pd-chip w-100 justify-content-between">
+                  <span>{% trans "Catégorie" %}</span>
+                  <strong class="text-body">{{ product.category }}</strong>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="pd-chip w-100 justify-content-between">
+                  <span>{% trans "Stock" %}</span>
+                  <strong class="text-body">{{ product.stock }}</strong>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="pd-chip w-100 justify-content-between">
+                  <span>{% trans "Créé le" %}</span>
+                  <strong class="text-body">{{ product.created_at|date:"d/m/Y" }}</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="pdShip" role="tabpanel">
+            <div class="small">
+              <p class="mb-2">
+                <strong>{% trans "Livraison" %}:</strong>
+                <span class="pd-muted">{% trans "Les délais varient selon la zone. Livraison rapide disponible sur certains articles." %}</span>
+              </p>
+              <p class="mb-2">
+                <strong>{% trans "Retours" %}:</strong>
+                <span class="pd-muted">{% trans "Retour possible selon nos conditions. Contactez le support en cas de problème." %}</span>
+              </p>
+              <p class="mb-0">
+                <strong>{% trans "Paiement" %}:</strong>
+                <span class="pd-muted">{% trans "Paiement sécurisé, informations personnelles protégées." %}</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    {# Right column: trust / highlights #}
+    <div class="col-12 col-lg-4">
+      <div class="pd-card p-3">
+        <h3 class="h6 fw-bold mb-3">{% trans "Pourquoi acheter ici ?" %}</h3>
+        <div class="d-grid gap-2 small">
+          <div class="d-flex gap-2">
+            <span class="text-success"><i class="bi bi-shield-check"></i></span>
+            <div>
+              <strong>{% trans "Protection acheteur" %}</strong><br>
+              <span class="pd-muted">{% trans "Remboursement si non livré / non conforme (selon conditions)." %}</span>
+            </div>
+          </div>
+          <div class="d-flex gap-2">
+            <span class="text-success"><i class="bi bi-truck"></i></span>
+            <div>
+              <strong>{% trans "Livraison optimisée" %}</strong><br>
+              <span class="pd-muted">{% trans "Options rapides et suivi dès expédition." %}</span>
+            </div>
+          </div>
+          <div class="d-flex gap-2">
+            <span class="text-success"><i class="bi bi-lock"></i></span>
+            <div>
+              <strong>{% trans "Paiement sécurisé" %}</strong><br>
+              <span class="pd-muted">{% trans "Vos données sont protégées." %}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {# ============================== #}
+  {#  RELATED PRODUCTS              #}
+  {# ============================== #}
+  {% if related_products %}
+    <div class="mt-5">
+      <h2 class="h5 fw-bold mb-3">{% trans "Articles similaires" %}</h2>
+
+      <div class="row g-3 pd-related">
+        {% for rp in related_products %}
+          {% if rp.slug %}
+            {% url 'economic:ecommerce:product_detail' rp.slug as rp_url %}
+          {% else %}
+            {% with rp_url="#" %}{% endwith %}
+          {% endif %}
+
+          <div class="col-6 col-md-4 col-lg-3">
+            <article class="card h-100">
+              {% with rp_img=rp.images.all.0 %}
+                <a href="{{ rp_url|default:'#' }}" class="text-decoration-none">
+                  {% if rp_img %}
+                    <img src="{{ rp_img.image.url }}" class="w-100" style="height:180px;object-fit:cover;" alt="{{ rp_img.alt_text|default:rp.name }}" loading="lazy">
+                  {% else %}
+                    <img src="{% static 'global/image/product-placeholder.png' %}" class="w-100" style="height:180px;object-fit:cover;" alt="{% trans 'Produit' %}" loading="lazy">
+                  {% endif %}
+                </a>
+              {% endwith %}
+
+              <div class="card-body">
+                <h3 class="h6 mb-2" style="min-height: 40px;">
+                  <a href="{{ rp_url|default:'#' }}" class="text-decoration-none">
+                    {{ rp.name|truncatechars:52 }}
+                  </a>
+                </h3>
+
+                <div class="fw-bold">{% money rp.price %}</div>
+                <div class="small pd-muted">★★★★★ 4.6 · 100+ {% trans "vendus" %}</div>
+
+                <a href="{{ rp_url|default:'#' }}" class="btn btn-sm btn-outline-primary w-100 mt-2 {% if not rp_url %}disabled{% endif %}">
+                  {% trans "Voir" %}
+                </a>
+              </div>
+            </article>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+</section>
+{% endblock %}
+
+{% block ecommerce_extra_js %}
+  <script>
+    (function(){
+      // ==============================
+      //  Gallery thumbnails -> main
+      // ==============================
+      const main = document.getElementById("pdMainImage");
+      const thumbs = document.querySelectorAll(".pd-thumb-btn[data-src]");
+      thumbs.forEach(btn => {
+        btn.addEventListener("click", () => {
+          const src = btn.getAttribute("data-src");
+          if (main && src) main.src = src;
+
+          thumbs.forEach(b => b.classList.remove("is-active"));
+          btn.classList.add("is-active");
+        });
+      });
+
+      // ==============================
+      //  Quantity (+ / -)
+      // ==============================
+      const input = document.getElementById("pdQtyInput");
+      const minus = document.getElementById("pdQtyMinus");
+      const plus = document.getElementById("pdQtyPlus");
+
+      function clampQty(v){
+        v = parseInt(v || "1", 10);
+        if (isNaN(v) || v < 1) v = 1;
+        return v;
+      }
+      if (minus && plus && input){
+        minus.addEventListener("click", () => input.value = clampQty(clampQty(input.value) - 1));
+        plus.addEventListener("click", () => input.value = clampQty(clampQty(input.value) + 1));
+        input.addEventListener("input", () => input.value = clampQty(input.value));
+      }
+    })();
+  </script>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/ecommerce/product_detail.html #}
+{% extends "economic/ecommerce/base_ecommerce.html" %}
+{% load i18n static money %}
+
+{% block ecommerce_title %}
+  {{ product.name }} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+
+  {# ============================== #}
+  {#  BREADCRUMB / RETOUR           #}
+  {# ============================== #}
+  <div class="mb-3 d-flex flex-wrap align-items-center gap-2 small text-muted">
+    <a href="{% url 'economic:ecommerce:index' %}" class="text-decoration-none">
+      {% trans "Boutique" %}
+    </a>
+
+    {% if product.category %}
+      <span>›</span>
+      <a href="{% url 'economic:ecommerce:category' product.category.slug %}"
+         class="text-decoration-none">
+        {{ product.category }}
+      </a>
+    {% endif %}
+
+    <span>›</span>
+    <span class="text-body">{{ product.name }}</span>
+  </div>
+
+  {# ==============================
+     HEAD : MEDIA + INFO / ACHAT
+     ============================== #}
+  <div class="row g-4 align-items-start">
+
+    {# ---------- COL IMAGES ---------- #}
+    <div class="col-12 col-lg-6">
+      <div class="card h-100">
+        <div class="card-body">
+
+          {# Image principale #}
+          <div class="mb-3 text-center">
+            {% if main_image %}
+              <img
+                src="{{ main_image.image.url }}"
+                alt="{{ main_image.alt_text|default:product.name }}"
+                class="img-fluid rounded"
+                loading="lazy">
+            {% else %}
+              <img
+                src="{% static 'global/image/product-placeholder.png' %}"
+                alt="{% trans 'Produit' %}"
+                class="img-fluid rounded"
+                loading="lazy">
+            {% endif %}
+          </div>
+
+          {# Galerie #}
+          {% if product_images and product_images|length > 1 %}
+            <div class="d-flex flex-wrap gap-2 justify-content-center">
+              {% for img in product_images %}
+                <button type="button"
+                        class="border-0 bg-transparent p-0"
+                        onclick="document.getElementById('main-product-image').src='{{ img.image.url }}'">
+                  <img
+                    src="{{ img.image.url }}"
+                    alt="{{ img.alt_text|default:product.name }}"
+                    style="width:70px;height:70px;object-fit:cover;"
+                    class="rounded border"
+                    loading="lazy">
+                </button>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+        </div>
+      </div>
+    </div>
+
+    {# ---------- COL INFO / ACHAT ---------- #}
+    <div class="col-12 col-lg-6">
+      <div class="card h-100">
+        <div class="card-body">
+
+          <h1 class="h3 mb-2">{{ product.name }}</h1>
+
+          {% if product.vendor %}
+            <p class="small text-muted mb-2">
+              {% trans "Vendu par" %} : <strong>{{ product.vendor }}</strong>
+            </p>
+          {% endif %}
+
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="h4 mb-0">
+              {% money product.price %}
+            </div>
+
+            {% if product.stock > 0 %}
+              <span class="badge bg-success">
+                {% blocktrans %}En stock ({{ product.stock }}){% endblocktrans %}
+              </span>
+            {% else %}
+              <span class="badge bg-danger">
+                {% trans "Rupture de stock" %}
+              </span>
+            {% endif %}
+          </div>
+
+          {% if product.short_description %}
+            <p class="text-muted mb-3">
+              {{ product.short_description }}
+            </p>
+          {% endif %}
+
+          {# Bloc d’achat (add_to_cart / B2B) #}
+          <div class="mt-3">
+            {% include "economic/ecommerce/components/purchase_block.html" with product=product %}
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  {# ==============================
+     DESCRIPTION DETAILLEE
+     ============================== #}
+  <div class="row mt-5">
+    <div class="col-12 col-lg-8">
+      <h2 class="h5 mb-3">{% trans "Description du produit" %}</h2>
+
+      {% if product.description %}
+        <div class="product-description">
+          {{ product.description|linebreaks }}
+        </div>
+      {% else %}
+        <p class="text-muted">
+          {% trans "Aucune description détaillée pour ce produit." %}
+        </p>
+      {% endif %}
+    </div>
+  </div>
+
+  {# ==============================
+     PRODUITS SIMILAIRES
+     ============================== #}
+  {% if related_products %}
+    <hr class="my-5">
+    <h2 class="h5 mb-3">{% trans "Produits similaires" %}</h2>
+
+    <div class="row g-3">
+      {% for rp in related_products %}
+        <div class="col-6 col-md-3 col-lg-2">
+          <article class="card h-100">
+            <div class="card-body">
+              <h3 class="h6 mb-2">
+                <a href="{% url 'economic:ecommerce:product_detail' rp.slug %}"
+                   class="text-decoration-none">
+                  {{ rp.name|truncatechars:50 }}
+                </a>
+              </h3>
+
+              <div class="small text-muted">
+                {% money rp.price %}
+              </div>
+            </div>
+          </article>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+</section>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/ecommerce/product_detail.html #}
+{% extends "economic/ecommerce/base_ecommerce.html" %}
+{% load i18n static money %}
+
+{% block ecommerce_title %}
+  {{ product.name }} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+  <a class="text-decoration-none d-inline-flex align-items-center mb-3"
+     href="{% url 'economic:ecommerce:product_list' %}">
+    ← {% trans "Retour aux produits" %}
+  </a>
+
+  <div class="row g-4">
+    <div class="col-12 col-lg-7">
+      <div class="card h-100">
+        <div class="card-body">
+          <h1 class="h3 mb-3">{{ product.name }}</h1>
+
+          {% if product.image %}
+            <div class="mb-3 text-center">
+              <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid">
+            </div>
+          {% endif %}
+
+          {% if product.description %}
+            <div class="product-description">
+              {{ product.description|linebreaks }}
+            </div>
+          {% else %}
+            <p class="text-muted mb-0">
+              {% trans "Aucune description détaillée pour ce produit." %}
+            </p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-5">
+      {% include "economic/ecommerce/components/purchase_block.html" with product=product %}
+    </div>
+  </div>
+
+  {% if related_products %}
+    <hr class="my-5">
+    <h2 class="h5 mb-3">{% trans "Produits similaires" %}</h2>
+    <div class="row g-3">
+      {% for rp in related_products %}
+        {% url 'economic:ecommerce:product_detail' rp.slug as rp_url %}
+        <div class="col-6 col-md-3">
+          <div class="card h-100">
+            <div class="card-body">
+              <h3 class="h6">
+                <a href="{{ rp_url|default:'#' }}" class="text-decoration-none">
+                  {{ rp.name|truncatechars:40 }}
+                </a>
+              </h3>
+              <div class="small text-muted">{% money rp.price %}</div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+</section>
+{% endblock %}
+
+
+
+ {% endcomment %}
+
+
+
+
+{% comment %} {# templates/economic/ecommerce/product_detail.html #}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}
+{{ product.name }} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'economic/css/ecommerce_product_detail.css' %}">
+<link rel="stylesheet" href="{% static 'economic/css/ecommerce_navbar.css' %}">
+{% endblock %}
+
+{% block section_menu %}
+  {% include 'economic/ecommerce/partials/_ecommerce_navbar.html' %}
+{% endblock %}
+
+{% block content %}
+
+<!-- ===================================================== -->
+<!-- BREADCRUMB -->
+<!-- ===================================================== -->
+<section class="container py-3">
+  <nav class="breadcrumb">
+    <a href="{% url 'economic:ecommerce:index' %}">{% trans "Boutique" %}</a>
+    {% if product.category %}
+      <span>/</span>
+      <a href="?category={{ product.category.slug }}">
+        {{ product.category.name }}
+      </a>
+    {% endif %}
+    <span>/</span>
+    <strong>{{ product.name|truncatechars:40 }}</strong>
+  </nav>
+</section>
+
+<!-- ===================================================== -->
+<!-- PRODUIT -->
+<!-- ===================================================== -->
+<section class="container pb-5">
+  <div class="row g-4">
+
+    <!-- ================= IMAGES ================= -->
+    <div class="col-md-6">
+      <div class="product-gallery">
+
+        {% if images %}
+          {% with main_image=images.0 %}
+            <img src="{{ main_image.image.url }}"
+                 class="img-fluid main-product-image"
+                 alt="{{ product.name }}">
+          {% endwith %}
+        {% else %}
+          <img src="{% static 'global/image/product-placeholder.png' %}"
+               class="img-fluid main-product-image"
+               alt="{% trans 'Produit' %}">
+        {% endif %}
+
+        {% if images %}
+          <div class="product-thumbnails mt-3">
+            {% for img in images %}
+              <img src="{{ img.image.url }}"
+                   alt="{{ product.name }}"
+                   class="thumbnail">
+            {% endfor %}
+          </div>
+        {% endif %}
+
+      </div>
+    </div>
+
+    <!-- ================= INFOS ================= -->
+    <div class="col-md-6">
+
+      <h1 class="product-title">{{ product.name }}</h1>
+
+      <div class="product-meta mb-2">
+        {% if product.is_new %}
+          <span class="badge bg-success">{% trans "Nouveau" %}</span>
+        {% endif %}
+        {% if product.is_featured %}
+          <span class="badge bg-danger">{% trans "Populaire" %}</span>
+        {% endif %}
+      </div>
+
+      <div class="product-price mb-3">
+        {{ product.price }} {{ CURRENCY|default:"XOF" }}
+      </div>
+
+      <div class="product-rating mb-3">
+        ⭐ {{ product.average_rating|default:"4.0" }}/5
+        <span class="text-muted">
+          ({{ product.review_count|default:"0" }} {% trans "avis" %})
+        </span>
+      </div>
+
+      {% if product.short_description %}
+        <p class="product-short-description">
+          {{ product.short_description|safe }}
+        </p>
+      {% endif %}
+
+      <!-- ================= ACTIONS ================= -->
+      <form method="post"
+            action="{% url 'economic:ecommerce:add_to_cart' product.id %}"
+            class="product-actions mt-4">
+        {% csrf_token %}
+
+        <div class="d-flex align-items-center gap-3">
+
+          <input type="number"
+                 name="quantity"
+                 value="1"
+                 min="1"
+                 class="form-control w-25">
+
+          <button type="submit"
+                  class="btn btn-primary btn-lg"
+                  {% if not product.is_active %}disabled{% endif %}>
+            🛒 {% trans "Ajouter au panier" %}
+          </button>
+
+        </div>
+
+      </form>
+
+      <div class="product-infos mt-4">
+        <p>✅ {% trans "Paiement sécurisé" %}</p>
+        <p>📦 {% trans "Livraison estimée après commande" %}</p>
+        <p>💬 {% trans "Support client disponible" %}</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===================================================== -->
+  <!-- TABS : DESCRIPTION / AVIS -->
+  <!-- ===================================================== -->
+  <div class="row mt-5">
+    <div class="col-12">
+
+      <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+          <button class="nav-link active"
+                  data-bs-toggle="tab"
+                  data-bs-target="#description">
+            {% trans "Description" %}
+          </button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link"
+                  data-bs-toggle="tab"
+                  data-bs-target="#reviews">
+            {% trans "Avis clients" %}
+          </button>
+        </li>
+      </ul>
+
+      <div class="tab-content border p-4">
+
+        <!-- DESCRIPTION -->
+        <div class="tab-pane fade show active" id="description">
+          {% if product.description %}
+            {{ product.description|safe }}
+          {% else %}
+            <p class="text-muted">
+              {% trans "Description détaillée à venir." %}
+            </p>
+          {% endif %}
+        </div>
+
+        <!-- AVIS -->
+        <div class="tab-pane fade" id="reviews">
+
+          {# on ne peut pas appeler .filter() dans un template #}
+          {% for review in product.reviews.all %}
+            {% if review.is_approved %}
+              <div class="review mb-3">
+                <strong>{{ review.user }}</strong>
+                ⭐ {{ review.rating }}/5
+                <h6>{{ review.title }}</h6>
+                <p>{{ review.content|safe }}</p>
+              </div>
+            {% endif %}
+          {% empty %}
+            <p class="text-muted">
+              {% trans "Aucun avis pour ce produit." %}
+            </p>
+          {% endfor %}
+
+          {% if user.is_authenticated %}
+          <hr>
+          <h5>{% trans "Laisser un avis" %}</h5>
+
+          <form method="post"
+                action="{% url 'economic:ecommerce:add_review' product.id %}">
+            {% csrf_token %}
+
+            <div class="mb-2">
+              <label>{% trans "Note" %}</label>
+              <input type="number" name="rating" min="1" max="5" required class="form-control">
+            </div>
+
+            <div class="mb-2">
+              <label>{% trans "Titre" %}</label>
+              <input type="text" name="title" class="form-control" required>
+            </div>
+
+            <div class="mb-2">
+              <label>{% trans "Commentaire" %}</label>
+              <textarea name="content" rows="3" class="form-control"></textarea>
+            </div>
+
+            <button class="btn btn-outline-primary">
+              {% trans "Envoyer mon avis" %}
+            </button>
+          </form>
+          {% else %}
+            <p class="text-muted mt-3">
+              {% trans "Connectez-vous pour laisser un avis." %}
+            </p>
+          {% endif %}
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/ecommerce/product_detail.html #}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}
+{{ product.name }} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'economic/css/ecommerce_product_detail.css' %}">
+<link rel="stylesheet" href="{% static 'economic/css/ecommerce_navbar.css' %}">
+{% endblock %}
+
+{% block section_menu %}
+  {% include 'economic/ecommerce/partials/_ecommerce_navbar.html' %}
+{% endblock %}
+
+{% block content %}
+
+<!-- ===================================================== -->
+<!-- BREADCRUMB -->
+<!-- ===================================================== -->
+<section class="container py-3">
+  <nav class="breadcrumb">
+    <a href="{% url 'economic:ecommerce:index' %}">{% trans "Boutique" %}</a>
+    {% if product.category %}
+      <span>/</span>
+      <a href="?category={{ product.category.slug }}">
+        {{ product.category.name }}
+      </a>
+    {% endif %}
+    <span>/</span>
+    <strong>{{ product.name|truncatechars:40 }}</strong>
+  </nav>
+</section>
+
+<!-- ===================================================== -->
+<!-- PRODUIT -->
+<!-- ===================================================== -->
+<section class="container pb-5">
+  <div class="row g-4">
+
+    <!-- ================= IMAGES ================= -->
+    <div class="col-md-6">
+
+      <div class="product-gallery">
+
+        {% if product.image %}
+          <img src="{{ product.image.url }}"
+               class="img-fluid main-product-image"
+               alt="{{ product.name }}">
+        {% else %}
+          <img src="{% static 'global/image/product-placeholder.png' %}"
+               class="img-fluid main-product-image"
+               alt="{% trans 'Produit' %}">
+        {% endif %}
+
+        {% if product.gallery_images.all %}
+        <div class="product-thumbnails mt-3">
+          {% for img in product.gallery_images.all %}
+            <img src="{{ img.image.url }}"
+                 alt="{{ product.name }}"
+                 class="thumbnail">
+          {% endfor %}
+        </div>
+        {% endif %}
+
+      </div>
+    </div>
+
+    <!-- ================= INFOS ================= -->
+    <div class="col-md-6">
+
+      <h1 class="product-title">{{ product.name }}</h1>
+
+      <div class="product-meta mb-2">
+        {% if product.is_new %}
+          <span class="badge bg-success">{% trans "Nouveau" %}</span>
+        {% endif %}
+        {% if product.is_featured %}
+          <span class="badge bg-danger">{% trans "Populaire" %}</span>
+        {% endif %}
+      </div>
+
+      <div class="product-price mb-3">
+        {{ product.price }} {{ CURRENCY|default:"€" }}
+      </div>
+
+      <div class="product-rating mb-3">
+        ⭐ {{ product.average_rating|default:"4.0" }}/5
+        <span class="text-muted">
+          ({{ product.review_count|default:"0" }} {% trans "avis" %})
+        </span>
+      </div>
+
+      {% if product.short_description %}
+        <p class="product-short-description">
+          {{ product.short_description|safe }}
+        </p>
+      {% endif %}
+
+      <!-- ================= ACTIONS ================= -->
+      <form method="post"
+            action="{% url 'economic:ecommerce:add_to_cart' product.id %}"
+            class="product-actions mt-4">
+        {% csrf_token %}
+
+        <div class="d-flex align-items-center gap-3">
+
+          <input type="number"
+                 name="quantity"
+                 value="1"
+                 min="1"
+                 class="form-control w-25">
+
+          <button type="submit"
+                  class="btn btn-primary btn-lg"
+                  {% if not product.is_active %}disabled{% endif %}>
+            🛒 {% trans "Ajouter au panier" %}
+          </button>
+
+        </div>
+
+      </form>
+
+      <div class="product-infos mt-4">
+        <p>✅ {% trans "Paiement sécurisé" %}</p>
+        <p>📦 {% trans "Livraison estimée après commande" %}</p>
+        <p>💬 {% trans "Support client disponible" %}</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===================================================== -->
+  <!-- TABS : DESCRIPTION / AVIS -->
+  <!-- ===================================================== -->
+  <div class="row mt-5">
+    <div class="col-12">
+
+      <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+          <button class="nav-link active"
+                  data-bs-toggle="tab"
+                  data-bs-target="#description">
+            {% trans "Description" %}
+          </button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link"
+                  data-bs-toggle="tab"
+                  data-bs-target="#reviews">
+            {% trans "Avis clients" %}
+          </button>
+        </li>
+      </ul>
+
+      <div class="tab-content border p-4">
+
+        <!-- DESCRIPTION -->
+        <div class="tab-pane fade show active" id="description">
+          {% if product.description %}
+            {{ product.description|safe }}
+          {% else %}
+            <p class="text-muted">
+              {% trans "Description détaillée à venir." %}
+            </p>
+          {% endif %}
+        </div>
+
+        <!-- AVIS -->
+        <div class="tab-pane fade" id="reviews">
+
+          {% for review in product.reviews.filter(is_approved=True) %}
+            <div class="review mb-3">
+              <strong>{{ review.user }}</strong>
+              ⭐ {{ review.rating }}/5
+              <h6>{{ review.title }}</h6>
+              <p>{{ review.content|safe }}</p>
+            </div>
+          {% empty %}
+            <p class="text-muted">
+              {% trans "Aucun avis pour ce produit." %}
+            </p>
+          {% endfor %}
+
+          {% if user.is_authenticated %}
+          <hr>
+          <h5>{% trans "Laisser un avis" %}</h5>
+
+          <form method="post"
+                action="{% url 'economic:ecommerce:add_review' product.id %}">
+            {% csrf_token %}
+
+            <div class="mb-2">
+              <label>{% trans "Note" %}</label>
+              <input type="number" name="rating" min="1" max="5" required class="form-control">
+            </div>
+
+            <div class="mb-2">
+              <label>{% trans "Titre" %}</label>
+              <input type="text" name="title" class="form-control" required>
+            </div>
+
+            <div class="mb-2">
+              <label>{% trans "Commentaire" %}</label>
+              <textarea name="content" rows="3" class="form-control"></textarea>
+            </div>
+
+            <button class="btn btn-outline-primary">
+              {% trans "Envoyer mon avis" %}
+            </button>
+          </form>
+          {% else %}
+            <p class="text-muted mt-3">
+              {% trans "Connectez-vous pour laisser un avis." %}
+            </p>
+          {% endif %}
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+
+
+ {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/ecommerce/product_detail.html #}
+{% load static i18n %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'ecommerce/css/product_details.css' %}">
+
+{% endblock %}
+<section class="product-reviews mt-5">
+
+  <!-- ===================================================== -->
+  <!-- TITRE -->
+  <!-- ===================================================== -->
+  <h3 class="section-title mb-4">
+    {% trans "Avis clients" %}
+  </h3>
+
+  <!-- ===================================================== -->
+  <!-- LISTE DES AVIS -->
+  <!-- ===================================================== -->
+  {% if product.reviews.filter(is_approved=True).exists %}
+    <div class="reviews-list">
+
+      {% for review in product.reviews.filter(is_approved=True) %}
+      <div class="review-card">
+
+        <div class="review-header d-flex justify-content-between align-items-center">
+          <div class="review-user">
+            <i class="bi bi-person-circle"></i>
+            <strong>{{ review.user.get_full_name|default:review.user.username }}</strong>
+          </div>
+
+          <div class="review-rating">
+            {% for i in "12345" %}
+              {% if forloop.counter <= review.rating %}
+                <i class="bi bi-star-fill text-warning"></i>
+              {% else %}
+                <i class="bi bi-star text-muted"></i>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+
+        {% if review.title %}
+        <h6 class="review-title mt-2">
+          {{ review.title }}
+        </h6>
+        {% endif %}
+
+        <div class="review-content text-muted">
+          {{ review.content|safe }}
+        </div>
+
+      </div>
+      {% endfor %}
+
+    </div>
+  {% else %}
+    <p class="text-muted">
+      {% trans "Aucun avis pour ce produit pour le moment." %}
+    </p>
+  {% endif %}
+
+  <!-- ===================================================== -->
+  <!-- FORMULAIRE AVIS -->
+  <!-- ===================================================== -->
+  {% if user.is_authenticated %}
+
+    {% if commerce_mode == "B2C" %}
+    <div class="review-form mt-5">
+
+      <h4 class="mb-3">
+        {% trans "Laisser un avis" %}
+      </h4>
+
+      <form method="post"
+            action="{% url 'economic:ecommerce:add_review' product.id %}"
+            class="row g-3">
+
+        {% csrf_token %}
+
+        <!-- NOTE -->
+        <div class="col-12 col-md-3">
+          <label class="form-label">
+            {% trans "Note" %}
+          </label>
+          <select name="rating" class="form-select" required>
+            <option value="">{% trans "Choisir" %}</option>
+            <option value="5">⭐⭐⭐⭐⭐</option>
+            <option value="4">⭐⭐⭐⭐</option>
+            <option value="3">⭐⭐⭐</option>
+            <option value="2">⭐⭐</option>
+            <option value="1">⭐</option>
+          </select>
+        </div>
+
+        <!-- TITRE -->
+        <div class="col-12 col-md-9">
+          <label class="form-label">
+            {% trans "Titre" %}
+          </label>
+          <input type="text"
+                 name="title"
+                 class="form-control"
+                 placeholder="{% trans 'Résumé de votre avis' %}"
+                 required>
+        </div>
+
+        <!-- CONTENU -->
+        <div class="col-12">
+          <label class="form-label">
+            {% trans "Votre avis" %}
+          </label>
+          <textarea name="content"
+                    rows="4"
+                    class="form-control"
+                    placeholder="{% trans 'Décrivez votre expérience avec ce produit…' %}"></textarea>
+        </div>
+
+        <!-- SUBMIT -->
+        <div class="col-12">
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-send"></i>
+            {% trans "Envoyer mon avis" %}
+          </button>
+        </div>
+
+      </form>
+
+      <p class="text-muted small mt-2">
+        {% trans "Votre avis sera publié après validation." %}
+      </p>
+
+    </div>
+    {% endif %}
+
+  {% else %}
+    <div class="alert alert-light mt-4">
+      <i class="bi bi-info-circle"></i>
+      {% trans "Connectez-vous pour laisser un avis." %}
+      <a href="{% url 'accounts_users:login' %}">
+        {% trans "Se connecter" %}
+      </a>
+    </div>
+  {% endif %}
+
+</section> {% endcomment %}
+
+
+
+
+
+
+
+
+
+
+
+{% comment %} {% load static i18n %}
+
+<h3>{% trans "Avis clients" %}</h3>
+
+{% for review in product.reviews.filter(is_approved=True) %}
+  <div class="review">
+    <strong>{{ review.user }}</strong>
+    ⭐ {{ review.rating }}/5
+    <h5>{{ review.title }}</h5>
+    <div>{{ review.content|safe }}</div>
+  </div>
+{% empty %}
+  <p>{% trans "Aucun avis pour ce produit." %}</p>
+{% endfor %}
+
+{% if user.is_authenticated %}
+<form method="post" action="{% url 'ecommerce:add_review' product.id %}">
+  {% csrf_token %}
+  <input type="number" name="rating" min="1" max="5" required>
+  <input type="text" name="title" required>
+  <textarea name="content"></textarea>
+  <button type="submit">{% trans "Envoyer mon avis" %}</button>
+</form>
+{% endif %} {% endcomment %}

@@ -1,4 +1,37 @@
-{# economic/resources/resources_list.html #}
+{# templates/economic/resources/resources_list.html #}
+{% extends "economic/resources/base_resources.html" %}
+{% load static i18n %}
+
+{% block resources_title %}{% trans "Toutes les ressources" %}{% endblock %}
+
+{% block resources_content %}
+
+  <h1 class="mb-4">📂 {% trans "Toutes les ressources" %}</h1>
+
+  <ul class="list-group list-group-flush">
+    {% for resource in resources %}
+      {% url 'economic:resources:detail' resource.slug as resource_detail_url %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <span>{{ resource.title }}</span>
+        <a href="{{ resource_detail_url|default:'#' }}"
+           class="{% if not resource_detail_url %}disabled{% endif %}">
+          {% trans "Ouvrir" %}
+        </a>
+      </li>
+    {% empty %}
+      <li class="list-group-item text-muted">
+        {% trans "Aucune ressource." %}
+      </li>
+    {% endfor %}
+  </ul>
+
+{% endblock %}
+
+
+
+
+
+{% comment %} {# economic/resources/resources_list.html #}
 {% extends "main.html" %}
 {% load i18n %}
 
@@ -27,7 +60,7 @@
   </ul>
 
 </section>
-{% endblock %}
+{% endblock %} {% endcomment %}
 
 
 

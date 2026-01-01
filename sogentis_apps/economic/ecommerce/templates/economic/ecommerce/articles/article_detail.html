@@ -1,4 +1,37 @@
-{% extends "main.html" %}
+{# templates/economic/ecommerce/articles/articles_details.html #}
+{% extends "economic/ecommerce/base_ecommerce.html" %}
+{% load i18n %}
+
+{% block ecommerce_title %}
+  {{ article.title }} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+  <a href="{{ back_url|default:article_list_url|default:'#' }}"
+     class="text-decoration-none d-inline-flex align-items-center mb-3">
+    ← {% trans "Retour aux articles" %}
+  </a>
+
+  <article class="card">
+    <div class="card-body">
+      <h1 class="h3 mb-2">{{ article.title }}</h1>
+      <p class="text-muted small mb-4">
+        {{ article.published_at|date:"Y-m-d" }}
+      </p>
+      <div class="article-body">
+        {{ article.body|linebreaks }}
+      </div>
+    </div>
+  </article>
+</section>
+{% endblock %}
+
+
+
+
+
+{% comment %} {% extends "main.html" %}
 
 {% block content %}
 <h1>{{ article.title }}</h1>
@@ -6,4 +39,4 @@
 <div>
     {{ article.content|linebreaks }}
 </div>
-{% endblock %}
+{% endblock %} {% endcomment %}

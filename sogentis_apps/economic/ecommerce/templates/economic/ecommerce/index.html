@@ -1,4 +1,740 @@
 {# templates/economic/ecommerce/index.html #}
+{% extends "economic/ecommerce/base_ecommerce.html" %}
+{% load static i18n money %}
+
+{% block ecommerce_title %}
+  {% trans "Boutique" %} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block ecommerce_extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'economic/ecommerce/css/ecommerce_marketplace.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="container-fluid py-3">
+  <div class="container">
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+      <div class="mk-results">
+        <strong>
+          {% if page_obj %}{{ page_obj.paginator.count }}{% else %}{{ products|length }}{% endif %}
+        </strong>
+        {% trans "produits trouvés" %}
+        {% if current_category %}
+          <span class="text-muted">· {{ current_category }}</span>
+        {% endif %}
+      </div>
+
+      <form method="get" class="d-flex align-items-center gap-2">
+        {% if request.GET.q %}<input type="hidden" name="q" value="{{ request.GET.q }}">{% endif %}
+        {% if request.GET.category %}<input type="hidden" name="category" value="{{ request.GET.category }}">{% endif %}
+        {% if request.GET.badge %}<input type="hidden" name="badge" value="{{ request.GET.badge }}">{% endif %}
+        {% if request.GET.price_max %}<input type="hidden" name="price_max" value="{{ request.GET.price_max }}">{% endif %}
+
+        <select name="sort" class="form-select form-select-sm" onchange="this.form.submit()">
+          <option value="">{% trans "Trier par" %}</option>
+          <option value="deals" {% if sort == "deals" %}selected{% endif %}>🔥 {% trans "Super Deals" %}</option>
+          <option value="new" {% if sort == "new" %}selected{% endif %}>✨ {% trans "Nouveautés" %}</option>
+          <option value="best" {% if sort == "best" %}selected{% endif %}>⭐ {% trans "Meilleures ventes" %}</option>
+          <option value="price_asc" {% if sort == "price_asc" %}selected{% endif %}>{% trans "Prix croissant" %}</option>
+          <option value="price_desc" {% if sort == "price_desc" %}selected{% endif %}>{% trans "Prix décroissant" %}</option>
+        </select>
+      </form>
+    </div>
+
+    <div class="row g-3">
+
+      <aside class="col-lg-2 d-none d-lg-block">
+        <div class="card mk-filter-card mb-3">
+          <div class="card-body">
+            <h6 class="mb-2">{% trans "Catégories" %}</h6>
+            <ul class="list-unstyled mb-0 mk-cat-list">
+              {% for c in categories %}
+                <li class="mb-1">
+                  <a class="{% if request.GET.category == c.slug or current_category.slug == c.slug %}active{% endif %}"
+                     href="?{% if request.GET.q %}q={{ request.GET.q|urlencode }}&{% endif %}category={{ c.slug }}{% if sort %}&sort={{ sort }}{% endif %}{% if badge %}&badge={{ badge }}{% endif %}">
+                    {{ c.name }}
+                  </a>
+                </li>
+              {% empty %}
+                <li class="text-muted small">{% trans "Aucune catégorie" %}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+
+        <div class="card mk-filter-card mb-3">
+          <div class="card-body">
+            <h6 class="mb-2">{% trans "Prix" %}</h6>
+
+            <form method="get">
+              {% if request.GET.q %}<input type="hidden" name="q" value="{{ request.GET.q }}">{% endif %}
+              {% if request.GET.category %}<input type="hidden" name="category" value="{{ request.GET.category }}">{% endif %}
+              {% if sort %}<input type="hidden" name="sort" value="{{ sort }}">{% endif %}
+              {% if badge %}<input type="hidden" name="badge" value="{{ badge }}">{% endif %}
+
+              <input type="range"
+                     name="price_max"
+                     class="form-range"
+                     min="0"
+                     max="{{ max_price|default:1000 }}"
+                     value="{{ request.GET.price_max|default:max_price }}">
+
+              <button class="btn btn-sm btn-outline-secondary w-100">
+                {% trans "Appliquer" %}
+              </button>
+
+              {% if request.GET.price_max %}
+                <a class="btn btn-sm btn-link w-100 mt-1"
+                   href="?{% if request.GET.q %}q={{ request.GET.q|urlencode }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}{% if sort %}sort={{ sort }}&{% endif %}{% if badge %}badge={{ badge }}{% endif %}">
+                  {% trans "Réinitialiser" %}
+                </a>
+              {% endif %}
+            </form>
+          </div>
+        </div>
+      </aside>
+
+      <div class="col-lg-10">
+
+        {% if products %}
+          <div class="row g-3">
+
+            {% for product in products %}
+              {% url 'economic:ecommerce:product_detail' product.slug as detail_url %}
+              {% url 'economic:ecommerce:add_to_cart' product.pk as add_url %}
+
+              <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+                <article class="px-card h-100">
+
+                  <div class="px-media">
+                    <a class="px-media-link {% if not detail_url %}disabled{% endif %}"
+                       href="{{ detail_url|default:'#' }}">
+                      {% with img=product.images.all.0 %}
+                        {% if img %}
+                          <img src="{{ img.image.url }}" alt="{{ img.alt_text|default:product.name }}" loading="lazy">
+                        {% else %}
+                          <img src="{% static 'global/image/product-placeholder.png' %}" alt="{% trans 'Produit' %}" loading="lazy">
+                        {% endif %}
+                      {% endwith %}
+                    </a>
+
+                    <div class="px-badges">
+                      {% if product.is_featured %}
+                        <span class="px-badge px-badge-promo">{% trans "Promo" %}</span>
+                        <span class="px-badge px-badge-choice">{% trans "Choix" %}</span>
+                      {% endif %}
+                      {% if product.stock|default:0 <= 0 %}
+                        <span class="px-badge px-badge-out">{% trans "Rupture" %}</span>
+                      {% endif %}
+                    </div>
+
+                    <a class="px-cart-fab {% if not add_url or product.stock|default:0 <= 0 %}disabled{% endif %}"
+                       href="{{ add_url|default:'#' }}"
+                       aria-label="{% trans 'Ajouter au panier' %}">
+                      <i class="bi bi-cart3"></i>
+                    </a>
+                  </div>
+
+                  <div class="px-body">
+
+                    <div class="px-title">
+                      <a href="{{ detail_url|default:'#' }}" class="{% if not detail_url %}disabled{% endif %}">
+                        {{ product.name|truncatechars:56 }}
+                      </a>
+                    </div>
+
+                    <div class="px-rating">
+                      <span class="px-stars" aria-hidden="true">★★★★★</span>
+                      {% if product.average_rating %}
+                        <span class="px-rating-num">{{ product.average_rating }}</span>
+                      {% endif %}
+                      {% if product.sold_count %}
+                        <span class="px-dot">·</span>
+                        <span class="px-sold">{{ product.sold_count }}+ {% trans "vendus" %}</span>
+                      {% endif %}
+                    </div>
+
+                    <div class="px-price-row">
+                      <div class="px-price">{% money product.price %}</div>
+
+                      {% if product.old_price and product.old_price > product.price %}
+                        <div class="px-old">{% money product.old_price %}</div>
+                        {% if product.discount_percent %}
+                          <div class="px-off">-{{ product.discount_percent }}%</div>
+                        {% endif %}
+                      {% endif %}
+                    </div>
+
+                    <div class="px-meta">
+                      {% if product.is_featured %}
+                        <span class="px-chip px-chip-promo">{% trans "Promo" %}</span>
+                      {% endif %}
+                      <span class="px-chip px-chip-ship">🚚 {% trans "Livraison gratuite" %}</span>
+                    </div>
+
+                  </div>
+
+                </article>
+              </div>
+            {% endfor %}
+
+          </div>
+
+          {% if is_paginated %}
+            <nav class="mt-4">
+              <ul class="pagination justify-content-center">
+
+                {% if page_obj.has_previous %}
+                  <li class="page-item">
+                    <a class="page-link"
+                       href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q|urlencode }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}{% if badge %}&badge={{ badge }}{% endif %}{% if request.GET.price_max %}&price_max={{ request.GET.price_max }}{% endif %}">
+                      &laquo;
+                    </a>
+                  </li>
+                {% endif %}
+
+                <li class="page-item disabled">
+                  <span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+                </li>
+
+                {% if page_obj.has_next %}
+                  <li class="page-item">
+                    <a class="page-link"
+                       href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q|urlencode }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}{% if badge %}&badge={{ badge }}{% endif %}{% if request.GET.price_max %}&price_max={{ request.GET.price_max }}{% endif %}">
+                      &raquo;
+                    </a>
+                  </li>
+                {% endif %}
+
+              </ul>
+            </nav>
+          {% endif %}
+
+        {% else %}
+          <div class="text-center py-5">
+            <h4>{% trans "Aucun produit disponible" %}</h4>
+            <p class="text-muted">{% trans "Les produits seront bientôt disponibles." %}</p>
+          </div>
+        {% endif %}
+
+      </div>
+    </div>
+
+  </div>
+</section>
+{% endblock %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/ecommerce/index.html #}
+{% extends "economic/ecommerce/base_ecommerce.html" %}
+{% load static i18n money %}
+
+{% block ecommerce_title %}
+  {% trans "Boutique" %} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block ecommerce_extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'economic/ecommerce/css/ecommerce_marketplace.css' %}">
+  <link rel="stylesheet" href="{% static 'economic/ecommerce/css/product_detail.css' %}">
+
+  {% endblock %}
+
+{% block content %}
+<section class="container-fluid py-3">
+  <div class="container">
+
+    {# ============================== #}
+    {#  BARRE : Résultats + Tri        #}
+    {# ============================== #}
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+      <div class="mk-results">
+        <strong>
+          {% if page_obj %}
+            {{ page_obj.paginator.count }}
+          {% else %}
+            {{ products|length }}
+          {% endif %}
+        </strong>
+        {% trans "produits trouvés" %}
+        {% if current_category %}
+          <span class="text-muted">· {{ current_category }}</span>
+        {% endif %}
+      </div>
+
+      <form method="get" class="d-flex align-items-center gap-2">
+        {% if request.GET.q %}<input type="hidden" name="q" value="{{ request.GET.q }}">{% endif %}
+        {% if request.GET.category %}<input type="hidden" name="category" value="{{ request.GET.category }}">{% endif %}
+        {% if request.GET.badge %}<input type="hidden" name="badge" value="{{ request.GET.badge }}">{% endif %}
+        {% if request.GET.price_max %}<input type="hidden" name="price_max" value="{{ request.GET.price_max }}">{% endif %}
+
+        <select name="sort" class="form-select form-select-sm" onchange="this.form.submit()">
+          <option value="">{% trans "Trier par" %}</option>
+          <option value="deals" {% if sort == "deals" %}selected{% endif %}>🔥 {% trans "Super Deals" %}</option>
+          <option value="new" {% if sort == "new" %}selected{% endif %}>✨ {% trans "Nouveautés" %}</option>
+          <option value="best" {% if sort == "best" %}selected{% endif %}>⭐ {% trans "Meilleures ventes" %}</option>
+        </select>
+      </form>
+    </div>
+
+    <div class="row g-3">
+
+      {# ============================== #}
+      {#  FILTRES (Desktop)              #}
+      {# ============================== #}
+      <aside class="col-lg-2 d-none d-lg-block">
+
+        <div class="card mk-filter-card mb-3">
+          <div class="card-body">
+            <h6 class="mb-2">{% trans "Catégories" %}</h6>
+            <ul class="list-unstyled mb-0 mk-cat-list">
+              {% for c in categories %}
+                <li class="mb-1">
+                  <a class="{% if request.GET.category == c.slug or current_category.slug == c.slug %}active{% endif %}"
+                     href="?{% if request.GET.q %}q={{ request.GET.q|urlencode }}&{% endif %}category={{ c.slug }}{% if sort %}&sort={{ sort }}{% endif %}{% if badge %}&badge={{ badge }}{% endif %}">
+                    {{ c.name }}
+                  </a>
+                </li>
+              {% empty %}
+                <li class="text-muted small">{% trans "Aucune catégorie" %}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+
+        <div class="card mk-filter-card mb-3">
+          <div class="card-body">
+            <h6 class="mb-2">{% trans "Prix" %}</h6>
+
+            <form method="get">
+              {% if request.GET.q %}<input type="hidden" name="q" value="{{ request.GET.q }}">{% endif %}
+              {% if request.GET.category %}<input type="hidden" name="category" value="{{ request.GET.category }}">{% endif %}
+              {% if sort %}<input type="hidden" name="sort" value="{{ sort }}">{% endif %}
+              {% if badge %}<input type="hidden" name="badge" value="{{ badge }}">{% endif %}
+
+              <input type="range"
+                     name="price_max"
+                     class="form-range"
+                     min="0"
+                     max="{{ max_price|default:1000 }}"
+                     value="{{ request.GET.price_max|default:max_price }}">
+
+              <button class="btn btn-sm btn-outline-secondary w-100">
+                {% trans "Appliquer" %}
+              </button>
+
+              {% if request.GET.price_max %}
+                <a class="btn btn-sm btn-link w-100 mt-1"
+                   href="?{% if request.GET.q %}q={{ request.GET.q|urlencode }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}{% if sort %}sort={{ sort }}&{% endif %}{% if badge %}badge={{ badge }}{% endif %}">
+                  {% trans "Réinitialiser" %}
+                </a>
+              {% endif %}
+            </form>
+          </div>
+        </div>
+
+      </aside>
+
+      {# ============================== #}
+      {#  GRID PRODUITS                 #}
+      {# ============================== #}
+      <div class="col-lg-10">
+
+        {% if products %}
+          <div class="row g-3">
+
+            {% for product in products %}
+              {% url 'economic:ecommerce:product_detail' product.slug as detail_url %}
+              {% url 'economic:ecommerce:add_to_cart' product.pk as add_url %}
+
+              <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+                <article class="mk-card h-100">
+
+                  <a class="mk-media {% if not detail_url %}disabled{% endif %}" href="{{ detail_url|default:'#' }}">
+                    {% with img=product.images.all.0 %}
+                      {% if img %}
+                        <img src="{{ img.image.url }}" alt="{{ img.alt_text|default:product.name }}" loading="lazy">
+                      {% else %}
+                        <img src="{% static 'global/image/product-placeholder.png' %}" alt="{% trans 'Produit' %}" loading="lazy">
+                      {% endif %}
+                    {% endwith %}
+
+                    <div class="mk-badges">
+                      {% if product.is_featured %}
+                        <span class="mk-badge promo">{% trans "Promo" %}</span>
+                      {% endif %}
+                      {% if product.stock|default:0 <= 0 %}
+                        <span class="mk-badge out">{% trans "Rupture" %}</span>
+                      {% endif %}
+                    </div>
+
+                    <a class="mk-cart-fab {% if not add_url or product.stock|default:0 <= 0 %}disabled{% endif %}"
+                       href="{{ add_url|default:'#' }}"
+                       aria-label="{% trans 'Ajouter au panier' %}">
+                      <i class="bi bi-cart-plus"></i>
+                    </a>
+                  </a>
+
+                  <div class="mk-body">
+                    <div class="mk-price">{% money product.price %}</div>
+
+                    <div class="mk-title">
+                      <a href="{{ detail_url|default:'#' }}" class="{% if not detail_url %}disabled{% endif %}">
+                        {{ product.name|truncatechars:48 }}
+                      </a>
+                    </div>
+
+                    <div class="mk-sub">
+                      <span class="mk-chip">🚚 {% trans "Livraison gratuite" %}</span>
+                      {% if product.stock|default:0 > 0 %}
+                        <span class="mk-stock">{% blocktrans %}Stock: {{ product.stock }}{% endblocktrans %}</span>
+                      {% endif %}
+                    </div>
+                  </div>
+
+                </article>
+              </div>
+            {% endfor %}
+
+          </div>
+
+          {# ============================== #}
+          {#  PAGINATION                    #}
+          {# ============================== #}
+          {% if is_paginated %}
+            <nav class="mt-4">
+              <ul class="pagination justify-content-center">
+
+                {% if page_obj.has_previous %}
+                  <li class="page-item">
+                    <a class="page-link"
+                       href="?page={{ page_obj.previous_page_number }}
+                       {% if request.GET.q %}&q={{ request.GET.q|urlencode }}{% endif %}
+                       {% if request.GET.category %}&category={{ request.GET.category }}{% endif %}
+                       {% if sort %}&sort={{ sort }}{% endif %}
+                       {% if badge %}&badge={{ badge }}{% endif %}
+                       {% if request.GET.price_max %}&price_max={{ request.GET.price_max }}{% endif %}">
+                      &laquo;
+                    </a>
+                  </li>
+                {% endif %}
+
+                <li class="page-item disabled">
+                  <span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+                </li>
+
+                {% if page_obj.has_next %}
+                  <li class="page-item">
+                    <a class="page-link"
+                       href="?page={{ page_obj.next_page_number }}
+                       {% if request.GET.q %}&q={{ request.GET.q|urlencode }}{% endif %}
+                       {% if request.GET.category %}&category={{ request.GET.category }}{% endif %}
+                       {% if sort %}&sort={{ sort }}{% endif %}
+                       {% if badge %}&badge={{ badge }}{% endif %}
+                       {% if request.GET.price_max %}&price_max={{ request.GET.price_max }}{% endif %}">
+                      &raquo;
+                    </a>
+                  </li>
+                {% endif %}
+
+              </ul>
+            </nav>
+          {% endif %}
+
+        {% else %}
+          <div class="text-center py-5">
+            <h4>{% trans "Aucun produit disponible" %}</h4>
+            <p class="text-muted">{% trans "Les produits seront bientôt disponibles." %}</p>
+          </div>
+        {% endif %}
+
+      </div>
+    </div>
+
+  </div>
+</section>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/ecommerce/index.html #}
+{% extends "main.html" %}
+{% load static i18n money %}
+
+{% block title %}
+  {% trans "Boutique" %} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block extra_css %}
+  {{ block.super }}
+  {# ✅ CSS unique recommandé #}
+  <link rel="stylesheet" href="{% static 'economic/ecommerce/css/ecommerce.css' %}">
+
+  {# (Option) si tu veux garder tes anciens fichiers, commente le css unique ci-dessus et décommente ces 4 lignes : #}
+  {# <link rel="stylesheet" href="{% static 'economic/css/ecommerce_navbar.css' %}"> #}
+  {# <link rel="stylesheet" href="{% static 'economic/css/ecommerce_navbar_pro.css' %}"> #}
+  {# <link rel="stylesheet" href="{% static 'economic/css/_commerce_mode_switch.css' %}"> #}
+  {# <link rel="stylesheet" href="{% static 'economic/css/ecommerce_marketplace.css' %}"> #}
+  
+{% endblock %}
+
+{% block section_menu %}
+  {% include "economic/ecommerce/partials/_ecommerce_navbar.html" %}
+{% endblock %}
+
+{% block content %}
+
+{# =========================== #}
+{#   Helpers GET (conserver filtres) #}
+{#   =========================== #}
+{% with q=request.GET.q category=request.GET.category sort=request.GET.sort price_max=request.GET.price_max rating=request.GET.rating %}
+
+{# ===================================================== #}
+{# TOP BAR : RÉSULTATS / TRI #}
+{# ===================================================== #}
+<section class="ecommerce-topbar container-fluid py-3 mb-3">
+  <div class="container d-flex flex-wrap justify-content-between align-items-center gap-3">
+
+    <div class="results-count">
+      <strong>
+        {% if page_obj %}
+          {{ page_obj.paginator.count }}
+        {% else %}
+          {{ products|length }}
+        {% endif %}
+      </strong>
+      {% trans "produits trouvés" %}
+    </div>
+
+    {#  TRI #}
+    <form method="get" class="sort-box">
+      {% if q %}<input type="hidden" name="q" value="{{ q }}">{% endif %}
+      {% if category %}<input type="hidden" name="category" value="{{ category }}">{% endif %}
+      {% if price_max %}<input type="hidden" name="price_max" value="{{ price_max }}">{% endif %}
+      {% if rating %}<input type="hidden" name="rating" value="{{ rating }}">{% endif %}
+
+      <select name="sort" class="form-select form-select-sm" onchange="this.form.submit()">
+        <option value="">{% trans "Trier par" %}</option>
+        <option value="price_asc" {% if sort == "price_asc" %}selected{% endif %}>
+          {% trans "Prix croissant" %}
+        </option>
+        <option value="price_desc" {% if sort == "price_desc" %}selected{% endif %}>
+          {% trans "Prix décroissant" %}
+        </option>
+        <option value="new" {% if sort == "new" %}selected{% endif %}>
+          {% trans "Nouveautés" %}
+        </option>
+        <option value="best" {% if sort == "best" %}selected{% endif %}>
+          {% trans "Meilleures ventes" %}
+        </option>
+      </select>
+    </form>
+
+  </div>
+</section>
+
+{# ===================================================== #}
+{# MAIN MARKETPLACE #}
+{#-- ===================================================== #}
+<section class="container-fluid">
+  <div class="container">
+    <div class="row">
+
+      {#  ================= SIDEBAR FILTRES ================= #}
+      <aside class="col-lg-2 d-none d-lg-block ecommerce-sidebar">
+
+        {# -- CATÉGORIES  #}
+        <h6 class="sidebar-title">{% trans "Catégories" %}</h6>
+        <ul class="sidebar-list">
+          {% for c in categories %}
+            <li>
+              <a href="?{% if q %}q={{ q|urlencode }}&{% endif %}category={{ c.slug }}{% if sort %}&sort={{ sort }}{% endif %}{% if price_max %}&price_max={{ price_max }}{% endif %}{% if rating %}&rating={{ rating }}{% endif %}"
+                 class="{% if category == c.slug %}active{% endif %}">
+                {{ c.name }}
+              </a>
+            </li>
+          {% empty %}
+            <li class="text-muted small">{% trans "Aucune catégorie" %}</li>
+          {% endfor %}
+        </ul>
+
+        <hr>
+
+        {# -- PRIX #}
+        <h6 class="sidebar-title">{% trans "Prix" %}</h6>
+        <form method="get">
+          {% if q %}<input type="hidden" name="q" value="{{ q }}">{% endif %}
+          {% if category %}<input type="hidden" name="category" value="{{ category }}">{% endif %}
+          {% if sort %}<input type="hidden" name="sort" value="{{ sort }}">{% endif %}
+          {% if rating %}<input type="hidden" name="rating" value="{{ rating }}">{% endif %}
+
+          <input type="range"
+                 name="price_max"
+                 class="form-range"
+                 min="0"
+                 max="{{ max_price|default:1000 }}"
+                 value="{{ price_max|default:max_price }}">
+
+          <button class="btn btn-sm btn-outline-secondary w-100 mt-2">
+            {% trans "Appliquer" %}
+          </button>
+
+          {% if price_max %}
+            <a class="btn btn-sm btn-link w-100 mt-1"
+               href="?{% if q %}q={{ q|urlencode }}&{% endif %}{% if category %}category={{ category }}&{% endif %}{% if sort %}sort={{ sort }}&{% endif %}{% if rating %}rating={{ rating }}{% endif %}">
+              {% trans "Réinitialiser" %}
+            </a>
+          {% endif %}
+        </form>
+
+        <hr>
+
+        {#  ÉVALUATIONS #}
+        <h6 class="sidebar-title">{% trans "Évaluations" %}</h6>
+        <ul class="sidebar-list rating-filter">
+          <li><a href="?{% if q %}q={{ q|urlencode }}&{% endif %}{% if category %}category={{ category }}&{% endif %}{% if sort %}sort={{ sort }}&{% endif %}{% if price_max %}price_max={{ price_max }}&{% endif %}rating=5"
+                 class="{% if rating == '5' %}active{% endif %}">⭐⭐⭐⭐⭐</a></li>
+
+          <li><a href="?{% if q %}q={{ q|urlencode }}&{% endif %}{% if category %}category={{ category }}&{% endif %}{% if sort %}sort={{ sort }}&{% endif %}{% if price_max %}price_max={{ price_max }}&{% endif %}rating=4"
+                 class="{% if rating == '4' %}active{% endif %}">⭐⭐⭐⭐</a></li>
+
+          <li><a href="?{% if q %}q={{ q|urlencode }}&{% endif %}{% if category %}category={{ category }}&{% endif %}{% if sort %}sort={{ sort }}&{% endif %}{% if price_max %}price_max={{ price_max }}&{% endif %}rating=3"
+                 class="{% if rating == '3' %}active{% endif %}">⭐⭐⭐</a></li>
+        </ul>
+
+      </aside>
+
+      {# ================= GRID PRODUITS ================= #}
+      <div class="col-lg-10">
+
+        {% if products %}
+          <div class="row g-3 ecommerce-grid">
+
+            {% for product in products %}
+              {% url 'economic:ecommerce:product_detail' product.slug as detail_url %}
+
+              <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+                <article class="product-card h-100">
+
+                  <a href="{{ detail_url|default:'#' }}" class="product-image {% if not detail_url %}disabled{% endif %}">
+                    {% if product.image %}
+                      <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                    {% else %}
+                      <img src="{% static 'global/image/product-placeholder.png' %}" alt="{% trans 'Produit' %}">
+                    {% endif %}
+
+                    <div class="product-badges">
+                      {% if product.is_featured %}
+                        <span class="badge bg-danger">{% trans "Promo" %}</span>
+                      {% endif %}
+                      {% if product.is_new %}
+                        <span class="badge bg-success">{% trans "Nouveau" %}</span>
+                      {% endif %}
+                    </div>
+                  </a>
+
+                  <div class="product-body">
+                    <div class="product-price">{% money product.price %}</div>
+
+                    <h6 class="product-title">
+                      <a href="{{ detail_url|default:'#' }}" class="{% if not detail_url %}disabled{% endif %}">
+                        {{ product.name|truncatechars:45 }}
+                      </a>
+                    </h6>
+
+                    <div class="product-rating">
+                      ⭐ {{ product.average_rating|default:"4.0" }}/5
+                      <span class="text-muted small">
+                        ({{ product.review_count|default:"0" }})
+                      </span>
+                    </div>
+
+                    <div class="product-actions">
+                      <a href="{{ detail_url|default:'#' }}"
+                         class="btn btn-sm btn-outline-primary w-100 {% if not detail_url %}disabled{% endif %}">
+                        {% trans "Voir le produit" %}
+                      </a>
+                    </div>
+                  </div>
+
+                </article>
+              </div>
+            {% endfor %}
+
+          </div>
+
+          {# PAGINATION #}
+          {% if is_paginated %}
+            <nav class="mt-4">
+              <ul class="pagination justify-content-center">
+
+                {% if page_obj.has_previous %}
+                  <li class="page-item">
+                    <a class="page-link"
+                       href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q|urlencode }}{% endif %}{% if category %}&category={{ category }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}{% if price_max %}&price_max={{ price_max }}{% endif %}{% if rating %}&rating={{ rating }}{% endif %}">
+                      &laquo;
+                    </a>
+                  </li>
+                {% endif %}
+
+                <li class="page-item disabled">
+                  <span class="page-link">
+                    {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+                  </span>
+                </li>
+
+                {% if page_obj.has_next %}
+                  <li class="page-item">
+                    <a class="page-link"
+                       href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q|urlencode }}{% endif %}{% if category %}&category={{ category }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}{% if price_max %}&price_max={{ price_max }}{% endif %}{% if rating %}&rating={{ rating }}{% endif %}">
+                      &raquo;
+                    </a>
+                  </li>
+                {% endif %}
+
+              </ul>
+            </nav>
+          {% endif %}
+
+        {% else %}
+          <div class="text-center py-5">
+            <h4>{% trans "Aucun produit disponible" %}</h4>
+            <p class="text-muted">
+              {% trans "Les produits seront bientôt disponibles." %}
+            </p>
+          </div>
+        {% endif %}
+
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% endwith %}
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/ecommerce/index.html #}
 {% extends "main.html" %}
 {% load static i18n money %}
 
@@ -231,7 +967,7 @@
     </div>
 </section>
 
-{% endblock %}
+{% endblock %} {% endcomment %}
 
 
 

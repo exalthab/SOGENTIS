@@ -1,4 +1,73 @@
 {# templates/economic/ecommerce/checkout.html #}
+{% extends "economic/ecommerce/base_ecommerce.html" %}
+{% load i18n money widget_tweaks %}
+
+{% block ecommerce_title %}
+  {% trans "Commande" %} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+  <h1 class="mb-4">📦 {% trans "Finaliser la commande" %}</h1>
+
+  <div class="row g-4">
+    <div class="col-12 col-lg-7">
+      <div class="card">
+        <div class="card-body">
+          <form method="post">
+            {% csrf_token %}
+
+            {% for field in form %}
+              <div class="mb-3">
+                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field|add_class:"form-control" }}
+                {% if field.help_text %}
+                  <div class="form-text">{{ field.help_text }}</div>
+                {% endif %}
+                {% if field.errors %}
+                  <div class="text-danger small mt-1">
+                    {{ field.errors|striptags }}
+                  </div>
+                {% endif %}
+              </div>
+            {% endfor %}
+
+            <div class="d-grid">
+              <button class="btn btn-primary" type="submit">
+                {% trans "Continuer vers le paiement" %}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-5">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="h6">{% trans "Récapitulatif" %}</h2>
+          <ul class="list-unstyled mb-3">
+            {% for item in cart_items %}
+              <li class="d-flex justify-content-between">
+                <span>{{ item.product.name }} × {{ item.quantity }}</span>
+                <span>{% money item.line_total %}</span>
+              </li>
+            {% endfor %}
+          </ul>
+          <div class="d-flex justify-content-between fw-bold">
+            <span>{% trans "Total" %}</span>
+            <span>{% money cart_total %}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+
+
+{% comment %} {# templates/economic/ecommerce/checkout.html #}
 {% extends "main.html" %}
 {% load i18n money %}
 
@@ -72,7 +141,7 @@
   </form>
 
 </section>
-{% endblock %}
+{% endblock %} {% endcomment %}
 
 
 

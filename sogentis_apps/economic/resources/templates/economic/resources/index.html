@@ -1,4 +1,59 @@
-{# economic/resources/index.html #}
+{# templates/economic/resources/index.html #}
+{% extends "economic/resources/base_resources.html" %}
+{% load static i18n %}
+
+{% block resources_title %}{{ page_title|default:_("Ressources") }}{% endblock %}
+
+{% block resources_content %}
+
+  <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+    <div>
+      <h1 class="mb-1">📚 {% trans "Ressources" %}</h1>
+      <p class="text-muted mb-0">
+        {% trans "Documents, guides, supports, fichiers téléchargeables." %}
+      </p>
+    </div>
+
+    <div class="d-flex gap-2 flex-wrap">
+      {% url 'economic:resources:index' as resources_index_url %}
+
+      <a class="btn btn-sm {% if not current_category %}btn-primary{% else %}btn-outline-primary{% endif %} {% if not resources_index_url %}disabled{% endif %}"
+         href="{{ resources_index_url|default:'#' }}">
+        {% trans "Toutes" %}
+      </a>
+
+      {% for c in categories %}
+        <a class="btn btn-sm {% if current_category and current_category.id == c.id %}btn-primary{% else %}btn-outline-primary{% endif %} {% if not resources_index_url %}disabled{% endif %}"
+           href="{% if resources_index_url %}{{ resources_index_url }}?cat={{ c.slug }}{% else %}#{% endif %}">
+          {{ c.name }}
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+
+  {# Option : filtres (si tu veux les activer partout) #}
+  {# {% include "economic/resources/partials/_resource_filters.html" %} #}
+
+  {% if resources %}
+    <div class="row g-3">
+      {% for r in resources %}
+        <div class="col-12 col-md-6 col-lg-4">
+          {% include "economic/resources/partials/_resource_card.html" with resource=r %}
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="alert alert-info">
+      {% trans "Aucune ressource disponible pour le moment." %}
+    </div>
+  {% endif %}
+
+{% endblock %}
+
+
+
+
+{% comment %} {# economic/resources/index.html #}
 {% extends "main.html" %}
 {% load static i18n %}
 
@@ -84,7 +139,7 @@
   {% endif %}
 
 </section>
-{% endblock %}
+{% endblock %} {% endcomment %}
 
 
 

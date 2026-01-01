@@ -1,0 +1,99 @@
+/* static/economic/ecommerce/css/ecommerce.css */
+
+/* =========================================================
+   ECOMMERCE - Sticky subnav + quickbar (production)
+   ========================================================= */
+
+/* Sous-nav e-commerce SOUS le hub */
+.ecommerce-subnav{
+  position: sticky;
+  top: var(--eco-hub-height);
+  z-index: 1090; /* sous le hub (1100), au-dessus du contenu */
+  background: #f8f9fa;
+  border-bottom: 1px solid rgba(0,0,0,.08);
+}
+
+/* ============ MODE + SEARCH ============ */
+.commerce-mode-switch .btn{
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+.ecommerce-search{
+  display:flex;
+  align-items:center;
+  gap:.5rem;
+  flex: 1 1 480px;
+  min-width: 240px;
+}
+.ecommerce-search input{
+  flex: 1 1 auto;
+  border-radius: 999px;
+  padding-left: 1rem;
+}
+.ecommerce-search .btn{
+  border-radius: 999px;
+  padding: .5rem .9rem;
+}
+
+/* ============ QUICKBAR (noire) ============ */
+.ecommerce-quickbar{
+  background: #0f0f10;
+  color: #fff;
+}
+.ecommerce-quickbar .container{
+  gap: 1rem;
+}
+.ecommerce-quickbar .eco-link{
+  color: rgba(255,255,255,.92);
+  text-decoration:none;
+  font-weight: 700;
+  padding: .35rem .6rem;
+  border-radius: 999px;
+  display:inline-flex;
+  align-items:center;
+  gap:.35rem;
+  white-space: nowrap;
+}
+.ecommerce-quickbar .eco-link:hover{
+  background: rgba(255,255,255,.10);
+  color:#fff;
+}
+.ecommerce-quickbar .eco-link.active{
+  background: rgba(255,255,255,.18);
+}
+
+/* quickbar actions (buttons) */
+.ecommerce-quickbar .btn{
+  border-radius: 999px;
+}
+
+/* Cat dropdown */
+.ecommerce-cat-dd{
+  max-height: 360px;
+  overflow: auto;
+}
+
+/* ============ LANG PANEL (Pays / Langue / Devise) ============ */
+.eco-lang-panel{
+  min-width:260px;
+  max-width:320px;
+  background:#fff;
+  border-radius:18px;
+}
+.eco-lang-panel h6{
+  font-size:.9rem;
+  font-weight:800;
+}
+.eco-lang-panel .form-select{
+  font-size:.9rem;
+}
+.btn-save-lang{
+  border-radius:999px;
+  font-weight:800;
+}
+
+/* Mobile: subnav peut être plus haute */
+@media (max-width: 576px){
+  .ecommerce-search{ flex: 1 1 100%; }
+}

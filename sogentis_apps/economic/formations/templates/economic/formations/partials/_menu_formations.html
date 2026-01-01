@@ -1,4 +1,184 @@
-{# core/partials/_menu_educ.html #}
+{# templates/economic/formations/partials/_menu_formations.html #}
+{% load i18n %}
+
+{# ✅ URLs SAFE (aucun NoReverseMatch en prod) #}
+{% url 'economic:formations:index' as formations_index_url %}
+{% url 'economic:formations:course_list' as formations_course_list_url %}
+{% url 'economic:support:index' as support_index_url %}
+{% url 'core:contact' as core_contact_url %}
+{% url 'accounts_users:login' as login_url %}
+{% url 'accounts_users:signup' as signup_url %}
+
+{% with rm=request.resolver_match %}
+
+<nav class="navbar navbar-expand-lg bg-light border-bottom shadow-sm sticky-top"
+     aria-label="{% trans 'Menu éducation & formations' %}">
+
+  <div class="container-fluid">
+
+    <!-- Branding -->
+    <a class="navbar-brand fw-semibold d-flex align-items-center {% if not formations_index_url %}disabled{% endif %}"
+       href="{{ formations_index_url|default:'#' }}">
+      <i class="fa-solid fa-graduation-cap me-2"></i>
+      {% trans "Éducation & Formations" %}
+    </a>
+
+    <!-- Toggle mobile -->
+    <button class="navbar-toggler" type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#educSubnav"
+            aria-controls="educSubnav"
+            aria-expanded="false"
+            aria-label="{% trans 'Basculer la navigation' %}">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Menu -->
+    <div class="collapse navbar-collapse" id="educSubnav">
+
+      <!-- Liens principaux -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+        {# ✅ Catalogue (redirige vers course_list si dispo, sinon index) #}
+        <li class="nav-item">
+          <a class="nav-link
+                    {% if rm and rm.namespace == 'formations' %}active{% endif %}
+                    {% if not formations_course_list_url and not formations_index_url %}disabled{% endif %}"
+             href="{{ formations_course_list_url|default:formations_index_url|default:'#' }}">
+            <i class="fa-solid fa-book-open me-1"></i>
+            {% trans "Catalogue" %}
+          </a>
+        </li>
+
+        {# Parcours (ancre) #}
+        <li class="nav-item">
+          <a class="nav-link {% if not formations_index_url %}disabled{% endif %}"
+             href="{% if formations_index_url %}{{ formations_index_url }}#parcours{% else %}#{% endif %}">
+            <i class="fa-solid fa-route me-1"></i>
+            {% trans "Parcours" %}
+          </a>
+        </li>
+
+        {# Calendrier (ancre) #}
+        <li class="nav-item">
+          <a class="nav-link {% if not formations_index_url %}disabled{% endif %}"
+             href="{% if formations_index_url %}{{ formations_index_url }}#calendar{% else %}#{% endif %}">
+            <i class="fa-regular fa-calendar-days me-1"></i>
+            {% trans "Calendrier" %}
+          </a>
+        </li>
+
+        {# Certifications (ancre) #}
+        <li class="nav-item">
+          <a class="nav-link {% if not formations_index_url %}disabled{% endif %}"
+             href="{% if formations_index_url %}{{ formations_index_url }}#certifications{% else %}#{% endif %}">
+            <i class="fa-solid fa-certificate me-1"></i>
+            {% trans "Certifications" %}
+          </a>
+        </li>
+
+        {# Formateurs (ancre) #}
+        <li class="nav-item">
+          <a class="nav-link {% if not formations_index_url %}disabled{% endif %}"
+             href="{% if formations_index_url %}{{ formations_index_url }}#instructors{% else %}#{% endif %}">
+            <i class="fa-regular fa-user me-1"></i>
+            {% trans "Formateurs" %}
+          </a>
+        </li>
+
+        {# Tarifs (ancre) #}
+        <li class="nav-item">
+          <a class="nav-link {% if not formations_index_url %}disabled{% endif %}"
+             href="{% if formations_index_url %}{{ formations_index_url }}#pricing{% else %}#{% endif %}">
+            <i class="fa-solid fa-tags me-1"></i>
+            {% trans "Tarifs" %}
+          </a>
+        </li>
+
+        {# FAQ / Support #}
+        <li class="nav-item">
+          <a class="nav-link {% if rm and rm.namespace == 'support' %}active{% endif %} {% if not support_index_url %}disabled{% endif %}"
+             href="{{ support_index_url|default:'#' }}">
+            <i class="fa-regular fa-circle-question me-1"></i>
+            {% trans "FAQ" %}
+          </a>
+        </li>
+
+      </ul>
+
+      <!-- Recherche (envoie vers course_list si dispo) -->
+      <form class="d-flex me-3"
+            method="get"
+            action="{{ formations_course_list_url|default:'#' }}"
+            role="search">
+        <input class="form-control"
+               type="search"
+               name="q"
+               value="{{ request.GET.q }}"
+               placeholder="{% trans 'Rechercher une formation…' %}"
+               aria-label="{% trans 'Rechercher' %}"
+               {% if not formations_course_list_url %}disabled{% endif %}>
+      </form>
+
+      <!-- Actions -->
+      <div class="d-flex gap-2">
+        <a class="btn btn-outline-primary {% if not login_url %}disabled{% endif %}"
+           href="{{ login_url|default:'#' }}">
+          <i class="fa-solid fa-user-graduate me-1"></i>
+          {% trans "Espace apprenant" %}
+        </a>
+
+        <a class="btn btn-primary {% if not signup_url %}disabled{% endif %}"
+           href="{{ signup_url|default:'#' }}">
+          <i class="fa-solid fa-pen-to-square me-1"></i>
+          {% trans "S’inscrire" %}
+        </a>
+      </div>
+
+    </div>
+  </div>
+</nav>
+
+<!-- Bandeau informations -->
+<div class="bg-white border-bottom">
+  <div class="container-fluid py-2 d-flex flex-wrap gap-3 align-items-center">
+
+    <span>
+      <i class="fa-regular fa-circle-check me-1 text-success"></i>
+      {% trans "Certifications reconnues" %}
+    </span>
+
+    <span>
+      <i class="fa-solid fa-laptop-file me-1 text-primary"></i>
+      {% trans "Cours en présentiel & en ligne" %}
+    </span>
+
+    <span>
+      <i class="fa-solid fa-hand-holding-dollar me-1 text-warning"></i>
+      {% trans "Financements possibles" %}
+    </span>
+
+    <a href="{{ core_contact_url|default:'#' }}"
+       class="ms-auto text-decoration-none {% if not core_contact_url %}disabled{% endif %}">
+      <i class="fa-regular fa-envelope me-1"></i>
+      {% trans "Contact pédagogique" %}
+    </a>
+
+  </div>
+</div>
+
+{% endwith %}
+
+
+
+
+
+
+
+
+
+
+{% comment %} {# economic/formations/partials/_menu_formations.html #}
 {% load i18n %}
 
 <nav class="navbar navbar-expand-lg bg-light border-bottom shadow-sm sticky-top"
@@ -153,7 +333,7 @@
   </div>
 </div>
 
-
+ {% endcomment %}
 
 
 

@@ -17,6 +17,167 @@
       </p>
 
       <div class="d-flex flex-wrap gap-2 mt-3">
+        {% url 'economic:formations:course_list' as course_list_url %}
+        <a href="{{ course_list_url|default:'#' }}"
+           class="btn btn-primary btn-lg {% if not course_list_url %}disabled{% endif %}">
+          {% trans "Voir toutes les formations" %}
+        </a>
+
+        <a href="{% if course_list_url %}{{ course_list_url }}?type=online{% else %}#{% endif %}"
+           class="btn btn-outline-secondary {% if not course_list_url %}disabled{% endif %}">
+          {% trans "Formations en ligne" %}
+        </a>
+      </div>
+    </div>
+
+    <div class="col-lg-5">
+      <div class="p-3 p-lg-4 bg-light rounded-3 shadow-sm">
+        <h2 class="h5 mb-3">
+          {% trans "Pourquoi se former avec SOGENTIS ?" %}
+        </h2>
+        <ul class="small mb-0">
+          <li>{% trans "Contenus adaptés au contexte africain." %}</li>
+          <li>{% trans "Cas pratiques issus de projets réels." %}</li>
+          <li>{% trans "Accompagnement par des praticiens." %}</li>
+          <li>{% trans "Possibilités de suivi et de mentorat." %}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% if categories %}
+<section class="mb-4">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="h6 mb-0">{% trans "Domaines de formation" %}</h2>
+
+    {% url 'economic:formations:course_list' as course_list_url %}
+    <a href="{{ course_list_url|default:'#' }}"
+       class="small text-decoration-none {% if not course_list_url %}disabled{% endif %}">
+      {% trans "Voir tout le catalogue" %} →
+    </a>
+  </div>
+
+  <div class="row g-3">
+    {% for category in categories %}
+      <div class="col-6 col-md-3">
+        {% url 'economic:formations:course_list' as course_list_url %}
+        <a href="{% if course_list_url %}{{ course_list_url }}?category={{ category.slug }}{% else %}#{% endif %}"
+           class="text-decoration-none {% if not course_list_url %}disabled{% endif %}">
+          <div class="p-3 bg-white border rounded-3 h-100">
+            <div class="fw-semibold small mb-1">
+              {{ category.name }}
+            </div>
+            {% if category.short_description %}
+              <div class="small text-muted">
+                {{ category.short_description|truncatechars:80 }}
+              </div>
+            {% endif %}
+          </div>
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<section class="mb-4">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="h6 mb-0">{% trans "Formations mises en avant" %}</h2>
+
+    {% url 'economic:formations:course_list' as course_list_url %}
+    <a href="{{ course_list_url|default:'#' }}"
+       class="small text-decoration-none {% if not course_list_url %}disabled{% endif %}">
+      {% trans "Voir le catalogue complet" %} →
+    </a>
+  </div>
+
+  {% if featured_courses %}
+    <div class="row g-3 g-md-4">
+      {% for course in featured_courses %}
+        <div class="col-md-6 col-lg-4">
+          <article class="p-3 bg-white border rounded-3 h-100 d-flex flex-column">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              {% if course.category %}
+                <span class="badge bg-light text-dark border small">
+                  {{ course.category }}
+                </span>
+              {% endif %}
+
+              {% if course.price %}
+                <span class="fw-semibold small">
+                  {{ course.price }} {{ FORMATIONS_CURRENCY|default:"XOF" }}
+                </span>
+              {% else %}
+                <span class="fw-semibold small text-success">
+                  {% trans "Gratuit" %}
+                </span>
+              {% endif %}
+            </div>
+
+            <h3 class="h6 mb-1">
+              {% url 'economic:formations:course_detail' slug=course.slug as course_detail_url %}
+              <a href="{{ course_detail_url|default:'#' }}"
+                 class="text-decoration-none {% if not course_detail_url %}disabled{% endif %}">
+                {{ course.title }}
+              </a>
+            </h3>
+
+            {% if course.short_description %}
+              <p class="small text-muted mb-3">
+                {{ course.short_description|truncatechars:120 }}
+              </p>
+            {% endif %}
+
+            <div class="mt-auto d-flex justify-content-between align-items-center">
+              {% if course.level_label %}
+                <span class="badge bg-light text-muted border small">
+                  {{ course.level_label }}
+                </span>
+              {% endif %}
+
+              <a href="{{ course_detail_url|default:'#' }}"
+                 class="btn btn-sm btn-outline-primary {% if not course_detail_url %}disabled{% endif %}">
+                {% trans "Voir le détail" %}
+              </a>
+            </div>
+          </article>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="small text-muted mb-0">
+      {% trans "Aucune formation mise en avant pour le moment." %}
+    </p>
+  {% endif %}
+</section>
+
+{% endblock %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/formations/index.html #}
+{% extends "economic/formations/base_formations.html" %}
+{% load i18n %}
+
+{% block formations_title %}{% trans "Pôle formations" %}{% endblock %}
+
+{% block formations_content %}
+
+<section class="formations-hero mb-4">
+  <div class="row align-items-center g-4">
+    <div class="col-lg-7">
+      <h1 class="display-6 fw-bold mb-3">
+        {% trans "Développez vos compétences avec SOGENTIS" %}
+      </h1>
+      <p class="lead text-muted">
+        {% trans "Des formations pratiques, ancrées dans le terrain : numérique, gestion de projet, entrepreneuriat, ONG, et plus encore." %}
+      </p>
+
+      <div class="d-flex flex-wrap gap-2 mt-3">
         <a href="{% url 'economic:formations:course_list' %}" class="btn btn-primary btn-lg">
           {% trans "Voir toutes les formations" %}
         </a>
@@ -141,4 +302,4 @@
   {% endif %}
 </section>
 
-{% endblock %}
+{% endblock %} {% endcomment %}

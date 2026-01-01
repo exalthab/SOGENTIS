@@ -1,4 +1,53 @@
 {# templates/economic/ecommerce/payments/checkout_provider.html #}
+{% extends "economic/ecommerce/base_ecommerce.html" %}
+{% load i18n money %}
+
+{% block ecommerce_title %}
+  {% trans "Redirection paiement" %} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+  <h1 class="mb-3">
+    {% block provider_title %}{{ provider_display_name|default:"Paiement" }}{% endblock %}
+  </h1>
+
+  <div class="card">
+    <div class="card-body">
+
+      <p class="mb-3">
+        {% trans "Commande" %} : <strong>{{ order.uuid }}</strong><br>
+        {% trans "Montant" %} : <strong>{% money order.total_amount %}</strong>
+      </p>
+
+      {% if instructions %}
+        <p class="mb-3">{{ instructions|linebreaks }}</p>
+      {% else %}
+        <p class="mb-3">
+          {% trans "Vous allez être redirigé vers la page de paiement du prestataire." %}
+        </p>
+      {% endif %}
+
+      {% if redirect_url %}
+        <a href="{{ redirect_url }}" class="btn btn-primary">
+          {% trans "Continuer vers le paiement" %}
+        </a>
+      {% endif %}
+
+      <a href="{% url 'economic:ecommerce:choose_payment' order.uuid %}"
+         class="btn btn-link">
+        {% trans "Changer de moyen de paiement" %}
+      </a>
+
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+
+
+
+{% comment %} {# templates/economic/ecommerce/payments/checkout_provider.html #}
 {% extends "main.html" %}
 {% load static i18n money %}
 
@@ -38,7 +87,7 @@
   </div>
 
 </section>
-{% endblock %}
+{% endblock %} {% endcomment %}
 
 
 

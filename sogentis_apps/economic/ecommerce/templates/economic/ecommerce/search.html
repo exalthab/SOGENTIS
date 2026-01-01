@@ -1,0 +1,133 @@
+{# templates/economic/ecommerce/search.html #}
+{% extends "economic/ecommerce/base_ecommerce.html" %}
+{% load static i18n money %}
+
+{% block ecommerce_title %}
+  {% trans "Recherche" %} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block ecommerce_extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'economic/ecommerce/css/ecommerce_marketplace.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="container-fluid py-3">
+  <div class="container">
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+      <div class="mk-results">
+        <strong>
+          {% if page_obj %}{{ page_obj.paginator.count }}{% else %}{{ products|length }}{% endif %}
+        </strong>
+        {% trans "résultats" %}
+        {% if request.GET.q %}
+          <span class="text-muted">· “{{ request.GET.q }}”</span>
+        {% endif %}
+      </div>
+
+      <form method="get" class="d-flex align-items-center gap-2">
+        <input type="hidden" name="q" value="{{ request.GET.q|default:'' }}">
+        <select name="sort" class="form-select form-select-sm" onchange="this.form.submit()">
+          <option value="">{% trans "Trier par" %}</option>
+          <option value="deals" {% if sort == "deals" %}selected{% endif %}>🔥 {% trans "Super Deals" %}</option>
+          <option value="new" {% if sort == "new" %}selected{% endif %}>✨ {% trans "Nouveautés" %}</option>
+          <option value="best" {% if sort == "best" %}selected{% endif %}>⭐ {% trans "Meilleures ventes" %}</option>
+        </select>
+      </form>
+    </div>
+
+    {% if products %}
+      <div class="row g-3">
+
+        {% for product in products %}
+          {% url 'economic:ecommerce:product_detail' product.slug as detail_url %}
+          {% url 'economic:ecommerce:add_to_cart' product.pk as add_url %}
+
+          <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+            <article class="mk-card h-100">
+
+              <a class="mk-media {% if not detail_url %}disabled{% endif %}" href="{{ detail_url|default:'#' }}">
+                {% with img=product.images.all.0 %}
+                  {% if img %}
+                    <img src="{{ img.image.url }}" alt="{{ img.alt_text|default:product.name }}" loading="lazy">
+                  {% else %}
+                    <img src="{% static 'global/image/product-placeholder.png' %}" alt="{% trans 'Produit' %}" loading="lazy">
+                  {% endif %}
+                {% endwith %}
+
+                <div class="mk-badges">
+                  {% if product.is_featured %}
+                    <span class="mk-badge promo">{% trans "Promo" %}</span>
+                  {% endif %}
+                  {% if product.stock|default:0 <= 0 %}
+                    <span class="mk-badge out">{% trans "Rupture" %}</span>
+                  {% endif %}
+                </div>
+
+                <a class="mk-cart-fab {% if not add_url or product.stock|default:0 <= 0 %}disabled{% endif %}"
+                   href="{{ add_url|default:'#' }}"
+                   aria-label="{% trans 'Ajouter au panier' %}">
+                  <i class="bi bi-cart-plus"></i>
+                </a>
+              </a>
+
+              <div class="mk-body">
+                <div class="mk-price">{% money product.price %}</div>
+
+                <div class="mk-title">
+                  <a href="{{ detail_url|default:'#' }}" class="{% if not detail_url %}disabled{% endif %}">
+                    {{ product.name|truncatechars:48 }}
+                  </a>
+                </div>
+
+                <div class="mk-sub">
+                  <span class="mk-chip">🚚 {% trans "Livraison gratuite" %}</span>
+                  {% if product.stock|default:0 > 0 %}
+                    <span class="mk-stock">{% blocktrans %}Stock: {{ product.stock }}{% endblocktrans %}</span>
+                  {% endif %}
+                </div>
+              </div>
+
+            </article>
+          </div>
+        {% endfor %}
+
+      </div>
+
+      {% if is_paginated %}
+        <nav class="mt-4">
+          <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+              <li class="page-item">
+                <a class="page-link"
+                   href="?page={{ page_obj.previous_page_number }}&q={{ request.GET.q|urlencode }}{% if sort %}&sort={{ sort }}{% endif %}">
+                  &laquo;
+                </a>
+              </li>
+            {% endif %}
+            <li class="page-item disabled">
+              <span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+            </li>
+            {% if page_obj.has_next %}
+              <li class="page-item">
+                <a class="page-link"
+                   href="?page={{ page_obj.next_page_number }}&q={{ request.GET.q|urlencode }}{% if sort %}&sort={{ sort }}{% endif %}">
+                  &raquo;
+                </a>
+              </li>
+            {% endif %}
+          </ul>
+        </nav>
+      {% endif %}
+
+    {% else %}
+      <div class="text-center py-5">
+        <h4>{% trans "Aucun résultat" %}</h4>
+        <p class="text-muted">{% trans "Essayez un autre mot-clé." %}</p>
+      </div>
+    {% endif %}
+
+  </div>
+</section>
+{% endblock %}

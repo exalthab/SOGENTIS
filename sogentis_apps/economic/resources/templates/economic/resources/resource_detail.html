@@ -1,4 +1,118 @@
-{# economic/resources/resource_detail.html #}
+{# templates/economic/resources/resource_detail.html #}
+{% extends "economic/resources/base_resources.html" %}
+{% load static i18n %}
+
+{% block resources_title %}{{ page_title|default:resource.title|default:_("Ressource") }}{% endblock %}
+
+{% block resources_content %}
+
+  {% url 'economic:resources:index' as resources_index_url %}
+
+  <div class="mb-4">
+    <a href="{{ resources_index_url|default:'#' }}"
+       class="btn btn-sm btn-outline-secondary {% if not resources_index_url %}disabled{% endif %}">
+      ← {% trans "Retour aux ressources" %}
+    </a>
+  </div>
+
+  <div class="row g-4">
+
+    <!-- CONTENU PRINCIPAL -->
+    <div class="col-lg-8">
+      <div class="card shadow-sm">
+        <div class="card-body">
+
+          <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+            <h1 class="h4 mb-0">📄 {{ resource.title }}</h1>
+
+            {% if resource.category %}
+              <span class="badge bg-secondary">
+                {{ resource.category.name }}
+              </span>
+            {% endif %}
+          </div>
+
+          <p class="text-muted small mb-3">
+            {% trans "Publié le" %} {{ resource.created_at|date:"d/m/Y" }}
+          </p>
+
+          {% if resource.summary %}
+            <p class="lead">{{ resource.summary }}</p>
+          {% endif %}
+
+          {% if resource.content %}
+            <div class="mt-3">
+              {{ resource.content|safe }}
+            </div>
+          {% endif %}
+
+        </div>
+      </div>
+    </div>
+
+    <!-- PANNEAU LATÉRAL : FICHIERS / LIENS -->
+    <div class="col-lg-4">
+      <div class="card shadow-sm mb-3">
+        <div class="card-body">
+          <h5 class="mb-3">{% trans "Accès à la ressource" %}</h5>
+
+          {% if resource.file %}
+            <a href="{{ resource.file.url }}" class="btn btn-primary w-100 mb-2" download>
+              ⬇ {% trans "Télécharger le fichier" %}
+            </a>
+          {% endif %}
+
+          {% if resource.external_url %}
+            <a href="{{ resource.external_url }}"
+               class="btn btn-outline-primary w-100"
+               target="_blank" rel="noopener">
+              🔗 {% trans "Ouvrir le lien externe" %}
+            </a>
+          {% endif %}
+
+          {% if not resource.file and not resource.external_url %}
+            <p class="text-muted small mb-0">
+              {% trans "Aucun fichier ou lien externe associé." %}
+            </p>
+          {% endif %}
+        </div>
+      </div>
+
+      {# DOCUMENTS LIÉS (ResourceDocument) #}
+      {% with docs=resource.documents.all %}
+        {% if docs|length %}
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <h6 class="mb-3">{% trans "Documents associés" %}</h6>
+              <ul class="list-unstyled mb-0">
+                {% for doc in docs %}
+                  <li class="mb-2">
+                    {% if doc.file %}
+                      <a href="{{ doc.file.url }}" download>
+                        📎 {{ doc.title|default:doc.file.name }}
+                      </a>
+                    {% else %}
+                      📎 {{ doc.title }}
+                    {% endif %}
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+        {% endif %}
+      {% endwith %}
+
+    </div>
+
+  </div>
+
+{% endblock %}
+
+
+
+
+
+{% comment %} {# economic/resources/resource_detail.html #}
 {% extends "main.html" %}
 {% load static i18n %}
 
@@ -106,7 +220,7 @@
   </div>
 
 </section>
-{% endblock %}
+{% endblock %} {% endcomment %}
 
 
 

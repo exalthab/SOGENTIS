@@ -1,0 +1,27 @@
+{# templates/economic/resources/base_resources.html #}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}
+  {% block resources_title %}{% trans "Ressources" %}{% endblock %} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block extra_css %}
+  {# si tu as un css dédié resources, sinon garde uniquement le global #}
+  <link rel="stylesheet" href="{% static 'resources/css/resources.css' %}">
+  {% block resources_extra_css %}{% endblock %}
+{% endblock %}
+
+{% block section_menu %}
+  {% include "economic/resources/partials/_menu_resources.html" %}
+{% endblock %}
+
+{% block content %}
+  <section class="container py-5">
+    {% block resources_content %}{% endblock %}
+  </section>
+{% endblock %}
+
+{% block extra_js %}
+  {% block resources_extra_js %}{% endblock %}
+{% endblock %}

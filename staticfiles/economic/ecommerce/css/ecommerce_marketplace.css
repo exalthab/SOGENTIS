@@ -1,0 +1,230 @@
+/* economic/ecommerce/css/ecommerce_marketplace.css */
+
+/* Card marketplace (AliExpress-like) */
+.px-card{
+  border: 1px solid rgba(0,0,0,.08);
+  border-radius: 16px;
+  background: #fff;
+  overflow: hidden;
+  display:flex;
+  flex-direction:column;
+  transition: transform .14s ease, box-shadow .14s ease;
+  height:100%;
+}
+.px-card:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(0,0,0,.08);
+}
+
+.px-media{
+  position:relative;
+  width:100%;
+  aspect-ratio: 4/3;
+  background: rgba(0,0,0,.03);
+  overflow:hidden;
+}
+.px-media-link{
+  display:block;
+  width:100%;
+  height:100%;
+  text-decoration:none;
+}
+.px-media img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+/* Badges */
+.px-badges{
+  position:absolute;
+  left:10px;
+  bottom:10px;
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  z-index:2;
+}
+.px-badge{
+  display:inline-flex;
+  align-items:center;
+  padding: .18rem .5rem;
+  border-radius: 999px;
+  font-size: .72rem;
+  font-weight: 800;
+  line-height: 1;
+  border: 1px solid rgba(0,0,0,.10);
+  background: rgba(255,255,255,.92);
+  color: rgba(0,0,0,.82);
+}
+.px-badge-promo{
+  background: rgba(220,53,69,.95);
+  border-color: rgba(220,53,69,.95);
+  color:#fff;
+}
+.px-badge-choice{
+  background: rgba(255,193,7,.95);
+  border-color: rgba(255,193,7,.95);
+  color:#1f1f1f;
+}
+.px-badge-out{
+  background: rgba(108,117,125,.92);
+  border-color: rgba(108,117,125,.92);
+  color:#fff;
+}
+
+/* Cart FAB */
+.px-cart-fab{
+  position:absolute;
+  right:10px;
+  bottom:10px;
+  width:44px;
+  height:44px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,.12);
+  background: rgba(255,255,255,.92);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-decoration:none;
+  color: rgba(0,0,0,.85);
+  z-index:3;
+}
+.px-cart-fab:hover{
+  transform: translateY(-1px);
+}
+.px-cart-fab.disabled{
+  pointer-events:none;
+  opacity:.55;
+}
+
+/* Body */
+.px-body{
+  padding: 10px 10px 12px;
+  display:flex;
+  flex-direction:column;
+  gap: 6px;
+  flex:1;
+}
+
+.px-title{
+  font-weight: 800;
+  line-height: 1.15;
+  min-height: 40px;
+}
+.px-title a{
+  text-decoration:none;
+  color: inherit;
+}
+.px-title a:hover{
+  text-decoration: underline;
+}
+
+/* Rating + sold */
+.px-rating{
+  display:flex;
+  align-items:center;
+  gap: 6px;
+  font-size: .82rem;
+  color: rgba(0,0,0,.68);
+}
+.px-stars{
+  letter-spacing: 1px;
+  color: #f0ad4e;
+  font-size: .86rem;
+}
+.px-rating-num{
+  font-weight: 900;
+  color: rgba(0,0,0,.85);
+}
+.px-dot{
+  opacity:.6;
+}
+.px-sold{
+  font-weight: 700;
+}
+
+/* Price row */
+.px-price-row{
+  display:flex;
+  align-items:baseline;
+  gap: 8px;
+  flex-wrap:wrap;
+}
+.px-price{
+  font-weight: 950;
+  font-size: 1.15rem;
+  letter-spacing: -.2px;
+}
+.px-old{
+  font-size: .86rem;
+  text-decoration: line-through;
+  color: rgba(0,0,0,.55);
+}
+.px-off{
+  font-size: .78rem;
+  font-weight: 900;
+  color: #dc3545;
+  background: rgba(220,53,69,.10);
+  border-radius: 999px;
+  padding: .12rem .45rem;
+}
+
+/* Meta chips */
+.px-meta{
+  display:flex;
+  gap: 6px;
+  flex-wrap:wrap;
+  margin-top: 2px;
+}
+.px-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:.35rem;
+  padding: .18rem .5rem;
+  border-radius: 999px;
+  font-size: .75rem;
+  font-weight: 800;
+  border: 1px solid rgba(0,0,0,.10);
+  background: rgba(0,0,0,.03);
+}
+.px-chip-promo{
+  border-color: rgba(220,53,69,.25);
+  background: rgba(220,53,69,.08);
+  color: #dc3545;
+}
+.px-chip-ship{
+  border-color: rgba(25,135,84,.20);
+  background: rgba(25,135,84,.08);
+  color: rgba(25,135,84,.95);
+}
+
+/* Dark mode */
+[data-bs-theme="dark"] .px-card{
+  background: rgba(20,20,22,.92);
+  border-color: rgba(255,255,255,.12);
+}
+[data-bs-theme="dark"] .px-rating{
+  color: rgba(255,255,255,.68);
+}
+[data-bs-theme="dark"] .px-rating-num{
+  color: rgba(255,255,255,.90);
+}
+[data-bs-theme="dark"] .px-old{
+  color: rgba(255,255,255,.55);
+}
+[data-bs-theme="dark"] .px-chip{
+  border-color: rgba(255,255,255,.12);
+  background: rgba(255,255,255,.06);
+}
+[data-bs-theme="dark"] .px-cart-fab{
+  background: rgba(20,20,22,.92);
+  border-color: rgba(255,255,255,.12);
+  color: rgba(255,255,255,.92);
+}
+[data-bs-theme="dark"] .px-badge{
+  border-color: rgba(255,255,255,.12);
+  background: rgba(20,20,22,.92);
+  color: rgba(255,255,255,.92);
+}

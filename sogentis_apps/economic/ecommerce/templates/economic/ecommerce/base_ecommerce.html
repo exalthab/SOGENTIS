@@ -1,0 +1,93 @@
+{# templates/economic/ecommerce/base_ecommerce.html #}
+{% extends "economic/base_economic.html" %}
+{% load static i18n %}
+
+{# ✅ Titre spécifique e-commerce #}
+{% block economic_title %}
+  {% block ecommerce_title %}{% trans "Boutique" %}{% endblock %}
+{% endblock %}
+
+{% block economic_extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'economic/ecommerce/css/ecommerce.css' %}">
+  {% block ecommerce_extra_css %}{% endblock %}
+{% endblock %}
+
+{# ✅ Sous-navbar E-commerce (mode + search + quickbar etc.) #}
+{% block economic_subnav %}
+  {% include "economic/ecommerce/partials/_ecommerce_navbar.html" %}
+{% endblock %}
+
+{% block economic_content %}
+  {% block content %}{% endblock %}
+{% endblock %}
+
+{% block economic_extra_js %}
+  {{ block.super }}
+  {# JS global e-commerce (galerie produit, favoris ajax, qty +/- etc.) #}
+  <script src="{% static 'economic/ecommerce/js/ecommerce.js' %}"></script>
+  {% block ecommerce_extra_js %}{% endblock %}
+{% endblock %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/ecommerce/base_ecommerce.html #}
+{% extends "economic/base_economic.html" %}
+{% load static i18n %}
+
+{# Titre spécifique e-commerce #}
+{% block economic_title %}
+  {% block ecommerce_title %}{% trans "Boutique" %}{% endblock %}
+{% endblock %}
+
+{% block economic_extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'economic/ecommerce/css/ecommerce.css' %}">
+  {% block ecommerce_extra_css %}{% endblock %}
+{% endblock %}
+
+{# 👉 ICI : on injecte le header e-commerce (app, commandes, panier, recherche, switch B2C/B2B) #}
+{% block economic_subnav %}
+  {% include "economic/ecommerce/partials/_ecommerce_navbar.html" %}
+{% endblock %}
+
+{# Contenu réel des pages e-commerce #}
+{% block economic_content %}
+  {% block content %}{% endblock %}
+{% endblock %}
+
+{% block economic_extra_js %}
+  {% block ecommerce_extra_js %}{% endblock %}
+{% endblock %} {% endcomment %}
+
+
+
+
+{% comment %} {# templates/economic/ecommerce/base_ecommerce.html #}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{# Barre pôle économique + navbar e-commerce #}
+{% block section_menu %}
+  {% include "economic/partials/_economic_menu.html" %}
+  {% include "economic/ecommerce/partials/_ecommerce_navbar.html" %}
+{% endblock %}
+
+{% block title %}
+  {% block ecommerce_title %}E-commerce | {{ PROJECT_NAME }}{% endblock %}
+{% endblock %}
+
+{% block extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'economic/ecommerce/css/ecommerce.css' %}">
+  {% block ecommerce_extra_css %}{% endblock %}
+{% endblock %}
+
+{% block extra_js %}
+  {{ block.super }}
+  <script src="{% static 'economic/ecommerce/js/ecommerce.js' %}"></script>
+  {% block ecommerce_extra_js %}{% endblock %}
+{% endblock %} {% endcomment %}

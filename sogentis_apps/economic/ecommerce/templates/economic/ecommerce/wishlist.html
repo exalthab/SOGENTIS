@@ -1,4 +1,62 @@
-{# economic/ecommerce/templates/ecommerce/wishlist.html #}
+{# templates/economic/ecommerce/wishlist.html #}
+{% extends "economic/ecommerce/base_ecommerce.html" %}
+{% load i18n money static %}
+
+{% block ecommerce_title %}
+  {% trans "Liste de souhaits" %} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+  <h1 class="mb-4">⭐ {% trans "Ma liste de souhaits" %}</h1>
+
+  {% if wishlist_items %}
+    <div class="row g-3">
+      {% for item in wishlist_items %}
+        {% with product=item.product %}
+          {% url 'economic:ecommerce:product_detail' product.slug as detail_url %}
+          <div class="col-6 col-md-4 col-lg-3">
+            <div class="card h-100">
+              <div class="card-body d-flex flex-column">
+                <h2 class="h6 mb-2">
+                  <a href="{{ detail_url|default:'#' }}" class="text-decoration-none">
+                    {{ product.name|truncatechars:40 }}
+                  </a>
+                </h2>
+                <div class="mb-2 small text-muted">
+                  {% money product.price %}
+                </div>
+                <div class="mt-auto d-flex justify-content-between gap-2">
+                  <form method="post" action="{% url 'economic:ecommerce:wishlist_remove' product.id %}">
+                    {% csrf_token %}
+                    <button class="btn btn-sm btn-outline-danger" type="submit">
+                      {% trans "Retirer" %}
+                    </button>
+                  </form>
+                  <a href="{{ detail_url|default:'#' }}"
+                     class="btn btn-sm btn-primary">
+                    {% trans "Voir" %}
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endwith %}
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="alert alert-light border">
+      {% trans "Votre liste de souhaits est vide." %}
+    </div>
+  {% endif %}
+</section>
+{% endblock %}
+
+
+
+
+
+{% comment %} {# economic/ecommerce/templates/ecommerce/wishlist.html #}
 {% extends "main.html" %}
 {% load i18n %}
 
@@ -21,5 +79,5 @@
 {% else %}
   <p>{% trans "Votre liste est vide." %}</p>
 {% endif %}
-{% endblock %}
+{% endblock %} {% endcomment %}
 

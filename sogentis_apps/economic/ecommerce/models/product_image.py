@@ -1,4 +1,4 @@
-# sogentis_apps/economic/ecommerce/models/product_image.py
+# economic/ecommerce/models/product_image.py
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _

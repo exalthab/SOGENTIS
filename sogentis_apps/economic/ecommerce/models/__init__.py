@@ -19,3 +19,4 @@ from .payment_transaction import PaymentTransaction
 from .pricing import PricingType
 
 from .invoice import Invoice
+from .favorite import Favorite

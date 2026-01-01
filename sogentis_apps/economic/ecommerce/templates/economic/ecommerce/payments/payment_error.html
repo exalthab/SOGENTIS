@@ -1,4 +1,47 @@
-{% extends "main.html" %}
+{# templates/economic/ecommerce/payments/payment_error.html #}
+{% extends "economic/ecommerce/base_ecommerce.html" %}
+{% load i18n %}
+
+{% block ecommerce_title %}
+  {% trans "Erreur de paiement" %} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block content %}
+<section class="container py-5 text-center">
+  <h1 class="mb-3">❌ {% trans "Une erreur est survenue lors du paiement." %}</h1>
+
+  {% if error_message %}
+    <p class="mb-3 text-danger">
+      {{ error_message }}
+    </p>
+  {% endif %}
+
+  {% if order %}
+    <p class="mb-4">
+      {% trans "Commande" %} : <strong>{{ order.uuid }}</strong>
+    </p>
+  {% endif %}
+
+  <div class="d-flex justify-content-center gap-2">
+    {% if order %}
+      <a href="{% url 'economic:ecommerce:choose_payment' order.uuid %}"
+         class="btn btn-primary">
+        {% trans "Réessayer le paiement" %}
+      </a>
+    {% endif %}
+    <a href="{% url 'economic:ecommerce:product_list' %}"
+       class="btn btn-outline-secondary">
+      {% trans "Retour à la boutique" %}
+    </a>
+  </div>
+</section>
+{% endblock %}
+
+
+
+
+
+{% comment %} {% extends "main.html" %}
 {% load i18n %}
 {% block title %}{% trans "Erreur paiement" %} | {{ PROJECT_NAME }}{% endblock %}
 {% block content %}
@@ -9,4 +52,4 @@
     {% trans "Retour" %}
   </a>
 </section>
-{% endblock %}
+{% endblock %} {% endcomment %}

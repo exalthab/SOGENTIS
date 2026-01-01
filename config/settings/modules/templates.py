@@ -25,7 +25,9 @@ BASE_CONTEXT_PROCESSORS = [
     # "economic.context_processors.economic_context",
     "economic.context_processors.context_processors.economic_context",
     # "economic.context_processors.commerce.commerce_mode",
-    
+    "economic.ecommerce.context_processors.ecommerce_context",
+    "economic.ecommerce.context_processors.ecommerce_counts",
+
 ]
 
 if USE_TEMPLATE_CACHING:

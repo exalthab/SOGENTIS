@@ -1,4 +1,44 @@
-{% extends "main.html" %}
+{# templates/economic/ecommerce/payments/payment_success.html #}
+{% extends "economic/ecommerce/base_ecommerce.html" %}
+{% load i18n money %}
+
+{% block ecommerce_title %}
+  {% trans "Paiement réussi" %} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block content %}
+<section class="container py-5 text-center">
+  <h1 class="mb-3">✅ {% trans "Merci, votre paiement a été validé." %}</h1>
+
+  <p class="mb-2">
+    {% trans "Commande" %} : <strong>{{ order.uuid }}</strong>
+  </p>
+  <p class="mb-4">
+    {% trans "Montant" %} : <strong>{% money order.total_amount %}</strong>
+  </p>
+
+  {% if transaction_id %}
+    <p class="text-muted mb-4">
+      {% trans "Référence de transaction" %} : {{ transaction_id }}
+    </p>
+  {% endif %}
+
+  <div class="d-flex justify-content-center gap-2">
+    <a href="{% url 'economic:ecommerce:order_detail' order.uuid %}" class="btn btn-primary">
+      {% trans "Voir ma commande" %}
+    </a>
+    <a href="{% url 'economic:ecommerce:product_list' %}" class="btn btn-outline-secondary">
+      {% trans "Continuer mes achats" %}
+    </a>
+  </div>
+</section>
+{% endblock %}
+
+
+
+
+
+{% comment %} {% extends "main.html" %}
 {% load i18n %}
 {% block title %}{% trans "Paiement reçu" %} | {{ PROJECT_NAME }}{% endblock %}
 {% block content %}
@@ -11,4 +51,4 @@
     {% trans "Voir mes commandes" %}
   </a>
 </section>
-{% endblock %}
+{% endblock %} {% endcomment %}
