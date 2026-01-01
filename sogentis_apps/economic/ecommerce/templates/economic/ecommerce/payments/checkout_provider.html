@@ -1,3 +1,53 @@
+{# templates/economic/ecommerce/payments/checkout_provider.html #}
+{% extends "main.html" %}
+{% load static i18n money %}
+
+{% block title %}
+{% trans "Paiement" %} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block section_menu %}
+  {% include "economic/ecommerce/partials/_ecommerce_navbar.html" %}
+{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+
+  <h1 class="mb-4">
+    💳 {% trans "Paiement" %} — {{ provider|upper }}
+  </h1>
+
+  <div class="card">
+    <div class="card-body">
+
+      <p>
+        <strong>{% trans "Commande" %} :</strong> {{ order.uuid }}<br>
+        <strong>{% trans "Total" %} :</strong>
+        {% money order.total_amount %}
+      </p>
+
+      <div class="alert alert-info mt-4">
+        {% trans "Page de paiement en attente d’intégration réelle avec le prestataire." %}
+      </div>
+
+      <p class="text-muted small">
+        {% trans "Cette page sera remplacée par Stripe Checkout, PayPal ou l’interface Wave / Orange Money." %}
+      </p>
+
+    </div>
+  </div>
+
+</section>
+{% endblock %}
+
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/ecommerce/payments/checkout_provider.html #}
 {% extends "main.html" %}
 {% load static i18n money %}
 
@@ -39,7 +89,7 @@
 </section>
 {% endblock %}
 
-
+ {% endcomment %}
 
 
 

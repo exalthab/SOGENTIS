@@ -1,3 +1,94 @@
+{# templates/economic/ecommerce/checkout.html #}
+{% extends "main.html" %}
+{% load i18n money %}
+
+{% block title %}
+{% trans "Validation de la commande" %} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block section_menu %}
+  {% include "economic/ecommerce/partials/_ecommerce_navbar.html" %}
+{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+
+  <h1 class="mb-4">🧾 {% trans "Récapitulatif de la commande" %}</h1>
+
+  <form method="post">
+    {% csrf_token %}
+
+    <div class="row">
+
+      <!-- ================= RÉCAP ================= -->
+      <div class="col-lg-8">
+        <div class="card mb-4">
+          <div class="card-body">
+
+            <h5 class="mb-3">{% trans "Articles" %}</h5>
+
+            {% for item in cart_items %}
+              <div class="d-flex justify-content-between mb-2">
+                <span>{{ item.product.name }} × {{ item.quantity }}</span>
+                <strong>
+                  {% money item.total_price %}
+                </strong>
+              </div>
+            {% endfor %}
+
+            <hr>
+
+            <div class="d-flex justify-content-between fs-5">
+              <strong>{% trans "Total" %}</strong>
+              <strong>
+                {% money total_amount %}
+              </strong>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= CONFIRMATION ================= -->
+      <div class="col-lg-4">
+        <div class="card shadow-sm">
+          <div class="card-body">
+
+            <h5 class="mb-3">{% trans "Confirmer la commande" %}</h5>
+
+            <p class="text-muted small">
+              {% trans "Aucun paiement ne sera effectué à cette étape." %}
+            </p>
+
+            <button type="submit" class="btn btn-primary w-100">
+              ➡️ {% trans "Continuer vers le paiement" %}
+            </button>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </form>
+
+</section>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% comment %} {## templates/economic/ecommerce/checkout.html #}
 {% extends "main.html" %}
 {% load i18n money %}
 
@@ -72,7 +163,7 @@
 
 </section>
 {% endblock %}
-
+ {% endcomment %}
 
 
 

@@ -168,14 +168,14 @@
             {% else %}
 
               <li>
-                <a class="dropdown-item" href="{% url 'accounts_users:login' %}">
+                <a class="dropdown-item" href="{% url 'accounts_users_web:login' %}">
                   <i class="fa-solid fa-right-to-bracket me-2"></i>
                   {% trans "Connexion" %}
                 </a>
               </li>
 
               <li>
-                <a class="dropdown-item" href="{% url 'accounts_users:signup' %}">
+                <a class="dropdown-item" href="{% url 'accounts_users_web:signup' %}">
                   <i class="fa-regular fa-circle-user me-2"></i>
                   {% trans "Créer un compte" %}
                 </a>
