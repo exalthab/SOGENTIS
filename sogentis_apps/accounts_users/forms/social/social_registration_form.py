@@ -1,4 +1,3 @@
-# accounts_users/forms/social/social_registration_form.py
 from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
@@ -31,32 +30,6 @@ class SocialRegistrationForm(forms.ModelForm):
         help_text=_("Format international requis, ex : +221771234567"),
         widget=forms.TextInput(attrs={"class": "form-control"}),
     )
-
-    # Champs de vérification téléphone (ne doivent JAMAIS apparaître côté public)
-    _PHONE_VERIFICATION_FIELD_CANDIDATES = (
-        "phone_verified",
-        "phone_verified_at",
-        "phone_verified_on",
-        "phone_is_verified",
-        "is_phone_verified",
-        "phone_verification_at",
-        "phone_verification_date",
-    )
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        # ==================================================
-        # ✅ Masquer les champs de vérification téléphone côté PUBLIC
-        # (ils resteront visibles dans l'Admin via ModelAdmin)
-        # ==================================================
-        for field_name in self._PHONE_VERIFICATION_FIELD_CANDIDATES:
-            self.fields.pop(field_name, None)
-
-        # Optionnel : si édition d'un profil (pas ton cas principal), pré-remplir phone_number
-        instance = getattr(self, "instance", None)
-        if instance and getattr(instance, "phone", None) and "phone_number" in self.fields:
-            self.fields["phone_number"].initial = instance.phone
 
     class Meta:
         model = SocialProfile
@@ -122,6 +95,28 @@ class SocialRegistrationForm(forms.ModelForm):
             "availability": forms.TextInput(attrs={"class": "form-control"}),
             "skills": forms.Textarea(attrs={"rows": 3, "class": "form-control"}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # ==================================================
+        # ✅ LISTE BLANCHE : seuls ces champs doivent être visibles côté PUBLIC
+        # - On se base sur tes champs déclarés dans widgets/help_texts (donc sans casser ton form)
+        # - On garde aussi les non-modèle : terms + phone_number
+        # ==================================================
+        allowed_model_fields = set(self.Meta.widgets.keys()) | set(self.Meta.help_texts.keys())
+
+        allowed_extra_fields = {"terms", "phone_number"}
+        allowed_all = allowed_model_fields | allowed_extra_fields
+
+        # On retire tout le reste (y compris "Téléphone vérifié", "Téléphone vérifié le", etc.)
+        for name in list(self.fields.keys()):
+            if name not in allowed_all:
+                self.fields.pop(name, None)
+
+        # Optionnel : si instance existe et a phone, préremplir phone_number
+        if getattr(self.instance, "phone", None) and "phone_number" in self.fields:
+            self.fields["phone_number"].initial = self.instance.phone
 
     # ==================================================
     # VALIDATIONS
