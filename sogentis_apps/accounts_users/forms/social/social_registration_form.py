@@ -1,3 +1,4 @@
+# accounts_users/forms/social/social_registration_form.py
 from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
@@ -30,6 +31,32 @@ class SocialRegistrationForm(forms.ModelForm):
         help_text=_("Format international requis, ex : +221771234567"),
         widget=forms.TextInput(attrs={"class": "form-control"}),
     )
+
+    # Champs de vérification téléphone (ne doivent JAMAIS apparaître côté public)
+    _PHONE_VERIFICATION_FIELD_CANDIDATES = (
+        "phone_verified",
+        "phone_verified_at",
+        "phone_verified_on",
+        "phone_is_verified",
+        "is_phone_verified",
+        "phone_verification_at",
+        "phone_verification_date",
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # ==================================================
+        # ✅ Masquer les champs de vérification téléphone côté PUBLIC
+        # (ils resteront visibles dans l'Admin via ModelAdmin)
+        # ==================================================
+        for field_name in self._PHONE_VERIFICATION_FIELD_CANDIDATES:
+            self.fields.pop(field_name, None)
+
+        # Optionnel : si édition d'un profil (pas ton cas principal), pré-remplir phone_number
+        instance = getattr(self, "instance", None)
+        if instance and getattr(instance, "phone", None) and "phone_number" in self.fields:
+            self.fields["phone_number"].initial = instance.phone
 
     class Meta:
         model = SocialProfile
@@ -153,6 +180,168 @@ class SocialRegistrationForm(forms.ModelForm):
             self.save_m2m()
 
         return instance
+
+
+
+
+
+
+# # accounts_users/forms/social/social_registration_form.py
+# from django import forms
+# from django.core.exceptions import ValidationError
+# from django.utils.translation import gettext_lazy as _
+# from django.utils import timezone
+
+# from django_countries.widgets import CountrySelectWidget
+# from phonenumber_field.formfields import PhoneNumberField
+
+# from accounts_users.models.social.social_profile import SocialProfile
+
+
+# class SocialRegistrationForm(forms.ModelForm):
+#     """
+#     Formulaire PUBLIC d’inscription sociale SOGENTIS
+#     """
+
+#     # ==================================================
+#     # CHAMPS NON-MODÈLE
+#     # ==================================================
+#     terms = forms.BooleanField(
+#         label=_("J’accepte les conditions générales"),
+#         required=True,
+#         help_text=_("Vous devez accepter les conditions générales pour poursuivre l’inscription."),
+#     )
+
+#     # Téléphone (lié au pays/indicatif via la lib)
+#     phone_number = PhoneNumberField(
+#         label=_("Téléphone"),
+#         required=True,
+#         help_text=_("Format international requis, ex : +221771234567"),
+#         widget=forms.TextInput(attrs={"class": "form-control"}),
+#     )
+
+#     class Meta:
+#         model = SocialProfile
+
+#         # 🔥 CRITIQUE : on EXCLUT le champ modèle "phone" pour éviter tout doublon
+#         exclude = (
+#             "phone",
+#             "user",
+#             "status",
+#             "is_active_member",
+#             "is_validated",
+#             "validated_at",
+#             "created_at",
+#             "updated_at",
+#         )
+
+#         help_texts = {
+#             "last_name": _("Nom de famille tel qu’indiqué sur vos documents officiels."),
+#             "first_name": _("Prénom officiel."),
+#             "middle_names": _("Autres prénoms (si applicable)."),
+#             "nickname": _("Nom usuel ou surnom (facultatif)."),
+#             "date_of_birth": _("Date de naissance."),
+#             "place_of_birth": _("Lieu de naissance (ville, pays)."),
+#             "country_of_birth": _("Pays de naissance."),
+#             "country_of_residence": _("Pays de résidence actuelle."),
+#             "city_of_residence": _("Ville de résidence actuelle."),
+#             "address": _("Adresse complète de résidence."),
+#             "profession": _("Votre profession actuelle."),
+#             "function": _("Fonction ou poste occupé."),
+#             "profile_picture": _("Photo de profil (format image)."),
+#             "judicial_record": _("Casier judiciaire obligatoire au format PDF (max 2 Mo)."),
+#             "membership_role": _("Type d’adhésion sociale souhaitée."),
+#             "membership_date": _("Date d’adhésion (auto si vide)."),
+#             "motivation": _("Expliquez votre motivation (au moins 20 caractères)."),
+#             "availability": _("Vos disponibilités pour les activités."),
+#             "skills": _("Compétences ou domaines d’expertise."),
+#         }
+
+#         widgets = {
+#             "last_name": forms.TextInput(attrs={"class": "form-control"}),
+#             "first_name": forms.TextInput(attrs={"class": "form-control"}),
+#             "middle_names": forms.TextInput(attrs={"class": "form-control"}),
+#             "nickname": forms.TextInput(attrs={"class": "form-control"}),
+
+#             "date_of_birth": forms.DateInput(attrs={"type": "date", "class": "form-control"}),
+#             "place_of_birth": forms.TextInput(attrs={"class": "form-control"}),
+#             "country_of_birth": CountrySelectWidget(attrs={"class": "form-select"}),
+
+#             "country_of_residence": CountrySelectWidget(attrs={"class": "form-select"}),
+#             "city_of_residence": forms.TextInput(attrs={"class": "form-control"}),
+#             "address": forms.Textarea(attrs={"rows": 2, "class": "form-control"}),
+
+#             "profession": forms.TextInput(attrs={"class": "form-control"}),
+#             "function": forms.TextInput(attrs={"class": "form-control"}),
+
+#             "profile_picture": forms.ClearableFileInput(attrs={"class": "form-control"}),
+#             "judicial_record": forms.ClearableFileInput(attrs={"class": "form-control"}),
+
+#             "membership_role": forms.Select(attrs={"class": "form-select"}),
+#             "membership_date": forms.DateInput(attrs={"type": "date", "class": "form-control"}),
+
+#             "motivation": forms.Textarea(attrs={"rows": 4, "class": "form-control"}),
+#             "availability": forms.TextInput(attrs={"class": "form-control"}),
+#             "skills": forms.Textarea(attrs={"rows": 3, "class": "form-control"}),
+#         }
+
+#     # ==================================================
+#     # VALIDATIONS
+#     # ==================================================
+#     def clean_membership_role(self):
+#         role = self.cleaned_data.get("membership_role")
+#         if not role:
+#             raise ValidationError(_("Veuillez sélectionner un type d’adhésion sociale."))
+#         return role
+
+#     def clean_motivation(self):
+#         motivation = (self.cleaned_data.get("motivation") or "").strip()
+#         if len(motivation) < 20:
+#             raise ValidationError(_("La motivation doit contenir au moins 20 caractères."))
+#         return motivation
+
+#     def clean_phone_number(self):
+#         phone = self.cleaned_data.get("phone_number")
+#         if not phone:
+#             raise ValidationError(_("Le numéro de téléphone est obligatoire."))
+#         return phone
+
+#     def clean_judicial_record(self):
+#         file = self.cleaned_data.get("judicial_record")
+
+#         if not file:
+#             raise ValidationError(_("Le casier judiciaire est obligatoire."))
+
+#         if getattr(file, "content_type", "") != "application/pdf":
+#             raise ValidationError(_("Le fichier doit être un PDF."))
+
+#         if file.size > 2 * 1024 * 1024:
+#             raise ValidationError(_("Le fichier ne doit pas dépasser 2 Mo."))
+
+#         return file
+
+#     # ==================================================
+#     # SAVE (signature voulue : save(user=...))
+#     # ==================================================
+#     def save(self, user, commit=True):
+#         instance = super().save(commit=False)
+#         instance.user = user
+
+#         # 🔗 mapping : champ form phone_number -> champ modèle phone
+#         instance.phone = self.cleaned_data.get("phone_number")
+
+#         if not instance.membership_date:
+#             instance.membership_date = timezone.now().date()
+
+#         instance.is_active_member = False
+#         instance.is_validated = False
+#         instance.validated_at = None
+
+#         if commit:
+#             instance.save()
+#             self.save_m2m()
+
+#         return instance
 
 
 
