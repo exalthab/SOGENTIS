@@ -1,3 +1,4 @@
+# /economic/decorators.py
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import user_passes_test
 from django.core.exceptions import PermissionDenied

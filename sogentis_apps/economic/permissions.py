@@ -1,9 +1,7 @@
-# /economic/permissions.py
+# economic/permissions.py
 # =====================================================
 # Policy de base : rôles économiques
 # =====================================================
-
-from django.conf import settings
 
 # -----------------------------------------------------
 # UTILITAIRES
@@ -17,6 +15,30 @@ def is_authenticated_user(user):
 def is_staff(user):
     """Utilisateur staff / admin Django"""
     return is_authenticated_user(user) and user.is_staff
+
+
+def _get_company_user(user):
+    """
+    Retourne un CompanyUser valide (actif + entreprise active),
+    sinon None. Défensif en production.
+    """
+    if not is_authenticated_user(user):
+        return None
+
+    cu = getattr(user, "company_user", None)
+    if not cu:
+        return None
+
+    # CompanyUser actif ?
+    if not getattr(cu, "is_active", True):
+        return None
+
+    # Entreprise active ?
+    company = getattr(cu, "company", None)
+    if not company or not getattr(company, "is_active", True):
+        return None
+
+    return cu
 
 
 # -----------------------------------------------------
@@ -44,23 +66,31 @@ def is_verified_vendor(user):
 
 def is_b2b_user(user):
     """
-    Utilisateur rattaché à une entreprise B2B
+    Utilisateur rattaché à une entreprise B2B (CompanyUser actif + company active)
     """
-    return is_authenticated_user(user) and hasattr(user, "company_user")
+    return _get_company_user(user) is not None
 
 
 def is_b2b_admin(user):
     """
-    Admin d'une entreprise B2B
+    Admin d'une entreprise B2B (selon ton modèle CompanyUser.is_admin)
     """
-    return is_b2b_user(user) and getattr(user.company_user, "is_admin", False)
+    cu = _get_company_user(user)
+    return bool(cu and getattr(cu, "is_admin", False))
 
 
 def is_b2b_manager(user):
     """
-    Alias explicite pour un manager B2B (admin ou responsable)
+    Manager B2B : admin OU staff (role CompanyUser)
+    - admin : cu.is_admin True
+    - staff : role == "staff"
     """
-    return is_b2b_admin(user)
+    cu = _get_company_user(user)
+    if not cu:
+        return False
+    if getattr(cu, "is_admin", False):
+        return True
+    return getattr(cu, "role", "") == "staff"
 
 
 # -----------------------------------------------------
@@ -79,9 +109,11 @@ def get_user_level(user):
     if is_staff(user):
         return "staff"
 
+    # b2b_admin = admin only (strict)
     if is_b2b_admin(user):
         return "b2b_admin"
 
+    # b2b = tout utilisateur B2B valide
     if is_b2b_user(user):
         return "b2b"
 
@@ -92,6 +124,106 @@ def get_user_level(user):
         return "vendor"
 
     return "user"
+
+
+
+
+
+
+# # /economic/permissions.py
+# # =====================================================
+# # Policy de base : rôles économiques
+# # =====================================================
+
+# from django.conf import settings
+
+# # -----------------------------------------------------
+# # UTILITAIRES
+# # -----------------------------------------------------
+
+# def is_authenticated_user(user):
+#     """Utilisateur connecté"""
+#     return bool(user and user.is_authenticated)
+
+
+# def is_staff(user):
+#     """Utilisateur staff / admin Django"""
+#     return is_authenticated_user(user) and user.is_staff
+
+
+# # -----------------------------------------------------
+# # VENDOR (Marketplace)
+# # -----------------------------------------------------
+
+# def is_vendor(user):
+#     """
+#     Utilisateur lié à un profil vendeur (Marketplace)
+#     Défensif : ne crash pas si relation absente
+#     """
+#     return is_authenticated_user(user) and hasattr(user, "vendor")
+
+
+# def is_verified_vendor(user):
+#     """
+#     Vendeur vérifié par l'administrateur
+#     """
+#     return is_vendor(user) and getattr(user.vendor, "is_verified", False)
+
+
+# # -----------------------------------------------------
+# # B2B (Entreprise)
+# # -----------------------------------------------------
+
+# def is_b2b_user(user):
+#     """
+#     Utilisateur rattaché à une entreprise B2B
+#     """
+#     return is_authenticated_user(user) and hasattr(user, "company_user")
+
+
+# def is_b2b_admin(user):
+#     """
+#     Admin d'une entreprise B2B
+#     """
+#     return is_b2b_user(user) and getattr(user.company_user, "is_admin", False)
+
+
+# def is_b2b_manager(user):
+#     """
+#     Alias explicite pour un manager B2B (admin ou responsable)
+#     """
+#     return is_b2b_admin(user)
+
+
+# # -----------------------------------------------------
+# # NIVEAU PRINCIPAL
+# # -----------------------------------------------------
+
+# def get_user_level(user):
+#     """
+#     Retourne le niveau principal de l'utilisateur selon la hiérarchie :
+
+#     public → user → vendor → verified_vendor → b2b → b2b_admin → staff
+#     """
+#     if not is_authenticated_user(user):
+#         return "public"
+
+#     if is_staff(user):
+#         return "staff"
+
+#     if is_b2b_admin(user):
+#         return "b2b_admin"
+
+#     if is_b2b_user(user):
+#         return "b2b"
+
+#     if is_verified_vendor(user):
+#         return "verified_vendor"
+
+#     if is_vendor(user):
+#         return "vendor"
+
+#     return "user"
 
 
 

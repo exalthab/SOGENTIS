@@ -1,4 +1,30 @@
-{% extends "main.html" %}
+{# templates/economic/b2b/company_users/list.html #}
+{% load i18n %}
+<!doctype html><html><head><meta charset="utf-8"><title>{% trans "Utilisateurs" %}</title></head><body>
+<h1>👥 {% trans "Utilisateurs" %} — {{ company.name }}</h1>
+<p><a href="{% url 'b2b:company_user_add' %}">+ {% trans "Ajouter" %}</a></p>
+
+<table border="1" cellpadding="6">
+  <tr>
+    <th>{% trans "Email" %}</th><th>{% trans "Rôle" %}</th><th>{% trans "Actif" %}</th><th></th>
+  </tr>
+  {% for cu in users %}
+    <tr>
+      <td>{{ cu.user.email }}</td>
+      <td>{{ cu.get_role_display }}</td>
+      <td>{{ cu.is_active }}</td>
+      <td><a href="{% url 'b2b:company_user_edit' cu.pk %}">{% trans "Modifier" %}</a></td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="4">{% trans "Aucun utilisateur" %}</td></tr>
+  {% endfor %}
+</table>
+</body></html>
+
+
+
+
+{% comment %} {% extends "main.html" %}
 {% load static i18n %}
 
 <h1>{% trans "Utilisateurs de l’entreprise" %}</h1>
@@ -14,4 +40,4 @@
       <a href="{% url 'b2b:company_user_edit' cu.id %}">{% trans "Modifier" %}</a>
     </li>
   {% endfor %}
-</ul>
+</ul> {% endcomment %}

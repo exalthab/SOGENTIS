@@ -1,0 +1,20 @@
+{# templates/economic/b2b/vendors/vendor_dashboard.html #}
+{% load i18n %}
+<!doctype html><html><head><meta charset="utf-8"><title>{% trans "Vendeur" %}</title></head><body>
+<h1>🏪 {% trans "Dashboard vendeur" %}</h1>
+
+<ul>
+  <li>{% trans "Articles vendus" %}: {{ totals.items_sold }}</li>
+  <li>{% trans "Commandes" %}: {{ totals.orders_count }}</li>
+  <li>{% trans "Revenu" %}: {{ totals.revenue }}</li>
+</ul>
+
+<h2>{% trans "Produits" %}</h2>
+<ul>
+  {% for p in products %}
+    <li>{{ p }}</li>
+  {% empty %}
+    <li>{% trans "Aucun produit" %}</li>
+  {% endfor %}
+</ul>
+</body></html>

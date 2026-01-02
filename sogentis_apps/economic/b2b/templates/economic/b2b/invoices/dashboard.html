@@ -1,4 +1,34 @@
-{% extends "main.html" %}
+{# templates/economic/b2b/invoices/dashboard.html #}
+{% load i18n humanize %}
+<!doctype html><html><head><meta charset="utf-8"><title>{{ page_title }}</title></head><body>
+<h1>🧾 {{ page_title }} — {{ company.name }}</h1>
+
+<ul>
+  <li>{% trans "Total factures" %}: {{ stats.total_invoices }}</li>
+  <li>{% trans "Montant total" %}: {{ stats.total_amount }}</li>
+  <li>{% trans "Payé" %}: {{ stats.paid_amount }}</li>
+  <li>{% trans "En attente" %}: {{ stats.pending_amount }}</li>
+  <li>{% trans "En retard" %}: {{ stats.overdue_count }}</li>
+</ul>
+
+<h2>{% trans "Dernières factures" %}</h2>
+<ul>
+  {% for inv in invoices %}
+    <li>{{ inv.invoice_number }} — {{ inv.amount }} — {{ inv.get_status_display }}</li>
+  {% empty %}
+    <li>{% trans "Aucune facture" %}</li>
+  {% endfor %}
+</ul>
+
+<p><a href="{% url 'b2b:index' %}">{% trans "Retour dashboard" %}</a></p>
+</body></html>
+
+
+
+
+
+
+{% comment %} {% extends "main.html" %}
 {% load i18n humanize %}
 
 {% block content %}
@@ -85,4 +115,4 @@
   </div>
 </div>
 
-{% endblock %}
+{% endblock %} {% endcomment %}

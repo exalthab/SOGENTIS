@@ -118,7 +118,7 @@ def economic_home_view(request):
         "sections": sections,
 
         # ✅ AJOUT CRUCIAL
-        "section_menu": "economic/partials/_economic_menu.html",
+        # "section_menu": "economic/partials/_economic_menu.html",
         
         # -----------------------------
         "YOUTUBE_CHANNEL_NAME": "SOGENTIS",
