@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 from .product import Product
 
 
-class ProductImages(models.Model):
+class ProductImage(models.Model):
     product = models.ForeignKey(
         Product,
         on_delete=models.CASCADE,

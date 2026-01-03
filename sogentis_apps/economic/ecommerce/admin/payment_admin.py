@@ -1,8 +1,8 @@
 from django.contrib import admin
-from ..models.payment_transactions import PaymentTransactions
+from ..models.payment_transaction import PaymentTransaction
 
 
-@admin.register(PaymentTransactions)
+@admin.register(PaymentTransaction)
 class PaymentTransactionAdmin(admin.ModelAdmin):
     list_display = (
         "uuid",

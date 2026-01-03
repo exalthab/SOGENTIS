@@ -3,7 +3,7 @@
 from .category import Category
 from .vendor import Vendor
 from .product import Product
-from .product_images import ProductImages
+from .product_image import ProductImage
 
 from .cart import Cart
 from .cart_item import CartItem
@@ -15,8 +15,8 @@ from .wishlist import Wishlist
 from .wishlist_item import WishlistItem
 
 from .review import Review
-from .payment_transactions import PaymentTransactions
-from .products_pricing import PricingType
+from .payment_transaction import PaymentTransaction
+from .product_pricing import PricingType
 
 from .invoice import Invoice
 from .favorite import Favorite

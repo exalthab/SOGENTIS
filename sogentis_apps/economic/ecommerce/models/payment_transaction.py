@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 from .order import Order
 
 
-class PaymentTransactions(models.Model):
+class PaymentTransaction(models.Model):
     # ==========================
     # PROVIDERS
     # ==========================
