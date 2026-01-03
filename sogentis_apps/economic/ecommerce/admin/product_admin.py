@@ -4,11 +4,11 @@ from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 from parler.admin import TranslatableAdmin
 
-from economic.ecommerce.models import Product, ProductImage
+from economic.ecommerce.models import Product, ProductImages
 
 
 class ProductImageInline(admin.TabularInline):
-    model = ProductImage
+    model = ProductImages
     extra = 1
     fields = ("image", "alt_text", "is_main")
     ordering = ("-is_main", "id")

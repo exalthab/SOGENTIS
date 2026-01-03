@@ -10,7 +10,7 @@ urlpatterns = [
     path("", economic_home_view, name="index"),
 
     # Sous-apps du pôle économique
-    path(_("ecommerce/"), include(("economic.ecommerce.urls", "ecommerce"), namespace="ecommerce")),
+    path(_("shop/"), include(("economic.ecommerce.urls", "ecommerce"), namespace="index")),
     path(_("formations/"), include(("economic.formations.urls", "formations"), namespace="formations")),
     path(_("services/"), include(("economic.services.urls", "services"), namespace="services")),
     path(_("b2b/"), include(("economic.b2b.urls", "b2b"), namespace="b2b")),

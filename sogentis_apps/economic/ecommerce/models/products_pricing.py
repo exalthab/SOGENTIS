@@ -8,7 +8,7 @@ class PricingType(models.TextChoices):
     B2B = "B2B", _("B2B – Professionnel")
 
 
-class ProductPricing(models.Model):
+class ProductsPricing(models.Model):
     """
     Prix principal d’un produit (B2C et/ou B2B)
     """
@@ -84,7 +84,7 @@ class BulkPrice(models.Model):
     Prix dégressifs B2B (MOQ inclus)
     """
     pricing = models.ForeignKey(
-        ProductPricing,
+        ProductsPricing,
         on_delete=models.CASCADE,
         related_name="bulk_prices"
     )

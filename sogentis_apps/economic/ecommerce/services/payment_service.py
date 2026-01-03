@@ -12,7 +12,7 @@ from django.db import transaction
 from django.utils.translation import gettext_lazy as _
 
 from ..models.order import Order
-from ..models.payment_transaction import PaymentTransaction
+from ..models.payment_transactions import PaymentTransaction
 
 from ..services.invoice_service import generate_invoice_pdf
 
