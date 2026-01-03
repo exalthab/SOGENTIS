@@ -1,10 +1,11 @@
+# economic/b2b/models/__init__.py
 from .company import Company
 from .company_user import CompanyUser
 from .bulk_order import BulkOrder
 from .bulk_order_item import BulkOrderItem
 from .invoice import Invoice
-from .offer import Offer
 from .rfq import RFQ
+from .offer import Offer
 
 __all__ = [
     "Company",
@@ -12,8 +13,8 @@ __all__ = [
     "BulkOrder",
     "BulkOrderItem",
     "Invoice",
-    "Offer",
     "RFQ",
+    "Offer",
 ]
 
 

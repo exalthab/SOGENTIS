@@ -1,0 +1,40 @@
+{% extends "dashboard/base.html" %}
+{% load i18n humanize %}
+
+{% block dashboard_header %}
+<h1 class="fw-bold mb-2">🧾 {% trans "Commandes vendeur" %}</h1>
+<p class="text-muted mb-0">{% trans "Suivi des commandes reçues." %}</p>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="card shadow-sm border-0">
+  <div class="card-body">
+    {% if orders %}
+      <div class="table-responsive">
+        <table class="table align-middle">
+          <thead>
+            <tr>
+              <th>{% trans "Réf." %}</th>
+              <th>{% trans "Client" %}</th>
+              <th>{% trans "Statut" %}</th>
+              <th>{% trans "Date" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for o in orders %}
+            <tr>
+              <td class="fw-semibold">#{{ o.id }}</td>
+              <td>{{ o.user.get_full_name|default:o.user.username }}</td>
+              <td>{{ o.status|default:"—" }}</td>
+              <td class="text-muted">{{ o.created_at|date:"d/m/Y H:i" }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      {% include "dashboard/partials/_empty_state.html" with icon="🧾" title=_("Aucune commande") text=_("Les commandes reçues apparaîtront ici.") %}
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

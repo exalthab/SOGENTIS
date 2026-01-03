@@ -2,114 +2,157 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.utils.translation import gettext_lazy as _
-from django.db.models import Sum
-from django.db.models.functions import TruncMonth
 
-from social.models import Donation, Engagement
+from dashboard.views.utils import StatCard, breadcrumb
 
 
 @login_required
 def stats_view(request):
-    """
-    Vue des statistiques personnelles du dashboard utilisateur.
+    cards = []
 
-    Affiche notamment :
-    - le total des dons de l'utilisateur,
-    - le nombre d'engagements,
-    - des cartes résumées,
-    - des séries prêtes pour l'affichage de graphiques.
-    """
-    user = request.user
+    # Notes
+    try:
+        from dashboard.models.dashboard_note import DashboardNote
+        cards.append(StatCard(label=_("Notes"), value=DashboardNote.objects.filter(author=request.user).count(), icon="📝"))
+    except Exception:
+        pass
 
-    # =====================================================
-    # TOTAL DES DONS (avec fallback robuste)
-    # =====================================================
-    donation_total = 0
+    # Donations (si dispo)
+    try:
+        from donations.models import Donation  # ajuste si ton app est ailleurs
+        cards.append(StatCard(label=_("Dons"), value=Donation.objects.filter(user=request.user).count(), icon="💝"))
+    except Exception:
+        pass
 
-    # Si tu as défini Donation.objects.aggregate_total_amount(user=...), on essaie d'abord
-    if hasattr(Donation.objects, "aggregate_total_amount"):
-        try:
-            donation_total = Donation.objects.aggregate_total_amount(user=user) or 0
-        except Exception:
-            donation_total = 0
+    # Orders (si dispo)
+    try:
+        from economic.ecommerce.models.order import Order  # ajuste selon ton projet
+        cards.append(StatCard(label=_("Commandes"), value=Order.objects.filter(user=request.user).count(), icon="🧾"))
+    except Exception:
+        pass
 
-    # Fallback standard si pas de méthode custom
-    if donation_total == 0:
-        donation_total = (
-            Donation.objects.filter(user=user)
-            .aggregate(total=Sum("amount"))
-            .get("total")
-            or 0
-        )
+    return render(request, "dashboard/stats.html", {
+        "breadcrumbs": breadcrumb((_('Dashboard'), "/dashboard/"), (_("Stats"), None)),
+        "cards": [c.__dict__ for c in cards],
+    })
 
-    # On force un float pour éviter les soucis de Decimal en JS
-    donation_total = float(donation_total)
 
-    # =====================================================
-    # NOMBRE D'ENGAGEMENTS
-    # =====================================================
-    engagement_count = Engagement.objects.filter(user=user).count()
 
-    # =====================================================
-    # CARTES RÉSUMÉ (affichées en haut)
-    # =====================================================
-    summary_cards = [
-        {
-            "label": _("Total des dons"),
-            "value": f"{donation_total:,.0f} FCFA",
-            "color": "primary",
-            "icon": "fas fa-coins",
-        },
-        {
-            "label": _("Engagements"),
-            "value": engagement_count,
-            "color": "success",
-            "icon": "fas fa-people-arrows",
-        },
-    ]
 
-    # =====================================================
-    # DONATIONS PAR MOIS (pour les graphiques)
-    # =====================================================
-    donations_by_month = []
 
-    if hasattr(Donation.objects, "get_donations_by_month"):
-        # Méthode custom sur le manager si tu l'as prévue
-        try:
-            donations_by_month = Donation.objects.get_donations_by_month(user=user)
-        except Exception:
-            donations_by_month = []
-    else:
-        # Fallback générique : groupement par mois sur created_at
-        qs = (
-            Donation.objects.filter(user=user)
-            .annotate(month=TruncMonth("created_at"))
-            .values("month")
-            .annotate(total=Sum("amount"))
-            .order_by("month")
-        )
 
-        donations_by_month = [
-            {
-                "month": item["month"].strftime("%Y-%m") if item["month"] else "",
-                "total": float(item["total"] or 0),
-            }
-            for item in qs
-        ]
+# # dashboard/views/stats.py
+# from django.contrib.auth.decorators import login_required
+# from django.shortcuts import render
+# from django.utils.translation import gettext_lazy as _
+# from django.db.models import Sum
+# from django.db.models.functions import TruncMonth
 
-    chart_labels = [item["month"] for item in donations_by_month]
-    chart_values = [item["total"] for item in donations_by_month]
+# from social.models import Donation, Engagement
 
-    context = {
-        "page_title": _("Statistiques"),
-        "donation_total": donation_total,
-        "engagement_count": engagement_count,
-        "summary_cards": summary_cards,
-        "chart_labels": chart_labels,
-        "chart_values": chart_values,
-    }
 
-    return render(request, "dashboard/stats.html", context)
+# @login_required
+# def stats_view(request):
+#     """
+#     Vue des statistiques personnelles du dashboard utilisateur.
+
+#     Affiche notamment :
+#     - le total des dons de l'utilisateur,
+#     - le nombre d'engagements,
+#     - des cartes résumées,
+#     - des séries prêtes pour l'affichage de graphiques.
+#     """
+#     user = request.user
+
+#     # =====================================================
+#     # TOTAL DES DONS (avec fallback robuste)
+#     # =====================================================
+#     donation_total = 0
+
+#     # Si tu as défini Donation.objects.aggregate_total_amount(user=...), on essaie d'abord
+#     if hasattr(Donation.objects, "aggregate_total_amount"):
+#         try:
+#             donation_total = Donation.objects.aggregate_total_amount(user=user) or 0
+#         except Exception:
+#             donation_total = 0
+
+#     # Fallback standard si pas de méthode custom
+#     if donation_total == 0:
+#         donation_total = (
+#             Donation.objects.filter(user=user)
+#             .aggregate(total=Sum("amount"))
+#             .get("total")
+#             or 0
+#         )
+
+#     # On force un float pour éviter les soucis de Decimal en JS
+#     donation_total = float(donation_total)
+
+#     # =====================================================
+#     # NOMBRE D'ENGAGEMENTS
+#     # =====================================================
+#     engagement_count = Engagement.objects.filter(user=user).count()
+
+#     # =====================================================
+#     # CARTES RÉSUMÉ (affichées en haut)
+#     # =====================================================
+#     summary_cards = [
+#         {
+#             "label": _("Total des dons"),
+#             "value": f"{donation_total:,.0f} FCFA",
+#             "color": "primary",
+#             "icon": "fas fa-coins",
+#         },
+#         {
+#             "label": _("Engagements"),
+#             "value": engagement_count,
+#             "color": "success",
+#             "icon": "fas fa-people-arrows",
+#         },
+#     ]
+
+#     # =====================================================
+#     # DONATIONS PAR MOIS (pour les graphiques)
+#     # =====================================================
+#     donations_by_month = []
+
+#     if hasattr(Donation.objects, "get_donations_by_month"):
+#         # Méthode custom sur le manager si tu l'as prévue
+#         try:
+#             donations_by_month = Donation.objects.get_donations_by_month(user=user)
+#         except Exception:
+#             donations_by_month = []
+#     else:
+#         # Fallback générique : groupement par mois sur created_at
+#         qs = (
+#             Donation.objects.filter(user=user)
+#             .annotate(month=TruncMonth("created_at"))
+#             .values("month")
+#             .annotate(total=Sum("amount"))
+#             .order_by("month")
+#         )
+
+#         donations_by_month = [
+#             {
+#                 "month": item["month"].strftime("%Y-%m") if item["month"] else "",
+#                 "total": float(item["total"] or 0),
+#             }
+#             for item in qs
+#         ]
+
+#     chart_labels = [item["month"] for item in donations_by_month]
+#     chart_values = [item["total"] for item in donations_by_month]
+
+#     context = {
+#         "page_title": _("Statistiques"),
+#         "donation_total": donation_total,
+#         "engagement_count": engagement_count,
+#         "summary_cards": summary_cards,
+#         "chart_labels": chart_labels,
+#         "chart_values": chart_values,
+#     }
+
+#     return render(request, "dashboard/stats.html", context)
 
 
 

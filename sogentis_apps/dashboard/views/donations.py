@@ -1,79 +1,105 @@
-# dashboard/views/donations.py
-from django.shortcuts import render
+# dashboard/views/dons.py
 from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator
+from django.shortcuts import render
 from django.utils.translation import gettext_lazy as _
-from django.db.models import Sum
-from django.db.models.functions import ExtractMonth
-from social.models import Donation
+
+from dashboard.views.utils import breadcrumb
 
 
 @login_required
-def dashboard_donations_view(request):
-    user = request.user
+def dashboard_dons_list_view(request):
+    dons = []
+    try:
+        from donations.models import Donation  # ajuste
+        dons = Donation.objects.filter(user=request.user).order_by("-created_at")[:50]
+    except Exception:
+        dons = []
 
-    # =============================
-    # 1. FILTRES
-    # =============================
-    status = request.GET.get("status", "")
-    donation_type = request.GET.get("type", "")
+    return render(request, "dashboard/social/donor/donations_list.html", {
+        "breadcrumbs": breadcrumb((_('Dashboard'), "/dashboard/"), (_("Dons"), None)),
+        "donations": dons,
+    })
 
-    donations_qs = Donation.objects.filter(user=user).order_by("-created_at")
 
-    if status:
-        donations_qs = donations_qs.filter(status=status)
 
-    if donation_type:
-        donations_qs = donations_qs.filter(donation_type=donation_type)
 
-    # Totaux AVANT pagination
-    donations_count = donations_qs.count()
-    receipts_count = donations_qs.filter(pdf_receipt__isnull=False).count()  # <-- corrigé ici
-    total_amount = donations_qs.aggregate(total=Sum("amount"))["total"] or 0
 
-    # =============================
-    # 2. PAGINATION
-    # =============================
-    paginator = Paginator(donations_qs, 10)
-    page_number = request.GET.get("page")
-    donations_page = paginator.get_page(page_number)
+# # dashboard/views/donations.py
+# from django.shortcuts import render
+# from django.contrib.auth.decorators import login_required
+# from django.core.paginator import Paginator
+# from django.utils.translation import gettext_lazy as _
+# from django.db.models import Sum
+# from django.db.models.functions import ExtractMonth
+# from social.models import Donation
 
-    # =============================
-    # 3. GRAPHIQUE : mensualisation propre
-    # =============================
-    monthly = (
-        donations_qs.annotate(month=ExtractMonth("created_at"))
-        .values("month")
-        .annotate(total=Sum("amount"))
-        .order_by("month")
-    )
 
-    chart_labels = []
-    chart_amounts = []
+# @login_required
+# def dashboard_donations_view(request):
+#     user = request.user
 
-    for m in monthly:
-        month_num = m.get("month")
-        amount = m.get("total") or 0
+#     # =============================
+#     # 1. FILTRES
+#     # =============================
+#     status = request.GET.get("status", "")
+#     donation_type = request.GET.get("type", "")
 
-        if month_num:
-            chart_labels.append(_("Mois ") + str(month_num))
-            chart_amounts.append(amount)
+#     donations_qs = Donation.objects.filter(user=user).order_by("-created_at")
 
-    # =============================
-    # 4. CONTEXTE
-    # =============================
-    context = {
-        "donations": donations_page,
-        "total_donations": total_amount,
-        "donations_count": donations_count,
-        "receipts_count": receipts_count,
-        "filter_status": status,
-        "filter_type": donation_type,
-        "chart_labels": chart_labels,
-        "chart_amounts": chart_amounts,
-    }
+#     if status:
+#         donations_qs = donations_qs.filter(status=status)
 
-    return render(request, "dashboard/donations.html", context)
+#     if donation_type:
+#         donations_qs = donations_qs.filter(donation_type=donation_type)
+
+#     # Totaux AVANT pagination
+#     donations_count = donations_qs.count()
+#     receipts_count = donations_qs.filter(pdf_receipt__isnull=False).count()  # <-- corrigé ici
+#     total_amount = donations_qs.aggregate(total=Sum("amount"))["total"] or 0
+
+#     # =============================
+#     # 2. PAGINATION
+#     # =============================
+#     paginator = Paginator(donations_qs, 10)
+#     page_number = request.GET.get("page")
+#     donations_page = paginator.get_page(page_number)
+
+#     # =============================
+#     # 3. GRAPHIQUE : mensualisation propre
+#     # =============================
+#     monthly = (
+#         donations_qs.annotate(month=ExtractMonth("created_at"))
+#         .values("month")
+#         .annotate(total=Sum("amount"))
+#         .order_by("month")
+#     )
+
+#     chart_labels = []
+#     chart_amounts = []
+
+#     for m in monthly:
+#         month_num = m.get("month")
+#         amount = m.get("total") or 0
+
+#         if month_num:
+#             chart_labels.append(_("Mois ") + str(month_num))
+#             chart_amounts.append(amount)
+
+#     # =============================
+#     # 4. CONTEXTE
+#     # =============================
+#     context = {
+#         "donations": donations_page,
+#         "total_donations": total_amount,
+#         "donations_count": donations_count,
+#         "receipts_count": receipts_count,
+#         "filter_status": status,
+#         "filter_type": donation_type,
+#         "chart_labels": chart_labels,
+#         "chart_amounts": chart_amounts,
+#     }
+
+#     return render(request, "dashboard/donations.html", context)
 
 
 

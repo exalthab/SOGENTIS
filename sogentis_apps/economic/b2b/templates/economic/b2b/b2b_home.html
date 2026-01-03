@@ -1,0 +1,32 @@
+{# templates/economic/b2b/b2b_home.html #}
+{% extends "economic/b2b/base_b2b.html" %}
+{% load i18n %}
+
+{% block b2b_content %}
+<h1 class="h4 mb-3">🏢 {% trans "Espace B2B" %}</h1>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div class="text-muted">
+    {% trans "Sélectionne une entreprise pour gérer commandes, factures et RFQ." %}
+  </div>
+  <a class="btn btn-sm btn-primary" href="{% url 'economic:b2b:company_create' %}">
+    + {% trans "Nouvelle entreprise" %}
+  </a>
+</div>
+
+{% if companies %}
+  <div class="list-group">
+    {% for c in companies %}
+      <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+         href="{% url 'economic:b2b:company_detail' company_id=c.id %}">
+        <span>{{ c.name }}</span>
+        <span class="badge bg-light text-dark">{{ c.status }}</span>
+      </a>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="alert alert-info mb-0">
+    {% trans "Aucune entreprise disponible. Crée-en une." %}
+  </div>
+{% endif %}
+{% endblock %}

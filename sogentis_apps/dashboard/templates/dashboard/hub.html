@@ -1,4 +1,204 @@
+{# templates/dashboard/hub.html #}
+{% extends "dashboard/base.html" %}
 {% load i18n %}
+
+{% block title %}{% trans "Hub" %} | {{ PROJECT_NAME }}{% endblock %}
+
+{% block dashboard_header %}
+  <div class="db-page">
+    <h1 class="fw-bold mb-2">📌 {% trans "Espace Dashboard" %}</h1>
+    <p class="text-muted mb-0">{% trans "Choisissez votre espace." %}</p>
+  </div>
+{% endblock %}
+
+{% block dashboard_content %}
+
+{% if cards %}
+  {% include "dashboard/partials/_stats_cards.html" with cards=cards %}
+{% endif %}
+
+<div class="row g-3 g-md-4 mt-1">
+
+  <div class="col-md-6 col-xl-4">
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link" href="{% url 'dashboard:user:home' %}">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <strong class="h5 mb-0">👤 {% trans "Utilisateur" %}</strong>
+          <span class="text-muted">→</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">{% trans "Commandes, profil, notes." %}</p>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-md-6 col-xl-4">
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link" href="{% url 'dashboard:vendor:home' %}">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <strong class="h5 mb-0">🏪 {% trans "Vendeur" %}</strong>
+          <span class="text-muted">→</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">{% trans "Boutique, produits, commandes." %}</p>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-md-6 col-xl-4">
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link" href="{% url 'dashboard:b2b:home' %}">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <strong class="h5 mb-0">🏢 {% trans "B2B" %}</strong>
+          <span class="text-muted">→</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">{% trans "Achats en gros, facturation." %}</p>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-md-6 col-xl-4">
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link" href="{% url 'dashboard:social:index' %}">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <strong class="h5 mb-0">❤️ {% trans "Social" %}</strong>
+          <span class="text-muted">→</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">{% trans "Dons, engagement, impact." %}</p>
+      </div>
+    </a>
+  </div>
+
+  {% if request.user.is_staff %}
+  <div class="col-md-6 col-xl-4">
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link" href="{% url 'dashboard:admin:index' %}">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <strong class="h5 mb-0">🛡️ {% trans "Admin" %}</strong>
+          <span class="text-muted">→</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">{% trans "Validation profils, supervision." %}</p>
+      </div>
+    </a>
+  </div>
+  {% endif %}
+
+  <div class="col-md-6 col-xl-4">
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link" href="{% url 'dashboard:notes_list' %}">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <strong class="h5 mb-0">📝 {% trans "Notes" %}</strong>
+          <span class="text-muted">→</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">{% trans "Vos notes personnelles." %}</p>
+      </div>
+    </a>
+  </div>
+
+</div>
+{% endblock %}
+
+
+
+
+
+{% comment %} {# templates/dashboard/hub.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Hub" %} | {{ PROJECT_NAME }}{% endblock %}
+
+{% block dashboard_header %}
+<h1 class="fw-bold mb-2">📌 {% trans "Espace Dashboard" %}</h1>
+<p class="text-muted mb-0">{% trans "Choisissez votre espace." %}</p>
+{% endblock %}
+
+{% block dashboard_content %}
+{% if cards %}
+  {% include "dashboard/partials/_stats_cards.html" with cards=cards %}
+{% endif %}
+
+<div class="row g-3 g-md-4 mt-1">
+  <div class="col-md-6 col-xl-4">
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link" href="{% url 'dashboard:user:home' %}">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <strong class="h5 mb-0">👤 {% trans "Utilisateur" %}</strong>
+          <span class="text-muted">→</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">{% trans "Commandes, profil, notes." %}</p>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-md-6 col-xl-4">
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link" href="{% url 'dashboard:vendor:home' %}">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <strong class="h5 mb-0">🏪 {% trans "Vendeur" %}</strong>
+          <span class="text-muted">→</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">{% trans "Boutique, produits, commandes." %}</p>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-md-6 col-xl-4">
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link" href="{% url 'dashboard:b2b:home' %}">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <strong class="h5 mb-0">🏢 {% trans "B2B" %}</strong>
+          <span class="text-muted">→</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">{% trans "Achats en gros, facturation." %}</p>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-md-6 col-xl-4">
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link" href="{% url 'dashboard:social:index' %}">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <strong class="h5 mb-0">❤️ {% trans "Social" %}</strong>
+          <span class="text-muted">→</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">{% trans "Dons, engagement, impact." %}</p>
+      </div>
+    </a>
+  </div>
+
+  {% if request.user.is_staff %}
+  <div class="col-md-6 col-xl-4">
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link" href="{% url 'dashboard:admin:index' %}">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <strong class="h5 mb-0">🛡️ {% trans "Admin" %}</strong>
+          <span class="text-muted">→</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">{% trans "Validation profils, supervision." %}</p>
+      </div>
+    </a>
+  </div>
+  {% endif %}
+
+  <div class="col-md-6 col-xl-4">
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link" href="{% url 'dashboard:notes_list' %}">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <strong class="h5 mb-0">📝 {% trans "Notes" %}</strong>
+          <span class="text-muted">→</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">{% trans "Vos notes personnelles." %}</p>
+      </div>
+    </a>
+  </div>
+</div>
+{% endblock %}
+ {% endcomment %}
+
+
+
+
+
+{% comment %} {% load i18n %}
 
 <h2>{% trans "Tableau de bord" %}</h2>
 
@@ -20,4 +220,4 @@
     </a>
     {% endif %}
 
-</div>
+</div> {% endcomment %}

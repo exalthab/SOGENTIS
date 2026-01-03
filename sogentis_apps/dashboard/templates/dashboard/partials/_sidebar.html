@@ -1,0 +1,105 @@
+{% load i18n %}
+<aside class="dashboard-sidebar" aria-label="{% trans 'Menu dashboard' %}" data-dashboard-sidebar>
+  <div class="sidebar-brand px-3 py-3">
+    <a class="text-decoration-none fw-bold" href="{% url 'dashboard:hub' %}">
+      {{ PROJECT_NAME|default:"SOGENTIS" }}
+    </a>
+    <div class="small text-muted">{% trans "Dashboard" %}</div>
+  </div>
+
+  <nav class="sidebar-nav px-2 pb-3">
+    <a class="sidebar-link" href="{% url 'dashboard:hub' %}">
+      <span>🏠</span> <span>{% trans "Hub" %}</span>
+    </a>
+
+    <div class="sidebar-section mt-2">
+      <div class="sidebar-title">{% trans "Compte" %}</div>
+      <a class="sidebar-link" href="{% url 'dashboard:profile' %}">👤 {% trans "Profil" %}</a>
+      <a class="sidebar-link" href="{% url 'dashboard:notes_list' %}">📝 {% trans "Notes" %}</a>
+    </div>
+
+    <div class="sidebar-section mt-2">
+      <div class="sidebar-title">{% trans "Modules" %}</div>
+      <a class="sidebar-link" href="{% url 'dashboard:stats' %}">📊 {% trans "Stats" %}</a>
+      <a class="sidebar-link" href="{% url 'dashboard:orders' %}">🧾 {% trans "Commandes" %}</a>
+      <a class="sidebar-link" href="{% url 'dashboard:lists' %}">📋 {% trans "Listes" %}</a>
+      <a class="sidebar-link" href="{% url 'dashboard:engagements_list' %}">🤝 {% trans "Engagements" %}</a>
+      <a class="sidebar-link" href="{% url 'dashboard:dons_list' %}">💝 {% trans "Dons" %}</a>
+      <a class="sidebar-link" href="{% url 'dashboard:donations' %}">💳 {% trans "Donations" %}</a>
+    </div>
+
+    <div class="sidebar-section mt-2">
+      <div class="sidebar-title">{% trans "Espaces" %}</div>
+      <a class="sidebar-link" href="{% url 'dashboard:user:home' %}">👤 {% trans "Utilisateur" %}</a>
+      <a class="sidebar-link" href="{% url 'dashboard:vendor:home' %}">🏪 {% trans "Vendeur" %}</a>
+      <a class="sidebar-link" href="{% url 'dashboard:b2b:home' %}">🏢 {% trans "B2B" %}</a>
+      <a class="sidebar-link" href="{% url 'dashboard:social:index' %}">❤️ {% trans "Social" %}</a>
+    </div>
+
+    {% if request.user.is_staff %}
+    <div class="sidebar-section mt-2">
+      <div class="sidebar-title">{% trans "Administration" %}</div>
+      <a class="sidebar-link" href="{% url 'dashboard:admin:index' %}">🛡️ {% trans "Admin dashboard" %}</a>
+      <a class="sidebar-link" href="{% url 'dashboard:pending_profiles' %}">⏳ {% trans "Profils en attente" %}</a>
+    </div>
+    {% endif %}
+  </nav>
+
+  <div class="sidebar-footer px-3 py-3">
+    <div class="small text-muted">
+      {% trans "Connecté en tant que" %}
+      <strong>{{ request.user.get_short_name|default:request.user.username }}</strong>
+    </div>
+  </div>
+</aside>
+
+
+
+
+
+
+
+
+
+{% comment %} <nav class="sidebar">
+  <div class="sidebar-header mb-4">
+    <h3 class="fw-bold">SOGENTIS</h3>
+  </div>
+  <ul class="sidebar-nav nav flex-column gap-1">
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'dashboard:index' %}">
+        <i class="bi bi-house me-2"></i> Accueil
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'dashboard:notes_list' %}">
+        <i class="bi bi-journal-text me-2"></i> Mes notes
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'dashboard:index' %}">
+        <i class="bi bi-graph-up me-2"></i> Tableau de bord
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'dashboard:profile' %}">
+        <i class="bi bi-person me-2"></i> Profil
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'dashboard:engagements_list' %}">
+        <i class="bi bi-people me-2"></i> Engagements
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'dashboard:stats' %}">
+        <i class="bi bi-bar-chart me-2"></i> Statistiques
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'accounts_users_web:logout' %}">
+        <i class="bi bi-box-arrow-right me-2"></i> Déconnexion
+      </a>
+    </li>
+  </ul>
+</nav> {% endcomment %}

@@ -1,0 +1,58 @@
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+
+{% block dashboard_header %}
+<h1 class="fw-bold mb-2">❤️ {% trans "Espace Social" %}</h1>
+<p class="text-muted mb-0">{% trans "Choisissez votre espace social." %}</p>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="row g-3">
+  <div class="col-md-6 col-xl-4">
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link" href="{% url 'dashboard:social:donor_home' %}">
+      <div class="card-body">
+        <strong class="h5 mb-0">💝 {% trans "Donateur" %}</strong>
+        <p class="text-muted mt-2 mb-0">{% trans "Historique des dons et reçus." %}</p>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-md-6 col-xl-4">
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link" href="{% url 'dashboard:social:member_home' %}">
+      <div class="card-body">
+        <strong class="h5 mb-0">🤝 {% trans "Membre" %}</strong>
+        <p class="text-muted mt-2 mb-0">{% trans "Suivi et espace membre." %}</p>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-md-6 col-xl-4">
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link" href="{% url 'dashboard:social:volunteer_home' %}">
+      <div class="card-body">
+        <strong class="h5 mb-0">🧤 {% trans "Volontaire" %}</strong>
+        <p class="text-muted mt-2 mb-0">{% trans "Missions et engagements." %}</p>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-md-6 col-xl-4">
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link" href="{% url 'dashboard:social:institution_home' %}">
+      <div class="card-body">
+        <strong class="h5 mb-0">🏛️ {% trans "Institution" %}</strong>
+        <p class="text-muted mt-2 mb-0">{% trans "Partenariats et demandes." %}</p>
+      </div>
+    </a>
+  </div>
+
+  {% if request.user.is_staff %}
+  <div class="col-md-6 col-xl-4">
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link" href="{% url 'dashboard:social:social_admin_home' %}">
+      <div class="card-body">
+        <strong class="h5 mb-0">🧭 {% trans "Admin social" %}</strong>
+        <p class="text-muted mt-2 mb-0">{% trans "Gestion et supervision." %}</p>
+      </div>
+    </a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

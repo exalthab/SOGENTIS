@@ -1,0 +1,22 @@
+{% load i18n %}
+<div class="db-topbar">
+  <div class="db-topbar-inner container-fluid">
+    <div class="d-flex align-items-center gap-2">
+      <button class="db-icon-btn d-lg-none" type="button"
+              data-db-toggle="sidebar"
+              aria-label="{% trans 'Ouvrir le menu' %}">
+        ☰
+      </button>
+      <div class="db-topbar-title">
+        <div class="db-topbar-kicker">{% trans "Dashboard" %}</div>
+        <div class="db-topbar-main">{{ PROJECT_NAME|default:"SOGENTIS" }}</div>
+      </div>
+    </div>
+
+    <div class="d-flex align-items-center gap-2">
+      <a class="btn btn-sm btn-outline-primary" href="{% url 'dashboard:profile' %}">👤 {% trans "Profil" %}</a>
+      <a class="btn btn-sm btn-outline-secondary" href="{% url 'dashboard:notes_list' %}">📝 {% trans "Notes" %}</a>
+      <a class="btn btn-sm btn-outline-danger" href="{% url 'accounts_users_web:logout' %}">{% trans "Déconnexion" %}</a>
+    </div>
+  </div>
+</div>

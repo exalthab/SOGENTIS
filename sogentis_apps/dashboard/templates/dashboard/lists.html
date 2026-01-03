@@ -1,0 +1,11 @@
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+
+{% block dashboard_header %}
+<h1 class="fw-bold mb-2">📋 {% trans "Listes" %}</h1>
+<p class="text-muted mb-0">{% trans "Espace listes." %}</p>
+{% endblock %}
+
+{% block dashboard_content %}
+{% include "dashboard/partials/_empty_state.html" with icon="📋" title=_("Listes") text=_("Ajoutez vos listes ici (favoris, suivis, etc.).") %}
+{% endblock %}

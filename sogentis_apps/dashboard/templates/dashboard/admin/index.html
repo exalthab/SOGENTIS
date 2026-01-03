@@ -1,0 +1,35 @@
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+
+{% block dashboard_header %}
+<h1 class="fw-bold mb-2">🛡️ {% trans "Admin dashboard" %}</h1>
+<p class="text-muted mb-0">{% trans "Supervision et validation." %}</p>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="row g-3">
+  <div class="col-lg-6">
+    <div class="card shadow-sm border-0 h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <strong>{% trans "Profils en attente" %}</strong>
+          <a class="btn btn-sm btn-outline-primary" href="{% url 'dashboard:pending_profiles' %}">{% trans "Voir" %}</a>
+        </div>
+        <p class="text-muted mb-0">{% trans "Valider ou refuser les profils inscrits." %}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="card shadow-sm border-0 h-100">
+      <div class="card-body">
+        <strong class="d-block mb-2">{% trans "Raccourcis" %}</strong>
+        <div class="d-flex flex-wrap gap-2">
+          <a class="btn btn-sm btn-outline-secondary" href="/admin/">{% trans "Admin Django" %}</a>
+          <a class="btn btn-sm btn-outline-secondary" href="{% url 'dashboard:notes_list' %}">{% trans "Notes" %}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

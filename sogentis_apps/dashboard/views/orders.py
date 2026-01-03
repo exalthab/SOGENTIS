@@ -1,22 +1,48 @@
 # dashboard/views/orders.py
-from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator
+from django.shortcuts import render
+from django.utils.translation import gettext_lazy as _
+
+from dashboard.views.utils import breadcrumb
+
 
 @login_required
 def orders_view(request):
-    from economic.ecommerce.models import Order
+    orders = []
+    try:
+        from economic.ecommerce.models.order import Order  # ajuste si différent
+        orders = Order.objects.filter(user=request.user).order_by("-created_at")[:50]
+    except Exception:
+        orders = []
 
-    orders_qs = (
-        Order.objects
-        .filter(user=request.user)
-        .order_by("-created_at")
-    )
+    return render(request, "dashboard/user/orders_list.html", {
+        "breadcrumbs": breadcrumb((_('Dashboard'), "/dashboard/"), (_("Commandes"), None)),
+        "orders": orders,
+    })
 
-    paginator = Paginator(orders_qs, 10)
-    orders_page = paginator.get_page(request.GET.get("page"))
 
-    return render(request, "dashboard/orders.html", {"orders": orders_page})
+
+
+
+# # dashboard/views/orders.py
+# from django.shortcuts import render
+# from django.contrib.auth.decorators import login_required
+# from django.core.paginator import Paginator
+
+# @login_required
+# def orders_view(request):
+#     from economic.ecommerce.models import Order
+
+#     orders_qs = (
+#         Order.objects
+#         .filter(user=request.user)
+#         .order_by("-created_at")
+#     )
+
+#     paginator = Paginator(orders_qs, 10)
+#     orders_page = paginator.get_page(request.GET.get("page"))
+
+#     return render(request, "dashboard/orders.html", {"orders": orders_page})
 
 
 

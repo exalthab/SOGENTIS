@@ -1,0 +1,19 @@
+{# templates/economic/b2b/partials/_b2b_navbar.html #}
+{% load i18n %}
+{% with rm=request.resolver_match %}
+<nav class="border-bottom bg-white" aria-label="{% trans 'Menu B2B' %}">
+  <div class="container py-2 d-flex gap-3 align-items-center flex-wrap">
+
+    <a class="eco-hub-link {% if rm and rm.url_name == 'index' %}active{% endif %}"
+       href="{% url 'economic:b2b:index' %}">
+      🏢 {% trans "B2B" %}
+    </a>
+
+    <a class="eco-hub-link {% if rm and rm.url_name == 'company_list' %}active{% endif %}"
+       href="{% url 'economic:b2b:company_list' %}">
+      {% trans "Entreprises" %}
+    </a>
+
+  </div>
+</nav>
+{% endwith %}

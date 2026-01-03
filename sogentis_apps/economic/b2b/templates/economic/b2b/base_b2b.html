@@ -1,0 +1,17 @@
+{# templates/economic/b2b/base_b2b.html #}
+{% extends "economic/base_economic.html" %}
+{% load i18n %}
+
+{# Optionnel : titre SEO propre #}
+{% block economic_title %}{% trans "Espace B2B" %}{% endblock %}
+
+{# Sous-menu spécifique B2B dans l'espace économique #}
+{% block economic_subnav %}
+  {% include "economic/b2b/partials/_b2b_navbar.html" %}
+{% endblock %}
+
+{% block economic_content %}
+  <div class="container py-4">
+    {% block b2b_content %}{% endblock %}
+  </div>
+{% endblock %}

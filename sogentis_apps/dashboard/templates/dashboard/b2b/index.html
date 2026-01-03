@@ -1,0 +1,31 @@
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+
+{% block dashboard_header %}
+<h1 class="fw-bold mb-2">🏢 {% trans "Espace B2B" %}</h1>
+<p class="text-muted mb-0">{% trans "Commandes en gros et facturation." %}</p>
+{% endblock %}
+
+{% block dashboard_content %}
+{% if cards %}
+  {% include "dashboard/partials/_stats_cards.html" with cards=cards %}
+{% endif %}
+
+<div class="card shadow-sm border-0 mt-3">
+  <div class="card-body">
+    <strong class="d-block mb-2">{% trans "Dernières commandes" %}</strong>
+    {% if recent_orders %}
+      <ul class="list-group list-group-flush">
+        {% for o in recent_orders %}
+          <li class="list-group-item d-flex justify-content-between">
+            <span>#{{ o.id }} — {{ o.status|default:"—" }}</span>
+            <span class="text-muted">{{ o.created_at|date:"d/m/Y" }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <div class="text-muted">{% trans "Aucune commande B2B pour le moment." %}</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

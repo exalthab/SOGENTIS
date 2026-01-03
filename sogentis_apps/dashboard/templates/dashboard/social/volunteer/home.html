@@ -1,7 +1,21 @@
-{% extends "dashboard/social/base_social.html" %}
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+{% block dashboard_header %}
+<h1 class="fw-bold mb-2">🧤 {% trans "Espace Volontaire" %}</h1>
+<p class="text-muted mb-0">{% trans "Missions et disponibilités." %}</p>
+{% endblock %}
+{% block dashboard_content %}
+{% include "dashboard/partials/_empty_state.html" with icon="🧤" title=_("Aucune mission") text=_("Vos missions apparaîtront ici.") %}
+{% endblock %}
+
+
+
+
+
+{% comment %} {% extends "dashboard/social/base_social.html" %}
 {% load i18n %}
 
 {% block content %}
 <h2>🤝 {% trans "Espace volontaire" %}</h2>
 <p>{% trans "Consultez vos missions et votre planning." %}</p>
-{% endblock %}
+{% endblock %} {% endcomment %}

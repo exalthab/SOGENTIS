@@ -1,0 +1,73 @@
+{% extends "economic/b2b/base_b2b.html" %}
+{% load i18n %}
+{% block b2b_content %}
+{% if company %}
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h1 class="h5 mb-0">{{ company.name }}</h1>
+    <div class="d-flex gap-2">
+      <a class="btn btn-sm btn-outline-secondary" href="{% url 'economic:b2b:bulk_order_list' company_id=company.id %}">
+        {% trans "Commandes" %}
+      </a>
+      <a class="btn btn-sm btn-outline-secondary" href="{% url 'economic:b2b:rfq_list' company_id=company.id %}">
+        {% trans "RFQ" %}
+      </a>
+    </div>
+  </div>
+{% else %}
+  <h1 class="h5 mb-3">{% trans "Créer une entreprise" %}</h1>
+{% endif %}
+
+<form method="post" class="card">
+  {% csrf_token %}
+  <div class="card-body">
+    {{ form.as_p }}
+    {% if not readonly %}
+      <button class="btn btn-primary" type="submit">{% trans "Enregistrer" %}</button>
+    {% endif %}
+  </div>
+</form>
+
+{% if members %}
+  <h2 class="h6 mt-4">{% trans "Membres" %}</h2>
+  <div class="list-group">
+    {% for m in members %}
+      <div class="list-group-item d-flex justify-content-between">
+        <span>{{ m.user }}</span><span class="badge bg-light text-dark">{{ m.role }}</span>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+{% endblock %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/b2b/company_users/form.html #}
+{% load i18n %}
+<!doctype html><html><head><meta charset="utf-8"><title>{% trans "Utilisateur" %}</title></head><body>
+<h1>🧑‍💼 {% trans "Utilisateur entreprise" %} — {{ company.name }}</h1>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">{% trans "Enregistrer" %}</button>
+</form>
+
+<p><a href="{% url 'b2b:company_users' %}">{% trans "Retour" %}</a></p>
+</body></html>
+
+ {% endcomment %}
+
+
+{% comment %} {% extends "main.html" %}
+{% load static i18n %}
+
+<h1>{% trans "Utilisateur B2B" %}</h1>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">{% trans "Enregistrer" %}</button>
+</form> {% endcomment %}

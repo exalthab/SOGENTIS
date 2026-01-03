@@ -1,5 +1,196 @@
 {# templates/dashboard/base.html #}
 {% load static i18n %}
+{% get_current_language as CUR_LANG %}
+{% get_current_language_bidi as CUR_BIDI %}
+
+<!DOCTYPE html>
+<html lang="{{ CUR_LANG|default:'fr' }}" {% if CUR_BIDI %}dir="rtl"{% endif %}>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>{% block title %}Dashboard | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}</title>
+
+  {# ===================== CSS ===================== #}
+  <link rel="stylesheet" href="{% static 'dashboard/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'dashboard/css/fontawesome.min.css' %}">
+  <link rel="stylesheet" href="{% static 'dashboard/css/premium_dashboard.css' %}">
+  <link rel="stylesheet" href="{% static 'dashboard/css/premium_sidebar.css' %}">
+  <link rel="stylesheet" href="{% static 'dashboard/css/premium_cards.css' %}">
+  <link rel="stylesheet" href="{% static 'dashboard/leaflet/leaflet.css' %}">
+
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body class="bg-light">
+
+<div class="dashboard-layout d-flex min-vh-100">
+
+  {# ===================== SIDEBAR PREMIUM (unique) ===================== #}
+  {% block dashboard_sidebar %}
+    {% include "dashboard/partials/_sidebar_premium.html" %}
+  {% endblock %}
+
+  {# ===================== MAIN ===================== #}
+  <div class="dashboard-main d-flex flex-column flex-grow-1">
+
+    <header class="dashboard-header d-flex align-items-center justify-content-between px-4 py-3 bg-white border-bottom shadow-sm">
+      <div class="d-flex align-items-center gap-3">
+        {# Burger (mobile) + collapse (desktop via JS) #}
+        <button class="btn btn-outline-secondary d-lg-none"
+                type="button"
+                data-db-open="sidebar"
+                aria-label="{% trans 'Menu' %}">
+          <i class="fas fa-bars"></i>
+        </button>
+
+        <h1 class="dashboard-title fs-4 fw-bold mb-0">
+          {% block dashboard_header %}{% trans "Tableau de bord" %}{% endblock %}
+        </h1>
+      </div>
+
+      <div class="user-actions d-flex align-items-center gap-3">
+        <span class="fw-medium">{{ user.get_full_name|default:user.username }}</span>
+        <img src="{% static 'dashboard/img/avatar.jpg' %}"
+             class="rounded-circle shadow avatar-sm"
+             width="36" height="36" alt="{% trans 'Avatar' %}">
+      </div>
+    </header>
+
+    <main class="dashboard-content flex-grow-1 p-4">
+      {% block dashboard_content %}{% endblock %}
+    </main>
+
+  </div>
+</div>
+
+{# ===================== JS ===================== #}
+<script src="{% static 'dashboard/js/premium_dashboard.js' %}"></script>
+<script src="{% static 'dashboard/js/chart.min.js' %}"></script>
+<script src="{% static 'dashboard/leaflet/leaflet.js' %}"></script>
+
+{% block extra_js %}{% endblock %}
+</body>
+</html>
+
+
+
+
+
+
+{% comment %} {# dashboard/base.html #}
+{% load static i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:'fr' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>
+        {% block title %}Dashboard | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+    </title>
+
+    {# ===================== CSS ===================== #}
+    <link rel="stylesheet" href="{% static 'dashboard/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/css/fontawesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/css/premium_dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/css/premium_sidebar.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/css/premium_cards.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/leaflet/leaflet.css' %}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="bg-light">
+
+<div class="dashboard-layout d-flex min-vh-100">
+
+    {# ===================== SIDEBAR ===================== #}
+    {% block dashboard_sidebar %}
+    <aside class="sidebar bg-dark text-white flex-shrink-0">
+        <div class="p-3">
+
+            <div class="brand mb-4 fs-4 text-center fw-bold">
+                {{ PROJECT_NAME|default:"SOGENTIS" }}
+            </div>
+
+            <div class="user mb-4 text-center">
+                <img src="{% static 'dashboard/img/avatar.jpg' %}"
+                     class="avatar mb-2 rounded-circle shadow"
+                     width="64" height="64" alt="Avatar">
+                <div>
+                    <small class="text-white-50">{% trans "Bienvenue" %},</small><br>
+                    <span class="fw-bold">
+                        {{ user.get_full_name|default:user.username }}
+                    </span>
+                </div>
+            </div>
+
+            <nav>
+                <ul class="nav flex-column gap-1">
+                    {% include "dashboard/partials/_sidebar_premium.html" %}
+                </ul>
+            </nav>
+        </div>
+
+        <div class="sidebar-footer mt-auto text-center py-3 border-top border-secondary">
+            <a href="#" class="text-white me-3">
+                <i class="fas fa-cog fa-lg"></i>
+            </a>
+            <a href="{% url 'accounts_users_web:logout' %}" class="text-white">
+                <i class="fas fa-sign-out-alt fa-lg"></i>
+            </a>
+        </div>
+    </aside>
+    {% endblock %}
+    
+
+    {# ===================== MAIN ===================== #}
+    <div class="dashboard-main d-flex flex-column flex-grow-1">
+
+        <header class="dashboard-header d-flex align-items-center justify-content-between px-4 py-3 bg-white border-bottom shadow-sm">
+            <h1 class="dashboard-title fs-4 fw-bold mb-0">
+                {% block dashboard_header %}
+                    {% trans "Tableau de bord" %}
+                {% endblock %}
+            </h1>
+
+            <div class="user-actions d-flex align-items-center gap-3">
+                <span>{{ user.get_full_name|default:user.username }}</span>
+                <img src="{% static 'dashboard/img/avatar.jpg' %}"
+                     class="rounded-circle shadow avatar-sm"
+                     width="36" height="36" alt="Avatar">
+            </div>
+
+            <button class="btn btn-outline-secondary d-lg-none" type="button" data-db-open="sidebar" aria-label="Menu">
+                <i class="fas fa-bars"></i>
+            </button>
+
+        </header>
+
+        <main class="dashboard-content flex-grow-1 p-4">
+            {% block dashboard_content %}{% endblock %}
+        </main>
+
+    </div>
+</div>
+
+{# ===================== JS ===================== #}
+<script src="{% static 'dashboard/js/premium_dashboard.js' %}"></script>
+<script src="{% static 'dashboard/js/chart.min.js' %}"></script>
+<script src="{% static 'dashboard/leaflet/leaflet.js' %}"></script>
+
+{% block extra_js %}{% endblock %}
+
+</body>
+</html> {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/dashboard/base.html #}
+{% load static i18n %}
 <!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE|default:'fr' }}">
 <head>
@@ -115,7 +306,7 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-white"
-                           href="{% url 'dashboard:admin:home' %}">
+                           href="{% url 'dashboard:admin:index' %}">
                             <i class="fas fa-tools me-2"></i>
                             {% trans "Admin dashboard" %}
                         </a>
@@ -171,7 +362,7 @@
 
 </body>
 </html>
-
+ {% endcomment %}
 
 
 

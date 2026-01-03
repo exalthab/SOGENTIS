@@ -1,4 +1,17 @@
-{# templates/dashboard/admin/home.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+{% block dashboard_header %}
+<h1 class="fw-bold mb-2">🧭 {% trans "Admin Social" %}</h1>
+<p class="text-muted mb-0">{% trans "Gestion et supervision des activités sociales." %}</p>
+{% endblock %}
+{% block dashboard_content %}
+{% include "dashboard/partials/_empty_state.html" with icon="🧭" title=_("Admin Social") text=_("Ajoutez ici les panneaux de supervision (dons, profils, projets).") %}
+{% endblock %}
+
+
+
+
+{% comment %} {# templates/dashboard/admin/home.html #}
 {% extends "dashboard/base.html" %}
 {% load i18n static %}
 
@@ -194,7 +207,7 @@
 </div>
 {% endblock %}
 
-{% block extra_js %}{% endblock %}
+{% block extra_js %}{% endblock %} {% endcomment %}
 
 
 

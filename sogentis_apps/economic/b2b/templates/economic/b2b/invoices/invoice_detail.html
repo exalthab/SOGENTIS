@@ -1,0 +1,36 @@
+{% extends "economic/b2b/base_b2b.html" %}
+{% load i18n %}
+{% block b2b_content %}
+<h1 class="h5 mb-2">🧾 {{ invoice.invoice_number }}</h1>
+<div class="text-muted mb-3">
+  {{ invoice.bulk_order.company }} — {% trans "Statut" %}: {{ invoice.status }} — {% trans "Montant" %}: {{ invoice.amount }}
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <h2 class="h6">{% trans "Détails commande" %}</h2>
+    <div class="table-responsive">
+      <table class="table table-sm">
+        <thead>
+          <tr>
+            <th>{% trans "Produit" %}</th>
+            <th class="text-end">{% trans "Qté" %}</th>
+            <th class="text-end">{% trans "PU" %}</th>
+            <th class="text-end">{% trans "Total" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for it in items %}
+          <tr>
+            <td>{{ it.product }}</td>
+            <td class="text-end">{{ it.quantity }}</td>
+            <td class="text-end">{{ it.unit_price }}</td>
+            <td class="text-end">{{ it.total_price }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

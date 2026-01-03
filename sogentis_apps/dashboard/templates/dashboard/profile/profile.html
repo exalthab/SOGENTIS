@@ -1,4 +1,328 @@
-{# dashboard/profile/profile.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Profil utilisateur" %} | {{ PROJECT_NAME }}{% endblock %}
+
+{% block dashboard_header %}
+<h1 class="fw-bold mb-2">👤 {% trans "Mon profil" %}</h1>
+<p class="text-muted mb-0">{% trans "Gérez vos informations et votre compte." %}</p>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="row g-3 g-md-4">
+  <div class="col-lg-8">
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <div class="text-muted small">{% trans "Compte" %}</div>
+            <div class="h5 fw-bold mb-1">{{ request.user.get_full_name|default:request.user.username }}</div>
+            <div class="text-muted">{{ request.user.email }}</div>
+          </div>
+          <a class="btn btn-outline-primary" href="{% url 'dashboard:profile_edit' %}">✏️ {% trans "Modifier" %}</a>
+        </div>
+
+        <hr>
+
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="text-muted small">{% trans "Téléphone" %}</div>
+            <div class="fw-semibold">{{ profile.phone_number|default:"—" }}</div>
+          </div>
+          <div class="col-md-6">
+            <div class="text-muted small">{% trans "Pays" %}</div>
+            <div class="fw-semibold">{{ profile.country|default:"—" }}</div>
+          </div>
+          <div class="col-md-6">
+            <div class="text-muted small">{% trans "Rôle" %}</div>
+            <div class="fw-semibold">{{ profile.role|default:"—" }}</div>
+          </div>
+          <div class="col-md-6">
+            <div class="text-muted small">{% trans "Statut" %}</div>
+            <div class="fw-semibold">{{ profile.status|default:"—" }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card shadow-sm border-0 h-100">
+      <div class="card-body">
+        <strong class="d-block mb-2">{% trans "Raccourcis" %}</strong>
+        <div class="d-grid gap-2">
+          <a class="btn btn-outline-secondary" href="{% url 'dashboard:notes_list' %}">{% trans "Mes notes" %}</a>
+          <a class="btn btn-outline-secondary" href="{% url 'dashboard:orders' %}">{% trans "Mes commandes" %}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+
+
+
+{% comment %} {# dashboard/profile/profile.html #}
+{% extends "dashboard/base.html" %}
+{% load static i18n widget_tweaks humanize %}
+
+{% block title %}{% trans "Profil utilisateur" %} | {{ PROJECT_NAME }}{% endblock %}
+
+{% block dashboard_header %}
+  {# ========================= #}
+  {#  TITRE : PROFIL UTILISATEUR #}
+  {# ========================= #}
+  <h1 class="fw-bold mb-2">
+    <i class="fas fa-user-circle me-2 text-primary"></i>
+    {% trans "Mon profil" %}
+  </h1>
+  <p class="text-muted mb-4">
+    {% trans "Gérez vos informations personnelles et le statut de votre compte." %}
+  </p>
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="row g-4">
+
+  {# ========================= #}
+  {#  COLONNE PRINCIPALE : PROFIL #}
+  {# ========================= #}
+  <div class="col-lg-8">
+    <div class="card shadow-sm border-0 h-100">
+      <div class="card-header bg-light fw-semibold py-3">
+        <i class="fas fa-id-card me-2"></i>
+        {% trans "Informations du compte" %}
+      </div>
+
+      <div class="card-body p-4">
+
+        {# ========================= #}
+        {#  BLOC : PHOTO + INFOS #}
+        {# ========================= #}
+        <div class="row g-4 align-items-center mb-4">
+
+          {# ========================= #}
+          {#  PHOTO DE PROFIL #}
+          {# ========================= #}
+          <div class="col-md-3 text-center">
+            {% if profile and profile.profile_picture %}
+              <img src="{{ profile.profile_picture.url }}"
+                   class="img-thumbnail rounded-circle shadow-sm"
+                   alt="{% trans 'Photo de profil' %}"
+                   style="width:130px;height:130px;object-fit:cover;">
+            {% else %}
+              <div class="rounded-circle bg-light shadow-sm d-flex align-items-center justify-content-center"
+                   style="width:130px;height:130px;">
+                <i class="fas fa-user text-muted" style="font-size:3rem;"></i>
+              </div>
+            {% endif %}
+          </div>
+
+          {# ========================= #}
+          {#  INFOS UTILISATEUR #}
+          {# ========================= #}
+          <div class="col-md-9">
+            <dl class="row mb-0 small">
+
+              {# ========================= #}
+              {#  NOM COMPLET #}
+              {# ========================= #}
+              <dt class="col-sm-4 text-muted">{% trans "Nom complet" %}</dt>
+              <dd class="col-sm-8">
+                {% if profile and profile.full_name %}
+                  {{ profile.full_name }}
+                {% else %}
+                  {{ user.get_full_name|default:user.username|default:"—" }}
+                {% endif %}
+              </dd>
+
+              {# ========================= #}
+              {#  EMAIL #}
+              {# ========================= #}
+              <dt class="col-sm-4 text-muted">Email</dt>
+              <dd class="col-sm-8">
+                {{ user.email|default:"—" }}
+              </dd>
+
+              {# ========================= #}
+              {#  TÉLÉPHONE #}
+              {# ========================= #}
+              <dt class="col-sm-4 text-muted">{% trans "Téléphone" %}</dt>
+              <dd class="col-sm-8">
+                {% if profile and profile.phone %}
+                  {{ profile.phone }}
+                {% else %}
+                  <span class="text-muted">—</span>
+                {% endif %}
+              </dd>
+
+              {# ========================= #}
+              {#  PAYS #}
+              {# ========================= #}
+              <dt class="col-sm-4 text-muted">{% trans "Pays" %}</dt>
+              <dd class="col-sm-8">
+                {% if profile and profile.country %}
+                  {{ profile.country }}
+                {% else %}
+                  <span class="text-muted">—</span>
+                {% endif %}
+              </dd>
+
+              {# ========================= #}
+              {#  TYPE D’ADHÉSION #}
+              {# ========================= #}
+              <dt class="col-sm-4 text-muted">{% trans "Type d’adhésion" %}</dt>
+              <dd class="col-sm-8">
+                {% if profile and profile.membership_role %}
+                  {{ profile.membership_role.label|default:profile.membership_role }}
+                {% else %}
+                  <span class="text-muted">—</span>
+                {% endif %}
+              </dd>
+
+              {# ========================= #}
+              {#  MESSAGE PERSONNEL #}
+              {# ========================= #}
+              <dt class="col-sm-4 text-muted">{% trans "Message personnel" %}</dt>
+              <dd class="col-sm-8">
+                {% if profile and profile.message %}
+                  <span class="text-muted">{{ profile.message }}</span>
+                {% else %}
+                  <span class="text-muted">—</span>
+                {% endif %}
+              </dd>
+
+              {# ========================= #}
+              {#  CASIER JUDICIAIRE #}
+              {# ========================= #}
+              <dt class="col-sm-4 text-muted">{% trans "Casier judiciaire" %}</dt>
+              <dd class="col-sm-8">
+                {% if profile and profile.judicial_record %}
+                  <a href="{{ profile.judicial_record.url }}"
+                     class="text-primary"
+                     target="_blank" rel="noopener noreferrer">
+                    <i class="fas fa-file-pdf me-1"></i>
+                    {% trans "Voir le document" %}
+                  </a>
+                {% else %}
+                  <span class="text-muted">—</span>
+                {% endif %}
+              </dd>
+
+              {# ========================= #}
+              {#  STATUT DU PROFIL #}
+              {# ========================= #}
+              <dt class="col-sm-4 text-muted">{% trans "Statut du profil" %}</dt>
+              <dd class="col-sm-8">
+                {% if profile %}
+                  {% if profile.status == "approved" %}
+                    <span class="badge bg-success">{% trans "Validé" %}</span>
+                  {% elif profile.status == "pending" %}
+                    <span class="badge bg-warning text-dark">{% trans "En attente de validation" %}</span>
+                  {% elif profile.status == "rejected" %}
+                    <span class="badge bg-danger">{% trans "Refusé" %}</span>
+                  {% else %}
+                    <span class="badge bg-secondary">
+                      {{ profile.status|default:_("Inconnu") }}
+                    </span>
+                  {% endif %}
+                {% else %}
+                  <span class="badge bg-secondary">{% trans "Profil incomplet" %}</span>
+                {% endif %}
+              </dd>
+
+            </dl>
+          </div>
+
+        </div>
+
+        {# ========================= #}
+        {#  ACTIONS #}
+        {# ========================= #}
+        <div class="d-flex flex-wrap gap-2">
+          <a href="{% url 'dashboard:profile_edit' %}" class="btn btn-primary px-4">
+            <i class="fas fa-edit me-1"></i>
+            {% trans "Mettre à jour mes informations" %}
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  {# ========================= #}
+  {#  COLONNE LATÉRALE : COMPTE & SÉCURITÉ #}
+  {# ========================= #}
+  <div class="col-lg-4">
+
+    <div class="card shadow-sm border-0 mb-4">
+      <div class="card-header bg-light fw-semibold py-3">
+        <i class="fas fa-shield-alt me-2"></i>
+        {% trans "Compte & sécurité" %}
+      </div>
+
+      <div class="card-body p-4 small">
+
+        {# ========================= #}
+        {#  USERNAME #}
+        {# ========================= #}
+        <p class="mb-2">
+          <strong>{% trans "Nom d’utilisateur" %} :</strong><br>
+          {{ user.username|default:"—" }}
+        </p>
+
+        {# ========================= #}
+        {#  DATE DE CRÉATION #}
+        {# ========================= #}
+        <p class="mb-2">
+          <strong>{% trans "Date de création du compte" %} :</strong><br>
+          {% if user.date_joined %}
+            {{ user.date_joined|date:"d/m/Y H:i" }}
+            <span class="text-muted">({{ user.date_joined|naturaltime }})</span>
+          {% else %}
+            —
+          {% endif %}
+        </p>
+
+        {# ========================= #}
+        {#  DERNIÈRE CONNEXION #}
+        {# ========================= #}
+        <p class="mb-2">
+          <strong>{% trans "Dernière connexion" %} :</strong><br>
+          {% if user.last_login %}
+            {{ user.last_login|date:"d/m/Y H:i" }}
+            <span class="text-muted">({{ user.last_login|naturaltime }})</span>
+          {% else %}
+            <span class="text-muted">{% trans "Aucune connexion enregistrée." %}</span>
+          {% endif %}
+        </p>
+
+        <hr>
+
+        {# ========================= #}
+        {#  NOTE SÉCURITÉ #}
+        {# ========================= #}
+        <p class="text-muted mb-2">
+          {% trans "Pour toute activité suspecte ou pour modifier vos paramètres de sécurité, contactez l’équipe SOGENTIS." %}
+        </p>
+
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+{% endblock %}
+ {% endcomment %}
+
+
+
+
+
+{% comment %} {# dashboard/profile/profile.html #}
 {% extends "dashboard/base.html" %}
 {% load static i18n widget_tweaks humanize %}
 
@@ -206,7 +530,7 @@
 
 </div>
 
-{% endblock %}
+{% endblock %} {% endcomment %}
 
 
 

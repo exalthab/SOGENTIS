@@ -1,7 +1,21 @@
-{% extends "dashboard/social/base_social.html" %}
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+{% block dashboard_header %}
+<h1 class="fw-bold mb-2">🤝 {% trans "Espace Membre" %}</h1>
+<p class="text-muted mb-0">{% trans "Informations et activités." %}</p>
+{% endblock %}
+{% block dashboard_content %}
+{% include "dashboard/partials/_empty_state.html" with icon="🤝" title=_("Espace membre prêt") text=_("Ajoutez ici vos fonctionnalités (attestations, engagements…).") %}
+{% endblock %}
+
+
+
+
+
+{% comment %} {% extends "dashboard/social/base_social.html" %}
 {% load i18n %}
 
 {% block content %}
 <h2>🧑‍🤝‍🧑 {% trans "Espace membre" %}</h2>
 <p>{% trans "Accédez à vos informations et documents." %}</p>
-{% endblock %}
+{% endblock %} {% endcomment %}

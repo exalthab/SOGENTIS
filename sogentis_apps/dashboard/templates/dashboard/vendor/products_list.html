@@ -1,4 +1,64 @@
-{% extends "dashboard/base_dashboard.html" %}
+{% extends "dashboard/base.html" %}
+{% load i18n humanize %}
+
+{% block dashboard_header %}
+<h1 class="fw-bold mb-2">📦 {% trans "Mes produits" %}</h1>
+<p class="text-muted mb-0">{% trans "Catalogue vendeur." %}</p>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <form method="get" class="d-flex gap-2">
+    <input class="form-control" name="q" value="{{ request.GET.q }}" placeholder="{% trans 'Rechercher…' %}">
+    <button class="btn btn-outline-secondary" type="submit">{% trans "Filtrer" %}</button>
+  </form>
+  <a class="btn btn-primary" href="{% url 'dashboard:vendor_product_create' %}">＋ {% trans "Ajouter" %}</a>
+</div>
+
+<div class="card shadow-sm border-0">
+  <div class="card-body">
+    {% if products %}
+      <div class="table-responsive">
+        <table class="table align-middle">
+          <thead>
+            <tr>
+              <th>{% trans "Produit" %}</th>
+              <th>{% trans "Prix" %}</th>
+              <th>{% trans "Actif" %}</th>
+              <th class="text-end">{% trans "Actions" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in products %}
+            <tr>
+              <td class="fw-semibold">{{ p.name|default:p }}</td>
+              <td>{{ p.price|floatformat:0|intcomma }}</td>
+              <td>
+                {% if p.is_active %}
+                  <span class="badge text-bg-success">{% trans "Oui" %}</span>
+                {% else %}
+                  <span class="badge text-bg-secondary">{% trans "Non" %}</span>
+                {% endif %}
+              </td>
+              <td class="text-end">
+                <a class="btn btn-sm btn-outline-primary" href="{% url 'dashboard:vendor_product_edit' p.pk %}">{% trans "Modifier" %}</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      {% include "dashboard/partials/_empty_state.html" with icon="📦" title=_("Aucun produit") text=_("Ajoutez votre premier produit.") %}
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+
+
+
+{% comment %} {% extends "dashboard/base_dashboard.html" %}
 {% load static i18n %}
 
 {% block content %}
@@ -60,4 +120,4 @@
     </div>
 
 </div>
-{% endblock %}
+{% endblock %} {% endcomment %}

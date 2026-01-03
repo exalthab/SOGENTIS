@@ -1,29 +1,57 @@
 # dashboard/views/b2b/home.py
-
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.utils.translation import gettext_lazy as _
 
-from dashboard.permissions import is_b2b_user
-from dashboard.services.b2b_dashboard_service import get_b2b_dashboard_data
+from dashboard.views.utils import StatCard, breadcrumb
 
 
 @login_required
-@user_passes_test(is_b2b_user)
 def b2b_dashboard_home_view(request):
-    company_user = request.user.company_user
-    company = company_user.company
+    cards = []
+    recent_orders = []
 
-    context = {
-        "page_title": _("Espace B2B"),
-        # "section_menu": "core/partials/_menu_dashboard.html",
-        "dashboard_menu": "dashboard/b2b/_menu.html",
+    try:
+        from economic.b2b.models.bulk_order import BulkOrder
+        recent_orders = BulkOrder.objects.filter(user=request.user).order_by("-created_at")[:8]
+        cards.append(StatCard(label=_("Commandes B2B"), value=BulkOrder.objects.filter(user=request.user).count(), icon="🏢"))
+    except Exception:
+        recent_orders = []
 
-        "company": company,
-        **get_b2b_dashboard_data(company),
-    }
+    return render(request, "dashboard/b2b/index.html", {
+        "breadcrumbs": breadcrumb((_('Dashboard'), "/dashboard/"), (_("B2B"), None)),
+        "cards": [c.__dict__ for c in cards],
+        "recent_orders": recent_orders,
+    })
 
-    return render(request, "dashboard/b2b/home.html", context)
+
+
+# # dashboard/views/b2b/home.py
+
+# from django.contrib.auth.decorators import login_required, user_passes_test
+# from django.shortcuts import render
+# from django.utils.translation import gettext_lazy as _
+
+# from dashboard.permissions import is_b2b_user
+# from dashboard.services.b2b_dashboard_service import get_b2b_dashboard_data
+
+
+# @login_required
+# @user_passes_test(is_b2b_user)
+# def b2b_dashboard_home_view(request):
+#     company_user = request.user.company_user
+#     company = company_user.company
+
+#     context = {
+#         "page_title": _("Espace B2B"),
+#         # "section_menu": "core/partials/_menu_dashboard.html",
+#         "dashboard_menu": "dashboard/b2b/_menu.html",
+
+#         "company": company,
+#         **get_b2b_dashboard_data(company),
+#     }
+
+#     return render(request, "dashboard/b2b/home.html", context)
 
 
 

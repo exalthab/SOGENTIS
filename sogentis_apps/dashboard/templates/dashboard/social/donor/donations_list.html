@@ -1,4 +1,56 @@
-{# templates/dashboard/social/donor/donations_list.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n humanize %}
+
+{% block dashboard_header %}
+<h1 class="fw-bold mb-2">💳 {% trans "Mes dons" %}</h1>
+<p class="text-muted mb-0">{% trans "Historique des dons et reçus." %}</p>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="card shadow-sm border-0">
+  <div class="card-body">
+    {% if donations %}
+      <div class="table-responsive">
+        <table class="table align-middle">
+          <thead>
+            <tr>
+              <th>{% trans "Date" %}</th>
+              <th>{% trans "Montant" %}</th>
+              <th>{% trans "Type" %}</th>
+              <th>{% trans "Statut" %}</th>
+              <th class="text-end">{% trans "Reçu" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for d in donations %}
+            <tr>
+              <td>{{ d.created_at|date:"d/m/Y H:i" }}</td>
+              <td class="fw-semibold">{{ d.amount|floatformat:0|intcomma }}</td>
+              <td>{{ d.donation_type|default:"—" }}</td>
+              <td>{{ d.status|default:"—" }}</td>
+              <td class="text-end">
+                {% if d.receipt or d.receipt_file %}
+                  <a class="btn btn-sm btn-outline-primary" href="{% url 'dashboard:social:donor_receipt_download' d.pk %}">{% trans "Télécharger" %}</a>
+                {% else %}
+                  <span class="text-muted small">—</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      {% include "dashboard/partials/_empty_state.html" with icon="💳" title=_("Aucun don") text=_("Vos dons apparaîtront ici.") %}
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+
+
+
+{% comment %} {# templates/dashboard/social/donor/donations_list.html #}
 {% extends "dashboard/social/base_social.html" %}
 {% load i18n humanize %}
 
@@ -111,7 +163,7 @@
   {% endif %}
 </nav>
 {% endif %}
-{% endblock %}
+{% endblock %} {% endcomment %}
 
 
 

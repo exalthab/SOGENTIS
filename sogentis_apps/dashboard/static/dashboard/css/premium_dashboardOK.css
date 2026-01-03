@@ -1,0 +1,91 @@
+/* ==========================================================
+   premium_dashboard.css — Layout wrapper + overlay + content polish
+   ========================================================== */
+
+:root{
+  --db-bg: #f6f7fb;
+  --db-surface: #ffffff;
+  --db-border: rgba(15, 23, 42, 0.10);
+  --db-text: #0f172a;
+  --db-muted: rgba(15, 23, 42, 0.65);
+  --db-shadow-sm: 0 8px 22px rgba(15,23,42,.08);
+  --db-radius: 18px;
+  --db-focus: rgba(13,110,253,.25);
+}
+
+html, body{ height: 100%; }
+body{ background: var(--db-bg); color: var(--db-text); }
+
+:focus-visible{
+  outline: 0;
+  box-shadow: 0 0 0 4px var(--db-focus);
+  border-radius: 12px;
+}
+
+.dashboard-layout{
+  width: 100%;
+  overflow: hidden;
+}
+
+/* When using .db-sidebar, keep main flexible */
+.dashboard-main{
+  min-width: 0;
+  width: 100%;
+}
+
+/* Overlay (JS will create if missing) */
+.db-overlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(15,23,42,.55);
+  z-index: 55;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s ease;
+}
+body.db-sidebar-open .db-overlay{
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Header */
+.dashboard-header{
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--db-surface) !important;
+  border-bottom: 1px solid var(--db-border) !important;
+}
+
+/* Content */
+.dashboard-content{
+  min-height: 0;
+  overflow: auto;
+}
+.dashboard-content::-webkit-scrollbar{ width: 10px; }
+.dashboard-content::-webkit-scrollbar-thumb{
+  background: rgba(15,23,42,.15);
+  border-radius: 999px;
+}
+.dashboard-content::-webkit-scrollbar-thumb:hover{
+  background: rgba(15,23,42,.25);
+}
+
+/* Small avatar */
+.avatar-sm{
+  object-fit: cover;
+}
+
+/* Utilities */
+.db-surface{
+  background: var(--db-surface);
+  border: 1px solid var(--db-border);
+  border-radius: var(--db-radius);
+  box-shadow: var(--db-shadow-sm);
+}
+.db-muted{ color: var(--db-muted) !important; }
+
+@media (max-width: 575.98px){
+  .dashboard-header{ padding-left: 1rem !important; padding-right: 1rem !important; }
+  .dashboard-content{ padding: 1rem !important; }
+}

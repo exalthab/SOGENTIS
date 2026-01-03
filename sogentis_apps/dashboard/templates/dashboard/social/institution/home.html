@@ -1,0 +1,9 @@
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+{% block dashboard_header %}
+<h1 class="fw-bold mb-2">🏛️ {% trans "Espace Institution" %}</h1>
+<p class="text-muted mb-0">{% trans "Partenariats et demandes." %}</p>
+{% endblock %}
+{% block dashboard_content %}
+{% include "dashboard/partials/_empty_state.html" with icon="🏛️" title=_("Aucune demande") text=_("Vos demandes et partenariats apparaîtront ici.") %}
+{% endblock %}

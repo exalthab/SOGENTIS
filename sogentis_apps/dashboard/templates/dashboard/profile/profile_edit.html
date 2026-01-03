@@ -1,4 +1,59 @@
-{# dashboard/profile/profile_edit.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n widget_tweaks %}
+
+{% block dashboard_header %}
+<h1 class="fw-bold mb-2">✏️ {{ title|default:_("Modifier le profil") }}</h1>
+<p class="text-muted mb-0">{% trans "Mettez à jour vos informations." %}</p>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="card shadow-sm border-0">
+  <div class="card-body">
+    <form method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+
+      {% if user_form %}
+        <div class="mb-4">
+          <div class="text-muted small mb-2">{% trans "Informations du compte" %}</div>
+          <div class="row g-3">
+            {% for field in user_form %}
+              <div class="col-md-6">
+                <label class="form-label">{{ field.label }}</label>
+                {% render_field field class="form-control" %}
+                <div class="text-danger small">{{ field.errors }}</div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+        <hr>
+      {% endif %}
+
+      <div class="mb-2 text-muted small">{% trans "Profil" %}</div>
+      <div class="row g-3">
+        {% for field in form %}
+          <div class="col-md-6">
+            <label class="form-label">{{ field.label }}</label>
+            {% render_field field class="form-control" %}
+            <div class="text-danger small">{{ field.errors }}</div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="d-flex justify-content-between mt-4">
+        <a class="btn btn-outline-secondary" href="{% url 'dashboard:profile' %}">{% trans "Annuler" %}</a>
+        <button class="btn btn-primary" type="submit">{% trans "Enregistrer" %}</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+
+
+
+
+
+{% comment %} {# dashboard/profile/profile_edit.html #}
 {% extends "dashboard/base.html" %}
 {% load static i18n widget_tweaks %}
 
@@ -131,7 +186,7 @@
   </div>
 </div>
 
-{% endblock %}
+{% endblock %} {% endcomment %}
 
 
 

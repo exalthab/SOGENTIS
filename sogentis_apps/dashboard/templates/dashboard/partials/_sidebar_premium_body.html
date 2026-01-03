@@ -1,0 +1,136 @@
+{# templates/dashboard/partials/_sidebar_premium_body.html #}
+{% load i18n %}
+
+<aside class="db-sidebar" aria-label="{% trans 'Menu dashboard' %}" data-db-sidebar>
+
+  <div class="db-sidebar-head">
+    <a class="db-brand" href="{% url 'dashboard:hub' %}">
+      <span class="db-brand-mark">S</span>
+      <span class="db-brand-text">
+        <span class="db-brand-name">{{ PROJECT_NAME|default:"SOGENTIS" }}</span>
+        <span class="db-brand-sub">{% trans "Dashboard" %}</span>
+      </span>
+    </a>
+
+    <button class="db-icon-btn d-lg-none" type="button"
+            data-db-toggle="sidebar"
+            aria-label="{% trans 'Fermer le menu' %}">
+      ✕
+    </button>
+  </div>
+
+  <div class="db-sidebar-user">
+    <div class="db-user-avatar" aria-hidden="true">
+      {{ request.user.get_short_name|default:request.user.username|slice:":1"|upper }}
+    </div>
+    <div class="db-user-meta">
+      <div class="db-user-name">{{ request.user.get_full_name|default:request.user.username }}</div>
+      <div class="db-user-sub">{{ request.user.email|default:"" }}</div>
+    </div>
+  </div>
+
+  <nav class="db-nav">
+
+    <div class="db-nav-section">
+      <div class="db-nav-title">{% trans "Général" %}</div>
+
+      <a class="db-link {% if rm and rm.url_name in 'hub router' %}active{% endif %}"
+         href="{% url 'dashboard:hub' %}">
+        <span class="db-ico">🏠</span>
+        <span class="db-label">{% trans "Hub" %}</span>
+      </a>
+
+      <a class="db-link {% if rm and rm.url_name in 'profile profile_edit' %}active{% endif %}"
+         href="{% url 'dashboard:profile' %}">
+        <span class="db-ico">👤</span>
+        <span class="db-label">{% trans "Profil" %}</span>
+      </a>
+
+      <a class="db-link {% if rm and rm.url_name in 'notes_list note_create note_edit' %}active{% endif %}"
+         href="{% url 'dashboard:notes_list' %}">
+        <span class="db-ico">📝</span>
+        <span class="db-label">{% trans "Notes" %}</span>
+      </a>
+    </div>
+
+    <div class="db-nav-section">
+      <button class="db-nav-toggle" type="button" data-db-collapse="modules" aria-expanded="true">
+        <span class="db-nav-title">{% trans "Modules" %}</span>
+        <span class="db-caret" aria-hidden="true">▾</span>
+      </button>
+
+      <div class="db-nav-group" data-db-collapsible="modules">
+        <a class="db-link {% if rm and rm.url_name == 'stats' %}active{% endif %}" href="{% url 'dashboard:stats' %}">
+          <span class="db-ico">📊</span><span class="db-label">{% trans "Stats" %}</span>
+        </a>
+        <a class="db-link {% if rm and rm.url_name == 'orders' %}active{% endif %}" href="{% url 'dashboard:orders' %}">
+          <span class="db-ico">🧾</span><span class="db-label">{% trans "Commandes" %}</span>
+        </a>
+        <a class="db-link {% if rm and rm.url_name == 'lists' %}active{% endif %}" href="{% url 'dashboard:lists' %}">
+          <span class="db-ico">📋</span><span class="db-label">{% trans "Listes" %}</span>
+        </a>
+        <a class="db-link {% if rm and rm.url_name == 'engagements_list' %}active{% endif %}" href="{% url 'dashboard:engagements_list' %}">
+          <span class="db-ico">🤝</span><span class="db-label">{% trans "Engagements" %}</span>
+        </a>
+        <a class="db-link {% if rm and rm.url_name == 'dons_list' %}active{% endif %}" href="{% url 'dashboard:dons_list' %}">
+          <span class="db-ico">💝</span><span class="db-label">{% trans "Dons" %}</span>
+        </a>
+        <a class="db-link {% if rm and rm.url_name == 'donations' %}active{% endif %}" href="{% url 'dashboard:donations' %}">
+          <span class="db-ico">💳</span><span class="db-label">{% trans "Donations" %}</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="db-nav-section">
+      <button class="db-nav-toggle" type="button" data-db-collapse="spaces" aria-expanded="true">
+        <span class="db-nav-title">{% trans "Espaces" %}</span>
+        <span class="db-caret" aria-hidden="true">▾</span>
+      </button>
+
+      <div class="db-nav-group" data-db-collapsible="spaces">
+        <a class="db-link {% if nss and 'user' in nss %}active{% endif %}" href="{% url 'dashboard:user:home' %}">
+          <span class="db-ico">👤</span><span class="db-label">{% trans "Utilisateur" %}</span>
+        </a>
+        <a class="db-link {% if nss and 'vendor' in nss %}active{% endif %}" href="{% url 'dashboard:vendor:home' %}">
+          <span class="db-ico">🏪</span><span class="db-label">{% trans "Vendeur" %}</span>
+        </a>
+        <a class="db-link {% if nss and 'b2b' in nss %}active{% endif %}" href="{% url 'dashboard:b2b:home' %}">
+          <span class="db-ico">🏢</span><span class="db-label">{% trans "B2B" %}</span>
+        </a>
+        <a class="db-link {% if nss and 'social' in nss %}active{% endif %}" href="{% url 'dashboard:social:index' %}">
+          <span class="db-ico">❤️</span><span class="db-label">{% trans "Social" %}</span>
+        </a>
+      </div>
+    </div>
+
+    {% if request.user.is_staff %}
+    <div class="db-nav-section">
+      <button class="db-nav-toggle" type="button" data-db-collapse="admin" aria-expanded="true">
+        <span class="db-nav-title">{% trans "Administration" %}</span>
+        <span class="db-caret" aria-hidden="true">▾</span>
+      </button>
+
+      <div class="db-nav-group" data-db-collapsible="admin">
+        <a class="db-link {% if nss and 'admin' in nss %}active{% endif %}" href="{% url 'dashboard:admin:index' %}">
+          <span class="db-ico">🛡️</span><span class="db-label">{% trans "Admin dashboard" %}</span>
+        </a>
+        <a class="db-link {% if rm and rm.url_name == 'pending_profiles' %}active{% endif %}" href="{% url 'dashboard:pending_profiles' %}">
+          <span class="db-ico">⏳</span><span class="db-label">{% trans "Profils en attente" %}</span>
+        </a>
+      </div>
+    </div>
+    {% endif %}
+
+  </nav>
+
+  <div class="db-sidebar-foot">
+    <a class="db-link danger" href="{% url 'accounts_users_web:logout' %}">
+      <span class="db-ico">🚪</span>
+      <span class="db-label">{% trans "Déconnexion" %}</span>
+    </a>
+    <div class="db-foot-note">
+      {% trans "Connecté en tant que" %} <strong>{{ request.user.username }}</strong>
+    </div>
+  </div>
+
+</aside>

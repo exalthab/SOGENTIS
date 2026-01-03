@@ -1,4 +1,23 @@
-{# templates/dashboard/vendor/home.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+
+{% block dashboard_header %}
+<h1 class="fw-bold mb-2">🏪 {% trans "Espace Vendeur" %}</h1>
+<p class="text-muted mb-0">{% trans "Pilotage boutique." %}</p>
+{% endblock %}
+
+{% block dashboard_content %}
+{% if cards %}
+  {% include "dashboard/partials/_stats_cards.html" with cards=cards %}
+{% else %}
+  {% include "dashboard/partials/_empty_state.html" with icon="🏪" title=_("Vendeur") text=_("Connectez vos modèles produits/commandes pour afficher des données ici.") %}
+{% endif %}
+{% endblock %}
+
+
+
+
+{% comment %} {# templates/dashboard/vendor/home.html #}
 {% extends "dashboard/base_dashboard.html" %}
 {% load i18n humanize %}
 
@@ -93,7 +112,7 @@
     </div>
 
 </div>
-{% endblock %}
+{% endblock %} {% endcomment %}
 
 
 

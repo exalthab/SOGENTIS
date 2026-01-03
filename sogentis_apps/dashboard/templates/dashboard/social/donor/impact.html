@@ -1,4 +1,32 @@
-{% extends "dashboard/social/base_social.html" %}
+{% extends "dashboard/base.html" %}
+{% load i18n humanize %}
+
+{% block dashboard_header %}
+<h1 class="fw-bold mb-2">📈 {% trans "Mon impact" %}</h1>
+<p class="text-muted mb-0">{% trans "Synthèse de votre contribution." %}</p>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="row g-3">
+  <div class="col-lg-6">
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+        <div class="text-muted small">{% trans "Total donné" %}</div>
+        <div class="display-6 fw-bold">{{ total_donated|default:0|floatformat:0|intcomma }}</div>
+        <div class="text-muted mt-2">{% trans "Merci pour votre soutien." %}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    {% include "dashboard/partials/_empty_state.html" with icon="🎯" title=_("Affectation") text=_("Vous pourrez relier l’impact à des projets (si activé).") %}
+  </div>
+</div>
+{% endblock %}
+
+
+
+
+{% comment %} {% extends "dashboard/social/base_social.html" %}
 {% load i18n humanize %}
 
 {% block title %}{% trans "Mon impact social" %}{% endblock %}
@@ -45,4 +73,4 @@
 {% else %}
 <p>{% trans "Vous n'avez pas encore soutenu de projet." %}</p>
 {% endif %}
-{% endblock %}
+{% endblock %} {% endcomment %}

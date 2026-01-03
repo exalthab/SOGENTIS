@@ -1,0 +1,12 @@
+{% extends "economic/b2b/base_b2b.html" %}
+{% load i18n %}
+{% block b2b_content %}
+<h1 class="h5 mb-3">{% trans "Créer une RFQ" %} — {{ company.name }}</h1>
+<form method="post" class="card">
+  {% csrf_token %}
+  <div class="card-body">
+    {{ form.as_p }}
+    <button class="btn btn-primary" type="submit">{% trans "Enregistrer" %}</button>
+  </div>
+</form>
+{% endblock %}

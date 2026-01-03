@@ -1,0 +1,31 @@
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+
+{% block dashboard_header %}
+<h1 class="fw-bold mb-2">🧾 {% trans "Sessions" %}</h1>
+<p class="text-muted mb-0">{% trans "Aperçu des connexions." %}</p>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="card shadow-sm border-0">
+  <div class="card-body">
+    {% if sessions %}
+      <ul class="list-group list-group-flush">
+        {% for s in sessions %}
+          <li class="list-group-item d-flex justify-content-between">
+            <div>
+              <div class="fw-semibold">{{ s.user_agent|default:_("Session") }}</div>
+              <div class="text-muted small">{{ s.ip|default:"—" }} • {{ s.last_seen|date:"d/m/Y H:i" }}</div>
+            </div>
+            {% if s.is_current %}
+              <span class="badge text-bg-success">{% trans "Actuelle" %}</span>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      {% include "dashboard/partials/_empty_state.html" with icon="🧾" title=_("Aucune session") text=_("Pas d’informations disponibles.") %}
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

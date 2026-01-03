@@ -1,0 +1,31 @@
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+
+{% block dashboard_header %}
+<h1 class="fw-bold mb-2">🔒 {% trans "Centre de sécurité" %}</h1>
+<p class="text-muted mb-0">{% trans "Mot de passe, sessions, recommandations." %}</p>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="row g-3">
+  <div class="col-lg-6">
+    <div class="card shadow-sm border-0 h-100">
+      <div class="card-body">
+        <strong class="d-block mb-2">{% trans "Mot de passe" %}</strong>
+        <p class="text-muted mb-3">{% trans "Changez régulièrement votre mot de passe." %}</p>
+        <a class="btn btn-outline-primary" href="{% url 'dashboard:password_change' %}">{% trans "Changer le mot de passe" %}</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="card shadow-sm border-0 h-100">
+      <div class="card-body">
+        <strong class="d-block mb-2">{% trans "Sessions" %}</strong>
+        <p class="text-muted mb-3">{% trans "Vérifiez les sessions actives et déconnectez-vous si besoin." %}</p>
+        <a class="btn btn-outline-secondary" href="{% url 'dashboard:sessions' %}">{% trans "Voir les sessions" %}</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "economic/b2b/base_b2b.html" %}
+{% load i18n %}
+{% block b2b_content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h5 mb-0">{% trans "RFQ" %} — {{ company.name }}</h1>
+  <a class="btn btn-sm btn-primary" href="{% url 'economic:b2b:rfq_create' company_id=company.id %}">
+    + {% trans "Créer RFQ" %}
+  </a>
+</div>
+
+<div class="list-group">
+  {% for r in rfqs %}
+    <div class="list-group-item">
+      <div class="d-flex justify-content-between">
+        <strong>{{ r.title }}</strong>
+        <span class="badge bg-light text-dark">{{ r.status }}</span>
+      </div>
+      <small class="text-muted">{{ r.created_at }} — {% trans "Deadline" %}: {{ r.deadline|default:"-" }}</small>
+    </div>
+  {% empty %}
+    <div class="alert alert-info mb-0">{% trans "Aucune RFQ." %}</div>
+  {% endfor %}
+</div>
+{% endblock %}

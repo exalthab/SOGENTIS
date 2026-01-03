@@ -1,19 +1,36 @@
-# # dashboard/views/lists.py
+# dashboard/views/lists.py
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
-from social.models import Donation, Engagement
+from django.utils.translation import gettext_lazy as _
+
+from dashboard.views.utils import breadcrumb
+
 
 @login_required
 def dashboard_lists_view(request):
-    user = request.user
-    donations = Donation.objects.filter(user=user).order_by("-created_at")  # ou .filter(author=user) selon modèle
-    engagements = Engagement.objects.filter(user=user).order_by("-date")
+    return render(request, "dashboard/lists.html", {
+        "breadcrumbs": breadcrumb((_('Dashboard'), "/dashboard/"), (_("Listes"), None)),
+    })
 
-    context = {
-        "donations": donations,
-        "engagements": engagements,
-    }
-    return render(request, "dashboard/lists.html", context)
+
+
+
+# # # dashboard/views/lists.py
+# from django.contrib.auth.decorators import login_required
+# from django.shortcuts import render
+# from social.models import Donation, Engagement
+
+# @login_required
+# def dashboard_lists_view(request):
+#     user = request.user
+#     donations = Donation.objects.filter(user=user).order_by("-created_at")  # ou .filter(author=user) selon modèle
+#     engagements = Engagement.objects.filter(user=user).order_by("-date")
+
+#     context = {
+#         "donations": donations,
+#         "engagements": engagements,
+#     }
+#     return render(request, "dashboard/lists.html", context)
 
 
 

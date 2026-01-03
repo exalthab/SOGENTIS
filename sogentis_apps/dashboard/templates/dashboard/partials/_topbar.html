@@ -1,4 +1,30 @@
-<header class="topbar d-flex justify-content-between align-items-center p-2 shadow-sm bg-white">
+{% load i18n %}
+<div class="dashboard-topbar border-bottom bg-body">
+  <div class="container-fluid py-2 d-flex align-items-center justify-content-between gap-2">
+    <div class="d-flex align-items-center gap-2">
+      <button class="btn btn-sm btn-outline-secondary d-lg-none"
+              type="button"
+              data-dashboard-toggle="sidebar"
+              aria-label="{% trans 'Ouvrir le menu' %}">
+        ☰
+      </button>
+      <div class="topbar-title">
+        <span class="fw-semibold">{% trans "Dashboard" %}</span>
+      </div>
+    </div>
+
+    <div class="d-flex align-items-center gap-2">
+      <a class="btn btn-sm btn-outline-primary" href="{% url 'dashboard:profile' %}">👤 {% trans "Profil" %}</a>
+      <a class="btn btn-sm btn-outline-secondary" href="{% url 'accounts_users_web:logout' %}">{% trans "Déconnexion" %}</a>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+{% comment %} <header class="topbar d-flex justify-content-between align-items-center p-2 shadow-sm bg-white">
   <div class="topbar-left">
     <span class="fw-bold">Tableau de bord</span>
   </div>
@@ -17,7 +43,7 @@
       </button>
     </form>
   </div>
-</header>
+</header> {% endcomment %}
 
 
 

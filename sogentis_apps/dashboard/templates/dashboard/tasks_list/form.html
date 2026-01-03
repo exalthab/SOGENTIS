@@ -1,0 +1,41 @@
+{% extends "dashboard/base.html" %}
+{% load i18n widget_tweaks %}
+
+{% block dashboard_header %}
+<h1 class="fw-bold mb-2">✅ {{ page_title|default:_("Tâche") }}</h1>
+<p class="text-muted mb-0">{% trans "Créer ou modifier une tâche." %}</p>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="card shadow-sm border-0">
+  <div class="card-body">
+    <form method="post" novalidate>
+      {% csrf_token %}
+      <div class="row g-3">
+        <div class="col-12">
+          <label class="form-label">{% trans "Titre" %}</label>
+          {% render_field form.title class="form-control" %}
+          <div class="text-danger small">{{ form.title.errors }}</div>
+        </div>
+        <div class="col-12">
+          <label class="form-label">{% trans "Description" %}</label>
+          {% render_field form.description class="form-control" rows="6" %}
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">{% trans "Statut" %}</label>
+          {% render_field form.status class="form-control" %}
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">{% trans "Échéance" %}</label>
+          {% render_field form.due_at class="form-control" %}
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-between mt-4">
+        <a class="btn btn-outline-secondary" href="{% url 'dashboard:task_list' %}">{% trans "Retour" %}</a>
+        <button class="btn btn-primary" type="submit">{% trans "Enregistrer" %}</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

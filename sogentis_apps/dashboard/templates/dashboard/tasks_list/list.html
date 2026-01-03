@@ -1,0 +1,34 @@
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+
+{% block dashboard_header %}
+<h1 class="fw-bold mb-2">✅ {% trans "Tâches" %}</h1>
+<p class="text-muted mb-0">{% trans "Liste et suivi." %}</p>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <strong class="text-muted">{% trans "Mes tâches" %}</strong>
+  <a class="btn btn-primary" href="{% url 'dashboard:task_create' %}">＋ {% trans "Nouvelle tâche" %}</a>
+</div>
+
+<div class="card shadow-sm border-0">
+  <div class="card-body">
+    {% if tasks %}
+      <div class="list-group">
+        {% for t in tasks %}
+          <a class="list-group-item list-group-item-action" href="{% url 'dashboard:task_detail' t.pk %}">
+            <div class="d-flex justify-content-between">
+              <strong>{{ t.title }}</strong>
+              <span class="text-muted small">{{ t.due_at|date:"d/m/Y"|default:"—" }}</span>
+            </div>
+            <div class="text-muted small">{{ t.status|default:"—" }}</div>
+          </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      {% include "dashboard/partials/_empty_state.html" with icon="✅" title=_("Aucune tâche") text=_("Créez votre première tâche.") %}
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

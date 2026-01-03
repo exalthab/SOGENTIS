@@ -1,4 +1,57 @@
-{% extends "dashboard/social/base_social.html" %}
+{% extends "dashboard/base.html" %}
+{% load i18n humanize %}
+
+{% block dashboard_header %}
+<h1 class="fw-bold mb-2">💝 {% trans "Espace Donateur" %}</h1>
+<p class="text-muted mb-0">{% trans "Suivez vos dons et votre impact." %}</p>
+{% endblock %}
+
+{% block dashboard_content %}
+{% if cards %}
+  {% include "dashboard/partials/_stats_cards.html" with cards=cards %}
+{% endif %}
+
+<div class="row g-3 mt-1">
+  <div class="col-lg-8">
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <strong>{% trans "Derniers dons" %}</strong>
+          <a class="btn btn-sm btn-outline-primary" href="{% url 'dashboard:social:donor_donations_list' %}">{% trans "Voir tout" %}</a>
+        </div>
+
+        {% if donations %}
+          <ul class="list-group list-group-flush">
+            {% for d in donations %}
+              <li class="list-group-item d-flex justify-content-between">
+                <span>{{ d.created_at|date:"d/m/Y" }} — {{ d.amount|floatformat:0|intcomma }}</span>
+                <span class="text-muted">{{ d.status|default:"—" }}</span>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <div class="text-muted">{% trans "Aucun don pour le moment." %}</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card shadow-sm border-0 h-100">
+      <div class="card-body">
+        <strong class="d-block mb-2">{% trans "Impact" %}</strong>
+        <p class="text-muted">{% trans "Consultez votre contribution globale." %}</p>
+        <a class="btn btn-outline-secondary w-100" href="{% url 'dashboard:social:donor_impact' %}">📈 {% trans "Voir l’impact" %}</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+
+
+
+{% comment %} {% extends "dashboard/social/base_social.html" %}
 {% load i18n humanize %}
 
 {% block title %}{% trans "Dashboard Donateur" %}{% endblock %}
@@ -57,4 +110,4 @@
 <p>{% trans "Aucun don enregistré pour le moment." %}</p>
 {% endif %}
 
-{% endblock %}
+{% endblock %} {% endcomment %}

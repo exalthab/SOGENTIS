@@ -1,0 +1,56 @@
+{% extends "economic/b2b/base_b2b.html" %}
+{% load i18n %}
+{% block b2b_content %}
+<div class="d-flex justify-content-between align-items-center mb-2">
+  <div>
+    <h1 class="h5 mb-0">{% trans "Commande" %} {{ order.uuid }}</h1>
+    <div class="text-muted">{% trans "Statut" %}: {{ order.status }} — {% trans "Total" %}: {{ order.total_amount }}</div>
+  </div>
+  <div class="d-flex gap-2">
+    {% if can_edit %}
+      <a class="btn btn-sm btn-outline-primary"
+         href="{% url 'economic:b2b:bulk_order_add_item' company_id=company.id order_id=order.id %}">
+        + {% trans "Ajouter produit" %}
+      </a>
+      <a class="btn btn-sm btn-primary"
+         href="{% url 'economic:b2b:bulk_order_submit' company_id=company.id order_id=order.id %}">
+        {% trans "Soumettre" %}
+      </a>
+    {% endif %}
+    <a class="btn btn-sm btn-outline-secondary"
+       href="{% url 'economic:b2b:invoice_create_for_order' company_id=company.id order_id=order.id %}">
+      🧾 {% trans "Créer facture" %}
+    </a>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <h2 class="h6">{% trans "Lignes" %}</h2>
+    <div class="table-responsive">
+      <table class="table table-sm">
+        <thead>
+          <tr>
+            <th>{% trans "Produit" %}</th>
+            <th class="text-end">{% trans "Qté" %}</th>
+            <th class="text-end">{% trans "PU" %}</th>
+            <th class="text-end">{% trans "Total" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for it in items %}
+          <tr>
+            <td>{{ it.product }}</td>
+            <td class="text-end">{{ it.quantity }}</td>
+            <td class="text-end">{{ it.unit_price }}</td>
+            <td class="text-end">{{ it.total_price }}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="4" class="text-muted">{% trans "Aucune ligne." %}</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

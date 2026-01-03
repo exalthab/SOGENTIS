@@ -1,0 +1,46 @@
+body { background: #f7f8fa; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; }
+.dashboard-layout { min-height: 100vh; display: flex; }
+.sidebar {
+  width: 240px; background: #263544; color: #fff; min-height: 100vh; display: flex; flex-direction: column;
+}
+.sidebar .brand { font-size: 1.4rem; font-weight: bold; margin-bottom: 2rem; text-align: center; }
+.sidebar .avatar { width: 58px; border-radius: 50%; border: 2px solid #fff; }
+.sidebar nav ul { list-style: none; padding: 0; }
+.sidebar nav ul li { margin-bottom: 8px; }
+.sidebar nav ul li a { display: block; color: #fff; padding: 10px; border-radius: 8px; text-decoration: none; transition: background 0.2s; }
+.sidebar nav ul li a:hover { background: #182430; }
+.sidebar-footer { display: flex; gap: 1rem; justify-content: center; padding: 1rem 0; }
+.sidebar-footer a { color: #fff; font-size: 1.2rem; }
+
+.dashboard-main { background: #f7f8fa; flex: 1; display: flex; flex-direction: column; }
+.dashboard-header { background: #fff; border-bottom: 1px solid #e7eaee; display: flex; align-items: center; justify-content: space-between; padding: 1.2rem 2rem; }
+.dashboard-title { font-size: 1.2rem; font-weight: bold; }
+.dashboard-content { flex: 1; padding: 2rem; }
+.avatar-sm { width: 40px; border-radius: 50%; margin-left: 1rem; }
+
+
+.card {
+  border: none;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 2px 8px #0001;
+  padding: 1.2rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.stats-card {
+  padding: 1.3rem 0.8rem;
+}
+
+.stats-card h2 {
+  font-size: 2rem;
+}
+
+.stats-card span {
+  display: block;
+  margin-top: 0.5rem;
+}
+
+@media (max-width: 900px) {
+  .row.g-4 > div { min-width: 50%; }
+}
