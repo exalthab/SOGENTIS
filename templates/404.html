@@ -1,3 +1,21 @@
+{# templates/404.html #}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block content %}
+<div style="text-align: center; padding: 3rem;">
+    <h1 style="font-size: 3rem; color: #e67e22;">404 - {% trans "Page introuvable" %}</h1>
+    <p style="font-size: 1.2rem;">{% trans "Oups ! La page que vous cherchez n'existe pas ou a été déplacée." %}</p>
+    <p><a href="/" style="color: #3498db;">{% trans "Retour à l'accueil" %}</a></p>
+</div>
+{% endblock %}
+
+
+
+
+
+{% comment %} {# templates/404.html #}
+
 {% extends "main.html" %}
 {% load static i18n %}
 
@@ -7,4 +25,4 @@
     <p style="font-size: 1.2rem;">Oups ! La page que vous cherchez n'existe pas ou a été déplacée.</p>
     <p><a href="/" style="color: #3498db;">Retour à l'accueil</a></p>
 </div>
-{% endblock %}
+{% endblock %} {% endcomment %}

@@ -1,3 +1,27 @@
+{# templates/403.html #}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block content %}
+<div style="text-align: center; padding: 3rem;">
+    <h1 style="font-size: 3rem; color: #e74c3c;">403 - {% trans "Accès interdit" %}</h1>
+    <p style="font-size: 1.2rem;">{% trans "Désolé, vous n'avez pas l'autorisation d'accéder à cette page." %}</p>
+
+    {# SAFE: user peut être absent selon le contexte #}
+    {% if user and not user.is_authenticated %}
+        <p><a href="{% url 'accounts_users_web:login' %}" style="color: #3498db;">{% trans "Se connecter" %}</a></p>
+    {% endif %}
+
+    <p><a href="/" style="color: #3498db;">{% trans "Retour à l'accueil" %}</a></p>
+</div>
+{% endblock %}
+
+
+
+
+
+
+{% comment %} {# templates/403.html #}
 {% extends "main.html" %}
 {% load static i18n %}
 
@@ -10,4 +34,4 @@
     {% endif %}
     <p><a href="/" style="color: #3498db;">Retour à l'accueil</a></p>
 </div>
-{% endblock %}
+{% endblock %} {% endcomment %}
