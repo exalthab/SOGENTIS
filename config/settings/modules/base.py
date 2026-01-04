@@ -45,9 +45,10 @@ if not SECRET_KEY or SECRET_KEY == "insecure-secret-for-dev":
 # ------------------------------------------------------------
 ALLOWED_HOSTS = config(
     "ALLOWED_HOSTS",
-    default="sogentis.org,127.0.0.1,localhost",
+    default="sogentis.org,www.sogentis.org,sogentis.com,www.sogentis.com,sogentis.sn,www.sogentis.sn,127.0.0.1,localhost",
     cast=Csv()
 )
+
 if not ALLOWED_HOSTS:
     raise ImproperlyConfigured("❌ ALLOWED_HOSTS must not be empty.")
 
