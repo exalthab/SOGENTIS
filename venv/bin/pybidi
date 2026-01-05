@@ -1,4 +1,4 @@
-#!/home/ubuntu/SOGENTIS/venv/bin/python3.10
+#!/home/ubuntu/SOGENTIS/venv/bin/python3
 import sys
 from bidi import main
 if __name__ == '__main__':
