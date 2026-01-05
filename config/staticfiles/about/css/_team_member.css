@@ -1,0 +1,93 @@
+/* ----------------------------- */
+/* TEAM SECTION                  */
+/* ----------------------------- */
+.team-section {
+    margin: 3rem 0;
+    font-family: Arial, sans-serif;
+}
+
+/* Onglets */
+.team-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.team-tab {
+    padding: 0.5rem 1.2rem;
+    background-color: #f0f0f0;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.team-tab:hover {
+    background-color: #e0e0e0;
+}
+
+.team-tab.active {
+    background-color: #007bff;
+    color: #fff;
+}
+
+/* Contenu des onglets */
+.team-tab-content {
+    display: block;
+}
+
+.team-tab-content.hidden {
+    display: none;
+}
+
+/* Grid des cartes */
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.8rem;
+    justify-items: center;
+}
+
+/* Carte individuelle */
+.team-card {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    text-align: center;
+    padding: 1rem;
+    max-width: 250px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.team-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.team-card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-bottom: 0.8rem;
+}
+
+.team-card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.3rem;
+    color: #333;
+}
+
+.team-card .role {
+    font-size: 0.95rem;
+    color: #666;
+    margin-bottom: 0.5rem;
+}
+
+.team-card .bio {
+    font-size: 0.9rem;
+    color: #555;
+    line-height: 1.4;
+}

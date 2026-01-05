@@ -1,0 +1,43 @@
+/* LIVE SEARCH DROPDOWN */
+.live-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 6px;
+    display: none;
+    z-index: 50;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.live-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 12px;
+    text-decoration: none;
+    color: #333;
+    border-bottom: 1px solid #f2f2f2;
+}
+
+.live-item:hover {
+    background: #f8f9fa;
+}
+
+.live-title mark.live-hl {
+    background: #fff2a8;
+}
+
+.live-type {
+    font-size: 0.75rem;
+    color: #6c757d;
+    text-transform: uppercase;
+}
+
+/* no result */
+.live-no-result {
+    padding: 10px 12px;
+    color: #999;
+}

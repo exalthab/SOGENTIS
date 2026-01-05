@@ -1,0 +1,158 @@
+/* ==========================================================
+   premium_cards.css — Cards / KPIs / Tables / Badges (Prod)
+   ========================================================== */
+
+:root{
+  --db-surface: #fff;
+  --db-text: #0f172a;
+  --db-muted: rgba(15,23,42,.65);
+  --db-border: rgba(15,23,42,.10);
+  --db-shadow-sm: 0 8px 22px rgba(15,23,42,.08);
+  --db-radius: 18px;
+}
+
+/* ===================== Cards ===================== */
+.db-card{
+  background: var(--db-surface);
+  border: 1px solid var(--db-border);
+  border-radius: var(--db-radius);
+  box-shadow: var(--db-shadow-sm);
+  overflow: hidden;
+}
+
+.db-card-header{
+  padding: 1rem 1.1rem;
+  border-bottom: 1px solid rgba(15,23,42,.08);
+  background: linear-gradient(180deg, #ffffff, #fbfbfd);
+}
+
+.db-card-title{
+  margin: 0;
+  font-weight: 950;
+  letter-spacing: -0.02em;
+}
+
+.db-card-subtitle{
+  margin: .25rem 0 0 0;
+  color: var(--db-muted);
+  font-size: .95rem;
+}
+
+.db-card-body{ padding: 1.1rem; }
+
+/* ===================== KPI / Stat cards ===================== */
+.db-stat{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.db-stat-left{
+  min-width: 0;
+}
+
+.db-stat-label{
+  color: var(--db-muted);
+  font-weight: 800;
+  font-size: .92rem;
+}
+
+.db-stat-value{
+  font-size: 1.7rem;
+  font-weight: 950;
+  letter-spacing: -0.03em;
+  margin-top: .25rem;
+  color: var(--db-text);
+}
+
+.db-stat-icon{
+  width: 44px;
+  height: 44px;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  background: rgba(13,110,253,.10);
+  border: 1px solid rgba(13,110,253,.18);
+}
+
+/* ===================== Pills / badges ===================== */
+.db-badge{
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  padding: .35rem .6rem;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: .82rem;
+  border: 1px solid var(--db-border);
+  background: rgba(15,23,42,.02);
+  color: rgba(15,23,42,.85);
+}
+.db-badge.success{
+  background: rgba(25,135,84,.10);
+  border-color: rgba(25,135,84,.20);
+  color: rgba(25,135,84,.95);
+}
+.db-badge.warning{
+  background: rgba(255,193,7,.14);
+  border-color: rgba(255,193,7,.25);
+  color: rgba(133,100,4,.98);
+}
+.db-badge.danger{
+  background: rgba(220,53,69,.12);
+  border-color: rgba(220,53,69,.22);
+  color: rgba(220,53,69,.98);
+}
+
+/* ===================== Tables (safe) ===================== */
+.db-table{
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  border-radius: 16px;
+  border: 1px solid rgba(15,23,42,.08);
+}
+
+.db-table th,
+.db-table td{
+  padding: .85rem .95rem;
+  border-bottom: 1px solid rgba(15,23,42,.08);
+  vertical-align: middle;
+}
+
+.db-table th{
+  font-size: .80rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: rgba(15,23,42,.65);
+  background: rgba(15,23,42,.02);
+  font-weight: 900;
+}
+
+.db-table tr:last-child td{
+  border-bottom: 0;
+}
+
+.db-table tbody tr:hover td{
+  background: rgba(15,23,42,.02);
+}
+
+/* ===================== Forms (optional polish) ===================== */
+.db-form .form-control,
+.db-form .form-select{
+  border-radius: 14px;
+  border-color: rgba(15,23,42,.12);
+  box-shadow: none;
+}
+.db-form .form-control:focus,
+.db-form .form-select:focus{
+  border-color: rgba(13,110,253,.35);
+  box-shadow: 0 0 0 4px rgba(13,110,253,.18);
+}
+
+/* Buttons small polish */
+.btn{
+  border-radius: 14px;
+}
