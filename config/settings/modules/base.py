@@ -34,6 +34,12 @@ SOCIAL_LINKS = {
     "youtube": "https://youtube.com/@sogentis",
 }
 
+# # ===========================================================
+# # URLS / WSGI
+# # ===========================================================
+ROOT_URLCONF = "config.urls"
+WSGI_APPLICATION = "config.wsgi.application"
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 
