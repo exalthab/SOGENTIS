@@ -26,6 +26,7 @@ BASE_CONTEXT_PROCESSORS = [
     "core.context_processors.global_context.section_menu",
     "core.context_processors.global_context.seo_context",
     "core.context_processors.global_context.social_links",
+    "core.context_processors.global_context.site_domains",
 
     # Dashboard
     "dashboard.context_processors.dashboard_context.dashboard_info",

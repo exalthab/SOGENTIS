@@ -28,7 +28,7 @@ def social_links(request):
         "FACEBOOK_URL": social.get("facebook"),
         "TWITTER_URL": social.get("twitter"),
         "YOUTUBE_URL": social.get("youtube"),
-        "LINKEDIN_URL": social.get("linkedin"),
+        # "LINKEDIN_URL": social.get("linkedin"),
     }
 
 
@@ -162,7 +162,13 @@ def section_menu(request):
 
     return {"section_menu": template}
 
-
+def site_domains(request):
+    return {
+        "SOCIAL_DOMAIN": getattr(settings, "SOCIAL_DOMAIN", "https://sogentis.org").rstrip("/"),
+        "BUSINESS_DOMAIN": getattr(settings, "BUSINESS_DOMAIN", "https://sogentis.com").rstrip("/"),
+        "INSTITUTION_DOMAIN": getattr(settings, "INSTITUTION_DOMAIN", "https://sogentis.sn").rstrip("/"),
+    }
+    
 # ======================================================
 # 🔹 Autres variables techniques
 # ======================================================

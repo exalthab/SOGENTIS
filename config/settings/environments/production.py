@@ -189,7 +189,7 @@ DOMAIN_SITE_MAP = {
 }
 
 # ✅ Objectif: redirection active sur "/" et "/<lang>/"
-DOMAIN_REDIRECT_ROOT = True
+DOMAIN_REDIRECT_ROOT = False
 DOMAIN_REDIRECT_PERMANENT = False  # 302 conseillé
 
 BUSINESS_HOME_URLNAME = "economic:index"
@@ -197,6 +197,10 @@ SOCIAL_HOME_URLNAME = "social:index"
 SN_HOME_URLNAME = "institution:index"
 DEFAULT_HOME_URLNAME = "core:home"
 
+
+SOCIAL_DOMAIN = config("SOCIAL_DOMAIN", default="https://sogentis.org").rstrip("/")
+BUSINESS_DOMAIN = config("BUSINESS_DOMAIN", default="https://sogentis.com").rstrip("/")
+INSTITUTION_DOMAIN = config("INSTITUTION_DOMAIN", default="https://sogentis.sn").rstrip("/")
 # ✅ Le hub (ta page "Bienvenue" avec globe) doit rester accessible
 HUB_URLNAME = "core:hub"
 
