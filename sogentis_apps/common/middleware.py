@@ -1,15 +1,95 @@
 # common/middleware.py
+from __future__ import annotations
+
+from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import redirect
+from django.urls import NoReverseMatch, reverse
 from django.utils.deprecation import MiddlewareMixin
+
+
+class DomainMiddleware(MiddlewareMixin):
+    """
+    Déduit le type de site selon le domaine et peut rediriger la racine vers
+    la "home" correspondante.
+
+    - .com -> business
+    - .org -> social
+    - .sn  -> institution
+    """
+
+    def process_request(self, request):
+        host = (request.get_host() or "").split(":")[0].lower().strip()
+        bare = host[4:] if host.startswith("www.") else host
+
+        # 1) Déterminer site_type
+        site_type = self._resolve_site_type(bare)
+        request.site_type = site_type
+        request.site_host = host
+        request.site_bare_host = bare
+
+        # 2) Calculer la home (path) correspondante
+        home_urlname = self._home_urlname_for(site_type)
+        home_path = self._safe_reverse(home_urlname) if home_urlname else "/"
+        request.site_home_urlname = home_urlname
+        request.site_home_path = home_path
+
+        # 3) Redirection automatique de la racine (option)
+        if getattr(settings, "DOMAIN_REDIRECT_ROOT", False) is True:
+            # Racines possibles: "/" + "/<lang>/"
+            roots = {"/"}
+            try:
+                for code, _ in getattr(settings, "LANGUAGES", []):
+                    roots.add(f"/{code}/")
+            except Exception:
+                pass
+
+            path = request.path_info or "/"
+            if path in roots and home_path and home_path != path:
+                # 302 par défaut (évite cache agressif). Tu peux forcer 301 via setting.
+                permanent = bool(getattr(settings, "DOMAIN_REDIRECT_PERMANENT", False))
+                return redirect(home_path, permanent=permanent)
+
+        return None
+
+    def _resolve_site_type(self, bare_host: str) -> str:
+        # mapping précis (prioritaire)
+        site_map = getattr(settings, "DOMAIN_SITE_MAP", {}) or {}
+        if bare_host in site_map:
+            return site_map[bare_host]
+
+        # fallback par TLD
+        if bare_host.endswith(".org"):
+            return "social"
+        if bare_host.endswith(".com"):
+            return "business"
+        if bare_host.endswith(".sn"):
+            return "institution"
+        return "default"
+
+    def _home_urlname_for(self, site_type: str) -> str:
+        # réglable dans settings
+        if site_type == "business":
+            return getattr(settings, "BUSINESS_HOME_URLNAME", "economic:index")
+        if site_type == "social":
+            return getattr(settings, "SOCIAL_HOME_URLNAME", "social:index")
+        if site_type == "institution":
+            return getattr(settings, "SN_HOME_URLNAME", "institution:index")
+        return getattr(settings, "DEFAULT_HOME_URLNAME", "core:home")
+
+    def _safe_reverse(self, urlname: str) -> str:
+        try:
+            return reverse(urlname)
+        except NoReverseMatch:
+            return "/"
 
 
 class ProfileStatusMiddleware(MiddlewareMixin):
     """
     Empêche l'accès au dashboard si :
-    - compte non activé (email non confirmé)
-    - profil en attente
-    - profil refusé
+    - le compte n'est pas activé (email non confirmé)
+    - le profil est en attente de validation
+    - le profil est refusé
     """
 
     EXEMPT_URLS = [
@@ -32,53 +112,30 @@ class ProfileStatusMiddleware(MiddlewareMixin):
     def process_view(self, request, view_func, view_args, view_kwargs):
         user = request.user
 
-        # Pas connecté -> rien à faire
         if not user.is_authenticated:
             return None
 
-        # Resolver match
-        rm = getattr(request, "resolver_match", None)
-        if not rm:
+        try:
+            current_url_name = request.resolver_match.view_name
+        except Exception:
             return None
 
-        current_view = getattr(rm, "view_name", "") or ""
-
-        # ✅ Ne bloque QUE le dashboard
-        # (tu peux adapter si ton dashboard a un autre namespace)
-        is_dashboard = current_view.startswith("dashboard:") or ("dashboard" in (rm.namespaces or []))
-        if not is_dashboard:
+        if current_url_name in self.EXEMPT_URLS:
             return None
 
-        # Exemptions (login, notices, reset password, etc.)
-        if current_view in self.EXEMPT_URLS:
-            return None
-
-        # Option : laisser passer staff/superuser
-        # (décommente si tu veux)
-        # if user.is_staff or user.is_superuser:
-        #     return None
-
-        # 1) Compte non activé
         if not user.is_active:
             messages.warning(request, "Veuillez activer votre compte par e-mail.")
             return redirect("accounts_users_web:login")
 
-        # 2) Profil associé (supporte user.profile OU user.userprofile)
-        profile = getattr(user, "profile", None) or getattr(user, "userprofile", None)
+        profile = getattr(user, "userprofile", None)
         if not profile:
             return None
 
-        status = getattr(profile, "status", None)
-        if not status:
-            return None
-
-        # 3) Pending
-        if status == "pending":
+        if getattr(profile, "status", "") == "pending":
             messages.info(request, "Votre profil est toujours en attente de validation.")
             return redirect("accounts_users_web:profile_pending_notice")
 
-        # 4) Refused
-        if status == "refused":
+        if getattr(profile, "status", "") == "refused":
             messages.error(request, "Votre profil a été refusé.")
             return redirect("accounts_users_web:profile_refused_notice")
 

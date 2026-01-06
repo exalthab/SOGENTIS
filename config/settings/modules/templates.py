@@ -1,3 +1,4 @@
+# config/settings/templates/middleware.py
 from pathlib import Path
 from decouple import config
 

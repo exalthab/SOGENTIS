@@ -200,17 +200,30 @@ DOMAIN_SITE_MAP = {
     "sogentis.org": "social",
     "sogentis.sn": "sn",
 }
+
+# redirige "/" et "/en/" vers la home du site_type
 DOMAIN_REDIRECT_ROOT = True
+# 302 conseillé (anti-cache), mets True si tu veux 301
+DOMAIN_REDIRECT_PERMANENT = False
 
 BUSINESS_HOME_URLNAME = "economic:index"
 SOCIAL_HOME_URLNAME = "social:index"
-SN_HOME_URLNAME = "core:home"  # ou "institution:index" si tu as cette app
+SN_HOME_URLNAME = "institution:index"
 DEFAULT_HOME_URLNAME = "core:home"
 
+# Important derrière Nginx SSL (évite boucle SECURE_SSL_REDIRECT)
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+USE_X_FORWARDED_HOST = True
 
 
-
-
+DOMAIN_BYPASS_PREFIXES = (
+    "/admin/",
+    "/accounts/",
+    "/dashboard/",
+    "/i18n/",
+    "/static/",
+    "/media/",
+)
 
 
 

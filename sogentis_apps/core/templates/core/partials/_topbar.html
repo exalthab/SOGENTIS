@@ -44,11 +44,11 @@
             {% include "core/partials/icons/twitter.svg" %}
           </a>
         {% endif %}
-        {% if LINKEDIN_URL %}
+        {% comment %} {% if LINKEDIN_URL %}
           <a class="social-icon" href="{{ LINKEDIN_URL }}" target="_blank" rel="noopener" aria-label="LinkedIn">
             {% include "core/partials/icons/linkedin.svg" %}
           </a>
-        {% endif %}
+        {% endif %} {% endcomment %}
         {% if YOUTUBE_URL %}
           <a class="social-icon" href="{{ YOUTUBE_URL }}" target="_blank" rel="noopener" aria-label="YouTube">
             {% include "core/partials/icons/youtube.svg" %}
