@@ -10,6 +10,9 @@ MIDDLEWARE = [
     # Gestion des langues (DOIT être ici)
     "django.middleware.locale.LocaleMiddleware",
 
+    # ✅ Nouveau: domaines (.com/.org/.sn)
+    "common.domain_middleware.DomainSiteMiddleware",
+
     # Middleware général Django
     "django.middleware.common.CommonMiddleware",
 
@@ -30,6 +33,7 @@ MIDDLEWARE = [
 
     # === ✅ Nouveau : interdiction Dashboard si profil pending/refused ===
     "common.middleware.ProfileStatusMiddleware",
+    
 ]
 
 # === Bootstrap Messages Tags ===

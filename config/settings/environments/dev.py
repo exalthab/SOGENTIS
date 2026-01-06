@@ -69,3 +69,6 @@ LOGGING = {
         "level": "DEBUG",
     },
 }
+
+DOMAIN_REDIRECT_ROOT = False
+SECURE_SSL_REDIRECT = False

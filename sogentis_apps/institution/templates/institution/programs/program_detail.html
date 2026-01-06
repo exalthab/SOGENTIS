@@ -1,0 +1,23 @@
+{% extends "institution/base_institution.html" %}
+{% load i18n %}
+
+{% block institution_content %}
+<a class="inst-back" href="{% url 'institution:program_list' %}">← {% trans "Retour" %}</a>
+
+<div class="inst-panel mt-3">
+  <h2 class="mb-1">{{ program.title }}</h2>
+  <div class="opacity-75 mb-3">
+    {{ program.facility.name }}
+    {% if program.start_date %} • {{ program.start_date }}{% endif %}
+    {% if program.end_date %} → {{ program.end_date }}{% endif %}
+  </div>
+
+  {% if program.summary %}
+    <p class="mb-2"><strong>{% trans "Résumé" %}:</strong> {{ program.summary }}</p>
+  {% endif %}
+
+  {% if program.content %}
+    <p class="mb-0">{{ program.content }}</p>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "institution/base_institution.html" %}
+{% load i18n %}
+
+{% block institution_content %}
+<a class="inst-back" href="{% url 'institution:facility_list' %}">← {% trans "Retour" %}</a>
+
+<div class="inst-panel mt-3">
+  <h2 class="mb-1">{{ facility.name }}</h2>
+  <div class="opacity-75 mb-3">
+    {{ facility.get_facility_type_display }} • {{ facility.city }} • {{ facility.country }}
+  </div>
+
+  {% if facility.short_description %}
+    <p class="mb-2"><strong>{% trans "Résumé" %}:</strong> {{ facility.short_description }}</p>
+  {% endif %}
+
+  {% if facility.description %}
+    <p class="mb-2">{{ facility.description }}</p>
+  {% endif %}
+
+  <hr>
+
+  <div class="small">
+    {% if facility.address %}<div><strong>{% trans "Adresse" %}:</strong> {{ facility.address }}</div>{% endif %}
+    {% if facility.phone %}<div><strong>{% trans "Téléphone" %}:</strong> {{ facility.phone }}</div>{% endif %}
+    {% if facility.email %}<div><strong>{% trans "Email" %}:</strong> {{ facility.email }}</div>{% endif %}
+  </div>
+</div>
+
+{% if facility.programs.all %}
+  <h3 class="mt-4 mb-2">📌 {% trans "Programmes" %}</h3>
+  <div class="inst-list">
+    {% for p in facility.programs.all %}
+      {% if p.is_active %}
+        <a class="inst-row" href="{% url 'institution:program_detail' p.slug %}">
+          <div class="inst-row-title">
+            <strong>{{ p.title }}</strong>
+            <div class="inst-row-meta">
+              {% if p.start_date %}{{ p.start_date }}{% endif %}
+              {% if p.end_date %} → {{ p.end_date }}{% endif %}
+            </div>
+          </div>
+          <div class="inst-row-arrow">→</div>
+        </a>
+      {% endif %}
+    {% endfor %}
+  </div>
+{% endif %}
+{% endblock %}

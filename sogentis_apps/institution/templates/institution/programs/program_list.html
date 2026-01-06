@@ -1,0 +1,28 @@
+{% extends "institution/base_institution.html" %}
+{% load i18n %}
+
+{% block institution_content %}
+<h2 class="mb-3">📌 {% trans "Programmes" %}</h2>
+
+{% if programs %}
+  <div class="inst-list">
+    {% for p in programs %}
+      <a class="inst-row" href="{% url 'institution:program_detail' p.slug %}">
+        <div class="inst-row-title">
+          <strong>{{ p.title }}</strong>
+          <div class="inst-row-meta">
+            {{ p.facility.name }}
+            {% if p.start_date %} • {{ p.start_date }}{% endif %}
+            {% if p.end_date %} → {{ p.end_date }}{% endif %}
+          </div>
+        </div>
+        <div class="inst-row-arrow">→</div>
+      </a>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="inst-panel">
+    <p class="mb-0">{% trans "Aucun programme pour le moment." %}</p>
+  </div>
+{% endif %}
+{% endblock %}

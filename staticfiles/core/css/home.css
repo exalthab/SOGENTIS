@@ -47,6 +47,7 @@ body {
 }
 
 .background-overlay {
+  position: relative; /* ✅ important: pour ancrer .flag correctement */
   background-color: var(--bg-dark-overlay);
   padding: 40px 30px;
   border-radius: 15px;
@@ -77,9 +78,6 @@ h1 {
 /* ===== COULEURS ===== */
 .highlight-white { color: #fff; }
 .highlight-yellow { color: var(--color-accent); }
-.color1 { color: #00bcd4; }
-.color2 { color: #f39c12; }
-.color3 { color: #2ecc71; }
 .highlight-primary { color: #00cec9; }
 .highlight-secondary { color: #ffeaa7; background: #222; padding: 0 0.5em; border-radius: 5px; }
 .highlight-accent { color: #fab1a0; font-weight: 600; }
@@ -92,8 +90,8 @@ h1 {
   font-weight: 600;
   border-radius: 10px;
   text-decoration: none;
-  transition: transform 0.3s, background-color 0.3s, box-shadow 0.3s;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  transition: transform 0.25s, background-color 0.25s, box-shadow 0.25s;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.30);
   white-space: nowrap;
   user-select: none;
 }
@@ -102,29 +100,28 @@ h1 {
   outline-offset: 2px;
 }
 
-.btn-business {
-  background-color: var(--color-primary);
-  color: var(--text-light);
-}
-.btn-business:hover,
-.btn-business:focus {
-  background-color: #3498db;
-  transform: scale(1.05);
-  box-shadow: 0 10px 25px rgba(52, 152, 219, 0.6);
-  outline: none;
-}
-
+/* Social */
 .btn-social {
   background-color: var(--color-secondary);
   color: var(--text-light);
 }
+/* Business */
+.btn-business {
+  background-color: var(--color-primary);
+  color: var(--text-light);
+}
+
+/* Hover (on ne casse pas l’arc: on garde la translation + scale) */
 .btn-social:hover,
-.btn-social:focus {
-  background-color: #2ecc71;
-  transform: scale(1.05);
-  box-shadow: 0 10px 25px rgba(46, 204, 113, 0.6);
+.btn-social:focus,
+.btn-business:hover,
+.btn-business:focus {
   outline: none;
 }
+.btn-social:hover,
+.btn-social:focus { box-shadow: 0 10px 25px rgba(46, 204, 113, 0.6); }
+.btn-business:hover,
+.btn-business:focus { box-shadow: 0 10px 25px rgba(52, 152, 219, 0.6); }
 
 /* ===== LAYOUT PRINCIPAL ===== */
 .main-layout {
@@ -180,13 +177,14 @@ h1 {
 /* ===== DRAPEAU ===== */
 .flag {
   position: absolute;
-  top: 2rem;
-  right: 2rem;
-  width: 90px;
+  top: 1.4rem;
+  right: 1.4rem;
+  width: 78px;
   height: auto;
   animation: wave 2.5s infinite ease-in-out;
   transform-origin: left center;
   opacity: 0.85;
+  z-index: 20;
 }
 @keyframes wave {
   0%,100% { transform: rotateZ(0deg) skewY(0deg); }
@@ -208,44 +206,128 @@ h1 {
 
 /* ===== ANIMATIONS ===== */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(30px);}
-  to   { opacity: 1; transform: translateY(0);}
-}
-@keyframes bounce {
-  0%,100% { transform: translateY(0);}
-  50%     { transform: translateY(-6px);}
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ===== TAG COMING SOON ===== */
-.coming-soon {
-  background: #e74c3c;
-  padding: 8px 20px;
-  font-size: 0.9rem;
-  font-weight: bold;
-  border-radius: 30px;
-  margin-top: 15px;
-  animation: bounce 1.5s infinite;
-  letter-spacing: 1px;
-  user-select: none;
+/* ==========================================================
+   ✅ ARC VRAIMENT VISIBLE (sur TON HTML actuel)
+   Social & Éco plus HAUTS, globe plus BAS + plus PETIT
+   + courbe décorative derrière
+   ========================================================== */
+
+.home-arc-layout{
+  position: relative;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+/* Courbe visible derrière (arc) */
+@media (min-width: 992px){
+  .home-arc-layout::before{
+    content:"";
+    position:absolute;
+    left:50%;
+    top:52%;
+    transform: translate(-50%, -50%);
+    width: min(760px, 92%);
+    height: 220px;
+    border-top: 2px solid rgba(255,255,255,0.18);
+    border-left: 2px solid rgba(255,255,255,0.10);
+    border-right: 2px solid rgba(255,255,255,0.10);
+    border-radius: 900px 900px 0 0;
+    pointer-events:none;
+    z-index: 1;
+  }
+
+  /* On met tous les éléments au-dessus de la courbe */
+  .home-arc-layout > *{
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Variables arc pour éviter le “saut” au hover */
+  .home-arc-layout{
+    --arc-side-y: -44px;   /* ✅ arc visible */
+    --arc-globe-y: 18px;   /* globe plus bas */
+  }
+
+  /* Social / Économique plus haut */
+  .home-arc-layout > a.btn-social{
+    transform: translateY(var(--arc-side-y));
+  }
+  .home-arc-layout > a.btn-business{
+    transform: translateY(var(--arc-side-y));
+  }
+
+  /* Hover garde la translation + ajoute scale */
+  .home-arc-layout > a.btn-social:hover,
+  .home-arc-layout > a.btn-social:focus{
+    transform: translateY(var(--arc-side-y)) scale(1.05);
+    background-color: #2ecc71;
+  }
+  .home-arc-layout > a.btn-business:hover,
+  .home-arc-layout > a.btn-business:focus{
+    transform: translateY(var(--arc-side-y)) scale(1.05);
+    background-color: #3498db;
+  }
+
+  /* Globe plus petit + légèrement plus bas */
+  .home-arc-layout #globe-container{
+    width: 180px !important;
+    height: 180px !important;
+    transform: translateY(var(--arc-globe-y));
+  }
+
+  /* Pulse ring recalibré */
+  .home-arc-layout .pulse-ring{
+    width: 230px !important;
+    height: 230px !important;
+    margin-left: -115px !important;
+    margin-top: -115px !important;
+    border-width: 3px !important;
+  }
+}
+
+/* Institution */
+.home-btn-institution{
+  min-width: 260px;
+  border-width: 2px;
+  backdrop-filter: blur(4px);
+}
+.home-btn-institution:hover,
+.home-btn-institution:focus{
+  transform: scale(1.03);
 }
 
 /* ===== RESPONSIVE ===== */
-@media (max-width: 992px) {
-  .main-layout { gap: 20px; }
-  #globe-container { width: 220px; height: 220px; }
+@media (max-width: 992px){
+  .home-arc-layout{
+    gap: 20px;
+  }
+  #globe-container{
+    width: 220px;
+    height: 220px;
+  }
 }
-@media (max-width: 768px) {
+
+@media (max-width: 768px){
   h1 { font-size: 2.2rem; }
   .subtitle { font-size: 1.1rem; }
   .main-layout { flex-direction: column; margin-top: 30px; }
   #globe-container { width: 200px; height: 200px; }
   .btn { font-size: 0.95rem; padding: 12px 20px; }
   .impact-message { font-size: 1rem; }
-  .flag { width: 70px; top: 1rem; right: 1rem; }
+  .flag { width: 64px; top: 1rem; right: 1rem; }
   .background-overlay { padding: 20px 15px; }
 }
-@media (max-width: 575px) {
+
+@media (max-width: 575px){
   .background-overlay { padding: 8px 2px; }
   .main-layout { gap: 10px; }
-  .flag { left: 50%; right: auto; transform: translateX(-50%) scale(0.8);}
+  .flag { left: 50%; right: auto; transform: translateX(-50%) scale(0.8); }
 }
+
+
+
+

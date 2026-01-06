@@ -1,4 +1,29 @@
-{# /core/partials/_language_selector.html #}
+{# templates/core/partials/_language_selector.html #}
+{% load i18n %}
+
+<form action="{% url 'set_language' %}" method="post" class="lang-switcher">
+  {% csrf_token %}
+  <input type="hidden" name="next" value="{{ request.get_full_path }}">
+
+  {% get_current_language as CUR_LANG %}
+  <div class="lang-box">
+    <button type="submit" name="language" value="fr"
+            class="lang-btn {% if CUR_LANG == 'fr' %}active{% endif %}">
+      🇫🇷 <span>FR</span>
+    </button>
+
+    <button type="submit" name="language" value="en"
+            class="lang-btn {% if CUR_LANG == 'en' %}active{% endif %}">
+      🇬🇧 <span>EN</span>
+    </button>
+  </div>
+</form>
+
+
+
+
+
+{% comment %} {# /core/partials/_language_selector.html #}
 {% load i18n %}
 
 <form action="{% url 'set_language' %}" method="post" class="lang-switcher">
@@ -17,7 +42,7 @@
             🇬🇧 <span>EN</span>
         </button>
     </div>
-</form>
+</form> {% endcomment %}
 
 
 

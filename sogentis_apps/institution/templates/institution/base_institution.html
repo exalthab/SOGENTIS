@@ -1,0 +1,29 @@
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'institution/css/institution.css' %}">
+  {% block institution_extra_css %}{% endblock %}
+{% endblock %}
+
+{% block section_menu %}
+  {% include "institution/partials/_institution_menu.html" %}
+{% endblock %}
+
+{% block content %}
+<section class="container py-4">
+  <header class="mb-4">
+    <h1 class="inst-title">{{ page_title|default:_("Pôle Institutionnel / Local") }}</h1>
+    <p class="inst-subtitle">
+      {% trans "Un espace local pour organiser l’éducation, la santé, la jeunesse et les infrastructures." %}
+    </p>
+  </header>
+
+  {% block institution_content %}{% endblock %}
+</section>
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'institution/js/institution.js' %}"></script>
+  {% block institution_extra_js %}{% endblock %}
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "institution/base_institution.html" %}
+{% load i18n %}
+
+{% block seo_title %}{% trans "Institutionnel - SOGENTIS" %}{% endblock %}
+
+{% block institution_content %}
+<div class="inst-grid">
+  <a class="inst-card" href="{% url 'institution:facility_list' %}">
+    <div class="inst-emoji">🏛️</div>
+    <h3>{% trans "Structures" %}</h3>
+    <p>{% trans "Écoles, centres de santé, centres de loisirs, et autres structures locales." %}</p>
+  </a>
+
+  <a class="inst-card" href="{% url 'institution:program_list' %}">
+    <div class="inst-emoji">📌</div>
+    <h3>{% trans "Programmes" %}</h3>
+    <p>{% trans "Programmes éducatifs, campagnes santé, activités jeunesse, ateliers." %}</p>
+  </a>
+
+  <div class="inst-card inst-card--coming">
+    <div class="inst-emoji">🏗️</div>
+    <h3>{% trans "Infrastructures" %}</h3>
+    <p>{% trans "À venir : eau, énergie, routes, bâtiments communautaires." %}</p>
+  </div>
+</div>
+{% endblock %}

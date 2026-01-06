@@ -1,0 +1,9 @@
+{% load i18n %}
+
+<nav class="inst-menu" aria-label="{% trans 'Menu institutionnel' %}">
+  <div class="container d-flex gap-2 flex-wrap py-2">
+    <a class="inst-link" href="{% url 'institution:index' %}">🏠 {% trans "Accueil" %}</a>
+    <a class="inst-link" href="{% url 'institution:facility_list' %}">🏛️ {% trans "Structures" %}</a>
+    <a class="inst-link" href="{% url 'institution:program_list' %}">📌 {% trans "Programmes" %}</a>
+  </div>
+</nav>

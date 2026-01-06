@@ -1,5 +1,7 @@
+# config/settings/modules/email.py
 from decouple import config
 from django.core.exceptions import ImproperlyConfigured
+
 
 # ===========================================================
 # EMAIL BACKEND (DEV / PROD)
@@ -10,11 +12,16 @@ EMAIL_BACKEND = config(
 )
 
 # ===========================================================
-# EXPÉDITEUR PAR DÉFAUT
+# EXPÉDITEUR PAR DÉFAUT + EMAIL SERVEUR (erreurs Django)
 # ===========================================================
 DEFAULT_FROM_EMAIL = config(
     "DEFAULT_FROM_EMAIL",
-    default="SOGENTIS <no-reply@sogentis.test>",
+    default="no-reply@sogentis.test",
+)
+
+SERVER_EMAIL = config(
+    "SERVER_EMAIL",
+    default=DEFAULT_FROM_EMAIL,
 )
 
 # ===========================================================
@@ -22,28 +29,106 @@ DEFAULT_FROM_EMAIL = config(
 # ===========================================================
 EMAIL_HOST = config("EMAIL_HOST", default="")
 EMAIL_PORT = config("EMAIL_PORT", cast=int, default=587)
+
 EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
+
 EMAIL_USE_TLS = config("EMAIL_USE_TLS", cast=bool, default=True)
 EMAIL_USE_SSL = config("EMAIL_USE_SSL", cast=bool, default=False)
+
 EMAIL_TIMEOUT = config("EMAIL_TIMEOUT", cast=int, default=30)
+
+# Optionnel (utile pour certains providers)
+EMAIL_SSL_KEYFILE = config("EMAIL_SSL_KEYFILE", default=None)
+EMAIL_SSL_CERTFILE = config("EMAIL_SSL_CERTFILE", default=None)
+
+
+# ===========================================================
+# RÈGLES DE COHÉRENCE
+# ===========================================================
+# TLS et SSL ne doivent pas être True en même temps
+if EMAIL_USE_TLS and EMAIL_USE_SSL:
+    raise ImproperlyConfigured("❌ EMAIL_USE_TLS et EMAIL_USE_SSL ne peuvent pas être True en même temps.")
 
 # ===========================================================
 # GARDE PROD – ÉVITER UNE CONFIG SMTP INCOMPLÈTE
 # ===========================================================
 if EMAIL_BACKEND == "django.core.mail.backends.smtp.EmailBackend":
     missing = [
-        name for name, value in {
+        name
+        for name, value in {
             "EMAIL_HOST": EMAIL_HOST,
             "EMAIL_HOST_USER": EMAIL_HOST_USER,
             "EMAIL_HOST_PASSWORD": EMAIL_HOST_PASSWORD,
-        }.items() if not value
+        }.items()
+        if not value
     ]
 
     if missing:
         raise ImproperlyConfigured(
             f"❌ Configuration SMTP incomplète : {', '.join(missing)}"
         )
+
+    # Si DEFAULT_FROM_EMAIL n’est pas crédible en prod, on force
+    if DEFAULT_FROM_EMAIL.endswith(".test") or "no-reply@" not in DEFAULT_FROM_EMAIL:
+        # pas de blocage dur si tu veux rester flexible :
+        # mais en prod c’est mieux d’obliger une vraie adresse
+        if config("DJANGO_ENV", default="local").strip().lower() in {"prod", "production"}:
+            raise ImproperlyConfigured(
+                "❌ DEFAULT_FROM_EMAIL doit être une adresse réelle en production."
+            )
+
+
+
+
+
+# # config/settings/modules/email.py
+# from decouple import config
+# from django.core.exceptions import ImproperlyConfigured
+
+# # ===========================================================
+# # EMAIL BACKEND (DEV / PROD)
+# # ===========================================================
+# EMAIL_BACKEND = config(
+#     "EMAIL_BACKEND",
+#     default="django.core.mail.backends.console.EmailBackend",
+# )
+
+# # ===========================================================
+# # EXPÉDITEUR PAR DÉFAUT
+# # ===========================================================
+# DEFAULT_FROM_EMAIL = config(
+#     "DEFAULT_FROM_EMAIL",
+#     default="SOGENTIS <no-reply@sogentis.test>",
+# )
+
+# # ===========================================================
+# # SMTP CONFIG — UTILISÉ UNIQUEMENT SI SMTP
+# # ===========================================================
+# EMAIL_HOST = config("EMAIL_HOST", default="")
+# EMAIL_PORT = config("EMAIL_PORT", cast=int, default=587)
+# EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
+# EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
+# EMAIL_USE_TLS = config("EMAIL_USE_TLS", cast=bool, default=True)
+# EMAIL_USE_SSL = config("EMAIL_USE_SSL", cast=bool, default=False)
+# EMAIL_TIMEOUT = config("EMAIL_TIMEOUT", cast=int, default=30)
+
+# # ===========================================================
+# # GARDE PROD – ÉVITER UNE CONFIG SMTP INCOMPLÈTE
+# # ===========================================================
+# if EMAIL_BACKEND == "django.core.mail.backends.smtp.EmailBackend":
+#     missing = [
+#         name for name, value in {
+#             "EMAIL_HOST": EMAIL_HOST,
+#             "EMAIL_HOST_USER": EMAIL_HOST_USER,
+#             "EMAIL_HOST_PASSWORD": EMAIL_HOST_PASSWORD,
+#         }.items() if not value
+#     ]
+
+#     if missing:
+#         raise ImproperlyConfigured(
+#             f"❌ Configuration SMTP incomplète : {', '.join(missing)}"
+#         )
 
 
 
