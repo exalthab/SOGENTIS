@@ -1,3 +1,5 @@
+/* static/core/css/home.css */
+
 /* ===== RESET & ROOT ===== */
 *,
 *::before,
@@ -47,7 +49,7 @@ body {
 }
 
 .background-overlay {
-  position: relative; /* ✅ important: pour ancrer .flag correctement */
+  position: relative;
   background-color: var(--bg-dark-overlay);
   padding: 40px 30px;
   border-radius: 15px;
@@ -79,7 +81,12 @@ h1 {
 .highlight-white { color: #fff; }
 .highlight-yellow { color: var(--color-accent); }
 .highlight-primary { color: #00cec9; }
-.highlight-secondary { color: #ffeaa7; background: #222; padding: 0 0.5em; border-radius: 5px; }
+.highlight-secondary {
+  color: #ffeaa7;
+  background: #222;
+  padding: 0 0.5em;
+  border-radius: 5px;
+}
 .highlight-accent { color: #fab1a0; font-weight: 600; }
 
 /* ===== BOUTONS ===== */
@@ -95,33 +102,29 @@ h1 {
   white-space: nowrap;
   user-select: none;
 }
+
 .btn:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
 
-/* Social */
-.btn-social {
-  background-color: var(--color-secondary);
-  color: var(--text-light);
-}
-/* Business */
 .btn-business {
   background-color: var(--color-primary);
   color: var(--text-light);
 }
 
-/* Hover (on ne casse pas l’arc: on garde la translation + scale) */
+.btn-social {
+  background-color: var(--color-secondary);
+  color: var(--text-light);
+}
+
+/* (hover géré aussi dans l’arc pour garder translateY) */
 .btn-social:hover,
 .btn-social:focus,
 .btn-business:hover,
 .btn-business:focus {
   outline: none;
 }
-.btn-social:hover,
-.btn-social:focus { box-shadow: 0 10px 25px rgba(46, 204, 113, 0.6); }
-.btn-business:hover,
-.btn-business:focus { box-shadow: 0 10px 25px rgba(52, 152, 219, 0.6); }
 
 /* ===== LAYOUT PRINCIPAL ===== */
 .main-layout {
@@ -140,6 +143,7 @@ h1 {
   height: 260px;
   z-index: 10;
 }
+
 #globe-wrapper {
   width: 100%;
   height: 100%;
@@ -148,6 +152,7 @@ h1 {
   position: relative;
   z-index: 11;
 }
+
 #globe-canvas {
   display: block;
   width: 100%;
@@ -168,6 +173,7 @@ h1 {
   animation: pulse 2.5s infinite ease-in-out;
   z-index: 9;
 }
+
 @keyframes pulse {
   0% { transform: scale(0.9); opacity: 0.7; }
   70% { transform: scale(1.2); opacity: 0; }
@@ -186,6 +192,7 @@ h1 {
   opacity: 0.85;
   z-index: 20;
 }
+
 @keyframes wave {
   0%,100% { transform: rotateZ(0deg) skewY(0deg); }
   25% { transform: rotateZ(1deg) skewY(2deg); }
@@ -211,24 +218,22 @@ h1 {
 }
 
 /* ==========================================================
-   ✅ ARC VRAIMENT VISIBLE (sur TON HTML actuel)
-   Social & Éco plus HAUTS, globe plus BAS + plus PETIT
-   + courbe décorative derrière
+   ARC VISIBLE (sur la div .home-arc-layout dans ton home.html)
    ========================================================== */
 
-.home-arc-layout{
+.home-arc-layout {
   position: relative;
   padding-top: 10px;
   padding-bottom: 10px;
 }
 
-/* Courbe visible derrière (arc) */
-@media (min-width: 992px){
-  .home-arc-layout::before{
-    content:"";
-    position:absolute;
-    left:50%;
-    top:52%;
+/* Courbe décorative derrière */
+@media (min-width: 992px) {
+  .home-arc-layout::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 52%;
     transform: translate(-50%, -50%);
     width: min(760px, 92%);
     height: 220px;
@@ -236,51 +241,53 @@ h1 {
     border-left: 2px solid rgba(255,255,255,0.10);
     border-right: 2px solid rgba(255,255,255,0.10);
     border-radius: 900px 900px 0 0;
-    pointer-events:none;
+    pointer-events: none;
     z-index: 1;
   }
 
-  /* On met tous les éléments au-dessus de la courbe */
-  .home-arc-layout > *{
+  /* Tout au-dessus de la courbe */
+  .home-arc-layout > * {
     position: relative;
     z-index: 2;
   }
 
-  /* Variables arc pour éviter le “saut” au hover */
-  .home-arc-layout{
-    --arc-side-y: -44px;   /* ✅ arc visible */
-    --arc-globe-y: 18px;   /* globe plus bas */
+  /* Valeurs d’arc */
+  .home-arc-layout {
+    --arc-side-y: -44px;  /* boutons montent */
+    --arc-globe-y: 18px;  /* globe descend */
   }
 
-  /* Social / Économique plus haut */
-  .home-arc-layout > a.btn-social{
+  /* Boutons montent */
+  .home-arc-layout > a.btn-social {
     transform: translateY(var(--arc-side-y));
   }
-  .home-arc-layout > a.btn-business{
+  .home-arc-layout > a.btn-business {
     transform: translateY(var(--arc-side-y));
   }
 
-  /* Hover garde la translation + ajoute scale */
+  /* Hover garde translateY + scale */
   .home-arc-layout > a.btn-social:hover,
-  .home-arc-layout > a.btn-social:focus{
+  .home-arc-layout > a.btn-social:focus {
     transform: translateY(var(--arc-side-y)) scale(1.05);
     background-color: #2ecc71;
+    box-shadow: 0 10px 25px rgba(46, 204, 113, 0.6);
   }
   .home-arc-layout > a.btn-business:hover,
-  .home-arc-layout > a.btn-business:focus{
+  .home-arc-layout > a.btn-business:focus {
     transform: translateY(var(--arc-side-y)) scale(1.05);
     background-color: #3498db;
+    box-shadow: 0 10px 25px rgba(52, 152, 219, 0.6);
   }
 
-  /* Globe plus petit + légèrement plus bas */
-  .home-arc-layout #globe-container{
+  /* Globe plus petit + plus bas */
+  .home-arc-layout #globe-container {
     width: 180px !important;
     height: 180px !important;
     transform: translateY(var(--arc-globe-y));
   }
 
   /* Pulse ring recalibré */
-  .home-arc-layout .pulse-ring{
+  .home-arc-layout .pulse-ring {
     width: 230px !important;
     height: 230px !important;
     margin-left: -115px !important;
@@ -289,29 +296,34 @@ h1 {
   }
 }
 
-/* Institution */
+/* Institution (sans backdrop-filter, compatible Safari iOS) */
 .home-btn-institution{
   min-width: 260px;
   border-width: 2px;
-  backdrop-filter: blur(4px);
+
+  background-color: rgba(0, 0, 0, 0.25);
+  border-color: rgba(255, 255, 255, 0.55);
+  color: #fff;
+
+  box-shadow: 0 10px 26px rgba(0,0,0,0.30);
 }
+
 .home-btn-institution:hover,
 .home-btn-institution:focus{
   transform: scale(1.03);
+  background-color: rgba(0, 0, 0, 0.35);
+  border-color: rgba(255, 255, 255, 0.80);
+  box-shadow: 0 14px 32px rgba(0,0,0,0.38);
+  outline: none;
 }
 
 /* ===== RESPONSIVE ===== */
-@media (max-width: 992px){
-  .home-arc-layout{
-    gap: 20px;
-  }
-  #globe-container{
-    width: 220px;
-    height: 220px;
-  }
+@media (max-width: 992px) {
+  .main-layout { gap: 20px; }
+  #globe-container { width: 220px; height: 220px; }
 }
 
-@media (max-width: 768px){
+@media (max-width: 768px) {
   h1 { font-size: 2.2rem; }
   .subtitle { font-size: 1.1rem; }
   .main-layout { flex-direction: column; margin-top: 30px; }
@@ -322,7 +334,7 @@ h1 {
   .background-overlay { padding: 20px 15px; }
 }
 
-@media (max-width: 575px){
+@media (max-width: 575px) {
   .background-overlay { padding: 8px 2px; }
   .main-layout { gap: 10px; }
   .flag { left: 50%; right: auto; transform: translateX(-50%) scale(0.8); }

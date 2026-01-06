@@ -16,7 +16,7 @@ EMAIL_BACKEND = config(
 # ===========================================================
 DEFAULT_FROM_EMAIL = config(
     "DEFAULT_FROM_EMAIL",
-    default="no-reply@sogentis.test",
+    default="no-reply@sogentis.org",
 )
 
 SERVER_EMAIL = config(
@@ -70,7 +70,7 @@ if EMAIL_BACKEND == "django.core.mail.backends.smtp.EmailBackend":
         )
 
     # Si DEFAULT_FROM_EMAIL n’est pas crédible en prod, on force
-    if DEFAULT_FROM_EMAIL.endswith(".test") or "no-reply@" not in DEFAULT_FROM_EMAIL:
+    if DEFAULT_FROM_EMAIL.endswith(".test") or "contact@sogentis.org" not in DEFAULT_FROM_EMAIL:
         # pas de blocage dur si tu veux rester flexible :
         # mais en prod c’est mieux d’obliger une vraie adresse
         if config("DJANGO_ENV", default="local").strip().lower() in {"prod", "production"}:
