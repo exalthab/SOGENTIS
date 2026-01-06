@@ -1,0 +1,213 @@
+/* ============================= */
+/* _mothers.css - Styles des mères */
+/* ============================= */
+
+/* -----------------------------
+   Grille générale
+------------------------------ */
+.mothers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.8rem;
+    padding: 2rem 1rem;
+}
+
+/* -----------------------------
+   Carte mère
+------------------------------ */
+.mother-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 1.6rem 1.3rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    /* Ombres et animation */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: transform .25s ease, box-shadow .25s ease;
+
+    /* Animation apparition */
+    opacity: 0;
+    transform: translateY(25px);
+    animation: fadeUpCard .55s ease forwards;
+}
+
+@keyframes fadeUpCard {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Hover */
+.mother-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* -----------------------------
+   Photo ronde
+------------------------------ */
+.mother-photo {
+    width: 135px;
+    height: 135px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid #e63946;
+    margin-bottom: 1rem;
+}
+
+.mother-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* -----------------------------
+   Nom & métadonnées
+------------------------------ */
+.mother-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: .4rem;
+}
+
+.mother-meta {
+    width: 100%;
+}
+
+.mother-info-line {
+    margin: .3rem 0;
+    color: #555;
+    font-size: .92rem;
+}
+
+/* -----------------------------
+   Actions
+------------------------------ */
+.mother-actions {
+    margin-top: 1rem;
+    display: flex;
+    gap: .6rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-support {
+    background: #e63946;
+    color: #fff;
+    border: none;
+    padding: .48rem 1.1rem;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background .2s ease;
+}
+
+.btn-support:hover {
+    background: #c71f30;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid #e63946;
+    color: #e63946;
+    padding: .46rem 1.1rem;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all .2s ease;
+}
+
+.btn-outline:hover {
+    background: #e63946;
+    color: #fff;
+}
+
+/* -----------------------------
+   Modal des mères
+------------------------------ */
+.mother-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1200;
+    background: rgba(0, 0, 0, .55);
+    padding: 1.8rem;
+    overflow-y: auto;
+}
+
+.mother-modal-content {
+    background: #fff;
+    margin: auto;
+    padding: 1.8rem;
+    max-width: 540px;
+    border-radius: 14px;
+    position: relative;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, .2);
+    animation: modalIn .35s ease;
+}
+
+@keyframes modalIn {
+    from {
+        opacity: 0;
+        transform: translateY(25px) scale(.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Bouton fermer */
+.close-modal {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: #666;
+    cursor: pointer;
+    transition: color .2s;
+}
+
+.close-modal:hover {
+    color: #000;
+}
+
+/* Titres */
+.modal-name {
+    font-size: 1.35rem;
+    color: #e63946;
+    margin-bottom: .5rem;
+}
+
+/* Texte modal */
+.modal-body p,
+.modal-story {
+    margin: .45rem 0;
+    color: #333;
+    font-size: .96rem;
+}
+
+/* Footer modal */
+.modal-footer .btn-support {
+    margin-top: 1rem;
+}
+
+/* -----------------------------
+   Responsive
+------------------------------ */
+@media (max-width: 600px) {
+    .mother-modal-content {
+        padding: 1.2rem;
+    }
+
+    .mother-photo {
+        width: 110px;
+        height: 110px;
+    }
+}

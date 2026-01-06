@@ -1,0 +1,15 @@
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- T-shirt rose -->
+  <rect x="20" y="60" width="60" height="30" fill="#FF69B4" rx="5"></rect>
+  <!-- Visage -->
+  <circle cx="50" cy="40" r="20" fill="#FDD7B0"></circle>
+  <!-- Cheveux longs ondulés -->
+  <path d="M15,35 Q50,-10 85,35 L85,80 Q50,110 15,80 Z" fill="#8B0000"></path>
+  <!-- Petite mèche sur le front -->
+  <path d="M45,25 Q50,20 55,25" stroke="#8B0000" stroke-width="2" fill="none"></path>
+  <!-- Yeux -->
+  <circle cx="42" cy="40" r="3" fill="#000"></circle>
+  <circle cx="58" cy="40" r="3" fill="#000"></circle>
+  <!-- Sourire -->
+  <path d="M40,48 Q50,55 60,48" stroke="#000" stroke-width="2" fill="none"></path>
+</svg>

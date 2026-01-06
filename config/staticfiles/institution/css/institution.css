@@ -1,0 +1,24 @@
+.inst-title{font-weight:800;letter-spacing:-0.02em;margin-bottom:.35rem}
+.inst-subtitle{opacity:.85;max-width:70ch}
+
+.inst-menu{background:rgba(0,0,0,.02);border-bottom:1px solid rgba(0,0,0,.08)}
+.inst-link{text-decoration:none;padding:.45rem .75rem;border-radius:999px;border:1px solid rgba(0,0,0,.12);color:inherit}
+.inst-link:hover{border-color:rgba(0,0,0,.22)}
+
+.inst-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:1rem}
+.inst-card{grid-column:span 12;padding:1.1rem;border-radius:16px;border:1px solid rgba(0,0,0,.10);background:rgba(255,255,255,.75);text-decoration:none;color:inherit;transition:transform .15s ease,border-color .15s ease}
+.inst-card:hover{transform:translateY(-2px);border-color:rgba(0,0,0,.22)}
+.inst-card--coming{opacity:.75}
+.inst-emoji{font-size:1.6rem;margin-bottom:.4rem}
+
+.inst-panel{border:1px solid rgba(0,0,0,.10);border-radius:16px;padding:1.2rem;background:rgba(255,255,255,.8)}
+.inst-list{display:flex;flex-direction:column;gap:.75rem}
+.inst-row{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.95rem 1rem;border-radius:14px;border:1px solid rgba(0,0,0,.10);background:rgba(255,255,255,.8);text-decoration:none;color:inherit}
+.inst-row:hover{border-color:rgba(0,0,0,.22)}
+.inst-row-meta{opacity:.75;font-size:.9rem;margin-top:.15rem}
+.inst-row-arrow{opacity:.7;font-weight:700}
+.inst-back{text-decoration:none;opacity:.8}
+.inst-back:hover{opacity:1}
+
+@media (min-width:768px){.inst-card{grid-column:span 6}}
+@media (min-width:1200px){.inst-card{grid-column:span 4}}

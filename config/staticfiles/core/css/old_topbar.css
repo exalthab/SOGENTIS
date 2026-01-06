@@ -1,0 +1,102 @@
+/* ===================== TOPBAR ===================== */
+.topbar {
+    font-size: 0.875rem; /* légèrement plus petit */
+}
+
+/* Liens utilitaires Desktop */
+.topbar a {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.topbar a i {
+    font-size: 1rem; /* icônes fontawesome */
+}
+
+/* Réseaux sociaux Desktop */
+.topbar svg {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.2s ease, fill 0.2s ease;
+    vertical-align: middle;
+}
+
+.topbar svg:hover {
+    transform: scale(1.1);
+    fill: var(--bs-primary, #0d6efd); /* utilise la couleur du thème */
+}
+
+/* Boutons langue Desktop */
+.topbar .btn-group button {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+}
+
+.topbar .btn-group svg {
+    vertical-align: middle;
+}
+
+/* Thème, login, utilisateur */
+.topbar .btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+}
+
+/* Hamburger mobile */
+.topbar button[data-bs-toggle="offcanvas"] {
+    font-size: 1.2rem;
+    padding: 0.2rem 0.5rem;
+}
+
+/* ===================== OFFCANVAS MOBILE ===================== */
+.offcanvas-body a,
+.offcanvas-body button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+}
+
+/* Boutons langue Mobile */
+.offcanvas-body form button {
+    width: 100%;
+    justify-content: flex-start;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+/* Theme & Auth Mobile */
+.offcanvas-body .btn-sm {
+    width: 100%;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Ajustement SVG dans menu mobile */
+.offcanvas-body svg {
+    width: 18px;
+    height: 12px;
+}
+
+/* Bouton actif - Langue */
+.btn.active {
+    background-color: var(--bs-primary, #0d6efd) !important;
+    color: #fff !important;
+    border-color: var(--bs-primary, #0d6efd) !important;
+}
+
+/* Hover général */
+.topbar a:hover,
+.topbar button:hover,
+.offcanvas-body a:hover,
+.offcanvas-body button:hover {
+    opacity: 0.85;
+    transition: opacity 0.2s ease;
+}

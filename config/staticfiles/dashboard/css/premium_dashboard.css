@@ -1,0 +1,156 @@
+/* ==========================================================
+   premium_dashboard.css — SOGENTIS Dashboard (Production)
+   - Layout global + topbar + content
+   - Overlay mobile
+   - Scrollbars, focus, responsive
+   Compatible Bootstrap
+   ========================================================== */
+
+:root{
+  --db-bg: #f6f7fb;
+  --db-surface: #ffffff;
+  --db-text: #0f172a;
+  --db-muted: rgba(15,23,42,.65);
+  --db-border: rgba(15,23,42,.10);
+  --db-shadow: 0 10px 30px rgba(15,23,42,.08);
+  --db-radius: 18px;
+
+  --db-overlay: rgba(15,23,42,.55);
+  --db-focus: rgba(13,110,253,.25);
+
+  --db-sidebar-w: 296px;          /* même valeur que premium_sidebar.css */
+  --db-sidebar-w-collapsed: 86px; /* même valeur que premium_sidebar.css */
+}
+
+html, body{ height: 100%; }
+body{
+  background: var(--db-bg);
+  color: var(--db-text);
+  overflow-x: hidden;
+}
+
+a{ color: inherit; }
+a:hover{ color: inherit; }
+
+:focus-visible{
+  outline: 0;
+  box-shadow: 0 0 0 4px var(--db-focus);
+  border-radius: 12px;
+}
+
+/* ==========================================================
+   Layout
+   ========================================================== */
+.dashboard-layout{
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* sidebar est .db-sidebar (dans premium_sidebar.css) */
+.dashboard-main{
+  min-width: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ==========================================================
+   Topbar
+   ========================================================== */
+.dashboard-header{
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--db-surface) !important;
+  border-bottom: 1px solid var(--db-border) !important;
+}
+
+.dashboard-title{
+  letter-spacing: -0.02em;
+}
+
+.user-actions span{
+  color: rgba(15,23,42,.8);
+}
+
+/* avatar */
+.avatar-sm{
+  object-fit: cover;
+}
+
+/* ==========================================================
+   Content area
+   ========================================================== */
+.dashboard-content{
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+}
+
+.dashboard-content::-webkit-scrollbar{ width: 10px; height: 10px; }
+.dashboard-content::-webkit-scrollbar-thumb{
+  background: rgba(15,23,42,.15);
+  border-radius: 999px;
+}
+.dashboard-content::-webkit-scrollbar-thumb:hover{
+  background: rgba(15,23,42,.25);
+}
+
+/* ==========================================================
+   Overlay (mobile sidebar)
+   ========================================================== */
+.db-overlay{
+  position: fixed;
+  inset: 0;
+  background: var(--db-overlay);
+  z-index: 55;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s ease;
+}
+
+body.db-sidebar-open .db-overlay{
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ==========================================================
+   Desktop collapsed sidebar helper
+   (si tu actives le collapse via JS)
+   ========================================================== */
+@media (min-width: 992px){
+  /* laisse le CSS principal gérer la largeur, ici on ajuste l’espace ressenti */
+  body.db-sidebar-collapsed .dashboard-main{
+    /* rien d’obligatoire, mais on garde la cohérence */
+  }
+}
+
+/* ==========================================================
+   Small helpers
+   ========================================================== */
+.db-surface{
+  background: var(--db-surface);
+  border: 1px solid var(--db-border);
+  border-radius: var(--db-radius);
+  box-shadow: var(--db-shadow);
+}
+
+.db-muted{ color: var(--db-muted) !important; }
+
+.db-kpi{
+  font-weight: 950;
+  letter-spacing: -0.03em;
+}
+
+/* ==========================================================
+   Mobile spacing
+   ========================================================== */
+@media (max-width: 575.98px){
+  .dashboard-header{
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  .dashboard-content{
+    padding: 1rem !important;
+  }
+}

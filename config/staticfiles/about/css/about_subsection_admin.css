@@ -1,0 +1,30 @@
+.smart-tabs-wrapper {
+    margin-top: 15px;
+}
+
+.smart-tab {
+    display: inline-block;
+    padding: 6px 12px;
+    background: #f1f1f1;
+    margin-right: 5px;
+    border-radius: 5px 5px 0 0;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.smart-tab.active {
+    background: #fff;
+    border-bottom: 2px solid #0d6efd;
+}
+
+.smart-tab-content {
+    border: 1px solid #dee2e6;
+    border-top: none;
+    padding: 12px;
+    display: none;
+    background: #fff;
+}
+
+.smart-tab-content.active {
+    display: block;
+}

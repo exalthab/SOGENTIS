@@ -1,0 +1,286 @@
+/* ==========================================================
+   premium_sidebar.css — SOGENTIS Dashboard Premium Sidebar
+   Cible: .db-sidebar, .db-link, .db-nav-toggle, collapsibles
+   JS classes: body.db-sidebar-open, body.db-sidebar-collapsed
+   ========================================================== */
+
+:root{
+  --db-sidebar-w: 296px;
+  --db-sidebar-w-collapsed: 86px;
+
+  --db-sb-bg1: #0b1220;
+  --db-sb-bg2: #0f172a;
+
+  --db-sb-text: rgba(255,255,255,.92);
+  --db-sb-muted: rgba(255,255,255,.65);
+  --db-sb-border: rgba(255,255,255,.10);
+
+  --db-sb-hover: rgba(255,255,255,.08);
+  --db-sb-active: rgba(255,255,255,.16);
+
+  --db-radius: 16px;
+}
+
+/* Sidebar container */
+.db-sidebar{
+  width: var(--db-sidebar-w);
+  height: 100vh;
+  position: sticky;
+  top: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  background: linear-gradient(180deg, var(--db-sb-bg1), var(--db-sb-bg2));
+  border-right: 1px solid var(--db-sb-border);
+
+  overflow: hidden;
+  transition: width .2s ease, transform .2s ease;
+  will-change: width, transform;
+  z-index: 60;
+}
+
+/* Head */
+.db-sidebar-head{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  padding: 1rem 1rem .75rem 1rem;
+  border-bottom: 1px solid var(--db-sb-border);
+}
+
+.db-brand{
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  text-decoration: none;
+  color: var(--db-sb-text);
+  min-width: 0;
+}
+
+.db-brand-mark{
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.10);
+}
+
+.db-brand-text{
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.db-brand-name{
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.db-brand-sub{
+  color: var(--db-sb-muted);
+  font-size: .85rem;
+  line-height: 1.1;
+}
+
+/* Icon button */
+.db-icon-btn{
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.06);
+  color: var(--db-sb-text);
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background .15s ease, transform .12s ease;
+}
+.db-icon-btn:hover{ background: rgba(255,255,255,.10); transform: translateY(-1px); }
+
+/* User block */
+.db-sidebar-user{
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding: .9rem 1rem;
+  border-bottom: 1px solid var(--db-sb-border);
+}
+.db-user-avatar{
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.10);
+}
+.db-user-meta{ min-width: 0; }
+.db-user-name{
+  color: var(--db-sb-text);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.db-user-sub{
+  color: var(--db-sb-muted);
+  font-size: .85rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Nav scroll area */
+.db-nav{
+  padding: .75rem .6rem 1rem .6rem;
+  overflow: auto;
+}
+.db-nav::-webkit-scrollbar{ width: 10px; }
+.db-nav::-webkit-scrollbar-thumb{ background: rgba(255,255,255,.14); border-radius: 999px; }
+
+/* Sections */
+.db-nav-section{
+  padding: .4rem .35rem .7rem .35rem;
+}
+.db-nav-title{
+  color: var(--db-sb-muted);
+  font-weight: 900;
+  font-size: .78rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: .6rem .6rem .35rem .6rem;
+}
+
+/* Links */
+.db-link{
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+
+  padding: .72rem .7rem;
+  margin: .15rem 0;
+
+  border-radius: 14px;
+  text-decoration: none;
+  color: var(--db-sb-text);
+  border: 1px solid transparent;
+
+  transition: background .15s ease, transform .12s ease, border-color .15s ease;
+}
+.db-link:hover{
+  background: var(--db-sb-hover);
+  transform: translateX(1px);
+}
+.db-link.active{
+  background: var(--db-sb-active);
+  border-color: rgba(255,255,255,.10);
+}
+.db-link.danger{
+  color: #ffe1e1;
+}
+.db-link.danger:hover{
+  background: rgba(255, 77, 79, .14);
+}
+
+/* Icon + label */
+.db-ico{
+  width: 22px;
+  min-width: 22px;
+  text-align: center;
+  filter: saturate(1.1);
+}
+.db-label{
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+/* Collapsible toggles */
+.db-nav-toggle{
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--db-sb-text);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .55rem .6rem;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background .15s ease;
+}
+.db-nav-toggle:hover{ background: rgba(255,255,255,.06); }
+
+/* Caret rotation based on aria-expanded (no JS inline styles needed) */
+.db-nav-toggle .db-caret{
+  display: inline-block;
+  opacity: .85;
+  transition: transform .16s ease;
+}
+.db-nav-toggle[aria-expanded="false"] .db-caret{
+  transform: rotate(-90deg);
+}
+
+
+/* Group */
+.db-nav-group{
+  padding-left: .15rem;
+}
+.db-nav-group[hidden]{
+  display: none !important;
+}
+
+/* Foot */
+.db-sidebar-foot{
+  margin-top: auto;
+  padding: .9rem .6rem 1rem .6rem;
+  border-top: 1px solid var(--db-sb-border);
+}
+.db-foot-note{
+  color: var(--db-sb-muted);
+  font-size: .85rem;
+  padding: .7rem .6rem 0 .6rem;
+}
+
+/* =============== Desktop collapsed =============== */
+@media (min-width: 992px){
+  body.db-sidebar-collapsed .db-sidebar{
+    width: var(--db-sidebar-w-collapsed);
+  }
+  body.db-sidebar-collapsed .db-brand-text,
+  body.db-sidebar-collapsed .db-sidebar-user,
+  body.db-sidebar-collapsed .db-nav-title,
+  body.db-sidebar-collapsed .db-label,
+  body.db-sidebar-collapsed .db-foot-note{
+    display: none !important;
+  }
+  body.db-sidebar-collapsed .db-link{
+    justify-content: center;
+    padding: .78rem .5rem;
+  }
+  body.db-sidebar-collapsed .db-nav{
+    padding-left: .4rem;
+    padding-right: .4rem;
+  }
+}
+
+/* =============== Mobile offcanvas =============== */
+@media (max-width: 991.98px){
+  .db-sidebar{
+    position: fixed;
+    left: 0;
+    top: 0;
+    transform: translateX(-105%);
+    box-shadow: 0 25px 60px rgba(0,0,0,.40);
+  }
+  body.db-sidebar-open .db-sidebar{
+    transform: translateX(0);
+  }
+}
