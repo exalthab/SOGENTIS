@@ -42,12 +42,11 @@ WSGI_APPLICATION = "config.wsgi.application"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
-SOCIAL_BASE_URL = "https://sogentis.org"
-COMMERCIAL_BASE_URL = "https://sogentis.com"
-INSTITUTION_BASE_URL = "https://sogentis.sn"
+SOCIAL_BASE_URL = config("SOCIAL_BASE_URL", default="https://sogentis.org").rstrip("/")
+COMMERCIAL_BASE_URL = config("COMMERCIAL_BASE_URL", default="https://sogentis.com").rstrip("/")
+INSTITUTION_BASE_URL = config("INSTITUTION_BASE_URL", default="https://sogentis.sn").rstrip("/")
 
 # Optionnel si tu sépares dashboard
-APP_BASE_URL = "https://app.sogentis.org"
 
 
 
