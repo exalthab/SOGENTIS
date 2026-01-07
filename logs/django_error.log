@@ -20860,3 +20860,1901 @@ Traceback (most recent call last):
   File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
     raise DisallowedHost(msg)
 django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+ERROR 2026-01-07 22:10:00,994 django.request log :: Internal Server Error: /about/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 524, in _get_translated_model
+    object = local_cache[language_code]
+KeyError: 'fr'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/about/views/about_index.py", line 50, in about_index_view
+    return render(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/library.py", line 381, in render
+    return t.render(new_context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 173, in render
+    return self._render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/defaulttags.py", line 243, in render
+    nodelist.append(node.render_annotated(context))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/defaulttags.py", line 550, in render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1075, in render
+    output = self.filter_expression.resolve(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 749, in resolve
+    new_obj = func(obj, *arg_vals)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/about/templatetags/about_tags.py", line 150, in translate
+    return getter(field, any_language=True)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 831, in safe_translation_getter
+    return getattr(self, field)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/fields.py", line 142, in __get__
+    translation = instance._get_translated_model(use_fallback=True, meta=meta)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 545, in _get_translated_model
+    object = get_cached_translation(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/cache.py", line 73, in get_cached_translation
+    values = _get_cached_values(instance, translated_model, language_code, use_fallback)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/cache.py", line 116, in _get_cached_values
+    values = cache.get(key)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 188, in get
+    return self._cache.get(key, default)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 173, in _cache
+    return self._class(self._servers, **self._options)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 46, in __init__
+    self._client = self._lib.Redis
+AttributeError: module 'redis' has no attribute 'Redis'
+ERROR 2026-01-07 22:10:04,394 django.request log :: Internal Server Error: /about/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 524, in _get_translated_model
+    object = local_cache[language_code]
+KeyError: 'fr'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/about/views/about_index.py", line 50, in about_index_view
+    return render(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/library.py", line 381, in render
+    return t.render(new_context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 173, in render
+    return self._render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/defaulttags.py", line 243, in render
+    nodelist.append(node.render_annotated(context))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/defaulttags.py", line 550, in render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1075, in render
+    output = self.filter_expression.resolve(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 749, in resolve
+    new_obj = func(obj, *arg_vals)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/about/templatetags/about_tags.py", line 150, in translate
+    return getter(field, any_language=True)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 831, in safe_translation_getter
+    return getattr(self, field)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/fields.py", line 142, in __get__
+    translation = instance._get_translated_model(use_fallback=True, meta=meta)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 545, in _get_translated_model
+    object = get_cached_translation(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/cache.py", line 73, in get_cached_translation
+    values = _get_cached_values(instance, translated_model, language_code, use_fallback)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/cache.py", line 116, in _get_cached_values
+    values = cache.get(key)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 188, in get
+    return self._cache.get(key, default)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 173, in _cache
+    return self._class(self._servers, **self._options)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 46, in __init__
+    self._client = self._lib.Redis
+AttributeError: module 'redis' has no attribute 'Redis'
+ERROR 2026-01-07 22:11:57,748 django.request log :: Internal Server Error: /social/donation/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 524, in _get_translated_model
+    object = local_cache[language_code]
+KeyError: 'fr'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/social/views/donations.py", line 191, in donation_view
+    return render(request, "social/donation_form.html", {
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1081, in render
+    return render_value_in_context(output, context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1058, in render_value_in_context
+    value = str(value)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/utils.py", line 79, in __str__
+    return self.as_widget()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/boundfield.py", line 108, in as_widget
+    return widget.render(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/widgets.py", line 329, in render
+    context = self.get_context(name, value, attrs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/widgets.py", line 830, in get_context
+    context = super().get_context(name, value, attrs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/widgets.py", line 781, in get_context
+    context["widget"]["optgroups"] = self.optgroups(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/widgets.py", line 721, in optgroups
+    for index, (option_value, option_label) in enumerate(self.choices):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/models.py", line 1425, in __iter__
+    yield self.choice(obj)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/models.py", line 1439, in choice
+    self.field.label_from_instance(obj),
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/models.py", line 1529, in label_from_instance
+    return str(obj)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/about/models/child.py", line 89, in __str__
+    return self.safe_translation_getter('name', any_language=True) or "Enfant sans nom"
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 831, in safe_translation_getter
+    return getattr(self, field)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/fields.py", line 142, in __get__
+    translation = instance._get_translated_model(use_fallback=True, meta=meta)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 545, in _get_translated_model
+    object = get_cached_translation(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/cache.py", line 73, in get_cached_translation
+    values = _get_cached_values(instance, translated_model, language_code, use_fallback)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/cache.py", line 116, in _get_cached_values
+    values = cache.get(key)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 188, in get
+    return self._cache.get(key, default)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 173, in _cache
+    return self._class(self._servers, **self._options)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 46, in __init__
+    self._client = self._lib.Redis
+AttributeError: module 'redis' has no attribute 'Redis'
+ERROR 2026-01-07 22:12:03,034 django.request log :: Internal Server Error: /social/donation/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 524, in _get_translated_model
+    object = local_cache[language_code]
+KeyError: 'fr'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/social/views/donations.py", line 191, in donation_view
+    return render(request, "social/donation_form.html", {
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1081, in render
+    return render_value_in_context(output, context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1058, in render_value_in_context
+    value = str(value)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/utils.py", line 79, in __str__
+    return self.as_widget()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/boundfield.py", line 108, in as_widget
+    return widget.render(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/widgets.py", line 329, in render
+    context = self.get_context(name, value, attrs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/widgets.py", line 830, in get_context
+    context = super().get_context(name, value, attrs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/widgets.py", line 781, in get_context
+    context["widget"]["optgroups"] = self.optgroups(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/widgets.py", line 721, in optgroups
+    for index, (option_value, option_label) in enumerate(self.choices):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/models.py", line 1425, in __iter__
+    yield self.choice(obj)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/models.py", line 1439, in choice
+    self.field.label_from_instance(obj),
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/models.py", line 1529, in label_from_instance
+    return str(obj)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/about/models/child.py", line 89, in __str__
+    return self.safe_translation_getter('name', any_language=True) or "Enfant sans nom"
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 831, in safe_translation_getter
+    return getattr(self, field)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/fields.py", line 142, in __get__
+    translation = instance._get_translated_model(use_fallback=True, meta=meta)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 545, in _get_translated_model
+    object = get_cached_translation(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/cache.py", line 73, in get_cached_translation
+    values = _get_cached_values(instance, translated_model, language_code, use_fallback)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/cache.py", line 116, in _get_cached_values
+    values = cache.get(key)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 188, in get
+    return self._cache.get(key, default)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 173, in _cache
+    return self._class(self._servers, **self._options)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 46, in __init__
+    self._client = self._lib.Redis
+AttributeError: module 'redis' has no attribute 'Redis'
+ERROR 2026-01-07 22:14:15,156 django.request log :: Internal Server Error: /social/donation/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 524, in _get_translated_model
+    object = local_cache[language_code]
+KeyError: 'fr'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/social/views/donations.py", line 191, in donation_view
+    return render(request, "social/donation_form.html", {
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1081, in render
+    return render_value_in_context(output, context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1058, in render_value_in_context
+    value = str(value)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/utils.py", line 79, in __str__
+    return self.as_widget()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/boundfield.py", line 108, in as_widget
+    return widget.render(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/widgets.py", line 329, in render
+    context = self.get_context(name, value, attrs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/widgets.py", line 830, in get_context
+    context = super().get_context(name, value, attrs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/widgets.py", line 781, in get_context
+    context["widget"]["optgroups"] = self.optgroups(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/widgets.py", line 721, in optgroups
+    for index, (option_value, option_label) in enumerate(self.choices):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/models.py", line 1425, in __iter__
+    yield self.choice(obj)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/models.py", line 1439, in choice
+    self.field.label_from_instance(obj),
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/models.py", line 1529, in label_from_instance
+    return str(obj)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/about/models/child.py", line 89, in __str__
+    return self.safe_translation_getter('name', any_language=True) or "Enfant sans nom"
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 831, in safe_translation_getter
+    return getattr(self, field)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/fields.py", line 142, in __get__
+    translation = instance._get_translated_model(use_fallback=True, meta=meta)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 545, in _get_translated_model
+    object = get_cached_translation(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/cache.py", line 73, in get_cached_translation
+    values = _get_cached_values(instance, translated_model, language_code, use_fallback)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/cache.py", line 116, in _get_cached_values
+    values = cache.get(key)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 188, in get
+    return self._cache.get(key, default)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 173, in _cache
+    return self._class(self._servers, **self._options)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 46, in __init__
+    self._client = self._lib.Redis
+AttributeError: module 'redis' has no attribute 'Redis'
+ERROR 2026-01-07 22:14:37,894 django.request log :: Internal Server Error: /about/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 524, in _get_translated_model
+    object = local_cache[language_code]
+KeyError: 'fr'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/about/views/about_index.py", line 50, in about_index_view
+    return render(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/library.py", line 381, in render
+    return t.render(new_context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 173, in render
+    return self._render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/defaulttags.py", line 243, in render
+    nodelist.append(node.render_annotated(context))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/defaulttags.py", line 550, in render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1075, in render
+    output = self.filter_expression.resolve(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 749, in resolve
+    new_obj = func(obj, *arg_vals)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/about/templatetags/about_tags.py", line 150, in translate
+    return getter(field, any_language=True)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 831, in safe_translation_getter
+    return getattr(self, field)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/fields.py", line 142, in __get__
+    translation = instance._get_translated_model(use_fallback=True, meta=meta)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 545, in _get_translated_model
+    object = get_cached_translation(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/cache.py", line 73, in get_cached_translation
+    values = _get_cached_values(instance, translated_model, language_code, use_fallback)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/cache.py", line 116, in _get_cached_values
+    values = cache.get(key)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 188, in get
+    return self._cache.get(key, default)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 173, in _cache
+    return self._class(self._servers, **self._options)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 46, in __init__
+    self._client = self._lib.Redis
+AttributeError: module 'redis' has no attribute 'Redis'
+ERROR 2026-01-07 22:16:58,501 django.request log :: Internal Server Error: /social/donation/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 524, in _get_translated_model
+    object = local_cache[language_code]
+KeyError: 'fr'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/social/views/donations.py", line 191, in donation_view
+    return render(request, "social/donation_form.html", {
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1081, in render
+    return render_value_in_context(output, context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1058, in render_value_in_context
+    value = str(value)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/utils.py", line 79, in __str__
+    return self.as_widget()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/boundfield.py", line 108, in as_widget
+    return widget.render(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/widgets.py", line 329, in render
+    context = self.get_context(name, value, attrs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/widgets.py", line 830, in get_context
+    context = super().get_context(name, value, attrs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/widgets.py", line 781, in get_context
+    context["widget"]["optgroups"] = self.optgroups(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/widgets.py", line 721, in optgroups
+    for index, (option_value, option_label) in enumerate(self.choices):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/models.py", line 1425, in __iter__
+    yield self.choice(obj)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/models.py", line 1439, in choice
+    self.field.label_from_instance(obj),
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/models.py", line 1529, in label_from_instance
+    return str(obj)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/about/models/child.py", line 89, in __str__
+    return self.safe_translation_getter('name', any_language=True) or "Enfant sans nom"
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 831, in safe_translation_getter
+    return getattr(self, field)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/fields.py", line 142, in __get__
+    translation = instance._get_translated_model(use_fallback=True, meta=meta)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 545, in _get_translated_model
+    object = get_cached_translation(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/cache.py", line 73, in get_cached_translation
+    values = _get_cached_values(instance, translated_model, language_code, use_fallback)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/cache.py", line 116, in _get_cached_values
+    values = cache.get(key)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 188, in get
+    return self._cache.get(key, default)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 173, in _cache
+    return self._class(self._servers, **self._options)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 46, in __init__
+    self._client = self._lib.Redis
+AttributeError: module 'redis' has no attribute 'Redis'
+ERROR 2026-01-07 22:17:45,613 django.request log :: Internal Server Error: /social/donation/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 524, in _get_translated_model
+    object = local_cache[language_code]
+KeyError: 'fr'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/social/views/donations.py", line 191, in donation_view
+    return render(request, "social/donation_form.html", {
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1081, in render
+    return render_value_in_context(output, context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1058, in render_value_in_context
+    value = str(value)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/utils.py", line 79, in __str__
+    return self.as_widget()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/boundfield.py", line 108, in as_widget
+    return widget.render(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/widgets.py", line 329, in render
+    context = self.get_context(name, value, attrs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/widgets.py", line 830, in get_context
+    context = super().get_context(name, value, attrs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/widgets.py", line 781, in get_context
+    context["widget"]["optgroups"] = self.optgroups(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/widgets.py", line 721, in optgroups
+    for index, (option_value, option_label) in enumerate(self.choices):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/models.py", line 1425, in __iter__
+    yield self.choice(obj)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/models.py", line 1439, in choice
+    self.field.label_from_instance(obj),
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/models.py", line 1529, in label_from_instance
+    return str(obj)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/about/models/child.py", line 89, in __str__
+    return self.safe_translation_getter('name', any_language=True) or "Enfant sans nom"
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 831, in safe_translation_getter
+    return getattr(self, field)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/fields.py", line 142, in __get__
+    translation = instance._get_translated_model(use_fallback=True, meta=meta)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 545, in _get_translated_model
+    object = get_cached_translation(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/cache.py", line 73, in get_cached_translation
+    values = _get_cached_values(instance, translated_model, language_code, use_fallback)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/cache.py", line 116, in _get_cached_values
+    values = cache.get(key)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 188, in get
+    return self._cache.get(key, default)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 173, in _cache
+    return self._class(self._servers, **self._options)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 46, in __init__
+    self._client = self._lib.Redis
+AttributeError: module 'redis' has no attribute 'Redis'
+ERROR 2026-01-07 22:17:45,640 django.request log :: Internal Server Error: /about/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 524, in _get_translated_model
+    object = local_cache[language_code]
+KeyError: 'fr'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/about/views/about_index.py", line 50, in about_index_view
+    return render(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/library.py", line 381, in render
+    return t.render(new_context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 173, in render
+    return self._render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/defaulttags.py", line 243, in render
+    nodelist.append(node.render_annotated(context))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/defaulttags.py", line 550, in render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1075, in render
+    output = self.filter_expression.resolve(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 749, in resolve
+    new_obj = func(obj, *arg_vals)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/about/templatetags/about_tags.py", line 150, in translate
+    return getter(field, any_language=True)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 831, in safe_translation_getter
+    return getattr(self, field)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/fields.py", line 142, in __get__
+    translation = instance._get_translated_model(use_fallback=True, meta=meta)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 545, in _get_translated_model
+    object = get_cached_translation(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/cache.py", line 73, in get_cached_translation
+    values = _get_cached_values(instance, translated_model, language_code, use_fallback)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/cache.py", line 116, in _get_cached_values
+    values = cache.get(key)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 188, in get
+    return self._cache.get(key, default)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 173, in _cache
+    return self._class(self._servers, **self._options)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 46, in __init__
+    self._client = self._lib.Redis
+AttributeError: module 'redis' has no attribute 'Redis'
+ERROR 2026-01-07 22:17:46,113 django.request log :: Internal Server Error: /about/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 524, in _get_translated_model
+    object = local_cache[language_code]
+KeyError: 'fr'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/about/views/about_index.py", line 50, in about_index_view
+    return render(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/library.py", line 381, in render
+    return t.render(new_context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 173, in render
+    return self._render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/defaulttags.py", line 243, in render
+    nodelist.append(node.render_annotated(context))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/defaulttags.py", line 550, in render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1075, in render
+    output = self.filter_expression.resolve(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 749, in resolve
+    new_obj = func(obj, *arg_vals)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/about/templatetags/about_tags.py", line 150, in translate
+    return getter(field, any_language=True)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 831, in safe_translation_getter
+    return getattr(self, field)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/fields.py", line 142, in __get__
+    translation = instance._get_translated_model(use_fallback=True, meta=meta)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 545, in _get_translated_model
+    object = get_cached_translation(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/cache.py", line 73, in get_cached_translation
+    values = _get_cached_values(instance, translated_model, language_code, use_fallback)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/cache.py", line 116, in _get_cached_values
+    values = cache.get(key)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 188, in get
+    return self._cache.get(key, default)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 173, in _cache
+    return self._class(self._servers, **self._options)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 46, in __init__
+    self._client = self._lib.Redis
+AttributeError: module 'redis' has no attribute 'Redis'
+ERROR 2026-01-07 22:17:46,137 django.request log :: Internal Server Error: /social/donation/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 524, in _get_translated_model
+    object = local_cache[language_code]
+KeyError: 'fr'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/social/views/donations.py", line 191, in donation_view
+    return render(request, "social/donation_form.html", {
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1081, in render
+    return render_value_in_context(output, context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1058, in render_value_in_context
+    value = str(value)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/utils.py", line 79, in __str__
+    return self.as_widget()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/boundfield.py", line 108, in as_widget
+    return widget.render(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/widgets.py", line 329, in render
+    context = self.get_context(name, value, attrs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/widgets.py", line 830, in get_context
+    context = super().get_context(name, value, attrs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/widgets.py", line 781, in get_context
+    context["widget"]["optgroups"] = self.optgroups(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/widgets.py", line 721, in optgroups
+    for index, (option_value, option_label) in enumerate(self.choices):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/models.py", line 1425, in __iter__
+    yield self.choice(obj)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/models.py", line 1439, in choice
+    self.field.label_from_instance(obj),
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/models.py", line 1529, in label_from_instance
+    return str(obj)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/about/models/child.py", line 89, in __str__
+    return self.safe_translation_getter('name', any_language=True) or "Enfant sans nom"
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 831, in safe_translation_getter
+    return getattr(self, field)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/fields.py", line 142, in __get__
+    translation = instance._get_translated_model(use_fallback=True, meta=meta)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 545, in _get_translated_model
+    object = get_cached_translation(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/cache.py", line 73, in get_cached_translation
+    values = _get_cached_values(instance, translated_model, language_code, use_fallback)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/cache.py", line 116, in _get_cached_values
+    values = cache.get(key)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 188, in get
+    return self._cache.get(key, default)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 173, in _cache
+    return self._class(self._servers, **self._options)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 46, in __init__
+    self._client = self._lib.Redis
+AttributeError: module 'redis' has no attribute 'Redis'
+ERROR 2026-01-07 22:17:46,646 django.request log :: Internal Server Error: /about/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 524, in _get_translated_model
+    object = local_cache[language_code]
+KeyError: 'fr'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/about/views/about_index.py", line 50, in about_index_view
+    return render(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/library.py", line 381, in render
+    return t.render(new_context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 173, in render
+    return self._render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/defaulttags.py", line 243, in render
+    nodelist.append(node.render_annotated(context))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/defaulttags.py", line 550, in render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1075, in render
+    output = self.filter_expression.resolve(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 749, in resolve
+    new_obj = func(obj, *arg_vals)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/about/templatetags/about_tags.py", line 150, in translate
+    return getter(field, any_language=True)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 831, in safe_translation_getter
+    return getattr(self, field)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/fields.py", line 142, in __get__
+    translation = instance._get_translated_model(use_fallback=True, meta=meta)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 545, in _get_translated_model
+    object = get_cached_translation(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/cache.py", line 73, in get_cached_translation
+    values = _get_cached_values(instance, translated_model, language_code, use_fallback)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/cache.py", line 116, in _get_cached_values
+    values = cache.get(key)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 188, in get
+    return self._cache.get(key, default)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 173, in _cache
+    return self._class(self._servers, **self._options)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 46, in __init__
+    self._client = self._lib.Redis
+AttributeError: module 'redis' has no attribute 'Redis'
+ERROR 2026-01-07 22:17:46,648 django.request log :: Internal Server Error: /social/donation/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 524, in _get_translated_model
+    object = local_cache[language_code]
+KeyError: 'fr'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/social/views/donations.py", line 191, in donation_view
+    return render(request, "social/donation_form.html", {
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1081, in render
+    return render_value_in_context(output, context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1058, in render_value_in_context
+    value = str(value)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/utils.py", line 79, in __str__
+    return self.as_widget()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/boundfield.py", line 108, in as_widget
+    return widget.render(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/widgets.py", line 329, in render
+    context = self.get_context(name, value, attrs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/widgets.py", line 830, in get_context
+    context = super().get_context(name, value, attrs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/widgets.py", line 781, in get_context
+    context["widget"]["optgroups"] = self.optgroups(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/widgets.py", line 721, in optgroups
+    for index, (option_value, option_label) in enumerate(self.choices):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/models.py", line 1425, in __iter__
+    yield self.choice(obj)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/models.py", line 1439, in choice
+    self.field.label_from_instance(obj),
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/models.py", line 1529, in label_from_instance
+    return str(obj)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/about/models/child.py", line 89, in __str__
+    return self.safe_translation_getter('name', any_language=True) or "Enfant sans nom"
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 831, in safe_translation_getter
+    return getattr(self, field)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/fields.py", line 142, in __get__
+    translation = instance._get_translated_model(use_fallback=True, meta=meta)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 545, in _get_translated_model
+    object = get_cached_translation(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/cache.py", line 73, in get_cached_translation
+    values = _get_cached_values(instance, translated_model, language_code, use_fallback)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/cache.py", line 116, in _get_cached_values
+    values = cache.get(key)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 188, in get
+    return self._cache.get(key, default)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 173, in _cache
+    return self._class(self._servers, **self._options)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 46, in __init__
+    self._client = self._lib.Redis
+AttributeError: module 'redis' has no attribute 'Redis'
+ERROR 2026-01-07 22:17:47,200 django.request log :: Internal Server Error: /social/donation/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 524, in _get_translated_model
+    object = local_cache[language_code]
+KeyError: 'fr'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/social/views/donations.py", line 191, in donation_view
+    return render(request, "social/donation_form.html", {
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1081, in render
+    return render_value_in_context(output, context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1058, in render_value_in_context
+    value = str(value)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/utils.py", line 79, in __str__
+    return self.as_widget()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/boundfield.py", line 108, in as_widget
+    return widget.render(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/widgets.py", line 329, in render
+    context = self.get_context(name, value, attrs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/widgets.py", line 830, in get_context
+    context = super().get_context(name, value, attrs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/widgets.py", line 781, in get_context
+    context["widget"]["optgroups"] = self.optgroups(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/widgets.py", line 721, in optgroups
+    for index, (option_value, option_label) in enumerate(self.choices):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/models.py", line 1425, in __iter__
+    yield self.choice(obj)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/models.py", line 1439, in choice
+    self.field.label_from_instance(obj),
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/models.py", line 1529, in label_from_instance
+    return str(obj)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/about/models/child.py", line 89, in __str__
+    return self.safe_translation_getter('name', any_language=True) or "Enfant sans nom"
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 831, in safe_translation_getter
+    return getattr(self, field)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/fields.py", line 142, in __get__
+    translation = instance._get_translated_model(use_fallback=True, meta=meta)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 545, in _get_translated_model
+    object = get_cached_translation(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/cache.py", line 73, in get_cached_translation
+    values = _get_cached_values(instance, translated_model, language_code, use_fallback)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/cache.py", line 116, in _get_cached_values
+    values = cache.get(key)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 188, in get
+    return self._cache.get(key, default)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 173, in _cache
+    return self._class(self._servers, **self._options)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 46, in __init__
+    self._client = self._lib.Redis
+AttributeError: module 'redis' has no attribute 'Redis'
+ERROR 2026-01-07 22:17:47,333 django.request log :: Internal Server Error: /about/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 524, in _get_translated_model
+    object = local_cache[language_code]
+KeyError: 'fr'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/about/views/about_index.py", line 50, in about_index_view
+    return render(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/library.py", line 381, in render
+    return t.render(new_context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 173, in render
+    return self._render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/defaulttags.py", line 243, in render
+    nodelist.append(node.render_annotated(context))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/defaulttags.py", line 550, in render
+    return self.nodelist.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 1075, in render
+    output = self.filter_expression.resolve(context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/template/base.py", line 749, in resolve
+    new_obj = func(obj, *arg_vals)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/about/templatetags/about_tags.py", line 150, in translate
+    return getter(field, any_language=True)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 831, in safe_translation_getter
+    return getattr(self, field)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/fields.py", line 142, in __get__
+    translation = instance._get_translated_model(use_fallback=True, meta=meta)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 545, in _get_translated_model
+    object = get_cached_translation(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/cache.py", line 73, in get_cached_translation
+    values = _get_cached_values(instance, translated_model, language_code, use_fallback)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/cache.py", line 116, in _get_cached_values
+    values = cache.get(key)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 188, in get
+    return self._cache.get(key, default)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 173, in _cache
+    return self._class(self._servers, **self._options)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/cache/backends/redis.py", line 46, in __init__
+    self._client = self._lib.Redis
+AttributeError: module 'redis' has no attribute 'Redis'
+ERROR 2026-01-07 22:35:07,551 django.security.DisallowedHost log :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+ERROR 2026-01-07 22:35:07,551 django.security.DisallowedHost log :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+ERROR 2026-01-07 22:35:07,563 django.security.DisallowedHost log :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+ERROR 2026-01-07 22:35:07,563 django.security.DisallowedHost log :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+ERROR 2026-01-07 22:35:11,083 django.security.DisallowedHost log :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+ERROR 2026-01-07 22:35:11,083 django.security.DisallowedHost log :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+ERROR 2026-01-07 22:35:11,980 django.security.DisallowedHost log :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+ERROR 2026-01-07 22:35:11,980 django.security.DisallowedHost log :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+ERROR 2026-01-07 22:35:11,996 django.security.DisallowedHost log :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+ERROR 2026-01-07 22:35:11,996 django.security.DisallowedHost log :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+ERROR 2026-01-07 22:37:17,687 django.security.DisallowedHost log :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+ERROR 2026-01-07 22:37:17,687 django.security.DisallowedHost log :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+ERROR 2026-01-07 22:37:18,153 django.security.DisallowedHost log :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+ERROR 2026-01-07 22:37:18,153 django.security.DisallowedHost log :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+ERROR 2026-01-07 22:37:18,885 django.security.DisallowedHost log :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+ERROR 2026-01-07 22:37:18,885 django.security.DisallowedHost log :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+ERROR 2026-01-07 22:37:19,721 django.security.DisallowedHost log :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+ERROR 2026-01-07 22:37:19,721 django.security.DisallowedHost log :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+ERROR 2026-01-07 22:37:20,264 django.security.DisallowedHost log :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+ERROR 2026-01-07 22:37:20,264 django.security.DisallowedHost log :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+ERROR 2026-01-07 22:37:21,007 django.security.DisallowedHost log :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+ERROR 2026-01-07 22:37:21,007 django.security.DisallowedHost log :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+ERROR 2026-01-07 22:37:21,613 django.security.DisallowedHost log :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+ERROR 2026-01-07 22:37:21,613 django.security.DisallowedHost log :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+ERROR 2026-01-07 22:37:22,084 django.security.DisallowedHost log :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+ERROR 2026-01-07 22:37:22,084 django.security.DisallowedHost log :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+ERROR 2026-01-07 22:37:22,958 django.security.DisallowedHost log :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+ERROR 2026-01-07 22:37:22,958 django.security.DisallowedHost log :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+ERROR 2026-01-07 22:40:15,253 django.security.DisallowedHost log :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+ERROR 2026-01-07 22:40:15,253 django.security.DisallowedHost log :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+ERROR 2026-01-07 22:41:54,409 django.security.DisallowedHost log :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+ERROR 2026-01-07 22:41:54,409 django.security.DisallowedHost log :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+ERROR 2026-01-07 22:44:25,541 django.request log :: Internal Server Error: /admin/about/heroblock/1/change/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 719, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/sites.py", line 246, in inner
+    return view(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 1987, in change_view
+    return self.changeform_view(request, object_id, form_url, extra_context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 1843, in changeform_view
+    return self._changeform_view(request, object_id, form_url, extra_context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 1888, in _changeform_view
+    form_validated = form.is_valid()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/forms.py", line 206, in is_valid
+    return self.is_bound and not self.errors
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/forms.py", line 201, in errors
+    self.full_clean()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/forms.py", line 338, in full_clean
+    self._clean_form()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/forms.py", line 354, in _clean_form
+    cleaned_data = self.clean()
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/about/forms/forms.py", line 149, in clean
+    self.clean_image_field(
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/about/forms/forms.py", line 82, in clean_image_field
+    if getattr(f, "size", 0) and f.size > max_bytes:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/fields/files.py", line 77, in size
+    return self.storage.size(self.name)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/files/storage/filesystem.py", line 223, in size
+    return os.path.getsize(self.path(name))
+  File "/usr/lib/python3.10/genericpath.py", line 50, in getsize
+    return os.stat(filename).st_size
+FileNotFoundError: [Errno 2] No such file or directory: '/home/ubuntu/SOGENTIS/config/media/about/hero/cover_sogentis1_5l68AZu.png'
+ERROR 2026-01-07 22:53:09,911 django.request log :: Internal Server Error: /admin/about/heroblock/1/change/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 719, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/sites.py", line 246, in inner
+    return view(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 1987, in change_view
+    return self.changeform_view(request, object_id, form_url, extra_context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 1843, in changeform_view
+    return self._changeform_view(request, object_id, form_url, extra_context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 1888, in _changeform_view
+    form_validated = form.is_valid()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/forms.py", line 206, in is_valid
+    return self.is_bound and not self.errors
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/forms.py", line 201, in errors
+    self.full_clean()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/forms.py", line 338, in full_clean
+    self._clean_form()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/forms.py", line 354, in _clean_form
+    cleaned_data = self.clean()
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/about/forms/forms.py", line 149, in clean
+    self.clean_image_field(
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/about/forms/forms.py", line 82, in clean_image_field
+    if getattr(f, "size", 0) and f.size > max_bytes:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/fields/files.py", line 77, in size
+    return self.storage.size(self.name)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/files/storage/filesystem.py", line 223, in size
+    return os.path.getsize(self.path(name))
+  File "/usr/lib/python3.10/genericpath.py", line 50, in getsize
+    return os.stat(filename).st_size
+FileNotFoundError: [Errno 2] No such file or directory: '/home/ubuntu/SOGENTIS/config/media/about/hero/cover_sogentis1_5l68AZu.png'
+ERROR 2026-01-07 22:53:40,871 django.request log :: Internal Server Error: /admin/about/heroblock/1/change/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 719, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/sites.py", line 246, in inner
+    return view(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 1987, in change_view
+    return self.changeform_view(request, object_id, form_url, extra_context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 1843, in changeform_view
+    return self._changeform_view(request, object_id, form_url, extra_context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 1888, in _changeform_view
+    form_validated = form.is_valid()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/forms.py", line 206, in is_valid
+    return self.is_bound and not self.errors
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/forms.py", line 201, in errors
+    self.full_clean()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/forms.py", line 338, in full_clean
+    self._clean_form()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/forms.py", line 354, in _clean_form
+    cleaned_data = self.clean()
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/about/forms/forms.py", line 149, in clean
+    self.clean_image_field(
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/about/forms/forms.py", line 82, in clean_image_field
+    if getattr(f, "size", 0) and f.size > max_bytes:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/fields/files.py", line 77, in size
+    return self.storage.size(self.name)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/files/storage/filesystem.py", line 223, in size
+    return os.path.getsize(self.path(name))
+  File "/usr/lib/python3.10/genericpath.py", line 50, in getsize
+    return os.stat(filename).st_size
+FileNotFoundError: [Errno 2] No such file or directory: '/home/ubuntu/SOGENTIS/config/media/about/hero/cover_sogentis1_5l68AZu.png'
+ERROR 2026-01-07 22:56:07,355 django.request log :: Internal Server Error: /admin/about/heroblock/1/change/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 719, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/sites.py", line 246, in inner
+    return view(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 1987, in change_view
+    return self.changeform_view(request, object_id, form_url, extra_context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 1843, in changeform_view
+    return self._changeform_view(request, object_id, form_url, extra_context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 1888, in _changeform_view
+    form_validated = form.is_valid()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/forms.py", line 206, in is_valid
+    return self.is_bound and not self.errors
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/forms.py", line 201, in errors
+    self.full_clean()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/forms.py", line 338, in full_clean
+    self._clean_form()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/forms.py", line 354, in _clean_form
+    cleaned_data = self.clean()
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/about/forms/forms.py", line 149, in clean
+    self.clean_image_field(
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/about/forms/forms.py", line 82, in clean_image_field
+    if getattr(f, "size", 0) and f.size > max_bytes:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/fields/files.py", line 77, in size
+    return self.storage.size(self.name)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/files/storage/filesystem.py", line 223, in size
+    return os.path.getsize(self.path(name))
+  File "/usr/lib/python3.10/genericpath.py", line 50, in getsize
+    return os.stat(filename).st_size
+FileNotFoundError: [Errno 2] No such file or directory: '/home/ubuntu/SOGENTIS/config/media/about/hero/cover_sogentis1_5l68AZu.png'
