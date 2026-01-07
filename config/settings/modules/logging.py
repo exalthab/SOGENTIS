@@ -1,37 +1,68 @@
 # config/settings/modules/logging.py
-import os
 from pathlib import Path
-
 from decouple import config
 
-
 # ============================================================
-# 1) BASE_DIR (attendu déjà défini par base.py ; fallback safe)
+# 1) BASE_DIR
 # ============================================================
 BASE_DIR = Path(globals().get("BASE_DIR") or Path(__file__).resolve().parents[3]).resolve()
 
+# ============================================================
+# 2) Paths
+# ============================================================
+DJANGO_DEBUG = config("DEBUG", cast=bool, default=False)
 
-# ============================================================
-# 2) Paths (depuis .env) + valeurs par défaut
-# ============================================================
 LOG_DIR = Path(config("LOG_DIR", default=str(BASE_DIR / "logs"))).resolve()
 LOG_PATH = Path(config("LOG_PATH", default=str(LOG_DIR / "django_error.log"))).resolve()
 DEBUG_LOG_PATH = Path(config("DEBUG_LOG_PATH", default=str(LOG_DIR / "django_debug.log"))).resolve()
 
-DJANGO_DEBUG = config("DEBUG", cast=bool, default=False)
+# ============================================================
+# 3) Handlers dynamiques
+#   - console toujours (journalctl)
+#   - file_error toujours (mais delay=True)
+#   - file_debug uniquement si DEBUG=True
+# ============================================================
+handlers = {
+    "console": {
+        "level": "DEBUG" if DJANGO_DEBUG else "INFO",
+        "class": "logging.StreamHandler",
+        "formatter": "simple",
+    },
+    "file_error": {
+        "level": "ERROR",
+        "class": "logging.handlers.RotatingFileHandler",
+        "filename": str(LOG_PATH),
+        "maxBytes": 10 * 1024 * 1024,
+        "backupCount": 10,
+        "formatter": "verbose",
+        "delay": True,
+    },
+}
 
+if DJANGO_DEBUG:
+    handlers["file_debug"] = {
+        "level": "DEBUG",
+        "class": "logging.handlers.RotatingFileHandler",
+        "filename": str(DEBUG_LOG_PATH),
+        "maxBytes": 10 * 1024 * 1024,
+        "backupCount": 5,
+        "formatter": "verbose",
+        "delay": True,
+    }
+
+django_handlers = ["console", "file_error"] + (["file_debug"] if DJANGO_DEBUG else [])
+root_handlers = ["console", "file_error"] + (["file_debug"] if DJANGO_DEBUG else [])
 
 # ============================================================
-# 3) Configuration LOGGING (déclarative, sans I/O)
+# 4) LOGGING
 # ============================================================
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
 
-    # ---------- FORMATTERS ----------
     "formatters": {
         "verbose": {
-            "format": "{levelname} {asctime} {name} {module} :: {message}",
+            "format": "[{asctime}] {levelname} {name}:{lineno} :: {message}",
             "style": "{",
         },
         "simple": {
@@ -40,49 +71,19 @@ LOGGING = {
         },
     },
 
-    # ---------- HANDLERS ----------
-    "handlers": {
-        # Console
-        "console": {
-            "level": "INFO",
-            "class": "logging.StreamHandler",
-            "formatter": "simple",
-        },
+    "handlers": handlers,
 
-        # Fichier erreurs
-        "file_error": {
-            "level": "ERROR",
-            "class": "logging.handlers.RotatingFileHandler",
-            "filename": str(LOG_PATH),
-            "maxBytes": 10 * 1024 * 1024,  # 10 MB
-            "backupCount": 10,
-            "formatter": "verbose",
-        },
-
-        # Fichier debug (si DEBUG=True)
-        "file_debug": {
-            "level": "DEBUG",
-            "class": "logging.handlers.RotatingFileHandler",
-            "filename": str(DEBUG_LOG_PATH),
-            "maxBytes": 10 * 1024 * 1024,  # 10 MB
-            "backupCount": 5,
-            "formatter": "verbose",
-        },
-    },
-
-    # ---------- LOGGERS ----------
     "loggers": {
         "django": {
-            "handlers": ["console", "file_error"],
-            "level": "ERROR",
-            "propagate": True,
+            "handlers": django_handlers,
+            "level": "DEBUG" if DJANGO_DEBUG else "WARNING",
+            "propagate": False,
         },
         "django.request": {
-            "handlers": ["console", "file_error"],
+            "handlers": django_handlers,
             "level": "ERROR",
             "propagate": False,
         },
-        # SQL uniquement si DEBUG=True
         "django.db.backends": {
             "handlers": ["console"] if DJANGO_DEBUG else [],
             "level": "DEBUG",
@@ -90,22 +91,11 @@ LOGGING = {
         },
     },
 
-    # ---------- ROOT LOGGER ----------
     "root": {
-        "handlers": ["console", "file_error"],
-        "level": "WARNING",
+        "handlers": root_handlers,
+        "level": "INFO" if DJANGO_DEBUG else "WARNING",
     },
 }
-
-
-# ============================================================
-# 4) Ajustements en DEBUG
-# ============================================================
-if DJANGO_DEBUG:
-    # Ajoute le handler debug au root + django
-    LOGGING["root"]["handlers"] = ["console", "file_error", "file_debug"]
-    LOGGING["loggers"]["django"]["handlers"] = ["console", "file_error", "file_debug"]
-    LOGGING["loggers"]["django.request"]["handlers"] = ["console", "file_error", "file_debug"]
 
 
 # ============================================================
