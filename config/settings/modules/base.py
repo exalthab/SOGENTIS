@@ -3,7 +3,7 @@ from pathlib import Path
 from decouple import config, Csv
 from django.core.exceptions import ImproperlyConfigured
 
-BASE_DIR = Path(__file__).resolve().parents[2]
+BASE_DIR = Path(__file__).resolve().parents[3]
 
 DEBUG = config("DEBUG", cast=bool, default=False)
 DJANGO_ENV = config("DJANGO_ENV", default="local").strip().lower()
