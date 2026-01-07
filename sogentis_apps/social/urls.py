@@ -1,5 +1,5 @@
 # social/urls.py
-from django.urls import path
+from django.urls import path, include
 
 from social.views.publication_view import (
     publication_list,
@@ -50,6 +50,10 @@ app_name = "social"
 urlpatterns = [
     # 🌍 Accueil et recherche
     path("", soci_index_view, name="index"),
+    path("", include(("core.urls", "core"), namespace="core")),
+    # path("social/", include(("social.urls", "social"), namespace="social")),
+    path("about/", include(("about.urls", "about"), namespace="about")),
+
     # path("search/", search_view, name="search"),
     # path("search/ajax/", ajax_search, name="ajax_search"),
 

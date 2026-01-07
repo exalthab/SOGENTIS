@@ -1,4 +1,4 @@
-# common/domain_middleware.py
+# common/middlewares/domain_middleware.py
 from django.conf import settings
 
 def _clean_host(raw_host: str) -> str:

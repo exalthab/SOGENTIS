@@ -8,9 +8,12 @@ app_name = "economic"
 urlpatterns = [
     # Page d'accueil du pôle économique
     path("", economic_home_view, name="index"),
+    path("", include(("core.urls", "core"), namespace="core")),
+    # path("economic/", include(("economic.urls", "economic"), namespace="economic")),
+    path("about/", include(("about.urls", "about"), namespace="about")),
 
     # Sous-apps du pôle économique
-    path(_("shop/"), include(("economic.ecommerce.urls", "ecommerce"), namespace="index")),
+    path(_("shop/"), include(("economic.ecommerce.urls", "ecommerce"), namespace="ecommerce")),
     path(_("formations/"), include(("economic.formations.urls", "formations"), namespace="formations")),
     path(_("services/"), include(("economic.services.urls", "services"), namespace="services")),
     path(_("b2b/"), include(("economic.b2b.urls", "b2b"), namespace="b2b")),

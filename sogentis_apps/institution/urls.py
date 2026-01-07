@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 
 from institution.views.index import institution_home_view
 from institution.views.schools import schools_home_view
@@ -13,6 +13,10 @@ app_name = "institution"
 
 urlpatterns = [
     path("", institution_home_view, name="index"),
+    path("", include(("core.urls", "core"), namespace="core")),
+    # path("institution/", include(("institution.urls", "institution"), namespace="institution")),
+    path("about/", include(("about.urls", "about"), namespace="about")),
+    
     path("ecoles/", schools_home_view, name="schools"),
     path("sante/", health_home_view, name="health"),
     path("jeunesse/", youth_home_view, name="youth"),

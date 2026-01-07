@@ -1,42 +1,43 @@
 # config/settings/modules/middleware.py
 
 MIDDLEWARE = [
-    # Sécurité générale (doit être en début de liste)
+    # Sécurité générale
     "django.middleware.security.SecurityMiddleware",
 
-    # Sessions utilisateur
+    # ✅ Cross-domain (FORCE economic sur .com etc.)
+    "common.middlewares.cross_domain_redirect.CrossDomainRedirectMiddleware",
+
+    # ✅ Router multi-domain (URLConf par host)
+    # "config.middlewares.domain_router.DomainRouterMiddleware",
+
+    # Sessions
     "django.contrib.sessions.middleware.SessionMiddleware",
 
-    # Gestion des langues (DOIT être ici)
+    # Langues
     "django.middleware.locale.LocaleMiddleware",
 
-    # ✅ Nouveau: domaines (.com/.org/.sn)
-    "common.domain_middleware.DomainSiteMiddleware",
-
-    # Middleware général Django
+    # Common
     "django.middleware.common.CommonMiddleware",
 
-    # Protection CSRF
+    # CSRF
     "django.middleware.csrf.CsrfViewMiddleware",
 
-    # Authentification (NE PAS déplacer)
+    # Auth
     "django.contrib.auth.middleware.AuthenticationMiddleware",
 
-    # Messages Django
+    # Messages
     "django.contrib.messages.middleware.MessageMiddleware",
 
-    # Protection contre clickjacking
+    # Clickjacking
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 
-    # === ⚠️ Ton tracking middleware (OK) ===
+    # Tracking
     "accounts_users.middleware.users_tracking_middleware.UsersTrackingMiddleware",
 
-    # === ✅ Nouveau : interdiction Dashboard si profil pending/refused ===
-    "common.middleware.ProfileStatusMiddleware",
-    
+    # ✅ Profil pending/refused
+    "common.middlewares.middlewares.ProfileStatusMiddleware",
 ]
 
-# === Bootstrap Messages Tags ===
 from django.contrib.messages import constants as messages
 
 MESSAGE_TAGS = {
@@ -46,6 +47,61 @@ MESSAGE_TAGS = {
     messages.WARNING: "warning",
     messages.ERROR: "danger",
 }
+
+
+
+
+
+# # config/settings/modules/middleware.py
+
+# MIDDLEWARE = [
+#     # Sécurité générale (doit être en début de liste)
+#     "django.middleware.security.SecurityMiddleware",
+#     "common.middlewares.cross_domain_redirect.CrossDomainRedirectMiddleware",
+#     "common.middlewares.domain_router.DomainRouterMiddleware",
+
+#     # Sessions utilisateur
+#     "django.contrib.sessions.middleware.SessionMiddleware",
+
+#     # Gestion des langues (DOIT être ici)
+#     "django.middleware.locale.LocaleMiddleware",
+
+#     # ✅ Nouveau: domaines (.com/.org/.sn)
+#     "common.middlewates.domain_middleware.DomainSiteMiddleware",
+
+#     # Middleware général Django
+#     "django.middleware.common.CommonMiddleware",
+
+#     # Protection CSRF
+#     "django.middleware.csrf.CsrfViewMiddleware",
+
+#     # Authentification (NE PAS déplacer)
+#     "django.contrib.auth.middleware.AuthenticationMiddleware",
+
+#     # Messages Django
+#     "django.contrib.messages.middleware.MessageMiddleware",
+
+#     # Protection contre clickjacking
+#     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+
+#     # === ⚠️ Ton tracking middleware (OK) ===
+#     "accounts_users.middleware.users_tracking_middleware.UsersTrackingMiddleware",
+
+#     # === ✅ Nouveau : interdiction Dashboard si profil pending/refused ===
+#     "common.middlewares.middlewares.ProfileStatusMiddleware",
+    
+# ]
+
+# # === Bootstrap Messages Tags ===
+# from django.contrib.messages import constants as messages
+
+# MESSAGE_TAGS = {
+#     messages.DEBUG: "secondary",
+#     messages.INFO: "info",
+#     messages.SUCCESS: "success",
+#     messages.WARNING: "warning",
+#     messages.ERROR: "danger",
+# }
 
 
 
