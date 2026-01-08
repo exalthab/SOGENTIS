@@ -1,3 +1,4 @@
+# core/services/hcaptcha.py
 from __future__ import annotations
 import json
 import urllib.parse
