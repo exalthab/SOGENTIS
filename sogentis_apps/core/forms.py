@@ -9,6 +9,7 @@ from .models import ContactMessage
 from core.services.turnstile import is_turnstile_enabled, verify_turnstile
 from core.services.hcaptcha import is_hcaptcha_enabled, verify_hcaptcha
 
+from core.services.email_domain_check import domain_accepts_mail
 
 class ContactForm(forms.ModelForm):
     website = forms.CharField(required=False, label="", widget=forms.HiddenInput(attrs={"autocomplete": "off"}))
@@ -43,10 +44,17 @@ class ContactForm(forms.ModelForm):
 
     def clean_email(self):
         email = (self.cleaned_data.get("email") or "").strip().lower()
+
         blocked = set(getattr(settings, "CONTACT_BLOCKED_EMAIL_DOMAINS", []) or [])
         domain = email.split("@")[-1] if "@" in email else ""
+
         if domain and domain in blocked:
             raise forms.ValidationError(_("Merci d’utiliser une adresse email valide (non temporaire)."))
+
+        # ✅ NOUVEAU: domaine doit exister et accepter le mail
+        if domain and not domain_accepts_mail(domain):
+            raise forms.ValidationError(_("Domaine email invalide ou injoignable. Merci de vérifier votre adresse."))
+
         return email
 
     def _looks_suspicious(self) -> bool:

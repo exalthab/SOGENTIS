@@ -8,6 +8,12 @@ from django.urls import reverse
 
 from core.models import ContactMessage
 
+def send_contact_to_admins(contact: ContactMessage) -> int:
+    # 🔒 BLOQUANT: jamais d’email admin tant que ce n’est pas vérifié
+    if contact.status not in {ContactMessage.Status.VERIFIED, ContactMessage.Status.SENT}:
+        return 0
+    ...
+
 
 def _from_email() -> str:
     return (getattr(settings, "CONTACT_FROM_EMAIL", "") or getattr(settings, "DEFAULT_FROM_EMAIL", "") or "").strip()
