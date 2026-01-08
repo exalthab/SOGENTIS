@@ -52,25 +52,18 @@ class ContactForm(forms.ModelForm):
 
     def clean_email(self):
         raw_email = self.cleaned_data.get("email") or ""
-        # Défensive : gérer cas liste ou autre type
         if isinstance(raw_email, (list, tuple)):
             raw_email = raw_email[0] if raw_email else ""
         email = str(raw_email).strip().lower()
 
-        # Vérification des domaines bloqués
         blocked = set(getattr(settings, "CONTACT_BLOCKED_EMAIL_DOMAINS", []) or [])
         domain = email.split("@")[-1] if "@" in email else ""
 
         if domain and domain in blocked:
-            raise forms.ValidationError(
-                _("Merci d’utiliser une adresse email valide (non temporaire).")
-            )
+            raise forms.ValidationError(_("Merci d’utiliser une adresse email valide (non temporaire)."))
 
-        # Vérification que le domaine existe et accepte les mails
         if domain and not domain_accepts_mail(domain):
-            raise forms.ValidationError(
-                _("Domaine email invalide ou injoignable. Merci de vérifier votre adresse.")
-            )
+            raise forms.ValidationError(_("Domaine email invalide ou injoignable. Merci de vérifier votre adresse."))
 
         return email
 
@@ -92,7 +85,6 @@ class ContactForm(forms.ModelForm):
         if mode == "always":
             return True
 
-        # fallback
         need = bool(self.request and self.request.session.get("contact_need_hcaptcha", False))
         if self._looks_suspicious():
             need = True
@@ -105,7 +97,7 @@ class ContactForm(forms.ModelForm):
         # Turnstile (si activé)
         if is_turnstile_enabled():
             token = (self.data.get("cf-turnstile-response") or "").strip()
-            ok, _ = verify_turnstile(token, remoteip=ip)
+            ok, ts_errors = verify_turnstile(token, remoteip=ip)  # ✅ ne pas utiliser "_"
             if not ok:
                 raise forms.ValidationError(
                     _("Vérification anti-spam (Turnstile) échouée. Merci de réessayer."),
@@ -115,7 +107,7 @@ class ContactForm(forms.ModelForm):
         # hCaptcha (si requis)
         if self._require_hcaptcha():
             token = (self.data.get("h-captcha-response") or "").strip()
-            ok, _ = verify_hcaptcha(token, remoteip=ip)
+            ok, hc_errors = verify_hcaptcha(token, remoteip=ip)  # ✅ ne pas utiliser "_"
             if not ok:
                 raise forms.ValidationError(
                     _("Vérification anti-spam (hCaptcha) échouée. Merci de réessayer."),
