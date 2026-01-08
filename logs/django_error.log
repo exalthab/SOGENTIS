@@ -27089,3 +27089,525 @@ Traceback (most recent call last):
   File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
     raise DisallowedHost(msg)
 django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:18:30,374] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:18:59,843] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:19:13,913] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:19:25,644] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:19:40,797] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:19:50,653] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:20:07,553] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:20:15,132] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:20:26,100] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:20:36,583] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:21:00,876] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:21:15,885] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:21:29,361] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:21:53,083] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:22:04,622] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:22:17,167] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:22:42,613] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:22:54,883] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:23:08,152] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:23:18,652] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:23:32,575] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:23:40,571] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:23:51,344] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:24:12,117] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:24:24,454] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:32:11,323] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:40:55,568] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:40:55,984] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:40:56,281] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:40:56,599] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:40:57,034] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:40:57,441] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:40:58,111] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:40:58,422] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:40:58,715] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:40:59,007] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:40:59,318] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:40:59,670] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:40:59,980] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:41:00,290] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:41:00,620] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:41:00,986] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:41:01,381] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:41:02,150] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:41:02,502] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:41:02,786] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:41:04,211] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:41:04,782] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:41:05,092] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:41:05,393] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:41:05,706] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:41:06,000] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:41:06,375] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:41:06,796] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:41:07,126] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 15:41:07,408] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 16:06:42,902] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 16:07:45,345] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
