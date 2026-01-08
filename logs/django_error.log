@@ -24623,3 +24623,2010 @@ Traceback (most recent call last):
   File "/home/ubuntu/SOGENTIS/sogentis_apps/core/forms.py", line 111, in clean
     _("Vérification anti-spam (Turnstile) échouée. Merci de réessayer."),
 TypeError: 'list' object is not callable
+[2026-01-08 13:00:28,909] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:28,916] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:29,140] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:29,143] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:29,186] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:29,206] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:29,264] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:29,429] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:29,500] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:29,526] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:29,577] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:29,579] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:29,635] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:29,801] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:29,849] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:29,851] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:29,923] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:29,924] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:29,926] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:29,980] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:29,982] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:29,985] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:30,054] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:30,104] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:30,155] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:30,157] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:30,158] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:30,208] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:30,226] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:30,295] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:30,351] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:30,366] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:30,404] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:30,455] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:30,512] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:30,514] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:30,515] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:30,565] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:30,616] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:30,673] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:30,674] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:30,689] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:30,752] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:30,749] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:30,779] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:30,781] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:30,798] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:30,840] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:30,854] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:30,895] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:30,950] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:30,968] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:31,005] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:31,007] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:31,022] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:31,024] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:31,069] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:31,118] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:31,180] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:31,230] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:31,233] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:31,236] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:31,237] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:31,241] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:31,248] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:31,253] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:31,283] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:31,285] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:31,344] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:31,400] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:31,470] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:31,474] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:31,505] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:31,508] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:31,512] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:31,560] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:31,558] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:31,565] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:31,562] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:31,631] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:31,685] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:31,720] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:31,723] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:31,747] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:31,779] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:31,854] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:31,896] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:31,909] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:31,914] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:31,916] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:31,949] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:32,002] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:32,006] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:32,059] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:32,114] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:32,116] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:32,166] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:32,170] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:32,168] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:32,186] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:32,277] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:32,280] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:32,294] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:32,335] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:32,387] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:32,389] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:32,393] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:32,441] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:32,458] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:32,461] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:32,502] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:32,508] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:32,555] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:32,553] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:32,605] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:32,607] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:32,662] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:32,678] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:32,721] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:32,720] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:32,724] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:32,789] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:32,792] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:32,829] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:32,886] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:32,884] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:32,900] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:32,938] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:32,995] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:33,007] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:33,049] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:33,048] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:33,054] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:33,053] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:33,052] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:33,175] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:33,241] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:33,244] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:33,275] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:33,329] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:33,332] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:33,348] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:33,386] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:33,384] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:33,441] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:33,443] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:33,496] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:33,498] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:33,512] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:33,568] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:33,572] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:33,609] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:33,681] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:33,685] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:33,719] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:33,735] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:33,770] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:33,790] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:33,826] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:33,883] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:33,881] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:33,931] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:33,934] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:33,989] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:33,992] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:33,996] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:34,046] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:34,045] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:34,116] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:34,187] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:34,190] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:34,224] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:34,226] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:34,258] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:34,261] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:34,262] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:34,366] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:34,369] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:34,371] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:34,373] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:34,438] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:34,441] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:34,481] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:34,482] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:34,543] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:34,553] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:34,559] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:34,583] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:34,696] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:34,698] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:34,700] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:34,694] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:34,764] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:34,767] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:34,770] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:34,797] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:34,799] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:34,800] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:34,872] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:34,964] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:35,014] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:35,174] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:35,384] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:35,593] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:35,798] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:36,004] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:36,218] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:36,423] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:36,631] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:36,840] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:37,048] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:37,253] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:37,465] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:37,671] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:37,877] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:38,090] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:38,298] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:38,503] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:38,713] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:38,922] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:00:44,120] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ov-d6260b.infomaniak.ch'. You may need to add 'ov-d6260b.infomaniak.ch' to ALLOWED_HOSTS.
+[2026-01-08 13:26:09,672] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 13:30:10,528] ERROR django.security.DisallowedHost:253 :: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/common/middlewares/cross_domain_redirect.py", line 61, in __call__
+    host = (request.get_host() or "").split(":")[0].lower()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
