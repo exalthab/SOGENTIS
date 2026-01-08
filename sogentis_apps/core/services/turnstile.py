@@ -12,9 +12,14 @@ TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverif
 
 
 def is_turnstile_enabled() -> bool:
-    return bool(getattr(settings, "TURNSTILE_ENABLED", False)) and bool(
-        (getattr(settings, "TURNSTILE_SECRETKEY", "") or "").strip()
-    )
+    return bool(getattr(settings, "TURNSTILE_ENABLED", False)) and bool(getattr(settings, "TURNSTILE_SECRETKEY", ""))
+
+
+def extract_turnstile_token(post_data) -> str:
+    """
+    Turnstile poste le token dans 'cf-turnstile-response' (standard).
+    """
+    return (post_data.get("cf-turnstile-response") or post_data.get("turnstile_token") or "").strip()
 
 
 def verify_turnstile(token: str, remoteip: Optional[str] = None) -> Tuple[bool, List[str]]:
@@ -25,33 +30,94 @@ def verify_turnstile(token: str, remoteip: Optional[str] = None) -> Tuple[bool, 
     if not token:
         return False, ["missing-input-response"]
 
-    secret = (getattr(settings, "TURNSTILE_SECRETKEY", "") or "").strip()
-    if not secret:
-        return False, ["missing-input-secret"]
-
-    data = {"secret": secret, "response": token}
-
-    # ✅ Ne pas envoyer remoteip par défaut (souvent source d’échec derrière proxy)
-    send_ip = bool(getattr(settings, "TURNSTILE_SEND_REMOTEIP", False))
-    if send_ip and remoteip:
+    data = {"secret": settings.TURNSTILE_SECRETKEY, "response": token}
+    if remoteip:
         data["remoteip"] = remoteip
 
     payload = urllib.parse.urlencode(data).encode("utf-8")
+    timeout = int(getattr(settings, "TURNSTILE_TIMEOUT", 5) or 5)
+
     req = urllib.request.Request(
         TURNSTILE_VERIFY_URL,
         data=payload,
+        headers={
+            "Content-Type": "application/x-www-form-urlencoded",
+            "User-Agent": "sogentis-turnstile/1.0",
+        },
         method="POST",
-        headers={"Content-Type": "application/x-www-form-urlencoded"},
     )
 
-    timeout = int(getattr(settings, "TURNSTILE_TIMEOUT", 5))
     try:
         with urllib.request.urlopen(req, timeout=timeout) as resp:
-            result = json.loads(resp.read().decode("utf-8"))
+            raw = resp.read().decode("utf-8")
+        parsed = json.loads(raw or "{}")
     except Exception:
-        return False, ["network-error"]
+        # réseau/DNS/timeout -> on renvoie un code explicite
+        return False, ["turnstile-unreachable"]
 
-    return bool(result.get("success", False)), (result.get("error-codes") or [])
+    success = bool(parsed.get("success", False))
+    errors = parsed.get("error-codes") or []
+    if success:
+        return True, []
+    return False, [str(e) for e in errors] or ["turnstile-failed"]
+
+
+
+
+# # core/services/turnstile.py
+# from __future__ import annotations
+
+# import json
+# import urllib.parse
+# import urllib.request
+# from typing import Optional, Tuple, List
+
+# from django.conf import settings
+
+# TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify"
+
+
+# def is_turnstile_enabled() -> bool:
+#     return bool(getattr(settings, "TURNSTILE_ENABLED", False)) and bool(
+#         (getattr(settings, "TURNSTILE_SECRETKEY", "") or "").strip()
+#     )
+
+
+# def verify_turnstile(token: str, remoteip: Optional[str] = None) -> Tuple[bool, List[str]]:
+#     if not is_turnstile_enabled():
+#         return True, []
+
+#     token = (token or "").strip()
+#     if not token:
+#         return False, ["missing-input-response"]
+
+#     secret = (getattr(settings, "TURNSTILE_SECRETKEY", "") or "").strip()
+#     if not secret:
+#         return False, ["missing-input-secret"]
+
+#     data = {"secret": secret, "response": token}
+
+#     # ✅ Ne pas envoyer remoteip par défaut (souvent source d’échec derrière proxy)
+#     send_ip = bool(getattr(settings, "TURNSTILE_SEND_REMOTEIP", False))
+#     if send_ip and remoteip:
+#         data["remoteip"] = remoteip
+
+#     payload = urllib.parse.urlencode(data).encode("utf-8")
+#     req = urllib.request.Request(
+#         TURNSTILE_VERIFY_URL,
+#         data=payload,
+#         method="POST",
+#         headers={"Content-Type": "application/x-www-form-urlencoded"},
+#     )
+
+#     timeout = int(getattr(settings, "TURNSTILE_TIMEOUT", 5))
+#     try:
+#         with urllib.request.urlopen(req, timeout=timeout) as resp:
+#             result = json.loads(resp.read().decode("utf-8"))
+#     except Exception:
+#         return False, ["network-error"]
+
+#     return bool(result.get("success", False)), (result.get("error-codes") or [])
 
 
 

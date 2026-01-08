@@ -3,9 +3,12 @@ import dj_database_url
 from decouple import config
 from django.core.exceptions import ImproperlyConfigured
 
-DATABASE_URL = config("DATABASE_URL", default=None)
-if not DATABASE_URL or not DATABASE_URL.strip():
-    raise ImproperlyConfigured("❌ DATABASE_URL est vide ou non défini dans le fichier .env")
+DATABASE_URL = (config("DATABASE_URL", default="") or "").strip()
+
+if not DATABASE_URL:
+    raise ImproperlyConfigured(
+        "❌ DATABASE_URL est vide ou non défini dans le fichier .env"
+    )
 
 DB_SSL_REQUIRE = config("DB_SSL_REQUIRE", cast=bool, default=False)
 
@@ -16,6 +19,30 @@ DATABASES = {
         ssl_require=DB_SSL_REQUIRE,
     )
 }
+
+
+
+
+
+
+# # config/settings/modules/database.py
+# import dj_database_url
+# from decouple import config
+# from django.core.exceptions import ImproperlyConfigured
+
+# DATABASE_URL = config("DATABASE_URL", default=None)
+# if not DATABASE_URL or not DATABASE_URL.strip():
+#     raise ImproperlyConfigured("❌ DATABASE_URL est vide ou non défini dans le fichier .env")
+
+# DB_SSL_REQUIRE = config("DB_SSL_REQUIRE", cast=bool, default=False)
+
+# DATABASES = {
+#     "default": dj_database_url.parse(
+#         DATABASE_URL,
+#         conn_max_age=600,
+#         ssl_require=DB_SSL_REQUIRE,
+#     )
+# }
 
 
 

@@ -1,4 +1,48 @@
-{# core/templates/core/contact.html #}
+{# templates/core/contact.html #}
+{% load i18n static %}
+
+<form method="post" novalidate>
+  {% csrf_token %}
+
+  {{ form.as_p }}
+
+  {# Turnstile (si activé) #}
+  {% if TURNSTILE_SITEKEY %}
+    <div class="mt-3">
+      <div class="cf-turnstile" data-sitekey="{{ TURNSTILE_SITEKEY }}"></div>
+    </div>
+  {% endif %}
+
+  {# hCaptcha UNIQUEMENT si requis (fallback / always décidé côté backend) #}
+  {% if HCAPTCHA_SITEKEY and HCAPTCHA_REQUIRED %}
+    <div class="mt-3">
+      <div class="h-captcha"
+           data-sitekey="{{ HCAPTCHA_SITEKEY }}"
+           data-theme="{{ HCAPTCHA_THEME|default:'light' }}"></div>
+    </div>
+  {% endif %}
+
+  <button type="submit" class="btn btn-primary mt-4">
+    {% trans "Envoyer" %}
+  </button>
+</form>
+
+{# JS Turnstile #}
+{% if TURNSTILE_SITEKEY %}
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+{% endif %}
+
+{# JS hCaptcha #}
+{% if HCAPTCHA_SITEKEY and HCAPTCHA_REQUIRED %}
+  <script src="https://hcaptcha.com/1/api.js" async defer></script>
+{% endif %}
+
+
+
+
+
+
+{% comment %} {# core/templates/core/contact.html #}
 {% extends 'main.html' %}
 {% load static i18n domain_urls language_tags %}
 
@@ -160,7 +204,7 @@
     <script src="https://js.hcaptcha.com/1/api.js?onload=onHCaptchaLoad&render=explicit" async defer></script>
   {% endif %}
 {% endblock %}
-
+ {% endcomment %}
 
 
 
