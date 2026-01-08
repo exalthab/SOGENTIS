@@ -1,3 +1,107 @@
+{# core/templates/core/contact.html #}
+{% extends 'main.html' %}
+{% load static i18n domain_urls language_tags %}
+
+{% block title %}{% trans "Contact" %} | {{ PROJECT_NAME }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'global/css/contact.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="contact-section">
+  <h1>{% trans "Contactez-nous" %}</h1>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="message {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+
+  <form id="contact-form" method="post" class="contact-form" novalidate>
+    {% csrf_token %}
+    {{ form.website }}
+
+    {% if form.non_field_errors %}
+      <div class="form-errors">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <div class="form-group">
+      {{ form.name.label_tag }} {{ form.name }} {{ form.name.errors }}
+    </div>
+    <div class="form-group">
+      {{ form.email.label_tag }} {{ form.email }} {{ form.email.errors }}
+    </div>
+    <div class="form-group">
+      {{ form.message.label_tag }} {{ form.message }} {{ form.message.errors }}
+    </div>
+
+    {% if TURNSTILE_SITEKEY %}
+      <div class="form-group" style="margin-top:12px;">
+        <div class="cf-turnstile" data-sitekey="{{ TURNSTILE_SITEKEY }}"></div>
+      </div>
+      <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    {% endif %}
+
+    {% if HCAPTCHA_SITEKEY and HCAPTCHA_REQUIRED %}
+      <div class="form-group" style="margin-top:12px;">
+        <div id="hcaptcha-container"></div>
+      </div>
+
+      <script>
+        (function () {
+          const form = document.getElementById("contact-form");
+          let widgetId = null;
+          let executing = false;
+
+          window.onHCaptchaLoad = function () {
+            try {
+              widgetId = hcaptcha.render("hcaptcha-container", {
+                sitekey: "{{ HCAPTCHA_SITEKEY }}",
+                theme: "{{ HCAPTCHA_THEME|default:'light' }}",
+                size: "invisible",
+                callback: function () {
+                  if (!executing) return;
+                  executing = false;
+                  form.submit();
+                }
+              });
+            } catch (e) {}
+          };
+
+          document.addEventListener("DOMContentLoaded", function () {
+            if (!form) return;
+            form.addEventListener("submit", function (e) {
+              const tokenEl = form.querySelector('[name="h-captcha-response"]');
+              const token = tokenEl ? (tokenEl.value || "").trim() : "";
+
+              if (token) return;
+              e.preventDefault();
+
+              if (widgetId !== null && !executing) {
+                executing = true;
+                try { hcaptcha.execute(widgetId); } catch (err) { executing = false; }
+              }
+            });
+          });
+        })();
+      </script>
+
+      <script src="https://js.hcaptcha.com/1/api.js?onload=onHCaptchaLoad&render=explicit" async defer></script>
+    {% endif %}
+
+    <p class="text-muted" style="margin-top:10px;">
+      {% trans "Pour éviter les spams, vous devez confirmer votre email avant que votre message soit transmis." %}
+    </p>
+
+    <button type="submit" class="btn-submit">{% trans "Envoyer" %}</button>
+  </form>
+</section>
+{% endblock %}
+
+
+
+{% comment %} {# core/templates/core/contact.html #}
 {% extends 'main.html' %}
 {% load static i18n %}
 
@@ -44,4 +148,4 @@
     <button type="submit" class="btn-submit">{% trans "Envoyer" %}</button>
   </form>
 </section>
-{% endblock %}
+{% endblock %} {% endcomment %}

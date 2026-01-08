@@ -1,0 +1,14 @@
+{# core/templates/core/contact_verify_sent.html #}
+{% extends "main.html" %}
+{% load static i18n domain_urls language_tags %}
+
+{% block title %}{% trans "Confirmation email" %} | {{ PROJECT_NAME }}{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+  <h1 class="mb-3">📩 {% trans "Vérifiez votre email" %}</h1>
+  <p>{% trans "Nous venons de vous envoyer un email de confirmation. Cliquez sur le lien pour valider l’envoi." %}</p>
+  <p class="text-muted">{% trans "Pensez à vérifier vos spams si vous ne trouvez pas l’email." %}</p>
+</section>
+{% endblock %}
+

@@ -1,0 +1,8 @@
+{% load i18n %}
+{% trans "Bonjour" %} {{ contact.name }}
+
+{% trans "Pour confirmer votre email et envoyer votre message, cliquez :" %}
+{{ verify_url }}
+
+{% trans "Votre message" %} :
+{{ contact.message }}

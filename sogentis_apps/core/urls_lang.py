@@ -1,3 +1,4 @@
+# core/urls_lang.py
 from django.urls import path
 from .views.lang import switch_language, force_language
 

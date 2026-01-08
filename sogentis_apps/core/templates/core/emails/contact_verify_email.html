@@ -1,0 +1,8 @@
+{# core/templates/core/emails/contact_verify_email.html #}
+{% load static i18n domain_urls language_tags %}
+<p>{% trans "Bonjour" %} {{ contact.name }},</p>
+<p>{% trans "Merci. Pour confirmer votre email et envoyer votre message, cliquez :" %}</p>
+<p><a href="{{ verify_url }}">{{ verify_url }}</a></p>
+<hr>
+<p><strong>{% trans "Votre message" %} :</strong><br>{{ contact.message|linebreaksbr }}</p>
+

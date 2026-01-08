@@ -1,0 +1,8 @@
+{# core/templates/core/emails/contact_admin_notification.html #}
+{% load static i18n domain_urls language_tags %}
+<h2>{% trans "Nouveau message de contact (email vérifié)" %}</h2>
+<p><strong>{% trans "Nom" %} :</strong> {{ contact.name }}</p>
+<p><strong>{% trans "Email" %} :</strong> {{ contact.email }}</p>
+<p><strong>{% trans "IP" %} :</strong> {{ contact.sender_ip|default:"-" }}</p>
+<hr>
+<p><strong>{% trans "Message" %} :</strong><br>{{ contact.message|linebreaksbr }}</p>

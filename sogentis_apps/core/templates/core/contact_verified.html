@@ -1,0 +1,23 @@
+{# core/templates/core/contact_verified.html #}
+{% extends "main.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Message confirmé" %} | {{ PROJECT_NAME }}{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+  {% if already %}
+    <h1 class="mb-3">✅ {% trans "Déjà confirmé" %}</h1>
+    <p>{% trans "Ce lien a déjà été utilisé." %}</p>
+  {% else %}
+    <h1 class="mb-3">✅ {% trans "Merci !" %}</h1>
+    {% if sent %}
+      <p>{% trans "Votre email est vérifié. Votre message a été transmis à notre équipe." %}</p>
+    {% else %}
+      <p>{% trans "Votre email est vérifié. La transmission à l’équipe sera finalisée très bientôt." %}</p>
+    {% endif %}
+  {% endif %}
+</section>
+{% endblock %}
+
+

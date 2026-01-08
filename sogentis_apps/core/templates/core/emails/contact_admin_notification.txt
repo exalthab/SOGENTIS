@@ -1,0 +1,9 @@
+{% load i18n %}
+{% trans "Nouveau message de contact (email vérifié)" %}
+
+{% trans "Nom" %}: {{ contact.name }}
+{% trans "Email" %}: {{ contact.email }}
+{% trans "IP" %}: {{ contact.sender_ip|default:"-" }}
+
+{% trans "Message" %}:
+{{ contact.message }}
