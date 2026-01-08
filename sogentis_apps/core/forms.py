@@ -12,6 +12,7 @@ from core.services.email_domain_check import domain_accepts_mail
 
 
 class ContactForm(forms.ModelForm):
+    # Honeypot anti-bot (doit rester vide)
     website = forms.CharField(
         required=False,
         label="",
@@ -33,9 +34,12 @@ class ContactForm(forms.ModelForm):
         labels = {
             "name": _("Nom"),
             "email": _("Email"),
-            "message": _("Message")
+            "message": _("Message"),
         }
 
+    # -----------------------------
+    # Helpers
+    # -----------------------------
     def _client_ip(self) -> str | None:
         if not self.request:
             return None
@@ -45,6 +49,39 @@ class ContactForm(forms.ModelForm):
         ip = (self.request.META.get("REMOTE_ADDR") or "").strip()
         return ip or None
 
+    def _looks_suspicious(self) -> bool:
+        msg = (self.data.get("message") or "").lower()
+        links = msg.count("http://") + msg.count("https://") + msg.count("www.")
+        if links >= 2:
+            return True
+        spam_words = ("seo", "backlink", "casino", "crypto", "loan", "viagra")
+        return any(w in msg for w in spam_words)
+
+    def _require_hcaptcha(self) -> bool:
+        """
+        Modes:
+          - off: jamais
+          - always: toujours
+          - fallback: seulement si session flag ou heuristique
+        """
+        if not is_hcaptcha_enabled():
+            return False
+
+        mode = (getattr(settings, "CONTACT_HCAPTCHA_MODE", "fallback") or "fallback").strip().lower()
+        if mode == "off":
+            return False
+        if mode == "always":
+            return True
+
+        # fallback
+        need = bool(self.request and self.request.session.get("contact_need_hcaptcha", False))
+        if self._looks_suspicious():
+            need = True
+        return need
+
+    # -----------------------------
+    # Field cleans
+    # -----------------------------
     def clean_website(self):
         if (self.cleaned_data.get("website") or "").strip():
             raise forms.ValidationError(_("Requête invalide."))
@@ -62,36 +99,32 @@ class ContactForm(forms.ModelForm):
         if domain and domain in blocked:
             raise forms.ValidationError(_("Merci d’utiliser une adresse email valide (non temporaire)."))
 
+        # Vérification DNS (MX/A/AAAA)
         if domain and not domain_accepts_mail(domain):
             raise forms.ValidationError(_("Domaine email invalide ou injoignable. Merci de vérifier votre adresse."))
 
         return email
 
-    def _looks_suspicious(self) -> bool:
-        msg = (self.data.get("message") or "").lower()
-        links = msg.count("http://") + msg.count("https://") + msg.count("www.")
-        if links >= 2:
-            return True
-        spam_words = ("seo", "backlink", "casino", "crypto", "loan", "viagra")
-        return any(w in msg for w in spam_words)
-
-    def _require_hcaptcha(self) -> bool:
-        if not is_hcaptcha_enabled():
-            return False
-
-        mode = (getattr(settings, "CONTACT_HCAPTCHA_MODE", "fallback") or "fallback").lower()
-        if mode == "off":
-            return False
-        if mode == "always":
-            return True
-
-        need = bool(self.request and self.request.session.get("contact_need_hcaptcha", False))
-        if self._looks_suspicious():
-            need = True
-        return need
-
+    # -----------------------------
+    # Form clean (captcha AFTER valid fields)
+    # -----------------------------
     def clean(self):
         cleaned = super().clean()
+
+        # ✅ IMPORTANT:
+        # Django appelle clean() même si des champs sont invalides/vides.
+        # On ne déclenche pas captcha si name/email/message ont déjà des erreurs.
+        required_fields = ("name", "email", "message")
+        errors = getattr(self, "_errors", None) or {}
+        if any(field in errors for field in required_fields):
+            return cleaned
+
+        # Si un champ requis est vide (sécurité UX), on skip captcha
+        for f in required_fields:
+            val = cleaned.get(f)
+            if val is None or (isinstance(val, str) and not val.strip()):
+                return cleaned
+
         ip = self._client_ip()
 
         # Turnstile (si activé)
@@ -101,7 +134,7 @@ class ContactForm(forms.ModelForm):
             if not ok:
                 raise forms.ValidationError(
                     _("Vérification anti-spam (Turnstile) échouée. Merci de réessayer."),
-                    code="turnstile_failed"
+                    code="turnstile_failed",
                 )
 
         # hCaptcha (si requis)
@@ -111,7 +144,7 @@ class ContactForm(forms.ModelForm):
             if not ok:
                 raise forms.ValidationError(
                     _("Vérification anti-spam (hCaptcha) échouée. Merci de réessayer."),
-                    code="hcaptcha_failed"
+                    code="hcaptcha_failed",
                 )
 
         return cleaned
