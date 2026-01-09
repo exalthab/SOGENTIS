@@ -5,7 +5,7 @@
 {% block title %}{% trans "Contact" %}{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'core/css/contact.css' %}">
+<link rel="stylesheet" href="{% static 'core/css/contact_form.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -84,7 +84,7 @@
 {% if HCAPTCHA_ENABLED and HCAPTCHA_SITEKEY %}
 <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
 {% endif %}
-<script src="{% static 'core/js/contact.js' %}" defer></script>
+<script src="{% static 'core/js/contact_form.js' %}" defer></script>
 {% endblock %}
 
 
