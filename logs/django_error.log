@@ -27674,3 +27674,13 @@ Traceback (most recent call last):
   File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/http/request.py", line 191, in get_host
     raise DisallowedHost(msg)
 django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '83.228.198.102'. You may need to add '83.228.198.102' to ALLOWED_HOSTS.
+[2026-01-08 21:49:53,388] ERROR core.views.views:65 :: Erreur lors de l'envoi du mail de contact
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/core/views/views.py", line 51, in contact_view
+    send_mail(
+TypeError: send_mail() got an unexpected keyword argument 'reply_to'
+[2026-01-08 21:49:58,118] ERROR core.views.views:65 :: Erreur lors de l'envoi du mail de contact
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/core/views/views.py", line 51, in contact_view
+    send_mail(
+TypeError: send_mail() got an unexpected keyword argument 'reply_to'
