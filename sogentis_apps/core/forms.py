@@ -2,122 +2,35 @@
 from __future__ import annotations
 
 from django import forms
-from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
-from .models import ContactMessage
-from core.services.turnstile import is_turnstile_enabled, verify_turnstile
-from core.services.hcaptcha import is_hcaptcha_enabled, verify_hcaptcha
-from core.services.email_domain_check import domain_accepts_mail
+from core.services.email_domain_check import is_email_domain_allowed
 
 
-class ContactForm(forms.ModelForm):
-    website = forms.CharField(
-        required=False,
-        label="",
-        widget=forms.HiddenInput(attrs={"autocomplete": "off"})
+class ContactForm(forms.Form):
+    name = forms.CharField(
+        label=_("Nom"),
+        max_length=255,
+        widget=forms.TextInput(attrs={"class": "form-control", "autocomplete": "name"}),
+    )
+    email = forms.EmailField(
+        label=_("Email"),
+        widget=forms.EmailInput(attrs={"class": "form-control", "autocomplete": "email"}),
+    )
+    message = forms.CharField(
+        label=_("Message"),
+        widget=forms.Textarea(attrs={"class": "form-control", "rows": 6}),
     )
 
-    def __init__(self, *args, request=None, **kwargs):
-        self.request = request
-        super().__init__(*args, **kwargs)
-
-    class Meta:
-        model = ContactMessage
-        fields = ("name", "email", "message")
-        widgets = {
-            "name": forms.TextInput(attrs={"autocomplete": "name"}),
-            "email": forms.EmailInput(attrs={"autocomplete": "email"}),
-            "message": forms.Textarea(attrs={"rows": 6}),
-        }
-        labels = {"name": _("Nom"), "email": _("Email"), "message": _("Message")}
-
-    def _client_ip(self) -> str | None:
-        if not self.request:
-            return None
-        xff = self.request.META.get("HTTP_X_FORWARDED_FOR", "")
-        if xff:
-            return xff.split(",")[0].strip()
-        return (self.request.META.get("REMOTE_ADDR") or "").strip() or None
-
-    def clean_website(self):
-        if (self.cleaned_data.get("website") or "").strip():
-            raise forms.ValidationError(_("Requête invalide."))
-        return ""
-
-    def clean_email(self):
-        raw_email = self.cleaned_data.get("email") or ""
-        if isinstance(raw_email, (list, tuple)):
-            raw_email = raw_email[0] if raw_email else ""
-        email = str(raw_email).strip().lower()
-
-        blocked = set(getattr(settings, "CONTACT_BLOCKED_EMAIL_DOMAINS", []) or [])
-        domain = email.split("@")[-1] if "@" in email else ""
-
-        if domain and domain in blocked:
-            raise forms.ValidationError(_("Merci d’utiliser une adresse email valide (non temporaire)."))
-
-        if domain and not domain_accepts_mail(domain):
-            raise forms.ValidationError(_("Domaine email invalide ou injoignable. Merci de vérifier votre adresse."))
-
+    def clean_email(self) -> str:
+        email = (self.cleaned_data.get("email") or "").strip()
+        ok, reason = is_email_domain_allowed(email)
+        if not ok:
+            raise forms.ValidationError(
+                _("Adresse email refusée. Merci d’utiliser une adresse valide."),
+                code=reason or "invalid-email-domain",
+            )
         return email
-
-    def _looks_suspicious(self) -> bool:
-        msg = (self.data.get("message") or "").lower()
-        links = msg.count("http://") + msg.count("https://") + msg.count("www.")
-        if links >= 2:
-            return True
-        spam_words = ("seo", "backlink", "casino", "crypto", "loan", "viagra")
-        return any(w in msg for w in spam_words)
-
-    def _require_hcaptcha(self) -> bool:
-        if not is_hcaptcha_enabled():
-            return False
-        mode = (getattr(settings, "CONTACT_HCAPTCHA_MODE", "fallback") or "fallback").lower()
-        if mode in ("off",):
-            return False
-        if mode == "always":
-            return True
-        # fallback
-        need = bool(self.request and self.request.session.get("contact_need_hcaptcha", False))
-        if self._looks_suspicious():
-            need = True
-        return need
-
-    def clean(self):
-        cleaned = super().clean()
-
-        # ❌ Si les champs requis sont invalides, ne pas lancer captcha
-        required_fields = ("name", "email", "message")
-        if any(f in self.errors for f in required_fields):
-            return cleaned
-        if any(not (cleaned.get(f) or "").strip() for f in required_fields):
-            return cleaned
-
-        ip = self._client_ip()
-
-        # ✅ hCaptcha fallback
-        if self._require_hcaptcha():
-            token = (self.data.get("h-captcha-response") or "").strip()
-            ok, _errors = verify_hcaptcha(token, remoteip=ip)
-            if not ok:
-                raise forms.ValidationError(
-                    _("Vérification anti-spam (hCaptcha) échouée. Merci de réessayer."),
-                    code="hcaptcha_failed",
-                )
-            return cleaned
-
-        # Turnstile (si activé)
-        if is_turnstile_enabled():
-            token = (self.data.get("cf-turnstile-response") or "").strip()
-            ok, _errors = verify_turnstile(token, remoteip=ip)
-            if not ok:
-                raise forms.ValidationError(
-                    _("Vérification anti-spam (Turnstile) échouée. Merci de réessayer."),
-                    code="turnstile_failed",
-                )
-
-        return cleaned
 
 
 

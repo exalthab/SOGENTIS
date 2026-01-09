@@ -1,8 +1,30 @@
+{% load static i18n language_tags domain_urls %}
+
 {% load i18n %}
+{% blocktrans with name=contact.name %}
+Bonjour {{ name }},
+
+Merci pour votre message.
+{% endblocktrans %}
+
+{% trans "Veuillez vérifier votre adresse email en cliquant sur ce lien :" %}
+{{ verify_url }}
+
+{% trans "Si vous n’êtes pas à l’origine de cette demande, ignorez cet email." %}
+
+
+
+
+
+
+
+
+
+{% comment %} {% load i18n %}
 {% trans "Bonjour" %} {{ contact.name }}
 
 {% trans "Pour confirmer votre email et envoyer votre message, cliquez :" %}
 {{ verify_url }}
 
 {% trans "Votre message" %} :
-{{ contact.message }}
+{{ contact.message }} {% endcomment %}

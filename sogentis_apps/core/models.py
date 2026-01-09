@@ -1,4 +1,3 @@
-# core/models.py
 from __future__ import annotations
 
 import uuid
@@ -38,7 +37,7 @@ class ContactMessage(models.Model):
     token_expires_at = models.DateTimeField(_("Expiration du token"), null=True, blank=True)
 
     verified_at = models.DateTimeField(_("Vérifié le"), null=True, blank=True)
-    sent_at = models.DateTimeField(_("Transmis le"), null=True, blank=True)
+    sent_at = models.DateTimeField(_("Transmis à l'équipe"), null=True, blank=True)
 
     sender_ip = models.GenericIPAddressField(_("IP expéditeur"), null=True, blank=True)
     user_agent = models.CharField(_("User agent"), max_length=512, blank=True)
@@ -57,14 +56,12 @@ class ContactMessage(models.Model):
     def __str__(self) -> str:
         return f"{self.name} <{self.email}> - {self.created_at:%d/%m/%Y %H:%M}"
 
-    # -------------------------------------------------
-    # Métier
-    # -------------------------------------------------
+    def save(self, *args, **kwargs):
+        if self.status == self.Status.PENDING and (not self.token_expires_at):
+            self.token_expires_at = timezone.now() + timedelta(hours=24)
+        super().save(*args, **kwargs)
 
     def ensure_expiry(self, hours: int = 24, save: bool = True) -> None:
-        """
-        Assure qu’un token a une expiration valide.
-        """
         now = timezone.now()
         if not self.token_expires_at or self.token_expires_at <= now:
             self.token_expires_at = now + timedelta(hours=hours)
@@ -72,12 +69,6 @@ class ContactMessage(models.Model):
                 self.save(update_fields=["token_expires_at"])
 
     def is_token_valid(self) -> bool:
-        """
-        Token valide uniquement si:
-        - message en attente
-        - expiration définie
-        - pas expiré
-        """
         if self.status != self.Status.PENDING:
             return False
         if not self.token_expires_at:
@@ -86,21 +77,14 @@ class ContactMessage(models.Model):
 
     @property
     def is_verified(self) -> bool:
-        """
-        VERIFIED ou SENT = email vérifié
-        """
         return self.status in {self.Status.VERIFIED, self.Status.SENT}
 
     def rotate_token(self, hours: int = 24, save: bool = True) -> None:
-        """
-        Génère un nouveau token et remet l’état à PENDING.
-        """
         self.verify_token = uuid.uuid4()
         self.token_expires_at = timezone.now() + timedelta(hours=hours)
         self.status = self.Status.PENDING
         self.verified_at = None
         self.sent_at = None
-
         if save:
             self.save(
                 update_fields=[
@@ -111,6 +95,24 @@ class ContactMessage(models.Model):
                     "sent_at",
                 ]
             )
+
+    def mark_verified(self, save: bool = True) -> None:
+        self.status = self.Status.VERIFIED
+        self.verified_at = timezone.now()
+        if save:
+            self.save(update_fields=["status", "verified_at"])
+
+    def mark_sent(self, save: bool = True) -> None:
+        self.status = self.Status.SENT
+        self.sent_at = timezone.now()
+        if save:
+            self.save(update_fields=["status", "sent_at"])
+
+    def mark_rejected(self, save: bool = True) -> None:
+        self.status = self.Status.REJECTED
+        if save:
+            self.save(update_fields=["status"])
+
 
 
 
@@ -174,36 +176,60 @@ class ContactMessage(models.Model):
 #     def __str__(self) -> str:
 #         return f"{self.name} <{self.email}> - {self.created_at:%d/%m/%Y %H:%M}"
 
+#     # -------------------------------------------------
+#     # Métier
+#     # -------------------------------------------------
+
 #     def ensure_expiry(self, hours: int = 24, save: bool = True) -> None:
-#         if not self.token_expires_at:
-#             self.token_expires_at = timezone.now() + timedelta(hours=hours)
+#         """
+#         Assure qu’un token a une expiration valide.
+#         """
+#         now = timezone.now()
+#         if not self.token_expires_at or self.token_expires_at <= now:
+#             self.token_expires_at = now + timedelta(hours=hours)
 #             if save:
 #                 self.save(update_fields=["token_expires_at"])
 
 #     def is_token_valid(self) -> bool:
-#         return (
-#             self.status == self.Status.PENDING
-#             and self.token_expires_at is not None
-#             and timezone.now() <= self.token_expires_at
-#         )
+#         """
+#         Token valide uniquement si:
+#         - message en attente
+#         - expiration définie
+#         - pas expiré
+#         """
+#         if self.status != self.Status.PENDING:
+#             return False
+#         if not self.token_expires_at:
+#             return False
+#         return timezone.now() <= self.token_expires_at
 
 #     @property
 #     def is_verified(self) -> bool:
-#         return self.status == self.Status.VERIFIED
+#         """
+#         VERIFIED ou SENT = email vérifié
+#         """
+#         return self.status in {self.Status.VERIFIED, self.Status.SENT}
 
 #     def rotate_token(self, hours: int = 24, save: bool = True) -> None:
+#         """
+#         Génère un nouveau token et remet l’état à PENDING.
+#         """
 #         self.verify_token = uuid.uuid4()
 #         self.token_expires_at = timezone.now() + timedelta(hours=hours)
 #         self.status = self.Status.PENDING
 #         self.verified_at = None
 #         self.sent_at = None
+
 #         if save:
-#             self.save(update_fields=["verify_token", "token_expires_at", "status", "verified_at", "sent_at"])
-
-
-
-
-
+#             self.save(
+#                 update_fields=[
+#                     "verify_token",
+#                     "token_expires_at",
+#                     "status",
+#                     "verified_at",
+#                     "sent_at",
+#                 ]
+#             )
 
 
 # # core/models.py

@@ -1,595 +1,93 @@
 {# templates/core/contact.html #}
-{% load static i18n domain_urls language_tags %}
+{% extends "main.html" %}
+{% load static i18n language_tags domain_urls %}
 
-<form method="post" novalidate>
-  {% csrf_token %}
-
-  {{ form.as_p }}
-
-  {# Turnstile (si activé) #}
-  {% if TURNSTILE_SITEKEY %}
-    <div class="mt-3">
-      <div class="cf-turnstile" data-sitekey="{{ TURNSTILE_SITEKEY }}"></div>
-    </div>
-  {% endif %}
-
-  {# hCaptcha (fallback/always) — intégré dans le même formulaire #}
-  {% if HCAPTCHA_SITEKEY and HCAPTCHA_REQUIRED %}
-    <div class="mt-3">
-      {# ✅ Ton bloc, mais sans second form #}
-      <div class="h-captcha" data-sitekey="{{ HCAPTCHA_SITEKEY }}"></div>
-    </div>
-  {% endif %}
-
-  <button type="submit" class="btn btn-primary mt-4">
-    {% trans "Envoyer" %}
-  </button>
-</form>
-
-{# JS Turnstile #}
-{% if TURNSTILE_SITEKEY %}
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-{% endif %}
-
-{# JS hCaptcha (tu utilises js.hcaptcha.com ou hcaptcha.com/1/api.js, les 2 marchent) #}
-{% if HCAPTCHA_SITEKEY and HCAPTCHA_REQUIRED %}
-  <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
-{% endif %}
-
-
-
-
-
-
-{% comment %} {# templates/core/contact.html #}
-{% load static i18n domain_urls language_tags %}
-
-<form method="post" novalidate>
-  {% csrf_token %}
-
-  {{ form.as_p }}
-
-  {# Turnstile (si activé) #}
-  {% if TURNSTILE_SITEKEY %}
-    <div class="mt-3">
-      <div class="cf-turnstile" data-sitekey="{{ TURNSTILE_SITEKEY }}"></div>
-    </div>
-  {% endif %}
-
-  {# hCaptcha uniquement si requis (fallback / always côté backend) #}
-  {% if HCAPTCHA_SITEKEY and HCAPTCHA_REQUIRED %}
-    <div class="mt-3">
-      <div class="h-captcha"
-           data-sitekey="{{ HCAPTCHA_SITEKEY }}"
-           data-theme="{{ HCAPTCHA_THEME|default:'light' }}"></div>
-    </div>
-  {% endif %}
-
-  <button type="submit" class="btn btn-primary mt-4">
-    {% trans "Envoyer" %}
-  </button>
-</form>
-
-{# JS Turnstile #}
-{% if TURNSTILE_SITEKEY %}
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-{% endif %}
-
-{# JS hCaptcha #}
-{% if HCAPTCHA_SITEKEY and HCAPTCHA_REQUIRED %}
-  <script src="https://hcaptcha.com/1/api.js" async defer></script>
-{% endif %}
- {% endcomment %}
-
-
-
-
-
-
-{% comment %} {# templates/core/contact.html #}
-{% load static i18n domain_urls language_tags %}
-
-<form method="post" novalidate>
-  {% csrf_token %}
-
-  {{ form.as_p }}
-
-  {# Turnstile (si activé) #}
-  {% if TURNSTILE_SITEKEY %}
-    <div class="mt-3">
-      <div class="cf-turnstile" data-sitekey="{{ TURNSTILE_SITEKEY }}"></div>
-    </div>
-  {% endif %}
-
-  {# hCaptcha UNIQUEMENT si requis (fallback / always décidé côté backend) #}
-  {% if HCAPTCHA_SITEKEY and HCAPTCHA_REQUIRED %}
-    <div class="mt-3">
-      <div class="h-captcha"
-           data-sitekey="{{ HCAPTCHA_SITEKEY }}"
-           data-theme="{{ HCAPTCHA_THEME|default:'light' }}"></div>
-    </div>
-  {% endif %}
-
-  <button type="submit" class="btn btn-primary mt-4">
-    {% trans "Envoyer" %}
-  </button>
-</form>
-
-{# JS Turnstile #}
-{% if TURNSTILE_SITEKEY %}
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-{% endif %}
-
-{# JS hCaptcha #}
-{% if HCAPTCHA_SITEKEY and HCAPTCHA_REQUIRED %}
-  <script src="https://hcaptcha.com/1/api.js" async defer></script>
-{% endif %}
-<form method="POST">
-  <div class="h-captcha" data-sitekey="b1a21d22-b702-4b8c-8b2c-f23ef936a12c"></div>
-  <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
-</form>
- {% endcomment %}
-
-
-
-
-
-{% comment %} {# core/templates/core/contact.html #}
-{% extends 'main.html' %}
-{% load static i18n domain_urls language_tags %}
-
-{% block title %}{% trans "Contact" %} | {{ PROJECT_NAME }}{% endblock %}
+{% block title %}{% trans "Contact" %}{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'global/css/contact.css' %}">
+<link rel="stylesheet" href="{% static 'core/css/contact.css' %}">
 {% endblock %}
 
 {% block content %}
-<section class="contact-section">
-  <h1>{% trans "Contactez-nous" %}</h1>
+<section class="contact-wrap">
+  <div class="contact-card">
+    <header class="contact-head">
+      <h1 class="contact-title">{% trans "Contact" %}</h1>
+      <p class="contact-subtitle">
+        {% trans "Envoyez-nous un message et nous vous répondrons dès que possible." %}
+      </p>
+    </header>
 
-  {% if messages %}
-    {% for message in messages %}
-      <div class="message {{ message.tags }}">{{ message }}</div>
-    {% endfor %}
-  {% endif %}
-
-  <form id="contact-form" method="post" class="contact-form" novalidate>
-    {% csrf_token %}
-    {{ form.website }}
-
-    {% if form.non_field_errors %}
-      <div class="form-errors">{{ form.non_field_errors }}</div>
-    {% endif %}
-
-    <div class="form-group">
-      {{ form.name.label_tag }} {{ form.name }} {{ form.name.errors }}
-    </div>
-    <div class="form-group">
-      {{ form.email.label_tag }} {{ form.email }} {{ form.email.errors }}
-    </div>
-    <div class="form-group">
-      {{ form.message.label_tag }} {{ form.message }} {{ form.message.errors }}
-    </div>
-
-    {% if TURNSTILE_SITEKEY %}
-      <div class="form-group" style="margin-top:12px;">
-        <div id="turnstile-container"></div>
-        <div id="turnstile-status" class="form-hint" style="display:none;margin-top:8px;"></div>
+    {% if messages %}
+      <div class="contact-messages" aria-live="polite">
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags|default:'info' }}">{{ message }}</div>
+        {% endfor %}
       </div>
     {% endif %}
 
-    {% if HCAPTCHA_SITEKEY and HCAPTCHA_REQUIRED %}
-      <div class="form-group" style="margin-top:12px;">
-        <div id="hcaptcha-container"></div>
+    <form method="post" class="contact-form" novalidate>
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="alert alert-error">
+          {{ form.non_field_errors }}
+        </div>
+      {% endif %}
+
+      <div class="grid">
+        <div class="field">
+          <label for="{{ form.name.id_for_label }}">{% trans "Nom" %}</label>
+          {{ form.name }}
+          {% if form.name.errors %}<div class="field-error">{{ form.name.errors }}</div>{% endif %}
+        </div>
+
+        <div class="field">
+          <label for="{{ form.email.id_for_label }}">{% trans "Email" %}</label>
+          {{ form.email }}
+          {% if form.email.errors %}<div class="field-error">{{ form.email.errors }}</div>{% endif %}
+        </div>
       </div>
-    {% endif %}
 
-    <p class="text-muted" style="margin-top:10px;">
-      {% trans "Pour éviter les spams, vous devez confirmer votre email avant que votre message soit transmis." %}
-    </p>
+      <div class="field">
+        <label for="{{ form.message.id_for_label }}">{% trans "Message" %}</label>
+        {{ form.message }}
+        {% if form.message.errors %}<div class="field-error">{{ form.message.errors }}</div>{% endif %}
+      </div>
 
-    <button id="contact-submit" type="submit" class="btn-submit">{% trans "Envoyer" %}</button>
-  </form>
+      {% if HCAPTCHA_ENABLED and HCAPTCHA_SITEKEY %}
+        <div class="captcha-wrap">
+          <div class="h-captcha" data-sitekey="{{ HCAPTCHA_SITEKEY }}"></div>
+          <small class="captcha-hint"
+                 data-i18n-default="{% trans 'Veuillez compléter le captcha avant d’envoyer.' %}">
+            {% trans "Veuillez compléter le captcha avant d’envoyer." %}
+          </small>
+        </div>
+      {% endif %}
+
+      <div class="actions">
+        <button type="submit"
+                class="btn btn-primary"
+                id="contactSubmit"
+                data-i18n-sending="{% trans 'Envoi…' %}">
+          <span class="btn-text">{% trans "Envoyer" %}</span>
+          <span class="btn-spinner" aria-hidden="true"></span>
+        </button>
+      </div>
+    </form>
+  </div>
 </section>
 {% endblock %}
 
 {% block extra_js %}
-  {% if TURNSTILE_SITEKEY %}
-    <script>
-      (function () {
-        const form = document.getElementById("contact-form");
-        const statusEl = document.getElementById("turnstile-status");
-        let widgetId = null;
-
-        function showStatus(text) {
-          if (!statusEl) return;
-          statusEl.textContent = text || "";
-          statusEl.style.display = text ? "block" : "none";
-        }
-
-        function getToken() {
-          try {
-            if (window.turnstile && widgetId !== null && typeof turnstile.getResponse === "function") {
-              return (turnstile.getResponse(widgetId) || "").trim();
-            }
-          } catch (e) {}
-          const el = form ? form.querySelector('[name="cf-turnstile-response"]') : null;
-          return el ? (el.value || "").trim() : "";
-        }
-
-        window.onTurnstileLoad = function () {
-          try {
-            widgetId = turnstile.render("#turnstile-container", {
-              sitekey: "{{ TURNSTILE_SITEKEY }}",
-              callback: function () { showStatus(""); },
-              "expired-callback": function () {
-                showStatus("{% trans 'Vérification expirée. Merci de réessayer.' %}");
-                try { turnstile.reset(widgetId); } catch (e) {}
-              },
-              "error-callback": function () {
-                showStatus("{% trans 'Erreur anti-spam. Vérifiez votre connexion ou désactivez un bloqueur puis réessayez.' %}");
-                try { turnstile.reset(widgetId); } catch (e) {}
-              }
-            });
-          } catch (e) {
-            showStatus("{% trans 'Impossible de charger la vérification anti-spam.' %}");
-          }
-        };
-
-        if (form) {
-          form.addEventListener("submit", function (e) {
-            const token = getToken();
-            if (!token) {
-              e.preventDefault();
-              showStatus("{% trans 'Veuillez compléter la vérification anti-spam avant d’envoyer.' %}");
-              const c = document.getElementById("turnstile-container");
-              if (c && typeof c.scrollIntoView === "function") c.scrollIntoView({behavior:"smooth", block:"center"});
-            }
-          });
-        }
-      })();
-    </script>
-
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileLoad" defer></script>
-  {% endif %}
-
-  {% if HCAPTCHA_SITEKEY and HCAPTCHA_REQUIRED %}
-    <script>
-      (function () {
-        const form = document.getElementById("contact-form");
-        let widgetId = null;
-        let executing = false;
-
-        window.onHCaptchaLoad = function () {
-          try {
-            widgetId = hcaptcha.render("hcaptcha-container", {
-              sitekey: "{{ HCAPTCHA_SITEKEY }}",
-              theme: "{{ HCAPTCHA_THEME|default:'light' }}",
-              size: "invisible",
-              callback: function () {
-                if (!executing) return;
-                executing = false;
-                form.submit();
-              }
-            });
-          } catch (e) {}
-        };
-
-        document.addEventListener("DOMContentLoaded", function () {
-          if (!form) return;
-          form.addEventListener("submit", function (e) {
-            const tokenEl = form.querySelector('[name="h-captcha-response"]');
-            const token = tokenEl ? (tokenEl.value || "").trim() : "";
-            if (token) return;
-
-            e.preventDefault();
-            if (widgetId !== null && !executing) {
-              executing = true;
-              try { hcaptcha.execute(widgetId); } catch (err) { executing = false; }
-            }
-          });
-        });
-      })();
-    </script>
-
-    <script src="https://js.hcaptcha.com/1/api.js?onload=onHCaptchaLoad&render=explicit" async defer></script>
-  {% endif %}
-{% endblock %}
- {% endcomment %}
-
-
-
-
-
-
-
-
-
-{% comment %} {% extends 'main.html' %}
-{% load static i18n domain_urls language_tags %}
-
-{% block title %}{% trans "Contact" %} | {{ PROJECT_NAME }}{% endblock %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'global/css/contact.css' %}">
+{{ block.super }}
+{% if HCAPTCHA_ENABLED and HCAPTCHA_SITEKEY %}
+<script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+{% endif %}
+<script src="{% static 'core/js/contact.js' %}" defer></script>
 {% endblock %}
 
-{% block content %}
-<section class="contact-section">
-  <h1>{% trans "Contactez-nous" %}</h1>
 
-  {% if messages %}
-    {% for message in messages %}
-      <div class="message {{ message.tags }}">{{ message }}</div>
-    {% endfor %}
-  {% endif %}
-
-  <form id="contact-form" method="post" class="contact-form" novalidate>
-    {% csrf_token %}
-    {{ form.website }}
-
-    {% if form.non_field_errors %}
-      <div class="form-errors">{{ form.non_field_errors }}</div>
-    {% endif %}
-
-    <div class="form-group">
-      {{ form.name.label_tag }} {{ form.name }} {{ form.name.errors }}
-    </div>
-    <div class="form-group">
-      {{ form.email.label_tag }} {{ form.email }} {{ form.email.errors }}
-    </div>
-    <div class="form-group">
-      {{ form.message.label_tag }} {{ form.message }} {{ form.message.errors }}
-    </div>
-
-    {% if TURNSTILE_SITEKEY %}
-      <div class="form-group" style="margin-top:12px;">
-        <div id="turnstile-container"></div>
-        <div id="turnstile-status" class="form-hint" style="display:none;margin-top:8px;"></div>
-      </div>
-    {% endif %}
-
-    {% if HCAPTCHA_SITEKEY and HCAPTCHA_REQUIRED %}
-      <div class="form-group" style="margin-top:12px;">
-        <div id="hcaptcha-container"></div>
-      </div>
-    {% endif %}
-
-    <p class="text-muted" style="margin-top:10px;">
-      {% trans "Pour éviter les spams, vous devez confirmer votre email avant que votre message soit transmis." %}
-    </p>
-
-    <button id="contact-submit" type="submit" class="btn-submit">
-      {% trans "Envoyer" %}
-    </button>
-  </form>
-</section>
-{% endblock %}
-
-{% block extra_js %}
-  {# =======================
-     Turnstile (explicite)
-     ======================= #}
-  {% if TURNSTILE_SITEKEY %}
-    <script>
-      (function () {
-        const form = document.getElementById("contact-form");
-        const statusEl = document.getElementById("turnstile-status");
-        let widgetId = null;
-
-        function showStatus(text) {
-          if (!statusEl) return;
-          statusEl.textContent = text || "";
-          statusEl.style.display = text ? "block" : "none";
-        }
-
-        function getToken() {
-          try {
-            if (window.turnstile && widgetId !== null && typeof turnstile.getResponse === "function") {
-              return (turnstile.getResponse(widgetId) || "").trim();
-            }
-          } catch (e) {}
-          // fallback: champ hidden standard si présent
-          const el = form ? form.querySelector('[name="cf-turnstile-response"]') : null;
-          return el ? (el.value || "").trim() : "";
-        }
-
-        // appelé quand le script Turnstile est prêt
-        window.onTurnstileLoad = function () {
-          try {
-            widgetId = turnstile.render("#turnstile-container", {
-              sitekey: "{{ TURNSTILE_SITEKEY }}",
-              callback: function () {
-                showStatus("");
-              },
-              "expired-callback": function () {
-                // Le token expire => reset recommandé pour regénérer
-                showStatus("{% trans 'Vérification expirée. Merci de réessayer.' %}");
-                try { turnstile.reset(widgetId); } catch (e) {}
-              },
-              "error-callback": function () {
-                showStatus("{% trans 'Erreur anti-spam. Vérifiez votre connexion ou désactivez un bloqueur puis réessayez.' %}");
-                // Possibilité de reset manuel
-                try { turnstile.reset(widgetId); } catch (e) {}
-              }
-            });
-          } catch (e) {
-            showStatus("{% trans 'Impossible de charger la vérification anti-spam.' %}");
-          }
-        };
-
-        // Bloque la soumission si le token n’est pas prêt (évite “Turnstile échouée” côté serveur)
-        if (form) {
-          form.addEventListener("submit", function (e) {
-            const token = getToken();
-            if (!token) {
-              e.preventDefault();
-              showStatus("{% trans 'Veuillez compléter la vérification anti-spam avant d’envoyer.' %}");
-              // petit confort : scroller vers le captcha
-              const c = document.getElementById("turnstile-container");
-              if (c && typeof c.scrollIntoView === "function") c.scrollIntoView({behavior:"smooth", block:"center"});
-            }
-          });
-        }
-      })();
-    </script>
-
-    <script
-      src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileLoad"
-      defer></script>
-  {% endif %}
-
-  {# =======================
-     hCaptcha (invisible) si requis
-     ======================= #}
-  {% if HCAPTCHA_SITEKEY and HCAPTCHA_REQUIRED %}
-    <script>
-      (function () {
-        const form = document.getElementById("contact-form");
-        let widgetId = null;
-        let executing = false;
-
-        window.onHCaptchaLoad = function () {
-          try {
-            widgetId = hcaptcha.render("hcaptcha-container", {
-              sitekey: "{{ HCAPTCHA_SITEKEY }}",
-              theme: "{{ HCAPTCHA_THEME|default:'light' }}",
-              size: "invisible",
-              callback: function () {
-                if (!executing) return;
-                executing = false;
-                form.submit();
-              }
-            });
-          } catch (e) {}
-        };
-
-        document.addEventListener("DOMContentLoaded", function () {
-          if (!form) return;
-          form.addEventListener("submit", function (e) {
-            const tokenEl = form.querySelector('[name="h-captcha-response"]');
-            const token = tokenEl ? (tokenEl.value || "").trim() : "";
-            if (token) return;
-
-            e.preventDefault();
-            if (widgetId !== null && !executing) {
-              executing = true;
-              try { hcaptcha.execute(widgetId); } catch (err) { executing = false; }
-            }
-          });
-        });
-      })();
-    </script>
-
-    <script src="https://js.hcaptcha.com/1/api.js?onload=onHCaptchaLoad&render=explicit" async defer></script>
-  {% endif %}
-{% endblock %} {% endcomment %}
-
-
-
-
-
-{% comment %} {# core/templates/core/contact.html #}
-{% extends 'main.html' %}
-{% load static i18n domain_urls language_tags %}
-
-{% block title %}{% trans "Contact" %} | {{ PROJECT_NAME }}{% endblock %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'global/css/contact.css' %}">
-{% endblock %}
-
-{% block content %}
-<section class="contact-section">
-  <h1>{% trans "Contactez-nous" %}</h1>
-
-  {% if messages %}
-    {% for message in messages %}
-      <div class="message {{ message.tags }}">{{ message }}</div>
-    {% endfor %}
-  {% endif %}
-
-  <form id="contact-form" method="post" class="contact-form" novalidate>
-    {% csrf_token %}
-    {{ form.website }}
-
-    {% if form.non_field_errors %}
-      <div class="form-errors">{{ form.non_field_errors }}</div>
-    {% endif %}
-
-    <div class="form-group">
-      {{ form.name.label_tag }} {{ form.name }} {{ form.name.errors }}
-    </div>
-    <div class="form-group">
-      {{ form.email.label_tag }} {{ form.email }} {{ form.email.errors }}
-    </div>
-    <div class="form-group">
-      {{ form.message.label_tag }} {{ form.message }} {{ form.message.errors }}
-    </div>
-
-    {% if TURNSTILE_SITEKEY %}
-      <div class="form-group" style="margin-top:12px;">
-        <div class="cf-turnstile" data-sitekey="{{ TURNSTILE_SITEKEY }}"></div>
-      </div>
-      <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-    {% endif %}
-
-    {% if HCAPTCHA_SITEKEY and HCAPTCHA_REQUIRED %}
-      <div class="form-group" style="margin-top:12px;">
-        <div id="hcaptcha-container"></div>
-      </div>
-
-      <script>
-        (function () {
-          const form = document.getElementById("contact-form");
-          let widgetId = null;
-          let executing = false;
-
-          window.onHCaptchaLoad = function () {
-            try {
-              widgetId = hcaptcha.render("hcaptcha-container", {
-                sitekey: "{{ HCAPTCHA_SITEKEY }}",
-                theme: "{{ HCAPTCHA_THEME|default:'light' }}",
-                size: "invisible",
-                callback: function () {
-                  if (!executing) return;
-                  executing = false;
-                  form.submit();
-                }
-              });
-            } catch (e) {}
-          };
-
-          document.addEventListener("DOMContentLoaded", function () {
-            if (!form) return;
-            form.addEventListener("submit", function (e) {
-              const tokenEl = form.querySelector('[name="h-captcha-response"]');
-              const token = tokenEl ? (tokenEl.value || "").trim() : "";
-
-              if (token) return;
-              e.preventDefault();
-
-              if (widgetId !== null && !executing) {
-                executing = true;
-                try { hcaptcha.execute(widgetId); } catch (err) { executing = false; }
-              }
-            });
-          });
-        })();
-      </script>
-
-      <script src="https://js.hcaptcha.com/1/api.js?onload=onHCaptchaLoad&render=explicit" async defer></script>
-    {% endif %}
-
-    <p class="text-muted" style="margin-top:10px;">
-      {% trans "Pour éviter les spams, vous devez confirmer votre email avant que votre message soit transmis." %}
-    </p>
-
-    <button type="submit" class="btn-submit">{% trans "Envoyer" %}</button>
-  </form>
-</section>
-{% endblock %} {% endcomment %}
 
 
 

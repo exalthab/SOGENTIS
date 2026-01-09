@@ -2,6 +2,33 @@
 {% extends "main.html" %}
 {% load static i18n domain_urls language_tags %}
 
+{% block title %}{% trans "Vérification envoyée" %}{% endblock %}
+
+{% block content %}
+<section class="contact-wrap">
+  <div class="contact-card">
+    <header class="contact-head">
+      <h1 class="contact-title">{% trans "Vérification envoyée" %}</h1>
+      <p class="contact-subtitle">
+        {% trans "Un email de vérification vient de vous être envoyé. Cliquez sur le lien pour confirmer votre adresse." %}
+      </p>
+    </header>
+
+    <div class="actions">
+      <a class="btn btn-secondary" href="{% url 'core:contact' %}">{% trans "Retour au formulaire" %}</a>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+
+
+
+
+
+{% comment %} {% extends "main.html" %}
+{% load static i18n domain_urls language_tags %}
+
 {% block title %}{% trans "Confirmation email" %} | {{ PROJECT_NAME }}{% endblock %}
 
 {% block content %}
@@ -10,5 +37,5 @@
   <p>{% trans "Nous venons de vous envoyer un email de confirmation. Cliquez sur le lien pour valider l’envoi." %}</p>
   <p class="text-muted">{% trans "Pensez à vérifier vos spams si vous ne trouvez pas l’email." %}</p>
 </section>
-{% endblock %}
+{% endblock %} {% endcomment %}
 

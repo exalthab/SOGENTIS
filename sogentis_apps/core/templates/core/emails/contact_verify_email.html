@@ -1,8 +1,84 @@
 {# core/templates/core/emails/contact_verify_email.html #}
-{% load static i18n domain_urls language_tags %}
+{% load static i18n language_tags domain_urls %}
+<!doctype html>
+<html lang="{{ LANGUAGE_CODE|default:'fr' }}">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>{% trans "Vérification email" %}</title>
+  </head>
+  <body style="margin:0;padding:0;background:#f6f7fb;font-family:Arial,Helvetica,sans-serif;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f6f7fb;padding:24px 12px;">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="max-width:600px;background:#ffffff;border-radius:14px;overflow:hidden;box-shadow:0 6px 20px rgba(16,24,40,.08);">
+            <tr>
+              <td style="padding:22px 24px;background:#0f172a;color:#fff;">
+                <div style="font-size:16px;font-weight:700;letter-spacing:.2px;">
+                  {{ PROJECT_NAME|default:"" }}
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding:26px 24px;color:#111827;">
+                <h2 style="margin:0 0 10px;font-size:20px;line-height:1.3;">
+                  {% trans "Vérifiez votre adresse email" %}
+                </h2>
+
+                <p style="margin:0 0 14px;font-size:14px;line-height:1.6;color:#374151;">
+                  {% blocktrans with name=contact.name %}
+                    Bonjour <strong>{{ name }}</strong>,<br />
+                    Merci pour votre message. Pour confirmer votre adresse, cliquez sur le bouton ci-dessous.
+                  {% endblocktrans %}
+                </p>
+
+                <p style="margin:18px 0;">
+                  <a href="{{ verify_url }}"
+                     style="display:inline-block;background:#2563eb;color:#fff;text-decoration:none;padding:12px 16px;border-radius:10px;font-weight:700;font-size:14px;">
+                    {% trans "Vérifier mon email" %}
+                  </a>
+                </p>
+
+                <p style="margin:0 0 10px;font-size:12px;line-height:1.6;color:#6b7280;">
+                  {% trans "Si le bouton ne fonctionne pas, copiez-collez ce lien :" %}
+                  <br />
+                  <span style="word-break:break-all;color:#111827;">{{ verify_url }}</span>
+                </p>
+
+                <p style="margin:18px 0 0;font-size:12px;line-height:1.6;color:#6b7280;">
+                  {% trans "Si vous n’êtes pas à l’origine de cette demande, ignorez cet email." %}
+                </p>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding:16px 24px;background:#f9fafb;color:#6b7280;font-size:11px;line-height:1.5;">
+                {% blocktrans with project=PROJECT_NAME|default:"" %}
+                  © {{ project }} — Message automatique
+                {% endblocktrans %}
+              </td>
+            </tr>
+
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+{% comment %} {% load static i18n domain_urls language_tags %}
 <p>{% trans "Bonjour" %} {{ contact.name }},</p>
 <p>{% trans "Merci. Pour confirmer votre email et envoyer votre message, cliquez :" %}</p>
 <p><a href="{{ verify_url }}">{{ verify_url }}</a></p>
 <hr>
 <p><strong>{% trans "Votre message" %} :</strong><br>{{ contact.message|linebreaksbr }}</p>
-
+ {% endcomment %}

@@ -1,5 +1,38 @@
 {# core/templates/core/contact_verified.html #}
 {% extends "main.html" %}
+{% load static i18n language_tags domain_urls %}
+
+{% block title %}{% trans "Email vérifié" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'core/css/contact.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="contact-wrap">
+  <div class="contact-card">
+    <header class="contact-head">
+      <h1 class="contact-title">{% trans "Email vérifié" %}</h1>
+      {% if already %}
+        <p class="contact-subtitle">{% trans "Votre email a déjà été vérifié." %}</p>
+      {% else %}
+        <p class="contact-subtitle">{% trans "Merci ! Votre email est vérifié et votre message a été transmis." %}</p>
+      {% endif %}
+    </header>
+
+    <div class="actions">
+      <a class="btn btn-secondary" href="{% url 'core:home' %}">{% trans "Retour à l’accueil" %}</a>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+
+
+
+
+{% comment %} {# core/templates/core/contact_verified.html #}
+{% extends "main.html" %}
 {% load static i18n domain_urls language_tags %}
 
 {% block title %}{% trans "Message confirmé" %} | {{ PROJECT_NAME }}{% endblock %}
@@ -18,6 +51,6 @@
     {% endif %}
   {% endif %}
 </section>
-{% endblock %}
+{% endblock %} {% endcomment %}
 
 

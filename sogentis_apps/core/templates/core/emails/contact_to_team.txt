@@ -1,0 +1,12 @@
+{# templates/core/emails/contact_to_team.txt #}
+{% load static i18n domain_urls language_tags %}
+{% trans "Nouveau message (Contact) - email vérifié" %}
+
+{% trans "Nom:" %} {{ contact.name }}
+{% trans "Email:" %} {{ contact.email }}
+{% trans "IP:" %} {{ contact.sender_ip }}
+{% trans "User-Agent:" %} {{ contact.user_agent }}
+{% trans "Date:" %} {{ contact.created_at }}
+
+{% trans "Message:" %}
+{{ contact.message }}

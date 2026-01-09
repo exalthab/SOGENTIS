@@ -1,0 +1,26 @@
+{# templates/core/contact_verification_sent.html #}
+{% extends "main.html" %}
+{% load static i18n language_tags domain_urls %}
+
+{% block title %}{% trans "Vérification envoyée" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'core/css/contact.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="contact-wrap">
+  <div class="contact-card">
+    <header class="contact-head">
+      <h1 class="contact-title">{% trans "Vérification envoyée" %}</h1>
+      <p class="contact-subtitle">
+        {% trans "Un email vient de vous être envoyé. Cliquez sur le lien de vérification pour confirmer votre adresse." %}
+      </p>
+    </header>
+
+    <div class="actions">
+      <a class="btn btn-secondary" href="{% url 'core:contact' %}">{% trans "Retour au formulaire" %}</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,70 +1,48 @@
 # core/services/email_domain_check.py
 from __future__ import annotations
 
-import socket
-import time
-from typing import Optional
+from dataclasses import dataclass
+from typing import Optional, Tuple
 
-from django.core.cache import cache
-import dns.resolver
-import dns.exception
+from django.conf import settings
 
 
-def _idna(domain: str) -> str:
-    """Convertit un domaine en ASCII compatible (punycode)."""
-    domain = (domain or "").strip().lower()
-    try:
-        return domain.encode("idna").decode("ascii")
-    except Exception:
-        return domain
+@dataclass(frozen=True)
+class EmailDomainPolicy:
+    allowlist: set[str]
+    blocklist: set[str]
+    require_dot: bool
 
 
-def domain_accepts_mail(domain: str, cache_seconds: int = 24 * 3600) -> bool:
+def _policy() -> EmailDomainPolicy:
+    allowlist = set(map(str.lower, getattr(settings, "EMAIL_DOMAIN_ALLOWLIST", []) or []))
+    blocklist = set(map(str.lower, getattr(settings, "EMAIL_DOMAIN_BLOCKLIST", []) or []))
+    require_dot = bool(getattr(settings, "EMAIL_DOMAIN_REQUIRE_DOT", True))
+    return EmailDomainPolicy(allowlist=allowlist, blocklist=blocklist, require_dot=require_dot)
+
+
+def is_email_domain_allowed(email: str) -> Tuple[bool, str]:
     """
-    Vérifie si un domaine peut recevoir des emails.
-
-    Règles :
-      - MX existe -> OK
-      - Sinon A/AAAA existe -> OK (RFC autorise)
-      - Sinon -> KO
-
-    Optimisé pour :
-      - Résilience DNS
-      - Réponse rapide
-      - Cache efficace pour réduire les requêtes DNS répétées
+    Retourne (ok, reason_code)
+    reason_code: 'missing-at' | 'missing-domain' | 'blocked-domain' | 'not-allowed-domain'
     """
-    domain = _idna(domain)
-    if not domain or "." not in domain:
-        return False
+    email = (email or "").strip()
+    if "@" not in email:
+        return False, "missing-at"
 
-    cache_key = f"maildom:{domain}"
-    cached = cache.get(cache_key)
-    if cached is not None:
-        return bool(cached)
+    domain = email.split("@", 1)[1].strip().lower()
+    if not domain:
+        return False, "missing-domain"
 
-    resolver = dns.resolver.Resolver()
-    resolver.lifetime = 2.0
-    resolver.timeout = 1.0
+    p = _policy()
 
-    def _has_rr(rrtype: str) -> bool:
-        """Vérifie si le domaine a un enregistrement DNS de type `rrtype`."""
-        try:
-            answers = resolver.resolve(domain, rrtype)
-            return bool(answers)
-        except (dns.resolver.NXDOMAIN, dns.resolver.NoAnswer, dns.resolver.NoNameservers):
-            return False
-        except (dns.exception.Timeout, dns.exception.DNSException, socket.gaierror):
-            # Échec réseau/DNS → considérer temporairement comme invalide
-            return False
+    if p.require_dot and "." not in domain:
+        return False, "missing-domain"
 
-    start = time.time()
-    ok = _has_rr("MX") or _has_rr("A") or _has_rr("AAAA")
-    elapsed = time.time() - start
+    if domain in p.blocklist:
+        return False, "blocked-domain"
 
-    # Ajuste la durée du cache si DNS lent
-    ttl = cache_seconds
-    if elapsed > 1.0:
-        ttl = min(ttl, 300)  # 5 minutes pour réponses lentes
-    cache.set(cache_key, ok, ttl)
+    if p.allowlist and domain not in p.allowlist:
+        return False, "not-allowed-domain"
 
-    return ok
+    return True, ""

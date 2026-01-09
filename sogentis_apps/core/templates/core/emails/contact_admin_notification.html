@@ -1,8 +1,96 @@
 {# core/templates/core/emails/contact_admin_notification.html #}
 {% load static i18n domain_urls language_tags %}
-<h2>{% trans "Nouveau message de contact (email vérifié)" %}</h2>
+<!doctype html>
+<html lang="{{ LANGUAGE_CODE|default:'fr' }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>{% trans "Nouveau message de contact (email vérifié)" %}</title>
+  </head>
+  <body style="margin:0;padding:0;background:#f6f7fb;font-family:Arial,Helvetica,sans-serif;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f6f7fb;padding:24px 12px;">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="680" cellspacing="0" cellpadding="0" style="max-width:680px;background:#ffffff;border-radius:14px;overflow:hidden;box-shadow:0 6px 20px rgba(16,24,40,.08);">
+            <tr>
+              <td style="padding:18px 20px;background:#0f172a;color:#fff;">
+                <div style="font-size:16px;font-weight:800;">
+                  {{ PROJECT_NAME|default:"" }}
+                </div>
+                <div style="font-size:12px;opacity:.9;margin-top:4px;">
+                  {% trans "Nouveau message de contact (email vérifié)" %}
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding:20px;color:#111827;">
+                <h2 style="margin:0 0 12px;font-size:18px;line-height:1.3;">
+                  {% trans "Détails du message" %}
+                </h2>
+
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;font-size:14px;">
+                  <tr>
+                    <td style="padding:8px 0;color:#6b7280;width:160px;">{% trans "Nom" %}</td>
+                    <td style="padding:8px 0;font-weight:700;">{{ contact.name }}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:8px 0;color:#6b7280;">{% trans "Email" %}</td>
+                    <td style="padding:8px 0;font-weight:700;">{{ contact.email }}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:8px 0;color:#6b7280;">{% trans "IP" %}</td>
+                    <td style="padding:8px 0;">{{ contact.sender_ip|default:"-" }}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:8px 0;color:#6b7280;">{% trans "User-Agent" %}</td>
+                    <td style="padding:8px 0;">{{ contact.user_agent|default:"-" }}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:8px 0;color:#6b7280;">{% trans "Date" %}</td>
+                    <td style="padding:8px 0;">{{ contact.created_at }}</td>
+                  </tr>
+                </table>
+
+                <hr style="border:none;border-top:1px solid #eef2f7;margin:16px 0;">
+
+                <h3 style="margin:0 0 8px;font-size:16px;">{% trans "Message" %}</h3>
+                <div style="white-space:pre-wrap;background:#f8fafc;border:1px solid #eef2f7;border-radius:12px;padding:12px;">
+                  {{ contact.message }}
+                </div>
+
+                {% if admin_url %}
+                  <p style="margin:16px 0 0;">
+                    <a href="{{ admin_url }}"
+                       style="display:inline-block;background:#2563eb;color:#fff;text-decoration:none;padding:10px 14px;border-radius:10px;font-weight:800;font-size:13px;">
+                      {% trans "Ouvrir dans l’admin" %}
+                    </a>
+                  </p>
+                {% endif %}
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding:14px 20px;background:#f9fafb;color:#6b7280;font-size:11px;">
+                {% trans "Email automatique — ne pas répondre directement." %}
+              </td>
+            </tr>
+
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
+
+
+
+
+
+
+{% comment %} <h2>{% trans "Nouveau message de contact (email vérifié)" %}</h2>
 <p><strong>{% trans "Nom" %} :</strong> {{ contact.name }}</p>
 <p><strong>{% trans "Email" %} :</strong> {{ contact.email }}</p>
 <p><strong>{% trans "IP" %} :</strong> {{ contact.sender_ip|default:"-" }}</p>
 <hr>
-<p><strong>{% trans "Message" %} :</strong><br>{{ contact.message|linebreaksbr }}</p>
+<p><strong>{% trans "Message" %} :</strong><br>{{ contact.message|linebreaksbr }}</p> {% endcomment %}

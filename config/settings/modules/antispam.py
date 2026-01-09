@@ -2,106 +2,71 @@
 import time
 from typing import List
 
-from django.core.cache import cache
 from decouple import config
+from django.core.cache import cache
+
+
+# ============================================================
+# hCaptcha settings
+# ============================================================
+HCAPTCHA_ENABLED = config("HCAPTCHA_ENABLED", cast=bool, default=False)
+HCAPTCHA_SITEKEY = config("HCAPTCHA_SITEKEY", default="")
+HCAPTCHA_SECRETKEY = config("HCAPTCHA_SECRETKEY", default="")
+HCAPTCHA_TIMEOUT = config("HCAPTCHA_TIMEOUT", cast=int, default=7)
+
+# Fallback si hCaptcha indisponible (timeout, DNS...)
+HCAPTCHA_FAIL_OPEN = config("HCAPTCHA_FAIL_OPEN", cast=bool, default=False)
+
+
+# ============================================================
+# Rate limiting (contact)
+# ============================================================
+CONTACT_RATE_LIMIT_ENABLED = config("CONTACT_RATE_LIMIT_ENABLED", cast=bool, default=True)
+CONTACT_RATE_LIMIT_WINDOW_SECONDS = config("CONTACT_RATE_LIMIT_WINDOW_SECONDS", cast=int, default=300)
+CONTACT_RATE_LIMIT_MAX_ATTEMPTS = config("CONTACT_RATE_LIMIT_MAX_ATTEMPTS", cast=int, default=5)
 
 
 def rate_limited(key: str, limit: int = 5, window_seconds: int = 300) -> bool:
     """
-    Vérifie si une clé (ex: IP) a dépassé le nombre de tentatives autorisées.
+    Rate limit simple basé sur cache.
+    - key: ex "contact:ip:1.2.3.4" ou "contact:ip:1.2.3.4:email:a@b.com"
+    - limit: nombre max de tentatives dans la fenêtre
+    - window_seconds: durée fenêtre (secondes)
     """
     now = int(time.time())
-    attempts: List[int] = cache.get(key, [])
+    bucket = (now // max(1, window_seconds))  # bucket par fenêtre
 
-    attempts = [t for t in attempts if t > now - window_seconds]
+    cache_key = f"rl:{key}:{bucket}"
+    attempts = cache.get(cache_key, 0)
 
-    if len(attempts) >= limit:
-        cache.set(key, attempts, timeout=window_seconds)
+    if attempts >= limit:
         return True
 
-    attempts.append(now)
-    cache.set(key, attempts, timeout=window_seconds)
+    # Incrémente et garde jusqu'à la fin de fenêtre (+ petite marge)
+    ttl = window_seconds + 5
+    cache.set(cache_key, int(attempts) + 1, timeout=ttl)
     return False
 
 
-# Turnstile
-TURNSTILE_ENABLED = config("TURNSTILE_ENABLED", cast=bool, default=False)
-TURNSTILE_SITEKEY = config("TURNSTILE_SITEKEY", default="")
-TURNSTILE_SECRETKEY = config("TURNSTILE_SECRETKEY", default="")
-TURNSTILE_TIMEOUT = config("TURNSTILE_TIMEOUT", cast=int, default=5)
+def rate_limit_reason_codes(ip: str, email: str | None = None) -> List[str]:
+    """
+    Renvoie une liste de codes qui expliquent quel rate-limit a bloqué.
+    """
+    codes: List[str] = []
+    if not CONTACT_RATE_LIMIT_ENABLED:
+        return codes
 
-# hCaptcha
-HCAPTCHA_ENABLED = config("HCAPTCHA_ENABLED", cast=bool, default=False)
-HCAPTCHA_SITEKEY = config("HCAPTCHA_SITEKEY", default="")
-HCAPTCHA_SECRETKEY = config("HCAPTCHA_SECRETKEY", default="")
-HCAPTCHA_TIMEOUT = config("HCAPTCHA_TIMEOUT", cast=int, default=5)
-HCAPTCHA_THEME = config("HCAPTCHA_THEME", default="light")
+    window = CONTACT_RATE_LIMIT_WINDOW_SECONDS
+    limit = CONTACT_RATE_LIMIT_MAX_ATTEMPTS
 
-# off | fallback | always
-CONTACT_HCAPTCHA_MODE = config("CONTACT_HCAPTCHA_MODE", default="fallback").lower().strip()
+    ip = (ip or "").strip()
+    email = (email or "").strip().lower()
 
-# Rate limit
-CONTACT_RATE_LIMIT_WINDOW = config("CONTACT_RATE_LIMIT_WINDOW", cast=int, default=300)
-CONTACT_RATE_LIMIT_MAX = config("CONTACT_RATE_LIMIT_MAX", cast=int, default=3)
+    if ip and rate_limited(f"contact:ip:{ip}", limit=limit, window_seconds=window):
+        codes.append("rate-limit-ip")
 
-CONTACT_VERIFY_TOKEN_HOURS = config("CONTACT_VERIFY_TOKEN_HOURS", cast=int, default=24)
+    # Optionnel: limiter aussi par paire IP+email (utile contre spam ciblé)
+    if ip and email and rate_limited(f"contact:ip:{ip}:email:{email}", limit=limit, window_seconds=window):
+        codes.append("rate-limit-ip-email")
 
-
-
-
-
-
-# # config/settings/modules/antispam.py
-# import time
-# from typing import List
-# from django.core.cache import cache
-# from decouple import config
-
-
-
-# def rate_limited(key: str, limit: int = 5, window_seconds: int = 300) -> bool:
-#     """
-#     Vérifie si une clé (ex: IP) a dépassé le nombre de tentatives autorisées.
-#     - key : identifiant unique (IP, email, etc.)
-#     - limit : nombre max de tentatives dans la fenêtre
-#     - window_seconds : durée de la fenêtre en secondes
-#     """
-#     now = int(time.time())
-#     attempts: List[int] = cache.get(key, [])
-
-#     # Nettoyage des timestamps expirés
-#     attempts = [t for t in attempts if t > now - window_seconds]
-
-#     if len(attempts) >= limit:
-#         # Déjà trop de tentatives
-#         cache.set(key, attempts, timeout=window_seconds)
-#         return True
-
-#     # Ajout de la tentative et mise à jour du cache
-#     attempts.append(now)
-#     cache.set(key, attempts, timeout=window_seconds)
-#     return False
-
-
-# # Turnstile
-# TURNSTILE_ENABLED = config("TURNSTILE_ENABLED", cast=bool, default=False)
-# TURNSTILE_SITEKEY = config("TURNSTILE_SITEKEY", default="")
-# TURNSTILE_SECRETKEY = config("TURNSTILE_SECRETKEY", default="")
-# TURNSTILE_TIMEOUT = config("TURNSTILE_TIMEOUT", cast=int, default=5)
-
-# # hCaptcha
-# HCAPTCHA_ENABLED = config("HCAPTCHA_ENABLED", cast=bool, default=False)
-# HCAPTCHA_SITEKEY = config("HCAPTCHA_SITEKEY", default="")
-# HCAPTCHA_SECRETKEY = config("HCAPTCHA_SECRETKEY", default="")
-# HCAPTCHA_TIMEOUT = config("HCAPTCHA_TIMEOUT", cast=int, default=5)
-# HCAPTCHA_THEME = config("HCAPTCHA_THEME", default="light")
-
-# # off | fallback | always
-# CONTACT_HCAPTCHA_MODE = config("CONTACT_HCAPTCHA_MODE", default="off").lower().strip()
-
-# # Rate limit
-# CONTACT_RATE_LIMIT_WINDOW = config("CONTACT_RATE_LIMIT_WINDOW", cast=int, default=300)
-# CONTACT_RATE_LIMIT_MAX = config("CONTACT_RATE_LIMIT_MAX", cast=int, default=3)
-
-# # (si tu l'utilises ailleurs)
-# CONTACT_VERIFY_TOKEN_HOURS = config("CONTACT_VERIFY_TOKEN_HOURS", cast=int, default=24)
+    return codes

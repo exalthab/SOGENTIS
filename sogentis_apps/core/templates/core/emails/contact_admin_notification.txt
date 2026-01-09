@@ -1,9 +1,31 @@
-{% load i18n %}
+{# core/templates/core/emails/contact_admin_notification.txt #}
+{% load static i18n domain_urls language_tags %}
 {% trans "Nouveau message de contact (email vérifié)" %}
+
+{% trans "Nom:" %} {{ contact.name }}
+{% trans "Email:" %} {{ contact.email }}
+{% trans "IP:" %} {{ contact.sender_ip|default:"-" }}
+{% trans "User-Agent:" %} {{ contact.user_agent|default:"-" }}
+{% trans "Date:" %} {{ contact.created_at }}
+
+{% trans "Message:" %}
+{{ contact.message }}
+
+{% if admin_url %}
+{% trans "Admin:" %} {{ admin_url }}
+{% endif %}
+
+
+
+
+
+
+
+{% comment %} {% trans "Nouveau message de contact (email vérifié)" %}
 
 {% trans "Nom" %}: {{ contact.name }}
 {% trans "Email" %}: {{ contact.email }}
 {% trans "IP" %}: {{ contact.sender_ip|default:"-" }}
 
 {% trans "Message" %}:
-{{ contact.message }}
+{{ contact.message }} {% endcomment %}

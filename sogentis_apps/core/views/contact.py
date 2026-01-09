@@ -2,202 +2,169 @@
 from __future__ import annotations
 
 import logging
+from typing import Optional
 
 from django.conf import settings
 from django.contrib import messages
-from django.db import transaction
+from django.core.mail import EmailMultiAlternatives
+from django.http import HttpRequest
 from django.shortcuts import get_object_or_404, redirect, render
-from django.utils import timezone
-from django.utils.translation import gettext_lazy as _
+from django.template.loader import render_to_string
+from django.urls import reverse
+from django.utils.translation import gettext as _
 from django.views.decorators.http import require_http_methods
 
+from config.settings.modules.antispam import rate_limit_reason_codes
 from core.forms import ContactForm
 from core.models import ContactMessage
-from core.services.contact_email_service import send_contact_to_admins, send_contact_verification_email
-from config.settings.modules.antispam import rate_limited
+from core.services.hcaptcha import verify_hcaptcha
 
 logger = logging.getLogger(__name__)
 
 
-def _client_ip(request) -> str | None:
-    """
-    Récupère l'IP client (proxy/Nginx/CDN).
-    """
-    # Cloudflare (si présent)
-    cf_ip = (request.META.get("HTTP_CF_CONNECTING_IP") or "").strip()
-    if cf_ip:
-        return cf_ip
-
-    # XFF
+def _get_client_ip(request: HttpRequest) -> str:
     xff = (request.META.get("HTTP_X_FORWARDED_FOR") or "").strip()
     if xff:
         return xff.split(",")[0].strip()
-
-    # X-Real-IP (nginx)
-    xri = (request.META.get("HTTP_X_REAL_IP") or "").strip()
-    if xri:
-        return xri
-
-    return (request.META.get("REMOTE_ADDR") or "").strip() or None
+    return (request.META.get("REMOTE_ADDR") or "").strip()
 
 
-def _wants_hcaptcha(request, form=None) -> bool:
+def _safe_from_email() -> Optional[str]:
+    return getattr(settings, "DEFAULT_FROM_EMAIL", None) or getattr(settings, "SERVER_EMAIL", None) or None
+
+
+def _send_verification_email(request: HttpRequest, cm: ContactMessage) -> None:
     """
-    Décide si hCaptcha doit être affiché/requis.
-    - always => toujours (si activé)
-    - fallback => seulement après échec/ratelimit
+    Email simple (sans dépendre d'un template) pour éviter les erreurs de fichiers manquants.
     """
-    mode = (getattr(settings, "CONTACT_HCAPTCHA_MODE", "off") or "off").lower().strip()
-    if mode == "off":
-        return False
+    verify_url = request.build_absolute_uri(reverse("core:contact_verify", kwargs={"token": cm.verify_token}))
 
-    # always -> on force (si sitekey présent)
-    if mode == "always":
-        return True
+    subject = _("Vérifiez votre adresse email")
+    body = _(
+        "Bonjour {name},\n\n"
+        "Merci pour votre message.\n"
+        "Veuillez vérifier votre adresse email en cliquant sur ce lien :\n"
+        "{url}\n\n"
+        "Si vous n’êtes pas à l’origine de cette demande, ignorez cet email."
+    ).format(name=cm.name, url=verify_url)
 
-    # fallback -> dépend de la session et/ou de l'erreur captchas
-    if request.session.get("contact_need_hcaptcha", False):
-        return True
-
-    # Si form invalide, on détecte des codes d'erreur captcha plus largement
-    if form is not None:
-        try:
-            for err in form.non_field_errors().as_data():
-                code = (getattr(err, "code", "") or "").lower()
-                msg = " ".join(getattr(err, "messages", []) or []).lower()
-                # codes/messages possibles selon ton implémentation
-                if (
-                    "turnstile" in code
-                    or "captcha" in code
-                    or "turnstile" in msg
-                    or "captcha" in msg
-                    or "anti-spam" in msg
-                ):
-                    return True
-        except Exception:
-            pass
-
-    return False
+    msg = EmailMultiAlternatives(
+        subject=subject,
+        body=body,
+        from_email=_safe_from_email(),
+        to=[cm.email],
+    )
+    msg.send(fail_silently=False)
 
 
-def _captcha_ctx(request, form=None) -> dict:
-    """
-    Contexte commun pour le template de contact avec captchas.
-    """
-    required = bool(getattr(settings, "HCAPTCHA_SITEKEY", "")) and _wants_hcaptcha(request, form=form)
+def _send_admin_notification(cm: ContactMessage) -> None:
+    contact_email = (getattr(settings, "CONTACT_EMAIL", "") or "").strip()
+    if not contact_email:
+        raise RuntimeError("CONTACT_EMAIL is not configured")
 
-    return {
-        "TURNSTILE_SITEKEY": getattr(settings, "TURNSTILE_SITEKEY", ""),
-        "HCAPTCHA_SITEKEY": getattr(settings, "HCAPTCHA_SITEKEY", ""),
-        "HCAPTCHA_THEME": getattr(settings, "HCAPTCHA_THEME", "light"),
-        "HCAPTCHA_REQUIRED": required,
+    admin_url = ""
+    try:
+        # si admin est monté sur /admin/
+        admin_url = reverse("admin:core_contactmessage_change", args=[cm.pk])
+    except Exception:
+        admin_url = ""
+
+    context = {
+        "contact": cm,
+        "admin_url": admin_url,
+        "PROJECT_NAME": getattr(settings, "PROJECT_NAME", ""),
     }
+
+    subject = _("Nouveau message de contact (email vérifié)")
+    text_body = render_to_string("core/emails/contact_admin_notification.txt", context).strip()
+    html_body = render_to_string("core/emails/contact_admin_notification.html", context).strip()
+
+    msg = EmailMultiAlternatives(
+        subject=subject,
+        body=text_body,
+        from_email=_safe_from_email(),
+        to=[contact_email],
+        headers={"Reply-To": cm.email},
+    )
+    msg.attach_alternative(html_body, "text/html")
+    msg.send(fail_silently=False)
 
 
 @require_http_methods(["GET", "POST"])
-def contact_view(request):
-    """
-    Affiche et traite le formulaire de contact avec anti-spam, captcha et rate-limit.
-    """
-    ip = _client_ip(request)
-    form = ContactForm(request.POST or None, request=request)
+def contact_view(request: HttpRequest):
+    form = ContactForm(request.POST or None)
+
+    h_enabled = bool(getattr(settings, "HCAPTCHA_ENABLED", False))
+    h_sitekey = getattr(settings, "HCAPTCHA_SITEKEY", "") or ""
+    fail_open = bool(getattr(settings, "HCAPTCHA_FAIL_OPEN", False))
 
     if request.method == "POST":
-        key = f"contact:rl:{ip}" if ip else "contact:rl:unknown"
-        if rate_limited(
-            key,
-            limit=int(getattr(settings, "CONTACT_RATE_LIMIT_MAX", 5)),
-            window_seconds=int(getattr(settings, "CONTACT_RATE_LIMIT_WINDOW", 300)),
-        ):
-            request.session["contact_need_hcaptcha"] = True
-            messages.error(request, _("Trop de tentatives. Merci de réessayer plus tard."))
-            return render(request, "core/contact.html", {"form": form, **_captcha_ctx(request, form=form)})
+        ip = _get_client_ip(request)
+
+        # Rate-limit
+        email_guess = (request.POST.get("email") or "").strip().lower()
+        rl_codes = rate_limit_reason_codes(ip=ip, email=email_guess)
+        if rl_codes:
+            messages.error(request, _("Trop de tentatives. Merci de réessayer dans quelques minutes."))
+            return render(request, "core/contact.html", {"form": form, "HCAPTCHA_ENABLED": h_enabled, "HCAPTCHA_SITEKEY": h_sitekey})
+
+        # hCaptcha
+        token = request.POST.get("h-captcha-response", "")
+        ok, codes, unavailable = verify_hcaptcha(token=token, remoteip=ip)
+        if not ok and not (unavailable and fail_open):
+            messages.error(request, _("Vérification anti-spam (Captcha) échouée. Merci de réessayer."))
+            return render(request, "core/contact.html", {"form": form, "HCAPTCHA_ENABLED": h_enabled, "HCAPTCHA_SITEKEY": h_sitekey})
 
         if form.is_valid():
-            contact: ContactMessage = form.save(commit=False)
-            contact.sender_ip = ip
-            contact.user_agent = (request.META.get("HTTP_USER_AGENT") or "")[:512]
-            contact.status = ContactMessage.Status.PENDING
-            contact.ensure_expiry(hours=int(getattr(settings, "CONTACT_VERIFY_TOKEN_HOURS", 48)), save=False)
-
-            with transaction.atomic():
-                contact.save()
-                transaction.on_commit(lambda: send_contact_verification_email(request, contact))
-
-            # reset fallback
-            request.session.pop("contact_need_hcaptcha", None)
-
-            messages.success(
-                request,
-                _("Merci ! Nous venons de vous envoyer un email de confirmation. Cliquez sur le lien pour valider l’envoi."),
+            cm = ContactMessage.objects.create(
+                name=form.cleaned_data["name"],
+                email=form.cleaned_data["email"],
+                message=form.cleaned_data["message"],
+                sender_ip=ip or None,
+                user_agent=(request.META.get("HTTP_USER_AGENT") or "")[:512],
             )
+            cm.ensure_expiry(hours=24, save=True)
+
+            try:
+                _send_verification_email(request, cm)
+            except Exception as exc:
+                logger.exception("Contact verification email failed: %s", exc)
+                messages.error(request, _("Impossible d’envoyer l’email de vérification. Merci de réessayer plus tard."))
+                return render(request, "core/contact.html", {"form": form, "HCAPTCHA_ENABLED": h_enabled, "HCAPTCHA_SITEKEY": h_sitekey})
+
             return redirect("core:contact_verify_sent")
 
-        # Form invalide => log + fallback hCaptcha (si pertinent)
-        try:
-            nfe = []
-            for err in form.non_field_errors().as_data():
-                nfe.append({"code": getattr(err, "code", ""), "messages": getattr(err, "messages", [])})
-            logger.warning("Contact form invalid host=%s ip=%s non_field_errors=%s",
-                           request.get_host(), ip, nfe)
-        except Exception:
-            pass
-
-        if _wants_hcaptcha(request, form=form):
-            request.session["contact_need_hcaptcha"] = True
-
-    return render(request, "core/contact.html", {"form": form, **_captcha_ctx(request, form=form)})
+    return render(request, "core/contact.html", {"form": form, "HCAPTCHA_ENABLED": h_enabled, "HCAPTCHA_SITEKEY": h_sitekey})
 
 
 @require_http_methods(["GET"])
-def contact_verify_sent_view(request):
-    """Page indiquant que l'email de vérification a été envoyé."""
+def contact_verify_sent_view(request: HttpRequest):
     return render(request, "core/contact_verify_sent.html")
 
 
 @require_http_methods(["GET"])
-def contact_verify_view(request, token):
-    """
-    Vérifie le token envoyé par email, marque le message comme VERIFIED et envoie aux admins.
-    """
-    with transaction.atomic():
-        contact = get_object_or_404(ContactMessage.objects.select_for_update(), verify_token=token)
+def contact_verify_view(request: HttpRequest, token):
+    cm = get_object_or_404(ContactMessage, verify_token=token)
 
-        # Déjà confirmé
-        if contact.status in {ContactMessage.Status.VERIFIED, ContactMessage.Status.SENT}:
-            return render(
-                request,
-                "core/contact_verified.html",
-                {"contact": contact, "already": True, "sent": contact.status == ContactMessage.Status.SENT},
-            )
+    if cm.is_verified:
+        messages.info(request, _("Votre email a déjà été vérifié."))
+        return redirect("core:contact")
 
-        # Token expiré
-        if not contact.is_token_valid():
-            contact.rotate_token(hours=int(getattr(settings, "CONTACT_VERIFY_TOKEN_HOURS", 48)), save=True)
-            transaction.on_commit(lambda: send_contact_verification_email(request, contact))
-            messages.warning(request, _("Ce lien avait expiré. Un nouveau lien de confirmation vient d’être renvoyé."))
-            return redirect("core:contact_verify_sent")
+    if not cm.is_token_valid():
+        messages.error(request, _("Lien invalide ou expiré. Merci de renvoyer un message via le formulaire."))
+        return redirect("core:contact")
 
-        # Token valide => marquer comme vérifié
-        contact.status = ContactMessage.Status.VERIFIED
-        contact.verified_at = timezone.now()
-        contact.save(update_fields=["status", "verified_at"])
+    cm.mark_verified(save=True)
 
-    # Envoi aux admins
-    sent = False
     try:
-        count = send_contact_to_admins(contact)
-        sent = count > 0
-    except Exception:
-        sent = False
+        _send_admin_notification(cm)
+        cm.mark_sent(save=True)
+        messages.success(request, _("Merci ! Votre email est vérifié et votre message a été transmis."))
+    except Exception as exc:
+        logger.exception("Admin notification failed: %s", exc)
+        messages.warning(request, _("Votre email est vérifié, mais la transmission a échoué. L’équipe sera notifiée manuellement."))
 
-    if sent:
-        now = timezone.now()
-        ContactMessage.objects.filter(pk=contact.pk).update(status=ContactMessage.Status.SENT, sent_at=now)
-        contact.status = ContactMessage.Status.SENT
-        contact.sent_at = now
-
-    return render(request, "core/contact_verified.html", {"contact": contact, "already": False, "sent": sent})
+    return redirect("core:contact")
 
 
 
