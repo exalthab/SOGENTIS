@@ -2,6 +2,129 @@
 {% extends "main.html" %}
 {% load static i18n language_tags domain_urls %}
 
+{% block seo_title %}{% trans "Contact" %} | {{ SEO_TITLE_DEFAULT }}{% endblock %}
+{% block seo_description %}{% trans "Envoyez-nous un message et nous vous répondrons dès que possible." %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'core/css/contact_form.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="contact-wrap">
+  <div class="contact-card">
+    <header class="contact-head">
+      <h1 class="contact-title">{% trans "Contact" %}</h1>
+      <p class="contact-subtitle">
+        {% trans "Envoyez-nous un message et nous vous répondrons dès que possible." %}
+      </p>
+    </header>
+
+    {% if messages %}
+      <div class="contact-messages" aria-live="polite">
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags|default:'info' }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <form method="post" class="contact-form" novalidate>
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="alert alert-error">
+          {{ form.non_field_errors }}
+        </div>
+      {% endif %}
+
+      <div class="grid">
+        <div class="field">
+          <label for="{{ form.name.id_for_label }}">{% trans "Nom" %}</label>
+          {{ form.name }}
+          {% if form.name.errors %}<div class="field-error">{{ form.name.errors }}</div>{% endif %}
+        </div>
+
+        <div class="field">
+          <label for="{{ form.email.id_for_label }}">{% trans "Email" %}</label>
+          {{ form.email }}
+          {% if form.email.errors %}<div class="field-error">{{ form.email.errors }}</div>{% endif %}
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="{{ form.message.id_for_label }}">{% trans "Message" %}</label>
+        {{ form.message }}
+        {% if form.message.errors %}<div class="field-error">{{ form.message.errors }}</div>{% endif %}
+      </div>
+
+      {% if HCAPTCHA_ENABLED and HCAPTCHA_SITEKEY %}
+        <div class="captcha-wrap">
+          <div id="hcaptcha-contact"
+               class="h-captcha"
+               data-sitekey="{{ HCAPTCHA_SITEKEY }}"></div>
+
+          <small class="captcha-hint"
+                 data-i18n-default="{% trans 'Veuillez compléter le captcha avant d’envoyer.' %}">
+            {% trans "Veuillez compléter le captcha avant d’envoyer." %}
+          </small>
+
+          <noscript>
+            <small class="captcha-hint">
+              {% trans "Activez JavaScript pour afficher le captcha." %}
+            </small>
+          </noscript>
+        </div>
+      {% endif %}
+
+      <div class="actions">
+        <button type="submit"
+                class="btn btn-primary"
+                id="contactSubmit"
+                data-i18n-sending="{% trans 'Envoi…' %}">
+          <span class="btn-text">{% trans "Envoyer" %}</span>
+          <span class="btn-spinner" aria-hidden="true"></span>
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+
+{% if HCAPTCHA_ENABLED and HCAPTCHA_SITEKEY %}
+<script>
+  // Rendu explicite : plus fiable que l'auto-render
+  function hcaptchaOnload() {
+    try {
+      const el = document.getElementById("hcaptcha-contact");
+      if (!el || !window.hcaptcha) return;
+
+      // évite double rendu
+      if (el.dataset.rendered === "1") return;
+
+      window.hcaptcha.render(el, { sitekey: el.dataset.sitekey });
+      el.dataset.rendered = "1";
+    } catch (e) {
+      console.error("hCaptcha render error:", e);
+    }
+  }
+</script>
+<script src="https://js.hcaptcha.com/1/api.js?render=explicit&onload=hcaptchaOnload" defer></script>
+{% endif %}
+
+<script src="{% static 'core/js/contact_form.js' %}" defer></script>
+{% endblock %}
+
+
+
+
+
+
+{% comment %} {# templates/core/contact.html #}
+{% extends "main.html" %}
+{% load static i18n language_tags domain_urls %}
+
 {% block title %}{% trans "Contact" %}{% endblock %}
 
 {% block extra_css %}
@@ -85,7 +208,7 @@
 <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
 {% endif %}
 <script src="{% static 'core/js/contact_form.js' %}" defer></script>
-{% endblock %}
+{% endblock %} {% endcomment %}
 
 
 

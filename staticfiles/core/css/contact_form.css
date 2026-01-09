@@ -1,4 +1,4 @@
-/* static/core/css/contact.css */
+/* static/core/css/contact_form.css */
 
 .contact-wrap{
   padding: 28px 12px;
@@ -188,9 +188,24 @@
   animation: spin .8s linear infinite;
 }
 
-.is-loading .btn-spinner{ display: inline-block; }
-.is-loading .btn-text{ opacity: .95; }
-
 @keyframes spin{
   to{ transform: rotate(360deg); }
+}
+
+/* =========================
+   FIXES IMPORTANTES
+   ========================= */
+
+/* 1) Ton JS met .is-loading sur le bouton => il faut cibler ainsi */
+.btn.is-loading .btn-spinner{ display: inline-block; }
+.btn.is-loading .btn-text{ opacity: .95; }
+
+/* 2) Laisse toujours de la place au widget */
+.captcha-wrap{
+  overflow: visible;
+  min-height: 96px;
+}
+.captcha-wrap .h-captcha{
+  display: block !important;
+  min-height: 78px;
 }
