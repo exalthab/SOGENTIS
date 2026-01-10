@@ -1,4 +1,3 @@
-// /accounts_users/static/accounts_users/js/form_validation1.js
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.querySelector("form[method='post']");
   if (!form) return;
@@ -26,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // =====================================================
   // ⚙️ CONSTANTES
   // =====================================================
-  const MAX_PDF_SIZE = 2 * 1024 * 1024;
+  const MAX_PDF_SIZE = 2 * 1024 * 1024; // 2 Mo
   const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 
   const COUNTRY_PHONE_PREFIX = {
@@ -69,10 +68,11 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // =====================================================
-  // 📱 TÉLÉPHONE (E.164 + Sénégal)
+  // 📱 TÉLÉPHONE
   // =====================================================
   const validatePhone = () => {
     if (!phoneInput) return true;
+
     const raw = phoneInput.value.replace(/\s+/g, "");
 
     if (!raw.startsWith("+") || raw.length < 11) {
@@ -93,7 +93,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // =====================================================
-  // 🔐 PASSWORDS
+  // 🔐 MOTS DE PASSE
   // =====================================================
   const validatePasswords = () => {
     if (!password1Input || !password2Input) return true;
@@ -103,14 +103,15 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // =====================================================
-  // 🎂 AGE
+  // 🎂 ÂGE (>= 18)
   // =====================================================
   const validateAge = () => {
     if (!birthDateInput || !membershipDateInput) return true;
     if (!birthDateInput.value || !membershipDateInput.value) return true;
 
     const age =
-      (new Date(membershipDateInput.value) - new Date(birthDateInput.value)) /
+      (new Date(membershipDateInput.value) -
+        new Date(birthDateInput.value)) /
       (1000 * 60 * 60 * 24 * 365.25);
 
     const ok = age >= 18;
@@ -119,46 +120,69 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // =====================================================
-  // 📄 CASIER JUDICIAIRE (OPTIONNEL + PREVIEW PROPRE)
+  // 📄 CASIER JUDICIAIRE (VALIDATION SEULE)
   // =====================================================
   const validateJudicialRecord = () => {
     if (!judicialInput) return true;
 
-    // Vide => OK (optionnel)
+    // optionnel : vide = OK
     if (!judicialInput.files.length) {
       setValidity(judicialInput, true);
-      if (pdfPreview) pdfPreview.innerHTML = "";
       return true;
     }
 
     const file = judicialInput.files[0];
-    const ok = file.type === "application/pdf" && file.size <= MAX_PDF_SIZE;
+    const ok =
+      file.type === "application/pdf" &&
+      file.size <= MAX_PDF_SIZE;
 
     setValidity(judicialInput, ok);
-
-    if (pdfPreview) {
-      pdfPreview.innerHTML = ok
-        ? `<iframe src="${URL.createObjectURL(file)}" width="100%" height="300"
-             style="border:1px solid #ccc;"></iframe>`
-        : "";
-    }
-
     return ok;
   };
 
   // =====================================================
-  // 🖼️ PHOTO
+  // 📄 PDF PREVIEW (UNIQUEMENT SUR CHANGE)
+  // =====================================================
+  judicialInput?.addEventListener("change", () => {
+    if (!judicialInput.files.length) {
+      pdfPreview.innerHTML = "";
+      return;
+    }
+
+    const file = judicialInput.files[0];
+
+    if (file.type === "application/pdf" && file.size <= MAX_PDF_SIZE) {
+      pdfPreview.innerHTML = `
+        <iframe
+          src="${URL.createObjectURL(file)}"
+          width="100%"
+          height="300"
+          style="border:1px solid #ccc;"
+        ></iframe>
+      `;
+    } else {
+      pdfPreview.innerHTML = "";
+    }
+  });
+
+  // =====================================================
+  // 🖼️ PHOTO DE PROFIL
   // =====================================================
   const validateProfilePicture = () => {
-    if (!profilePictureInput || !profilePictureInput.files.length) return true;
+    if (!profilePictureInput || !profilePictureInput.files.length)
+      return true;
+
     const file = profilePictureInput.files[0];
-    const ok = file.type.startsWith("image/") && file.size <= MAX_IMAGE_SIZE;
+    const ok =
+      file.type.startsWith("image/") &&
+      file.size <= MAX_IMAGE_SIZE;
+
     setValidity(profilePictureInput, ok);
     return ok;
   };
 
   // =====================================================
-  // 🌍 PAYS → PRÉFIXE (FIX MOBILE: focus avant setSelectionRange)
+  // 🌍 PAYS → PRÉFIXE
   // =====================================================
   const syncCountryToPhone = () => {
     if (!countrySelect || !phoneInput) return;
@@ -167,9 +191,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!prefix) return;
 
     currentPhonePrefix = `${prefix} `;
-    if (!phoneInput.value.trim()) phoneInput.value = currentPhonePrefix;
+    if (!phoneInput.value.trim()) {
+      phoneInput.value = currentPhonePrefix;
+    }
 
-    // ✅ important mobile
     phoneInput.focus();
     phoneInput.setSelectionRange(
       currentPhonePrefix.length,
@@ -177,9 +202,6 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   };
 
-  // =====================================================
-  // 🔒 PROTECTION SAISIE TÉLÉPHONE
-  // =====================================================
   phoneInput?.addEventListener("input", () => {
     if (!currentPhonePrefix) return;
 
@@ -213,89 +235,21 @@ document.addEventListener("DOMContentLoaded", () => {
   syncCountryToPhone();
 
   // =====================================================
-  // 📱 OTP FLOW
-  // =====================================================
-  const modalEl = document.getElementById("otpModal");
-  if (!modalEl || !phoneInput) return;
-
-  const csrf = document.querySelector("[name=csrfmiddlewaretoken]")?.value;
-  const otpModal = new bootstrap.Modal(modalEl);
-
-  const sendOTP = async () => {
-    const res = await fetch("/accounts_users/ajax/phone/send-otp/", {
-      method: "POST",
-      headers: {
-        "X-CSRFToken": csrf,
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: `phone=${encodeURIComponent(phoneInput.value)}`,
-    });
-
-    const data = await res.json();
-    if (data.ok) otpModal.show();
-    else alert(data.error);
-  };
-
-  document
-    .getElementById("verify-otp-btn")
-    ?.addEventListener("click", async () => {
-      const code = document.getElementById("otp-code-input")?.value;
-      const errorBox = document.getElementById("otp-error");
-
-      const res = await fetch("/accounts_users/ajax/phone/verify-otp/", {
-        method: "POST",
-        headers: {
-          "X-CSRFToken": csrf,
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: `phone=${encodeURIComponent(phoneInput.value)}&code=${code}`,
-      });
-
-      const data = await res.json();
-      if (data.ok) {
-        otpValidated = true;
-        otpModal.hide();
-        form.requestSubmit(); // ✅ déclenche submit normal
-      } else {
-        if (errorBox) {
-          errorBox.textContent = data.error || "Code invalide";
-          errorBox.classList.remove("d-none");
-        } else {
-          alert(data.error || "Code invalide");
-        }
-      }
-    });
-
-  // =====================================================
   // 🚀 SUBMIT FINAL
   // =====================================================
   form.addEventListener("submit", (e) => {
-    if (submitting) {
+    if (submitting || !validateForm()) {
       e.preventDefault();
       return;
     }
 
-    if (!validateForm()) {
-      e.preventDefault();
-      return;
-    }
-
-    if (!otpValidated) {
-      e.preventDefault();
-      sendOTP();
-      return;
-    }
-
-    // Nettoyage final E.164 (sans espaces)
     phoneInput.value = phoneInput.value.replace(/\s+/g, "");
 
     submitting = true;
-    if (submitBtn) {
-      submitBtn.disabled = true;
-      submitBtn.setAttribute("aria-busy", "true");
-    }
+    submitBtn && (submitBtn.disabled = true);
+    submitBtn?.setAttribute("aria-busy", "true");
   });
 
-  // validation initiale pour état cohérent
+  // état initial
   validateForm();
 });
