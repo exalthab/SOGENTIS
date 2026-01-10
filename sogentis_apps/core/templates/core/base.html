@@ -1,0 +1,25 @@
+{% extends "main.html" %}
+{# templates/core/base.html #}
+
+{% load static i18n %}
+
+{% block seo_title %}{% block core_title %}{{ PROJECT_NAME }}{% endblock %}{% endblock %}
+{% block seo_description %}{% block core_description %}{{ SEO_DESCRIPTION_DEFAULT }}{% endblock %}{% endblock %}
+
+{% block extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'core/css/core_base.css' %}">
+{% endblock %}
+
+{% block content %}
+  <section class="core-page">
+    <div class="container">
+      {% block core_header %}{% endblock %}
+      {% block core_content %}{% endblock %}
+    </div>
+  </section>
+{% endblock %}
+
+{% block extra_js %}
+  {{ block.super }}
+{% endblock %}

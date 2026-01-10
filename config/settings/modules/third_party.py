@@ -1,4 +1,72 @@
 # config/settings/modules/third_party.py
+from decouple import config
+
+# ==============================
+# Stripe
+# ==============================
+STRIPE_SECRET_KEY = config("STRIPE_SECRET_KEY", default="")
+STRIPE_PUBLISHABLE_KEY = config("STRIPE_PUBLISHABLE_KEY", default="")
+STRIPE_WEBHOOK_SECRET = config("STRIPE_WEBHOOK_SECRET", default="")
+
+# ==============================
+# PayPal
+# ==============================
+PAYPAL_CLIENT_ID = config("PAYPAL_CLIENT_ID", default="")
+PAYPAL_SECRET = config("PAYPAL_SECRET", default="")
+PAYPAL_BASE_URL = config("PAYPAL_BASE_URL", default="https://api-m.sandbox.paypal.com")
+
+# ==============================
+# Project Domain
+# ==============================
+DOMAIN = config("DOMAIN", default="localhost")
+
+# ==============================
+# Sentry
+# ==============================
+SENTRY_DSN = config("SENTRY_DSN", default="")
+
+# ==============================
+# AWS S3 (si utilisé)
+# ==============================
+USE_S3 = config("USE_S3", default=False, cast=bool)
+if USE_S3:
+    AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID", default="")
+    AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY", default="")
+    AWS_STORAGE_BUCKET_NAME = config("AWS_STORAGE_BUCKET_NAME", default="")
+    AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+    AWS_QUERYSTRING_AUTH = config("AWS_QUERYSTRING_AUTH", cast=bool, default=False)
+
+# ==============================
+# hCaptcha
+# ==============================
+HCAPTCHA_ENABLED = config("HCAPTCHA_ENABLED", cast=bool, default=False)
+HCAPTCHA_SITEKEY = config("HCAPTCHA_SITEKEY", default="")
+HCAPTCHA_SECRETKEY = config("HCAPTCHA_SECRETKEY", default="")
+HCAPTCHA_TIMEOUT = config("HCAPTCHA_TIMEOUT", cast=int, default=5)
+HCAPTCHA_THEME = config("HCAPTCHA_THEME", default="light")
+
+# ==============================
+# reCAPTCHA v3 (optionnel)
+# ==============================
+RECAPTCHA_PUBLIC_KEY = config("RECAPTCHA_PUBLIC_KEY", default="")
+RECAPTCHA_PRIVATE_KEY = config("RECAPTCHA_PRIVATE_KEY", default="")
+RECAPTCHA_REQUIRED_SCORE = config("RECAPTCHA_REQUIRED_SCORE", cast=float, default=0.85)
+RECAPTCHA_PROXY = config("RECAPTCHA_PROXY", default=None)
+
+# === Firebase (optionnel) ===
+# FIREBASE_API_KEY = config("FIREBASE_API_KEY", default="")
+
+# === Mailgun / SendGrid (optionnel) ===
+# MAILGUN_API_KEY = config("MAILGUN_API_KEY", default="")
+# SENDGRID_API_KEY = config("SENDGRID_API_KEY", default="")
+
+
+
+
+
+
+
+# config/settings/modules/third_party.py
 
 from decouple import config
 

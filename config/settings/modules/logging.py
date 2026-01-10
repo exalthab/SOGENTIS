@@ -1,26 +1,40 @@
 # config/settings/modules/logging.py
+
 from pathlib import Path
 from decouple import config
 
 # ============================================================
-# 1) BASE_DIR
+# 1) BASE_DIR (fourni par settings_loader ou fallback sûr)
 # ============================================================
-BASE_DIR = Path(globals().get("BASE_DIR") or Path(__file__).resolve().parents[3]).resolve()
+BASE_DIR = globals().get(
+    "BASE_DIR",
+    Path(__file__).resolve().parents[3],
+)
+
+BASE_DIR = Path(BASE_DIR).resolve()
 
 # ============================================================
-# 2) Paths
+# 2) Environment
 # ============================================================
 DJANGO_DEBUG = config("DEBUG", cast=bool, default=False)
 
-LOG_DIR = Path(config("LOG_DIR", default=str(BASE_DIR / "logs"))).resolve()
-LOG_PATH = Path(config("LOG_PATH", default=str(LOG_DIR / "django_error.log"))).resolve()
-DEBUG_LOG_PATH = Path(config("DEBUG_LOG_PATH", default=str(LOG_DIR / "django_debug.log"))).resolve()
+# ============================================================
+# 3) Paths (NE PAS créer les dossiers ici)
+# ============================================================
+LOG_DIR = Path(
+    config("LOG_DIR", default=BASE_DIR / "logs")
+).resolve()
+
+LOG_PATH = Path(
+    config("LOG_PATH", default=LOG_DIR / "django_error.log")
+).resolve()
+
+DEBUG_LOG_PATH = Path(
+    config("DEBUG_LOG_PATH", default=LOG_DIR / "django_debug.log")
+).resolve()
 
 # ============================================================
-# 3) Handlers dynamiques
-#   - console toujours (journalctl)
-#   - file_error toujours (mais delay=True)
-#   - file_debug uniquement si DEBUG=True
+# 4) Handlers dynamiques
 # ============================================================
 handlers = {
     "console": {
@@ -32,7 +46,7 @@ handlers = {
         "level": "ERROR",
         "class": "logging.handlers.RotatingFileHandler",
         "filename": str(LOG_PATH),
-        "maxBytes": 10 * 1024 * 1024,
+        "maxBytes": 10 * 1024 * 1024,  # 10 MB
         "backupCount": 10,
         "formatter": "verbose",
         "delay": True,
@@ -50,11 +64,14 @@ if DJANGO_DEBUG:
         "delay": True,
     }
 
-django_handlers = ["console", "file_error"] + (["file_debug"] if DJANGO_DEBUG else [])
-root_handlers = ["console", "file_error"] + (["file_debug"] if DJANGO_DEBUG else [])
+django_handlers = ["console", "file_error"]
+if DJANGO_DEBUG:
+    django_handlers.append("file_debug")
+
+root_handlers = django_handlers.copy()
 
 # ============================================================
-# 4) LOGGING
+# 5) LOGGING
 # ============================================================
 LOGGING = {
     "version": 1,
@@ -74,11 +91,12 @@ LOGGING = {
     "handlers": handlers,
 
     "loggers": {
-        "django": {
-            "handlers": django_handlers,
-            "level": "DEBUG" if DJANGO_DEBUG else "WARNING",
+        "django.utils.autoreload": {
+            "handlers": ["console"],
+            "level": "INFO",
             "propagate": False,
         },
+
         "django.request": {
             "handlers": django_handlers,
             "level": "ERROR",
@@ -93,22 +111,135 @@ LOGGING = {
 
     "root": {
         "handlers": root_handlers,
-        "level": "INFO" if DJANGO_DEBUG else "WARNING",
+        "level": "DEBUG" if DJANGO_DEBUG else "INFO",
     },
 }
 
-
 # ============================================================
-# 5) Recommandation: s’assurer que le dossier logs existe via deploy
+# 6) IMPORTANT (rappel déploiement)
 # ============================================================
-# IMPORTANT:
-# - Ne pas créer de fichiers/dossiers ici (settings import-time)
-# - Crée le dossier via provisioning (bash), systemd tmpfiles, ou Ansible
+# ⚠️ Ne jamais créer les dossiers ici (settings import-time)
 #
-# Exemple (une fois sur VPS):
-#   sudo mkdir -p /home/ubuntu/SOGENTIS/logs
-#   sudo chown -R ubuntu:www-data /home/ubuntu/SOGENTIS/logs
-#   sudo chmod 775 /home/ubuntu/SOGENTIS/logs
+# À faire côté système :
+#   mkdir -p /path/to/project/logs
+#   chown -R user:www-data logs
+#   chmod 775 logs
+
+
+
+
+
+# # config/settings/modules/logging.py 09/01/2026
+# from pathlib import Path
+# from decouple import config
+
+# # ============================================================
+# # 1) BASE_DIR
+# # ============================================================
+# BASE_DIR = Path(globals().get("BASE_DIR") or Path(__file__).resolve().parents[3]).resolve()
+
+# # ============================================================
+# # 2) Paths
+# # ============================================================
+# DJANGO_DEBUG = config("DEBUG", cast=bool, default=False)
+
+# LOG_DIR = Path(config("LOG_DIR", default=str(BASE_DIR / "logs"))).resolve()
+# LOG_PATH = Path(config("LOG_PATH", default=str(LOG_DIR / "django_error.log"))).resolve()
+# DEBUG_LOG_PATH = Path(config("DEBUG_LOG_PATH", default=str(LOG_DIR / "django_debug.log"))).resolve()
+
+# # ============================================================
+# # 3) Handlers dynamiques
+# #   - console toujours (journalctl)
+# #   - file_error toujours (mais delay=True)
+# #   - file_debug uniquement si DEBUG=True
+# # ============================================================
+# handlers = {
+#     "console": {
+#         "level": "DEBUG" if DJANGO_DEBUG else "INFO",
+#         "class": "logging.StreamHandler",
+#         "formatter": "simple",
+#     },
+#     "file_error": {
+#         "level": "ERROR",
+#         "class": "logging.handlers.RotatingFileHandler",
+#         "filename": str(LOG_PATH),
+#         "maxBytes": 10 * 1024 * 1024,
+#         "backupCount": 10,
+#         "formatter": "verbose",
+#         "delay": True,
+#     },
+# }
+
+# if DJANGO_DEBUG:
+#     handlers["file_debug"] = {
+#         "level": "DEBUG",
+#         "class": "logging.handlers.RotatingFileHandler",
+#         "filename": str(DEBUG_LOG_PATH),
+#         "maxBytes": 10 * 1024 * 1024,
+#         "backupCount": 5,
+#         "formatter": "verbose",
+#         "delay": True,
+#     }
+
+# django_handlers = ["console", "file_error"] + (["file_debug"] if DJANGO_DEBUG else [])
+# root_handlers = ["console", "file_error"] + (["file_debug"] if DJANGO_DEBUG else [])
+
+# # ============================================================
+# # 4) LOGGING
+# # ============================================================
+# LOGGING = {
+#     "version": 1,
+#     "disable_existing_loggers": False,
+
+#     "formatters": {
+#         "verbose": {
+#             "format": "[{asctime}] {levelname} {name}:{lineno} :: {message}",
+#             "style": "{",
+#         },
+#         "simple": {
+#             "format": "{levelname}: {message}",
+#             "style": "{",
+#         },
+#     },
+
+#     "handlers": handlers,
+
+#     "loggers": {
+#         "django": {
+#             "handlers": django_handlers,
+#             "level": "DEBUG" if DJANGO_DEBUG else "WARNING",
+#             "propagate": False,
+#         },
+#         "django.request": {
+#             "handlers": django_handlers,
+#             "level": "ERROR",
+#             "propagate": False,
+#         },
+#         "django.db.backends": {
+#             "handlers": ["console"] if DJANGO_DEBUG else [],
+#             "level": "DEBUG",
+#             "propagate": False,
+#         },
+#     },
+
+#     "root": {
+#         "handlers": root_handlers,
+#         "level": "INFO" if DJANGO_DEBUG else "WARNING",
+#     },
+# }
+
+
+# # ============================================================
+# # 5) Recommandation: s’assurer que le dossier logs existe via deploy
+# # ============================================================
+# # IMPORTANT:
+# # - Ne pas créer de fichiers/dossiers ici (settings import-time)
+# # - Crée le dossier via provisioning (bash), systemd tmpfiles, ou Ansible
+# #
+# # Exemple (une fois sur VPS):
+# #   sudo mkdir -p /home/ubuntu/SOGENTIS/logs
+# #   sudo chown -R ubuntu:www-data /home/ubuntu/SOGENTIS/logs
+# #   sudo chmod 775 /home/ubuntu/SOGENTIS/logs
 
 
 
@@ -240,4 +371,5 @@ LOGGING = {
 #         "level": "WARNING",  # par défaut : avertissements +
 #     },
 # }
+
 

@@ -1,55 +1,42 @@
-# config/settings/templates/middleware.py
+# config/settings/modules/templates.py
 from pathlib import Path
 from decouple import config
 
-# Base directory
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
+# BASE_DIR = Path(__file__).resolve().parents[3]  # <-- remonte jusqu'au dossier projet (avec manage.py)
+BASE_DIR = Path(globals().get("BASE_DIR", Path(__file__).resolve().parents[3])).resolve()
 
-# Environment
 DEBUG = config("DEBUG", cast=bool, default=False)
-USE_TEMPLATE_CACHING = config(
-    "USE_TEMPLATE_CACHING",
-    cast=bool,
-    default=not DEBUG,
-)
+USE_TEMPLATE_CACHING = config("USE_TEMPLATE_CACHING", cast=bool, default=not DEBUG)
 
-# Context processors communs
+# ✅ Chemin templates résolu (évite les surprises)
+TEMPLATES_DIR = (BASE_DIR / "templates").resolve()
+
 BASE_CONTEXT_PROCESSORS = [
     "django.template.context_processors.request",
     "django.template.context_processors.i18n",
     "django.contrib.auth.context_processors.auth",
     "django.contrib.messages.context_processors.messages",
 
-    # Custom global context
     "core.context_processors.global_context.theme_context",
     "core.context_processors.global_context.global_variables",
     "core.context_processors.global_context.section_menu",
     "core.context_processors.global_context.seo_context",
     "core.context_processors.global_context.social_links",
     "core.context_processors.global_context.site_domains",
+    "core.context_processors.security_context.antispam",
 
-    # Dashboard
     "dashboard.context_processors.dashboard_context.dashboard_info",
     "dashboard.context_processors.dashboard_context.dashboard_roles",
-
-    # Economic / Ecommerce
-    "economic.context_processors.context_processors.economic_context",
-    "economic.ecommerce.context_processors.ecommerce_context",
-    "economic.ecommerce.context_processors.ecommerce_counts",
 ]
 
-# Debug context uniquement en DEV
 if DEBUG:
-    BASE_CONTEXT_PROCESSORS.insert(
-        0, "django.template.context_processors.debug"
-    )
+    BASE_CONTEXT_PROCESSORS.insert(0, "django.template.context_processors.debug")
 
-# Templates
 if USE_TEMPLATE_CACHING:
-    # PROD / cache activé
     TEMPLATES = [{
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],
+        # "DIRS": [BASE_DIR / "templates"],
+        "DIRS": [str(TEMPLATES_DIR)],  # ✅ important: str + resolve
         "APP_DIRS": False,
         "OPTIONS": {
             "loaders": [
@@ -65,15 +52,257 @@ if USE_TEMPLATE_CACHING:
         },
     }]
 else:
-    # DEV / local
     TEMPLATES = [{
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],
+        # "DIRS": [BASE_DIR / "templates"],
+        "DIRS": [str(TEMPLATES_DIR)],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": BASE_CONTEXT_PROCESSORS,
         },
     }]
+
+
+
+
+
+# # config/settings/modules/templates.py
+# from pathlib import Path
+# from decouple import config
+
+# # ============================================================
+# # 1) BASE_DIR
+# # ============================================================
+# BASE_DIR = Path(__file__).resolve().parents[3]  # racine du projet
+
+# # ============================================================
+# # 2) DEBUG & Template caching
+# # ============================================================
+# DEBUG = config("DEBUG", cast=bool, default=False)
+# USE_TEMPLATE_CACHING = config("USE_TEMPLATE_CACHING", cast=bool, default=not DEBUG)
+
+# # ============================================================
+# # 3) Context processors globaux
+# # ============================================================
+# BASE_CONTEXT_PROCESSORS = [
+#     # Django built-ins
+#     "django.template.context_processors.request",
+#     "django.template.context_processors.i18n",
+#     "django.contrib.auth.context_processors.auth",
+#     "django.contrib.messages.context_processors.messages",
+
+#     # Custom global context
+#     "core.context_processors.global_context.theme_context",
+#     "core.context_processors.global_context.global_variables",
+#     "core.context_processors.global_context.section_menu",
+#     "core.context_processors.global_context.seo_context",
+#     "core.context_processors.global_context.social_links",
+#     "core.context_processors.global_context.site_domains",
+
+#     # Anti-spam / hCaptcha
+#     "core.context_processors.global_context.antispam_context",
+
+#     # Dashboard
+#     "dashboard.context_processors.dashboard_context.dashboard_info",
+#     "dashboard.context_processors.dashboard_context.dashboard_roles",
+
+#     # Economic / Ecommerce
+#     "economic.context_processors.context_processors.economic_context",
+#     "economic.ecommerce.context_processors.ecommerce_context",
+#     "economic.ecommerce.context_processors.ecommerce_counts",
+# ]
+
+# # Debug context processor en priorité si DEBUG
+# if DEBUG:
+#     BASE_CONTEXT_PROCESSORS.insert(0, "django.template.context_processors.debug")
+
+# # ============================================================
+# # 4) TEMPLATES configuration
+# # ============================================================
+# if USE_TEMPLATE_CACHING:
+#     # Chargement avec cache pour prod
+#     TEMPLATES = [{
+#         "BACKEND": "django.template.backends.django.DjangoTemplates",
+#         "DIRS": [BASE_DIR / "templates"],
+#         "APP_DIRS": False,  # on utilise loaders explicites
+#         "OPTIONS": {
+#             "loaders": [
+#                 (
+#                     "django.template.loaders.cached.Loader",
+#                     [
+#                         "django.template.loaders.filesystem.Loader",
+#                         "django.template.loaders.app_directories.Loader",
+#                     ],
+#                 ),
+#             ],
+#             "context_processors": BASE_CONTEXT_PROCESSORS,
+#         },
+#     }]
+# else:
+#     # Chargement simple pour dev
+#     TEMPLATES = [{
+#         "BACKEND": "django.template.backends.django.DjangoTemplates",
+#         "DIRS": [BASE_DIR / "templates"],
+#         "APP_DIRS": True,
+#         "OPTIONS": {
+#             "context_processors": BASE_CONTEXT_PROCESSORS,
+#         },
+#     }]
+
+
+
+
+
+# # config/settings/modules/templates.py
+# from pathlib import Path
+# from decouple import config
+
+# BASE_DIR = Path(__file__).resolve().parents[3]
+# # BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+# DEBUG = config("DEBUG", cast=bool, default=False)
+# USE_TEMPLATE_CACHING = config("USE_TEMPLATE_CACHING", cast=bool, default=not DEBUG)
+
+# BASE_CONTEXT_PROCESSORS = [
+#     "django.template.context_processors.request",
+#     "django.template.context_processors.i18n",
+#     "django.contrib.auth.context_processors.auth",
+#     "django.contrib.messages.context_processors.messages",
+
+#     # Custom global context
+#     "core.context_processors.global_context.theme_context",
+#     "core.context_processors.global_context.global_variables",
+#     "core.context_processors.global_context.section_menu",
+#     "core.context_processors.global_context.seo_context",
+#     "core.context_processors.global_context.social_links",
+#     "core.context_processors.global_context.site_domains",
+
+#     # ✅ hCaptcha context (ICI)
+#     "core.context_processors.global_context.antispam_context",
+
+#     # Dashboard
+#     "dashboard.context_processors.dashboard_context.dashboard_info",
+#     "dashboard.context_processors.dashboard_context.dashboard_roles",
+
+#     # Economic / Ecommerce
+#     "economic.context_processors.context_processors.economic_context",
+#     "economic.ecommerce.context_processors.ecommerce_context",
+#     "economic.ecommerce.context_processors.ecommerce_counts",
+# ]
+
+# if DEBUG:
+#     BASE_CONTEXT_PROCESSORS.insert(0, "django.template.context_processors.debug")
+
+# if USE_TEMPLATE_CACHING:
+#     TEMPLATES = [{
+#         "BACKEND": "django.template.backends.django.DjangoTemplates",
+#         "DIRS": [BASE_DIR / "templates"],
+#         "APP_DIRS": False,
+#         "OPTIONS": {
+#             "loaders": [
+#                 (
+#                     "django.template.loaders.cached.Loader",
+#                     [
+#                         "django.template.loaders.filesystem.Loader",
+#                         "django.template.loaders.app_directories.Loader",
+#                     ],
+#                 ),
+#             ],
+#             "context_processors": BASE_CONTEXT_PROCESSORS,
+#         },
+#     }]
+# else:
+#     TEMPLATES = [{
+#         "BACKEND": "django.template.backends.django.DjangoTemplates",
+#         "DIRS": [BASE_DIR / "templates"],
+#         "APP_DIRS": True,
+#         "OPTIONS": {
+#             "context_processors": BASE_CONTEXT_PROCESSORS,
+#         },
+#     }]
+
+
+
+
+
+
+# # config/settings/templates/middleware.py
+# from pathlib import Path
+# from decouple import config
+
+# # Base directory
+# BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+# # Environment
+# DEBUG = config("DEBUG", cast=bool, default=False)
+# USE_TEMPLATE_CACHING = config(
+#     "USE_TEMPLATE_CACHING",
+#     cast=bool,
+#     default=not DEBUG,
+# )
+
+# # Context processors communs
+# BASE_CONTEXT_PROCESSORS = [
+#     "django.template.context_processors.request",
+#     "django.template.context_processors.i18n",
+#     "django.contrib.auth.context_processors.auth",
+#     "django.contrib.messages.context_processors.messages",
+
+#     # Custom global context
+#     "core.context_processors.global_context.theme_context",
+#     "core.context_processors.global_context.global_variables",
+#     "core.context_processors.global_context.section_menu",
+#     "core.context_processors.global_context.seo_context",
+#     "core.context_processors.global_context.social_links",
+#     "core.context_processors.global_context.site_domains",
+#     "core.context_processors.security_context.antispam",
+
+#     # Dashboard
+#     "dashboard.context_processors.dashboard_context.dashboard_info",
+#     "dashboard.context_processors.dashboard_context.dashboard_roles",
+
+#     # Economic / Ecommerce
+#     "economic.context_processors.context_processors.economic_context",
+#     "economic.ecommerce.context_processors.ecommerce_context",
+#     "economic.ecommerce.context_processors.ecommerce_counts",
+# ]
+
+# # Debug context uniquement en DEV
+# if DEBUG:
+#     BASE_CONTEXT_PROCESSORS.insert(
+#         0, "django.template.context_processors.debug"
+#     )
+
+# # Templates
+# if USE_TEMPLATE_CACHING:
+#     # PROD / cache activé
+#     TEMPLATES = [{
+#         "BACKEND": "django.template.backends.django.DjangoTemplates",
+#         "DIRS": [BASE_DIR / "templates"],
+#         "APP_DIRS": False,
+#         "OPTIONS": {
+#             "loaders": [
+#                 (
+#                     "django.template.loaders.cached.Loader",
+#                     [
+#                         "django.template.loaders.filesystem.Loader",
+#                         "django.template.loaders.app_directories.Loader",
+#                     ],
+#                 ),
+#             ],
+#             "context_processors": BASE_CONTEXT_PROCESSORS,
+#         },
+#     }]
+# else:
+#     # DEV / local
+#     TEMPLATES = [{
+#         "BACKEND": "django.template.backends.django.DjangoTemplates",
+#         "DIRS": [BASE_DIR / "templates"],
+#         "APP_DIRS": True,
+#         "OPTIONS": {
+#             "context_processors": BASE_CONTEXT_PROCESSORS,
+#         },
+#     }]
 
 
 

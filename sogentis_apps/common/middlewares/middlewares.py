@@ -1,92 +1,12 @@
 # common/middlewares/middlewares.py
-from __future__ import annotations
 
-from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import redirect
-from django.urls import NoReverseMatch, reverse
 from django.utils.deprecation import MiddlewareMixin
 
 
-class DomainMiddleware(MiddlewareMixin):
-    """
-    Déduit le type de site par domaine + redirige la racine vers le bon pôle
-    si DOMAIN_REDIRECT_ROOT=True.
-
-    Hub accessible via /hub/ (et /fr/hub/ si i18n).
-    """
-
-    def process_request(self, request):
-        host = (request.get_host() or "").split(":")[0].lower().strip()
-        bare = host[4:] if host.startswith("www.") else host
-
-        request.site_host = host
-        request.site_bare_host = bare
-
-        site_type = self._resolve_site_type(bare)
-        request.site_type = site_type
-
-        # Bypass (admin, static, hub, etc.)
-        path = request.path_info or "/"
-        if self._is_bypassed(path):
-            return None
-
-        # Redirige uniquement "/" et "/<lang>/"
-        if not getattr(settings, "DOMAIN_REDIRECT_ROOT", False):
-            return None
-
-        roots = {"/"}
-        for code, _ in getattr(settings, "LANGUAGES", []):
-            roots.add(f"/{code}/")
-
-        if path not in roots:
-            return None
-
-        # Calcul home cible selon site_type
-        target_urlname = self._home_urlname_for(site_type)
-        target_path = self._safe_reverse(target_urlname) or "/"
-
-        if target_path and target_path != path:
-            permanent = bool(getattr(settings, "DOMAIN_REDIRECT_PERMANENT", False))
-            return redirect(target_path, permanent=permanent)
-
-        return None
-
-    def _is_bypassed(self, path: str) -> bool:
-        prefixes = getattr(settings, "DOMAIN_BYPASS_PREFIXES", ()) or ()
-        return any(path.startswith(p) for p in prefixes)
-
-    def _resolve_site_type(self, bare_host: str) -> str:
-        mapping = getattr(settings, "DOMAIN_SITE_MAP", {}) or {}
-        if bare_host in mapping:
-            return mapping[bare_host]
-
-        if bare_host.endswith(".org"):
-            return "social"
-        if bare_host.endswith(".com"):
-            return "business"
-        if bare_host.endswith(".sn"):
-            return "institution"
-        return "default"
-
-    def _home_urlname_for(self, site_type: str) -> str:
-        if site_type == "business":
-            return getattr(settings, "BUSINESS_HOME_URLNAME", "economic:index")
-        if site_type == "social":
-            return getattr(settings, "SOCIAL_HOME_URLNAME", "social:index")
-        if site_type == "institution":
-            return getattr(settings, "SN_HOME_URLNAME", "institution:index")
-        return getattr(settings, "DEFAULT_HOME_URLNAME", "core:home")
-
-    def _safe_reverse(self, urlname: str) -> str:
-        try:
-            return reverse(urlname)
-        except NoReverseMatch:
-            return "/"
-
-
 class ProfileStatusMiddleware(MiddlewareMixin):
-    EXEMPT_URLS = [
+    EXEMPT_URLS = {
         "accounts_users_web:login",
         "accounts_users_web:logout",
         "accounts_users_web:signup",
@@ -98,39 +18,253 @@ class ProfileStatusMiddleware(MiddlewareMixin):
         "accounts_users_web:password_reset_complete",
         "accounts_users_web:profile_pending_notice",
         "accounts_users_web:profile_refused_notice",
-    ]
+    }
+
+    STATUS_PENDING = "pending"
+    STATUS_REFUSED = "refused"
 
     def process_view(self, request, view_func, view_args, view_kwargs):
-        user = request.user
-        if not user.is_authenticated:
+        user = getattr(request, "user", None)
+
+        if not user or not user.is_authenticated:
             return None
 
-        try:
-            current_url_name = request.resolver_match.view_name
-        except Exception:
+        resolver = getattr(request, "resolver_match", None)
+        if not resolver:
             return None
 
-        if current_url_name in self.EXEMPT_URLS:
+        if resolver.view_name in self.EXEMPT_URLS:
             return None
 
         if not user.is_active:
-            messages.warning(request, "Veuillez activer votre compte par e-mail.")
+            messages.warning(
+                request,
+                "Veuillez activer votre compte via le lien reçu par e-mail."
+            )
             return redirect("accounts_users_web:login")
 
-        profile = getattr(user, "userprofile", None)
+        profile = getattr(user, "profile", None) or getattr(user, "userprofile", None)
         if not profile:
             return None
 
-        status = getattr(profile, "status", "")
-        if status == "pending":
-            messages.info(request, "Votre profil est toujours en attente de validation.")
+        status = getattr(profile, "status", "") or ""
+
+        if status == self.STATUS_PENDING:
+            messages.info(
+                request,
+                "Votre profil est en attente de validation."
+            )
             return redirect("accounts_users_web:profile_pending_notice")
 
-        if status == "refused":
-            messages.error(request, "Votre profil a été refusé.")
+        if status == self.STATUS_REFUSED:
+            messages.error(
+                request,
+                "Votre profil a été refusé."
+            )
             return redirect("accounts_users_web:profile_refused_notice")
 
         return None
+
+
+
+
+
+
+
+
+
+# # common/middlewares/middlewares.py 10/01/2026
+# from __future__ import annotations
+
+# from django.contrib import messages
+# from django.shortcuts import redirect
+# from django.utils.deprecation import MiddlewareMixin
+
+
+# class ProfileStatusMiddleware(MiddlewareMixin):
+#     EXEMPT_URLS = [
+#         "accounts_users_web:login",
+#         "accounts_users_web:logout",
+#         "accounts_users_web:signup",
+#         "accounts_users_web:activate",
+#         "accounts_users_web:resend_activation",
+#         "accounts_users_web:password_reset",
+#         "accounts_users_web:password_reset_done",
+#         "accounts_users_web:password_reset_confirm",
+#         "accounts_users_web:password_reset_complete",
+#         "accounts_users_web:profile_pending_notice",
+#         "accounts_users_web:profile_refused_notice",
+#     ]
+
+#     def process_view(self, request, view_func, view_args, view_kwargs):
+#         user = request.user
+#         if not user.is_authenticated:
+#             return None
+
+#         try:
+#             current_url_name = request.resolver_match.view_name
+#         except Exception:
+#             return None
+
+#         if current_url_name in self.EXEMPT_URLS:
+#             return None
+
+#         if not user.is_active:
+#             messages.warning(request, "Veuillez activer votre compte par e-mail.")
+#             return redirect("accounts_users_web:login")
+
+#         profile = getattr(user, "profile", None) or getattr(user, "userprofile", None)
+#         if not profile:
+#             return None
+
+#         status = getattr(profile, "status", "") or ""
+#         if status == "pending":
+#             messages.info(request, "Votre profil est toujours en attente de validation.")
+#             return redirect("accounts_users_web:profile_pending_notice")
+
+#         if status == "refused":
+#             messages.error(request, "Votre profil a été refusé.")
+#             return redirect("accounts_users_web:profile_refused_notice")
+
+#         return None
+
+
+
+
+
+# # common/middlewares/middlewares.py 09/01/2026
+# from __future__ import annotations
+
+# from django.conf import settings
+# from django.contrib import messages
+# from django.shortcuts import redirect
+# from django.urls import NoReverseMatch, reverse
+# from django.utils.deprecation import MiddlewareMixin
+
+
+# class DomainMiddleware(MiddlewareMixin):
+#     """
+#     Déduit le type de site par domaine + redirige la racine vers le bon pôle
+#     si DOMAIN_REDIRECT_ROOT=True.
+
+#     Hub accessible via /hub/ (et /fr/hub/ si i18n).
+#     """
+
+#     def process_request(self, request):
+#         host = (request.get_host() or "").split(":")[0].lower().strip()
+#         bare = host[4:] if host.startswith("www.") else host
+
+#         request.site_host = host
+#         request.site_bare_host = bare
+
+#         site_type = self._resolve_site_type(bare)
+#         request.site_type = site_type
+
+#         # Bypass (admin, static, hub, etc.)
+#         path = request.path_info or "/"
+#         if self._is_bypassed(path):
+#             return None
+
+#         # Redirige uniquement "/" et "/<lang>/"
+#         if not getattr(settings, "DOMAIN_REDIRECT_ROOT", False):
+#             return None
+
+#         roots = {"/"}
+#         for code, _ in getattr(settings, "LANGUAGES", []):
+#             roots.add(f"/{code}/")
+
+#         if path not in roots:
+#             return None
+
+#         # Calcul home cible selon site_type
+#         target_urlname = self._home_urlname_for(site_type)
+#         target_path = self._safe_reverse(target_urlname) or "/"
+
+#         if target_path and target_path != path:
+#             permanent = bool(getattr(settings, "DOMAIN_REDIRECT_PERMANENT", False))
+#             return redirect(target_path, permanent=permanent)
+
+#         return None
+
+#     def _is_bypassed(self, path: str) -> bool:
+#         prefixes = getattr(settings, "DOMAIN_BYPASS_PREFIXES", ()) or ()
+#         return any(path.startswith(p) for p in prefixes)
+
+#     def _resolve_site_type(self, bare_host: str) -> str:
+#         mapping = getattr(settings, "DOMAIN_SITE_MAP", {}) or {}
+#         if bare_host in mapping:
+#             return mapping[bare_host]
+
+#         if bare_host.endswith(".org"):
+#             return "social"
+#         if bare_host.endswith(".com"):
+#             return "business"
+#         if bare_host.endswith(".sn"):
+#             return "institution"
+#         return "default"
+
+#     def _home_urlname_for(self, site_type: str) -> str:
+#         if site_type == "business":
+#             return getattr(settings, "BUSINESS_HOME_URLNAME", "economic:index")
+#         if site_type == "social":
+#             return getattr(settings, "SOCIAL_HOME_URLNAME", "social:index")
+#         if site_type == "institution":
+#             return getattr(settings, "SN_HOME_URLNAME", "institution:index")
+#         return getattr(settings, "DEFAULT_HOME_URLNAME", "core:home")
+
+#     def _safe_reverse(self, urlname: str) -> str:
+#         try:
+#             return reverse(urlname)
+#         except NoReverseMatch:
+#             return "/"
+
+
+# class ProfileStatusMiddleware(MiddlewareMixin):
+#     EXEMPT_URLS = [
+#         "accounts_users_web:login",
+#         "accounts_users_web:logout",
+#         "accounts_users_web:signup",
+#         "accounts_users_web:activate",
+#         "accounts_users_web:resend_activation",
+#         "accounts_users_web:password_reset",
+#         "accounts_users_web:password_reset_done",
+#         "accounts_users_web:password_reset_confirm",
+#         "accounts_users_web:password_reset_complete",
+#         "accounts_users_web:profile_pending_notice",
+#         "accounts_users_web:profile_refused_notice",
+#     ]
+
+#     def process_view(self, request, view_func, view_args, view_kwargs):
+#         user = request.user
+#         if not user.is_authenticated:
+#             return None
+
+#         try:
+#             current_url_name = request.resolver_match.view_name
+#         except Exception:
+#             return None
+
+#         if current_url_name in self.EXEMPT_URLS:
+#             return None
+
+#         if not user.is_active:
+#             messages.warning(request, "Veuillez activer votre compte par e-mail.")
+#             return redirect("accounts_users_web:login")
+
+#         profile = getattr(user, "userprofile", None)
+#         if not profile:
+#             return None
+
+#         status = getattr(profile, "status", "")
+#         if status == "pending":
+#             messages.info(request, "Votre profil est toujours en attente de validation.")
+#             return redirect("accounts_users_web:profile_pending_notice")
+
+#         if status == "refused":
+#             messages.error(request, "Votre profil a été refusé.")
+#             return redirect("accounts_users_web:profile_refused_notice")
+
+#         return None
 
 
 

@@ -1,43 +1,69 @@
 # config/settings/modules/middleware.py
 
+# ==========================================================
+# Django middleware stack
+# Order is IMPORTANT – do not reorder blindly
+# ==========================================================
 MIDDLEWARE = [
-    # Sécurité générale
+
+    # ------------------------------------------------------
+    # Security (MUST be first)
+    # ------------------------------------------------------
     "django.middleware.security.SecurityMiddleware",
 
-    # ✅ Cross-domain (FORCE economic sur .com etc.)
+    # ------------------------------------------------------
+    # Early custom middlewares (before sessions)
+    # ------------------------------------------------------
+
+    # Cross-domain redirections (GET / HEAD only)
     "common.middlewares.cross_domain_redirect.CrossDomainRedirectMiddleware",
 
-    # ✅ Router multi-domain (URLConf par host)
-    # "config.middlewares.domain_router.DomainRouterMiddleware",
+    # Detect active site (social / business / institution) from host
+    "common.middlewares.domain_middleware.DomainSiteMiddleware",
 
-    # Sessions
+    # ------------------------------------------------------
+    # Sessions & internationalization
+    # ------------------------------------------------------
     "django.contrib.sessions.middleware.SessionMiddleware",
 
-    # Langues
+    # Language detection (requires sessions)
     "django.middleware.locale.LocaleMiddleware",
 
-    # Common
+    # ------------------------------------------------------
+    # Common HTTP behavior
+    # ------------------------------------------------------
     "django.middleware.common.CommonMiddleware",
 
-    # CSRF
+    # ------------------------------------------------------
+    # CSRF protection
+    # ------------------------------------------------------
     "django.middleware.csrf.CsrfViewMiddleware",
 
-    # Auth
+    # ------------------------------------------------------
+    # Authentication & messages
+    # ------------------------------------------------------
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-
-    # Messages
     "django.contrib.messages.middleware.MessageMiddleware",
 
-    # Clickjacking
+    # ------------------------------------------------------
+    # Security headers
+    # ------------------------------------------------------
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 
-    # Tracking
+    # ------------------------------------------------------
+    # Application-level middlewares
+    # ------------------------------------------------------
+
+    # User activity tracking
     "accounts_users.middleware.users_tracking_middleware.UsersTrackingMiddleware",
 
-    # ✅ Profil pending/refused
+    # Profile status enforcement (AFTER auth + messages)
     "common.middlewares.middlewares.ProfileStatusMiddleware",
 ]
 
+# ==========================================================
+# Django messages → Bootstrap mapping
+# ==========================================================
 from django.contrib.messages import constants as messages
 
 MESSAGE_TAGS = {
@@ -47,6 +73,116 @@ MESSAGE_TAGS = {
     messages.WARNING: "warning",
     messages.ERROR: "danger",
 }
+
+
+
+
+
+
+# # config/settings/modules/middleware.py 10/01/2026
+
+# MIDDLEWARE = [
+#     # Sécurité générale (doit rester en premier)
+#     "django.middleware.security.SecurityMiddleware",
+
+#     # ✅ Redirections cross-domain (GET/HEAD seulement – voir fichier corrigé)
+#     "common.middlewares.cross_domain_redirect.CrossDomainRedirectMiddleware",
+
+#     # ✅ Détecte le type de site (social/business/institution) via host
+#     "common.middlewares.domain_middleware.DomainSiteMiddleware",
+
+#     # Sessions
+#     "django.contrib.sessions.middleware.SessionMiddleware",
+
+#     # Langues
+#     "django.middleware.locale.LocaleMiddleware",
+
+#     # Common
+#     "django.middleware.common.CommonMiddleware",
+
+#     # CSRF
+#     "django.middleware.csrf.CsrfViewMiddleware",
+
+#     # Auth
+#     "django.contrib.auth.middleware.AuthenticationMiddleware",
+
+#     # Messages
+#     "django.contrib.messages.middleware.MessageMiddleware",
+
+#     # Clickjacking
+#     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+
+#     # Tracking
+#     "accounts_users.middleware.users_tracking_middleware.UsersTrackingMiddleware",
+
+#     # ✅ Profil pending/refused (DOIT être après Auth + Messages)
+#     "common.middlewares.middlewares.ProfileStatusMiddleware",
+# ]
+
+# from django.contrib.messages import constants as messages
+
+# MESSAGE_TAGS = {
+#     messages.DEBUG: "secondary",
+#     messages.INFO: "info",
+#     messages.SUCCESS: "success",
+#     messages.WARNING: "warning",
+#     messages.ERROR: "danger",
+# }
+
+
+
+
+
+
+# # config/settings/modules/middleware.py 09/01/2026
+
+# MIDDLEWARE = [
+#     # Sécurité générale
+#     "django.middleware.security.SecurityMiddleware",
+
+#     # ✅ Cross-domain (FORCE economic sur .com etc.)
+#     "common.middlewares.cross_domain_redirect.CrossDomainRedirectMiddleware",
+
+#     # ✅ Router multi-domain (URLConf par host)
+#     # "config.middlewares.domain_router.DomainRouterMiddleware",
+
+#     # Sessions
+#     "django.contrib.sessions.middleware.SessionMiddleware",
+
+#     # Langues
+#     "django.middleware.locale.LocaleMiddleware",
+
+#     # Common
+#     "django.middleware.common.CommonMiddleware",
+
+#     # CSRF
+#     "django.middleware.csrf.CsrfViewMiddleware",
+
+#     # Auth
+#     "django.contrib.auth.middleware.AuthenticationMiddleware",
+
+#     # Messages
+#     "django.contrib.messages.middleware.MessageMiddleware",
+
+#     # Clickjacking
+#     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+
+#     # Tracking
+#     "accounts_users.middleware.users_tracking_middleware.UsersTrackingMiddleware",
+
+#     # ✅ Profil pending/refused
+#     "common.middlewares.middlewares.ProfileStatusMiddleware",
+# ]
+
+# from django.contrib.messages import constants as messages
+
+# MESSAGE_TAGS = {
+#     messages.DEBUG: "secondary",
+#     messages.INFO: "info",
+#     messages.SUCCESS: "success",
+#     messages.WARNING: "warning",
+#     messages.ERROR: "danger",
+# }
 
 
 
