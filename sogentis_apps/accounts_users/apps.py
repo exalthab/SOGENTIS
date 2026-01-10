@@ -7,8 +7,27 @@ class AccountsUsersConfig(AppConfig):
     name = "accounts_users"
 
     def ready(self):
-        # Import signals
+        # Import signals (enregistrement des receivers)
         from .signals import profile_validation_signals  # noqa
+        from .signals import membership_role_signals    # noqa
+
+
+
+
+
+
+
+# # accounts_users/apps.py
+# from django.apps import AppConfig
+
+
+# class AccountsUsersConfig(AppConfig):
+#     default_auto_field = "django.db.models.BigAutoField"
+#     name = "accounts_users"
+
+#     def ready(self):
+#         # Import signals
+#         from .signals import profile_validation_signals  # noqa
 
 
 
