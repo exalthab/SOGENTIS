@@ -25,7 +25,7 @@ from accounts_users.web.views.registration_choice import registration_choice_vie
 from accounts_users.web.views.social.social_registration_view import social_register_view
 from accounts_users.web.views.economic.registration_economic import register_economic_view, register_economic_choice_view
 
-# from accounts_users.web.views.social.social_registration_view import social_register_view
+from accounts_users.web.views.social.social_registration_view import social_register_view
 
 
 # Password reset personnalisé
