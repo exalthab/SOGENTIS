@@ -40,7 +40,7 @@ def social_register_view(request):
                     request,
                     _("Veuillez vérifier votre numéro de téléphone avant de continuer.")
                 )
-                return redirect("accounts_users_web:social_signup")
+                return redirect("accounts_users_web:social_register")
 
             try:
                 with transaction.atomic():
