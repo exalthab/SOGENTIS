@@ -1,0 +1,702 @@
+{# templates/economic/formations/learner/dashboard.html #}
+{% extends "economic/formations/base_formations.html" %}
+{% load i18n dashboard_tags %}
+
+{% block formations_title %}{% trans "Mon espace apprenant" %}{% endblock %}
+
+{% block formations_content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <div>
+    <div class="text-muted small text-uppercase">{% trans "Mon espace" %}</div>
+    <h1 class="h4 mb-1">{% trans "Espace apprenant" %}</h1>
+    <div class="text-muted small">{% trans "Suivi rapide : cours, sessions, certificats." %}</div>
+  </div>
+  <div class="d-flex gap-2">
+    {% safe_url "economic:formations:my_courses" as u_courses %}
+    {% safe_url "economic:formations:my_calendar" as u_cal %}
+    {% safe_url "economic:formations:my_certificates" as u_certs %}
+    <a class="btn btn-sm btn-outline-secondary" href="{{ u_courses|default:'#' }}">{% trans "Mes cours" %}</a>
+    <a class="btn btn-sm btn-outline-secondary" href="{{ u_cal|default:'#' }}">{% trans "Calendrier" %}</a>
+    <a class="btn btn-sm btn-outline-secondary" href="{{ u_certs|default:'#' }}">{% trans "Certificats" %}</a>
+  </div>
+</div>
+
+<div class="row g-3 mb-3">
+  <div class="col-md-4">
+    <div class="p-3 bg-white border rounded-3">
+      <div class="text-muted small">{% trans "Actifs" %}</div>
+      <div class="h4 mb-0">{{ active_count|default:0 }}</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="p-3 bg-white border rounded-3">
+      <div class="text-muted small">{% trans "En attente" %}</div>
+      <div class="h4 mb-0">{{ pending_count|default:0 }}</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="p-3 bg-white border rounded-3">
+      <div class="text-muted small">{% trans "Terminés" %}</div>
+      <div class="h4 mb-0">{{ completed_count|default:0 }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-7">
+    <div class="p-3 bg-white border rounded-3">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h2 class="h6 mb-0">{% trans "Mes dernières inscriptions" %}</h2>
+        {% safe_url "economic:formations:my_courses" as u_all %}
+        <a class="small text-decoration-none" href="{{ u_all|default:'#' }}">{% trans "Voir tout" %} →</a>
+      </div>
+
+      {% if enrollments %}
+        <div class="table-responsive">
+          <table class="table table-sm align-middle mb-0">
+            <thead>
+              <tr>
+                <th>{% trans "Cours" %}</th>
+                <th>{% trans "Statut" %}</th>
+                <th>{% trans "Date" %}</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for e in enrollments %}
+                <tr>
+                  <td>{{ e.course }}</td>
+                  <td>
+                    <span class="badge bg-light text-dark border">
+                      {{ e.get_status_display|default:e.status }}
+                    </span>
+                  </td>
+                  <td class="text-muted">
+                    {{ e.enrolled_at|date:"d/m/Y" }}
+                  </td>
+                  <td class="text-end">
+                    {% safe_url "economic:formations:learning" as u_learning %}
+                    {% if u_learning %}
+                      <a class="btn btn-sm btn-outline-primary"
+                         href="{% url 'economic:formations:learning' slug=e.course.slug %}">
+                        {% trans "Apprendre" %}
+                      </a>
+                    {% else %}
+                      <a class="btn btn-sm btn-outline-primary disabled" href="#">{% trans "Apprendre" %}</a>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <p class="small text-muted mb-0">{% trans "Aucune inscription pour le moment." %}</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="p-3 bg-white border rounded-3 mb-3">
+      <h2 class="h6 mb-2">{% trans "Sessions à venir" %}</h2>
+      {% if sessions %}
+        <ul class="small mb-0">
+          {% for s in sessions %}
+            <li class="mb-1">
+              <strong>{{ s.course }}</strong> —
+              {{ s.start_at|date:"d/m H:i" }}{% if s.end_at %} → {{ s.end_at|date:"H:i" }}{% endif %}
+              {% if s.location %}<span class="text-muted">({{ s.location }})</span>{% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="small text-muted mb-0">{% trans "Aucune session planifiée." %}</p>
+      {% endif %}
+    </div>
+
+    <div class="p-3 bg-white border rounded-3">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h2 class="h6 mb-0">{% trans "Derniers certificats" %}</h2>
+        {% safe_url "economic:formations:my_certificates" as u_all_c %}
+        <a class="small text-decoration-none" href="{{ u_all_c|default:'#' }}">
+          {% trans "Voir" %} →
+        </a>
+      </div>
+
+      {% if certificates %}
+        <ul class="small mb-0">
+          {% for c in certificates %}
+            {% safe_url "economic:formations:certificate_detail" as u_cd %}
+            <li class="mb-1">
+              {% if u_cd %}
+                <a class="text-decoration-none" href="{% url 'economic:formations:certificate_detail' pk=c.pk %}">
+                  {{ c.course }}
+                </a>
+              {% else %}
+                <span>{{ c.course }}</span>
+              {% endif %}
+              <span class="text-muted">— {{ c.code }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="small text-muted mb-0">{% trans "Aucun certificat pour le moment." %}</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+
+
+
+{% comment %} {# templates/economic/formations/learner/dashboard.html #}
+{% extends "economic/formations/base_formations.html" %}
+{% load i18n %}
+
+{% block formations_title %}{% trans "Mon espace — Formations" %}{% endblock %}
+
+{% block formations_content %}
+
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <div>
+      <h1 class="h4 fw-bold mb-1">{% trans "Mon espace" %}</h1>
+      <div class="text-muted">{% trans "Suivez vos inscriptions, sessions et certificats." %}</div>
+    </div>
+    <div class="d-flex gap-2">
+      <a class="btn btn-outline-secondary" href="{% url 'economic:formations:learner:calendar' %}">{% trans "Mon calendrier" %}</a>
+      <a class="btn btn-primary" href="{% url 'economic:formations:courses:list' %}">{% trans "Catalogue" %}</a>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-3">
+    <div class="col-12 col-md-4">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <div class="text-muted small">{% trans "Actives" %}</div>
+          <div class="display-6 fw-bold">{{ active_count|default:0 }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <div class="text-muted small">{% trans "En attente" %}</div>
+          <div class="display-6 fw-bold">{{ pending_count|default:0 }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <div class="text-muted small">{% trans "Terminées" %}</div>
+          <div class="display-6 fw-bold">{{ completed_count|default:0 }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-12 col-lg-7">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-transparent border-0 d-flex align-items-center justify-content-between">
+          <div class="fw-bold">{% trans "Mes inscriptions" %}</div>
+          <a class="small text-decoration-none" href="{% url 'economic:formations:courses:list' %}">{% trans "Ajouter une formation" %}</a>
+        </div>
+        <div class="card-body pt-0">
+          {% if enrollments %}
+            <div class="list-group list-group-flush">
+              {% for e in enrollments %}
+                {% include "economic/formations/learner/partials/_enrollment_row.html" with e=e %}
+              {% endfor %}
+            </div>
+          {% else %}
+            {% include "economic/formations/partials/_empty_state.html" with
+              title=_("Aucune inscription")
+              text=_("Inscrivez-vous à une formation depuis le catalogue.")
+            %}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-5">
+      <div class="card border-0 shadow-sm mb-3">
+        <div class="card-header bg-transparent border-0 fw-bold">{% trans "Sessions à venir" %}</div>
+        <div class="card-body pt-0">
+          {% if sessions %}
+            <div class="list-group list-group-flush">
+              {% for s in sessions %}
+                {% include "economic/formations/learner/partials/_session_item.html" with s=s %}
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="text-muted small">{% trans "Aucune session prévue." %}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-transparent border-0 fw-bold">{% trans "Certificats" %}</div>
+        <div class="card-body pt-0">
+          {% if certificates %}
+            <div class="list-group list-group-flush">
+              {% for c in certificates %}
+                {% include "economic/formations/learner/partials/_certificate_item.html" with c=c %}
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="text-muted small">{% trans "Aucun certificat disponible." %}</div>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+{% endblock %}
+ {% endcomment %}
+
+
+
+{% comment %} {# templates/economic/formations/learner/dashboard.html #}
+{% extends "economic/formations/base_formations.html" %}
+{% load i18n %}
+
+{% block formations_title %}{% trans "Mon espace apprenant" %}{% endblock %}
+
+{% block formations_content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <div>
+    <div class="text-muted small text-uppercase">{% trans "Mon espace" %}</div>
+    <h1 class="h4 mb-1">{% trans "Espace apprenant" %}</h1>
+    <div class="text-muted small">{% trans "Suivi rapide : cours, sessions, certificats." %}</div>
+  </div>
+  <div class="d-flex gap-2">
+    {% url 'economic:formations:my_courses' as u_courses %}
+    {% url 'economic:formations:my_calendar' as u_cal %}
+    {% url 'economic:formations:my_certificates' as u_certs %}
+    <a class="btn btn-sm btn-outline-secondary" href="{{ u_courses|default:'#' }}">{% trans "Mes cours" %}</a>
+    <a class="btn btn-sm btn-outline-secondary" href="{{ u_cal|default:'#' }}">{% trans "Calendrier" %}</a>
+    <a class="btn btn-sm btn-outline-secondary" href="{{ u_certs|default:'#' }}">{% trans "Certificats" %}</a>
+  </div>
+</div>
+
+{# --- Statistiques --- #}
+<div class="row g-3 mb-3">
+  <div class="col-md-4">
+    <div class="p-3 bg-white border rounded-3">
+      <div class="text-muted small">{% trans "Actifs" %}</div>
+      <div class="h4 mb-0">{{ active_count }}</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="p-3 bg-white border rounded-3">
+      <div class="text-muted small">{% trans "En attente" %}</div>
+      <div class="h4 mb-0">{{ pending_count }}</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="p-3 bg-white border rounded-3">
+      <div class="text-muted small">{% trans "Terminés" %}</div>
+      <div class="h4 mb-0">{{ completed_count }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  {# --- Inscriptions --- #}
+  <div class="col-lg-7">
+    <div class="p-3 bg-white border rounded-3">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h2 class="h6 mb-0">{% trans "Mes dernières inscriptions" %}</h2>
+        {% url 'economic:formations:my_courses' as u %}
+        <a class="small text-decoration-none" href="{{ u|default:'#' }}">{% trans "Voir tout" %} →</a>
+      </div>
+
+      {% if enrollments %}
+        <div class="table-responsive">
+          <table class="table table-sm align-middle mb-0">
+            <thead>
+              <tr>
+                <th>{% trans "Cours" %}</th>
+                <th>{% trans "Statut" %}</th>
+                <th>{% trans "Date" %}</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for e in enrollments %}
+                <tr>
+                  <td>{{ e.course.title }}</td>
+                  <td>
+                    <span class="badge bg-light text-dark border">
+                      {{ e.get_status_display }}
+                    </span>
+                  </td>
+                  <td class="text-muted">
+                    {{ e.enrolled_at|date:"d/m/Y" }}
+                  </td>
+                  <td class="text-end">
+                    {% url 'economic:formations:learning' slug=e.course.slug as u_learn %}
+                    <a class="btn btn-sm btn-outline-primary"
+                       href="{{ u_learn|default:'#' }}">
+                      {% trans "Apprendre" %}
+                    </a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <p class="small text-muted mb-0">
+          {% trans "Aucune inscription pour le moment." %}
+        </p>
+      {% endif %}
+    </div>
+  </div>
+
+  {# --- Colonne droite --- #}
+  <div class="col-lg-5">
+    {# Sessions #}
+    <div class="p-3 bg-white border rounded-3 mb-3">
+      <h2 class="h6 mb-2">{% trans "Sessions à venir" %}</h2>
+      {% if sessions %}
+        <ul class="small mb-0">
+          {% for s in sessions %}
+            <li class="mb-1">
+              <strong>{{ s.course.title }}</strong> —
+              {{ s.starts_at|date:"d/m H:i" }} → {{ s.ends_at|date:"H:i" }}
+              {% if s.location %}
+                <span class="text-muted">({{ s.location }})</span>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="small text-muted mb-0">
+          {% trans "Aucune session planifiée." %}
+        </p>
+      {% endif %}
+    </div>
+
+    {# Certificats #}
+    <div class="p-3 bg-white border rounded-3">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h2 class="h6 mb-0">{% trans "Derniers certificats" %}</h2>
+        {% url 'economic:formations:my_certificates' as u %}
+        <a class="small text-decoration-none" href="{{ u|default:'#' }}">
+          {% trans "Voir" %} →
+        </a>
+      </div>
+
+      {% if certificates %}
+        <ul class="small mb-0">
+          {% for c in certificates %}
+            {% url 'economic:formations:certificate_detail' uuid=c.uuid as u_detail %}
+            <li class="mb-1">
+              <a class="text-decoration-none" href="{{ u_detail|default:'#' }}">
+                {{ c.course.title }}
+              </a>
+              <span class="text-muted">— {{ c.code }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="small text-muted mb-0">
+          {% trans "Aucun certificat pour le moment." %}
+        </p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+ {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/economic/formations/learner/dashboard.html #}
+{% extends "economic/formations/base_formations.html" %}
+{% load i18n %}
+
+{% block formations_title %}{% trans "Mon espace apprenant" %}{% endblock %}
+
+{% block formations_content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <div>
+    <h1 class="h4 mb-1">{% trans "Espace apprenant" %}</h1>
+    <div class="text-muted small">{% trans "Suivi rapide : cours, sessions, certificats." %}</div>
+  </div>
+  <div class="d-flex gap-2">
+    {% url 'economic:formations:my_courses' as u_courses %}
+    {% url 'economic:formations:my_calendar' as u_cal %}
+    {% url 'economic:formations:my_certificates' as u_certs %}
+    <a class="btn btn-sm btn-outline-secondary" href="{{ u_courses|default:'#' }}">{% trans "Mes cours" %}</a>
+    <a class="btn btn-sm btn-outline-secondary" href="{{ u_cal|default:'#' }}">{% trans "Calendrier" %}</a>
+    <a class="btn btn-sm btn-outline-secondary" href="{{ u_certs|default:'#' }}">{% trans "Certificats" %}</a>
+  </div>
+</div>
+
+{# --- Statistiques --- #}
+<div class="row g-3 mb-3">
+  <div class="col-md-4">
+    <div class="p-3 bg-white border rounded-3">
+      <div class="text-muted small">{% trans "Actifs" %}</div>
+      <div class="h4 mb-0">{{ active_count }}</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="p-3 bg-white border rounded-3">
+      <div class="text-muted small">{% trans "En attente" %}</div>
+      <div class="h4 mb-0">{{ pending_count }}</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="p-3 bg-white border rounded-3">
+      <div class="text-muted small">{% trans "Terminés" %}</div>
+      <div class="h4 mb-0">{{ completed_count }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  {# --- Inscriptions --- #}
+  <div class="col-lg-7">
+    <div class="p-3 bg-white border rounded-3">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h2 class="h6 mb-0">{% trans "Mes dernières inscriptions" %}</h2>
+        {% url 'economic:formations:my_courses' as u %}
+        <a class="small text-decoration-none" href="{{ u|default:'#' }}">{% trans "Voir tout" %} →</a>
+      </div>
+
+      {% if enrollments %}
+        <div class="table-responsive">
+          <table class="table table-sm align-middle mb-0">
+            <thead>
+              <tr>
+                <th>{% trans "Cours" %}</th>
+                <th>{% trans "Statut" %}</th>
+                <th>{% trans "Date" %}</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for e in enrollments %}
+                <tr>
+                  <td>{{ e.course.title }}</td>
+                  <td>
+                    <span class="badge bg-light text-dark border">
+                      {{ e.get_status_display }}
+                    </span>
+                  </td>
+                  <td class="text-muted">
+                    {{ e.enrolled_at|date:"d/m/Y" }}
+                  </td>
+                  <td class="text-end">
+                    {% url 'economic:formations:learning' slug=e.course.slug as u_learn %}
+                    <a class="btn btn-sm btn-outline-primary"
+                       href="{{ u_learn|default:'#' }}">
+                      {% trans "Apprendre" %}
+                    </a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <p class="small text-muted mb-0">
+          {% trans "Aucune inscription pour le moment." %}
+        </p>
+      {% endif %}
+    </div>
+  </div>
+
+  {# --- Colonne droite --- #}
+  <div class="col-lg-5">
+    {# Sessions #}
+    <div class="p-3 bg-white border rounded-3 mb-3">
+      <h2 class="h6 mb-2">{% trans "Sessions à venir" %}</h2>
+      {% if sessions %}
+        <ul class="small mb-0">
+          {% for s in sessions %}
+            <li class="mb-1">
+              <strong>{{ s.course.title }}</strong> —
+              {{ s.starts_at|date:"d/m H:i" }} → {{ s.ends_at|date:"H:i" }}
+              {% if s.location %}
+                <span class="text-muted">({{ s.location }})</span>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="small text-muted mb-0">
+          {% trans "Aucune session planifiée." %}
+        </p>
+      {% endif %}
+    </div>
+
+    {# Certificats #}
+    <div class="p-3 bg-white border rounded-3">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h2 class="h6 mb-0">{% trans "Derniers certificats" %}</h2>
+        {% url 'economic:formations:my_certificates' as u %}
+        <a class="small text-decoration-none" href="{{ u|default:'#' }}">
+          {% trans "Voir" %} →
+        </a>
+      </div>
+
+      {% if certificates %}
+        <ul class="small mb-0">
+          {% for c in certificates %}
+            {% url 'economic:formations:certificate_detail' uuid=c.uuid as u_detail %}
+            <li class="mb-1">
+              <a class="text-decoration-none" href="{{ u_detail|default:'#' }}">
+                {{ c.course.title }}
+              </a>
+              <span class="text-muted">— {{ c.code }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="small text-muted mb-0">
+          {% trans "Aucun certificat pour le moment." %}
+        </p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/formations/learner/dashboard.html #}
+{% extends "economic/formations/base_formations.html" %}
+{% load i18n %}
+
+{% block formations_title %}{% trans "Mon espace apprenant" %}{% endblock %}
+
+{% block formations_content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <div>
+    <h1 class="h4 mb-1">{% trans "Espace apprenant" %}</h1>
+    <div class="text-muted small">{% trans "Suivi rapide : cours, sessions, certificats." %}</div>
+  </div>
+  <div class="d-flex gap-2">
+    {% url 'economic:formations:my_courses' as u_courses %}
+    {% url 'economic:formations:my_calendar' as u_cal %}
+    {% url 'economic:formations:my_certificates' as u_certs %}
+    <a class="btn btn-sm btn-outline-secondary" href="{{ u_courses|default:'#' }}">{% trans "Mes cours" %}</a>
+    <a class="btn btn-sm btn-outline-secondary" href="{{ u_cal|default:'#' }}">{% trans "Calendrier" %}</a>
+    <a class="btn btn-sm btn-outline-secondary" href="{{ u_certs|default:'#' }}">{% trans "Certificats" %}</a>
+  </div>
+</div>
+
+<div class="row g-3 mb-3">
+  <div class="col-md-4">
+    <div class="p-3 bg-white border rounded-3">
+      <div class="text-muted small">{% trans "Actifs" %}</div>
+      <div class="h4 mb-0">{{ active_count }}</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="p-3 bg-white border rounded-3">
+      <div class="text-muted small">{% trans "En attente" %}</div>
+      <div class="h4 mb-0">{{ pending_count }}</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="p-3 bg-white border rounded-3">
+      <div class="text-muted small">{% trans "Terminés" %}</div>
+      <div class="h4 mb-0">{{ completed_count }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-7">
+    <div class="p-3 bg-white border rounded-3">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h2 class="h6 mb-0">{% trans "Mes dernières inscriptions" %}</h2>
+        {% url 'economic:formations:my_courses' as u %}
+        <a class="small text-decoration-none" href="{{ u|default:'#' }}">{% trans "Voir tout" %} →</a>
+      </div>
+
+      {% if enrollments %}
+        <div class="table-responsive">
+          <table class="table table-sm align-middle mb-0">
+            <thead>
+              <tr>
+                <th>{% trans "Cours" %}</th>
+                <th>{% trans "Statut" %}</th>
+                <th>{% trans "Date" %}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for e in enrollments %}
+                <tr>
+                  <td>{{ e.course.title }}</td>
+                  <td><span class="badge bg-light text-dark border">{{ e.get_status_display }}</span></td>
+                  <td class="text-muted">{{ e.enrolled_at|date:"d/m/Y" }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <p class="small text-muted mb-0">{% trans "Aucune inscription pour le moment." %}</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="p-3 bg-white border rounded-3 mb-3">
+      <h2 class="h6 mb-2">{% trans "Sessions à venir" %}</h2>
+      {% if sessions %}
+        <ul class="small mb-0">
+          {% for s in sessions %}
+            <li class="mb-1">
+              <strong>{{ s.course.title }}</strong> —
+              {{ s.starts_at|date:"d/m H:i" }} → {{ s.ends_at|date:"H:i" }}
+              {% if s.location %}<span class="text-muted">({{ s.location }})</span>{% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="small text-muted mb-0">{% trans "Aucune session planifiée." %}</p>
+      {% endif %}
+    </div>
+
+    <div class="p-3 bg-white border rounded-3">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h2 class="h6 mb-0">{% trans "Derniers certificats" %}</h2>
+        {% url 'economic:formations:my_certificates' as u %}
+        <a class="small text-decoration-none" href="{{ u|default:'#' }}">{% trans "Voir" %} →</a>
+      </div>
+
+      {% if certificates %}
+        <ul class="small mb-0">
+          {% for c in certificates %}
+            {% url 'economic:formations:certificate_detail' uuid=c.uuid as u_detail %}
+            <li class="mb-1">
+              <a class="text-decoration-none" href="{{ u_detail|default:'#' }}">
+                {{ c.course.title }}
+              </a>
+              <span class="text-muted">— {{ c.code }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="small text-muted mb-0">{% trans "Aucun certificat pour le moment." %}</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %} {% endcomment %}

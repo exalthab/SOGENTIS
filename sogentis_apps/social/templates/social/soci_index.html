@@ -1,3 +1,4 @@
+{# templates/social/soci_index.html #}
 {% extends "main.html" %}
 {% load static i18n document_filters %}
 
@@ -7,6 +8,7 @@
 {% comment %} <link rel="stylesheet" href="{% static 'social/css/new_social_index.css' %}">
 <link rel="stylesheet" href="{% static 'social/css/vision_mission.css' %}"> {% endcomment %}
 <link rel="stylesheet" href="{% static 'global/css/soci_index.css' %}">
+<link rel="stylesheet" href="{% static 'social/css/menubar_soci.css' %}">
 
 
 {% endblock %}
@@ -180,7 +182,7 @@
         {% trans "Devenez bénévole, partenaire ou mécène en cliquant sur je m'engage." %}
       </p>
       <div class="d-flex flex-wrap justify-content-center gap-3 mt-4">
-        <a href="{% url 'accounts_users_web:login' %}" class="btn btn-light btn-lg" target="_blank" rel="noopener noreferrer">
+        <a href="{% url 'accounts_users:web:auth:login' %}" class="btn btn-light btn-lg" target="_blank" rel="noopener noreferrer">
           {% trans "Je m'engage" %}
         </a>
         <a href="{% url 'economic:index' %}" class="btn btn-warning btn-lg" style="color: #0d1e34;" target="_blank" rel="noopener noreferrer">
@@ -209,7 +211,7 @@
   </section>
 
   <!-- 🔹 DOCUMENTS -->
-<section class="section-spacing documents-section bg-documents-gradient">
+<section id="documents" class="section-spacing documents-section bg-documents-gradient">
   <div class="container">
     <h2 class="text-center mb-4 fw-bold text-documents-title">
       {% trans "Documents téléchargeables" %}

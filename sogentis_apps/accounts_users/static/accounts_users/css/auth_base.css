@@ -1,137 +1,159 @@
 /* ============================================================
-   AUTH BASE LAYOUT — PREMIUM SOGENTIS 2025
-   Compatible login/signup/password reset
+   AUTH BASE LAYOUT — SOGENTIS (ROBUSTE)
+   Fichier : static/accounts_users/css/auth/base_auth.css
    ============================================================ */
 
-/* ------------------------ */
-/* BACKGROUND IMAGE         */
-/* ------------------------ */
+html, body { height: 100%; }
 
-.auth-bg {
+/* évite les scrollbars parasites (parfois causées par scale/filters) */
+body{
+  margin: 0;
+  background: transparent !important;
+  overflow-x: hidden;
+}
+
+/* Background via variable (définie dans le template: --auth-bg) */
+body.auth-body{
+  background-image: var(--auth-bg) !important;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* BG (derrière tout) — optionnel si tu utilises un div .auth-bg */
+.auth-bg{
   position: fixed;
   inset: 0;
-  z-index: -3;
-  background-image: var(--auth-bg-image);
-  background-position: center;
+  z-index: 0;
+  pointer-events: none;
+
+  /* ✅ utilise la même variable que le body pour éviter les oublis */
+  background-image: var(--auth-bg);
+  background-position: center center;
   background-size: cover;
   background-repeat: no-repeat;
 
-  /* effet réaliste */
+  /* fallback visuel si l’image est absente (ou en chargement) */
+  background-color: #0b1220;
+
+  /* rendu */
   filter: grayscale(18%) brightness(0.88);
   transform: scale(1.02);
+
+  /* perf */
+  will-change: transform;
+  backface-visibility: hidden;
 }
 
-
-/* ------------------------ */
-/* OVERLAY (contraste card) */
-/* ------------------------ */
-
-.auth-overlay {
+/* Overlay */
+.auth-overlay{
   position: fixed;
   inset: 0;
-  z-index: -2;
-
-  /* dégradé subtil et esthétique */
-  background: radial-gradient(
-      circle at center,
-      rgba(0, 0, 0, 0.12),
-      rgba(0, 0, 0, 0.45)
-  );
-
-  -webkit-backdrop-filter: blur(2px);
-  backdrop-filter: blur(2px);
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(circle at center, rgba(0,0,0,.12), rgba(0,0,0,.48));
 }
 
+/* ✅ blur seulement si supporté */
+@supports ((-webkit-backdrop-filter: blur(2px)) or (backdrop-filter: blur(2px))) {
+  .auth-overlay{
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+  }
+}
 
-/* ------------------------ */
-/* AUTH SHELL (centre tout) */
-/* ------------------------ */
-
-.auth-shell {
+/* Layout */
+.auth-shell{
   position: relative;
-  min-height: 100svh;
+  z-index: 2;
+  min-height: 100vh;
   width: 100%;
   display: grid;
   place-items: center;
   padding: 2rem 1rem;
-  z-index: 20;
 }
 
-
-/* ------------------------ */
-/* CARD WRAPPER (centrage)  */
-/* ------------------------ */
-
-.auth-wrapper {
+.auth-wrapper{
   width: 100%;
   max-width: 520px;
   margin: 0 auto;
 }
 
+.auth-wrapper-wide{
+  max-width: 1120px !important;
+}
 
-/* ------------------------ */
-/* AUTH CARD                */
-/* ------------------------ */
-
-.auth-card {
+/* Card */
+.auth-card{
   width: 100%;
   border: 0;
   border-radius: 1rem;
-  background: rgba(255, 255, 255, 0.96);
-
-  box-shadow: 0 18px 55px rgba(0, 0, 0, 0.22);
-
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
+  background: rgba(255,255,255,0.96);
+  box-shadow: 0 18px 55px rgba(0,0,0,0.22);
 }
 
-
-/* ------------------------ */
-/* LOGO                     */
-/* ------------------------ */
-
-.auth-brand img {
-  height: 54px;
-}
-
-@media (max-width: 480px) {
-  .auth-brand img {
-    height: 44px;
+@supports ((-webkit-backdrop-filter: blur(8px)) or (backdrop-filter: blur(8px))) {
+  .auth-card{
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
   }
 }
 
+/* Logo (si tu utilises <img> dans .auth-brand) */
+.auth-brand img{
+  height: 54px;
+  width: auto;
+  display: inline-block;
+}
+@media (max-width: 480px){
+  .auth-brand img{ height: 44px; }
+}
 
-/* ------------------------ */
-/* LANGUAGE SELECTOR        */
-/* ------------------------ */
-
-.auth-lang-switch select {
+/* Lang selector */
+.auth-lang-switch select{
   min-width: 105px;
   width: auto;
-  padding: 0.35rem 0.55rem;
-  border-radius: 0.5rem;
-  font-size: 0.9rem;
+  padding: .35rem .55rem;
+  border-radius: .5rem;
+  font-size: .9rem;
 }
 
-
-/* ------------------------ */
-/* DARK MODE (optionnel)    */
-/* ------------------------ */
-
-body.dark-mode .auth-card {
+/* Dark mode */
+body.dark-mode .auth-card{
   background: rgba(20, 22, 25, 0.92);
   color: #eaecef;
-  box-shadow: 0 18px 55px rgba(0, 0, 0, 0.55);
+  box-shadow: 0 18px 55px rgba(0,0,0,0.55);
 }
 
-body.dark-mode .auth-bg {
+body.dark-mode .auth-bg{
   filter: grayscale(35%) brightness(0.55);
 }
 
-body.dark-mode .auth-overlay {
-  background: radial-gradient(
-      circle at center,
-      rgba(0, 0, 0, 0.25),
-      rgba(0, 0, 0, 0.75)
-  );
+body.dark-mode .auth-overlay{
+  background: radial-gradient(circle at center, rgba(0,0,0,.25), rgba(0,0,0,.75));
+}
+
+/* Brand (logo + texte) — pas de <img> => pas d'image cassée */
+.auth-brand-mark{
+  display: inline-block; /* ✅ indispensable pour width/height sur un span */
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background-image: var(--brand-logo);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  box-shadow: 0 6px 18px rgba(16,24,40,.10);
+  flex: 0 0 auto;
+}
+
+.auth-brand-name{
+  font-weight: 900;
+  letter-spacing: .3px;
+  color: #0f172a;
+}
+
+/* lisibilité du brand en dark mode */
+body.dark-mode .auth-brand-name{
+  color: #eaecef;
 }

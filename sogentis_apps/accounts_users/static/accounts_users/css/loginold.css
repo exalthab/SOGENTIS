@@ -1,0 +1,152 @@
+/* ============================================================
+   LOGIN PAGE — SOGENTIS (2025)
+   Fichier : static/accounts_users/css/login.css
+   Harmonisé avec auth_base.css + signup.css
+   Pas de styles globaux sur .auth-shell/.auth-card (évite conflits)
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   TITRES / TEXTES (scopés)
+   ------------------------------------------------------------ */
+
+.auth-card h1,
+.auth-card h3,
+.auth-card .h3{
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: .25rem;
+}
+
+.auth-card .login-intro{
+  color: rgba(0,0,0,.62);
+  text-align: center;
+  margin-bottom: 1rem;
+  font-size: .95rem;
+}
+
+/* ------------------------------------------------------------
+   FORM
+   ------------------------------------------------------------ */
+.auth-card .form-label{
+  font-weight: 700;
+  margin-bottom: .35rem;
+}
+
+.auth-card .form-control{
+  height: 44px;
+  padding: .55rem .9rem;
+  border-radius: 12px; /* cohérent signup.css */
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.auth-card .form-control:focus{
+  border-color: rgba(25,135,84,.55);
+  box-shadow: 0 0 0 .18rem rgba(25,135,84,.16);
+}
+
+/* Erreurs */
+.auth-card .invalid-feedback.d-block{
+  font-size: .9rem;
+  font-weight: 600;
+}
+
+/* ------------------------------------------------------------
+   INPUT GROUP (password + toggle)
+   ------------------------------------------------------------ */
+.auth-card .input-group > .form-control{
+  border-right: 0;
+}
+
+.auth-card .input-group .btn{
+  border-color: #ced4da;
+  background: #fff;
+  border-radius: 12px;
+}
+
+.auth-card .input-group .toggle-password{
+  border-left: 0;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+/* ------------------------------------------------------------
+   BOUTON (harmonisé)
+   ------------------------------------------------------------ */
+/* Tu utilises btn-success dans le template => on le stylise ici */
+.auth-card .btn.btn-success{
+  font-weight: 800;
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+
+/* Si jamais une page login utilise encore btn-primary */
+.auth-card .btn.btn-primary{
+  font-weight: 800;
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+
+/* ------------------------------------------------------------
+   LIENS SECONDAIRES
+   ------------------------------------------------------------ */
+.auth-card .login-links{
+  margin-top: .75rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: .9rem;
+}
+
+.auth-card .login-links a{
+  text-decoration: none;
+  font-weight: 800;
+}
+
+.auth-card .login-links a:hover{
+  text-decoration: underline;
+}
+
+/* ------------------------------------------------------------
+   RESPONSIVE
+   ------------------------------------------------------------ */
+@media (max-width: 768px){
+  .auth-card .form-control{ height: 42px; }
+}
+
+@media (max-width: 480px){
+  .auth-card .login-links{
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ------------------------------------------------------------
+   NAVIGATEURS — masquage œil/password natif
+   ------------------------------------------------------------ */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear{
+  display: none;
+}
+
+input[type="password"]::-webkit-credentials-auto-fill-button{
+  visibility: hidden !important;
+  display: none !important;
+}
+
+/* ------------------------------------------------------------
+   MODE RTL
+   ------------------------------------------------------------ */
+html[dir="rtl"] .auth-card .input-group > .form-control{
+  border-left: 0;
+  border-right: 1px solid #ced4da;
+}
+
+html[dir="rtl"] .auth-card .input-group .toggle-password{
+  border-right: 0;
+  border-left: 1px solid #ced4da;
+  border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}

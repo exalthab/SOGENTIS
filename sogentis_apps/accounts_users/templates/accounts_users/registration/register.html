@@ -1,0 +1,1725 @@
+{# templates/accounts_users/registration/register.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks %}
+
+{% block title %}{% trans "S'inscrire | SOGENTIS" %}{% endblock %}
+{% block auth_title %}{% trans "Créer un compte" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Inscription sécurisée sur SOGENTIS" %}{% endblock %}
+{% block auth_bg_image %}url('{% static "accounts_users/img/auth_bg.png" %}'){% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+{% with next_url=next|default:"" %}
+
+{% if account_created %}
+  <div class="alert alert-success text-center" role="alert">
+    {% trans "Votre compte a été créé avec succès. Vous allez être redirigé vers la page d’accueil…" %}
+  </div>
+  <script>
+    setTimeout(() => { window.location.href = "{% url 'core:home' %}"; }, 5000);
+  </script>
+{% endif %}
+
+<form method="post" enctype="multipart/form-data" novalidate>
+  {% csrf_token %}
+
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger" role="alert">{{ form.non_field_errors }}</div>
+  {% endif %}
+  {% if profile_form.non_field_errors %}
+    <div class="alert alert-danger" role="alert">{{ profile_form.non_field_errors }}</div>
+  {% endif %}
+
+  <h6 class="fw-bold mb-3">{% trans "Informations du compte" %}</h6>
+
+  {% for field in form %}
+    <div class="mb-3">
+      <label class="form-label" for="{{ field.id_for_label }}">
+        {{ field.label }}{% if field.field.required %} *{% endif %}
+      </label>
+
+      {% if field.field.widget.input_type == "password" %}
+        <div class="input-group">
+          {% if field.errors %}
+            {% render_field field class="form-control is-invalid" aria_invalid="true" %}
+          {% else %}
+            {% render_field field class="form-control" %}
+          {% endif %}
+          <button type="button"
+                  class="btn btn-outline-secondary toggle-password"
+                  data-target="{{ field.id_for_label }}"
+                  aria-label="{% trans 'Afficher/Masquer le mot de passe' %}">
+            👁️
+          </button>
+        </div>
+
+      {% else %}
+        {# Détection SAFE select vs input #}
+        {% if field.field.widget.input_type %}
+          {% if field.errors %}
+            {% render_field field class="form-control is-invalid" aria_invalid="true" %}
+          {% else %}
+            {% render_field field class="form-control" %}
+          {% endif %}
+        {% else %}
+          {% if field.field.choices %}
+            {% if field.errors %}
+              {% render_field field class="form-select is-invalid" aria_invalid="true" %}
+            {% else %}
+              {% render_field field class="form-select" %}
+            {% endif %}
+          {% else %}
+            {% if field.errors %}
+              {% render_field field class="form-control is-invalid" aria_invalid="true" %}
+            {% else %}
+              {% render_field field class="form-control" %}
+            {% endif %}
+          {% endif %}
+        {% endif %}
+      {% endif %}
+
+      {% if field.help_text %}
+        <div class="form-text">{{ field.help_text|safe }}</div>
+      {% endif %}
+      {% for error in field.errors %}
+        <div class="invalid-feedback d-block">{{ error }}</div>
+      {% endfor %}
+    </div>
+  {% endfor %}
+
+  <h6 class="fw-bold mt-4 mb-3">{% trans "Profil" %}</h6>
+
+  {% for field in profile_form %}
+    {% if field.name not in ("terms","judicial_record","profile_picture") %}
+      <div class="mb-3">
+        <label class="form-label" for="{{ field.id_for_label }}">
+          {{ field.label }}{% if field.field.required %} *{% endif %}
+        </label>
+
+        {% if field.field.widget.input_type == "file" %}
+          {% if field.errors %}
+            {% render_field field class="form-control is-invalid" aria_invalid="true" %}
+          {% else %}
+            {% render_field field class="form-control" %}
+          {% endif %}
+
+        {% elif field.field.widget.input_type %}
+          {% if field.errors %}
+            {% render_field field class="form-control is-invalid" aria_invalid="true" %}
+          {% else %}
+            {% render_field field class="form-control" %}
+          {% endif %}
+
+        {% else %}
+          {% if field.field.choices %}
+            {% if field.errors %}
+              {% render_field field class="form-select is-invalid" aria_invalid="true" %}
+            {% else %}
+              {% render_field field class="form-select" %}
+            {% endif %}
+          {% else %}
+            {% if field.errors %}
+              {% render_field field class="form-control is-invalid" aria_invalid="true" %}
+            {% else %}
+              {% render_field field class="form-control" %}
+            {% endif %}
+          {% endif %}
+        {% endif %}
+
+        {% if field.help_text %}
+          <div class="form-text">{{ field.help_text|safe }}</div>
+        {% endif %}
+        {% for error in field.errors %}
+          <div class="invalid-feedback d-block">{{ error }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endfor %}
+
+  <div class="mb-3">
+    <label class="form-label" for="{{ profile_form.profile_picture.id_for_label }}">
+      {{ profile_form.profile_picture.label }}
+    </label>
+    {% if profile_form.profile_picture.errors %}
+      {% render_field profile_form.profile_picture class="form-control is-invalid" aria_invalid="true" %}
+    {% else %}
+      {% render_field profile_form.profile_picture class="form-control" %}
+    {% endif %}
+    {% for error in profile_form.profile_picture.errors %}
+      <div class="invalid-feedback d-block">{{ error }}</div>
+    {% endfor %}
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label" for="{{ profile_form.judicial_record.id_for_label }}">
+      {{ profile_form.judicial_record.label }} *
+    </label>
+    {% if profile_form.judicial_record.errors %}
+      {% render_field profile_form.judicial_record class="form-control is-invalid" aria_invalid="true" %}
+    {% else %}
+      {% render_field profile_form.judicial_record class="form-control" %}
+    {% endif %}
+    <div id="pdf-preview" class="mt-2"></div>
+    {% for error in profile_form.judicial_record.errors %}
+      <div class="invalid-feedback d-block">{{ error }}</div>
+    {% endfor %}
+  </div>
+
+  <div class="form-check mt-3">
+    {% if profile_form.terms.errors %}
+      {% render_field profile_form.terms class="form-check-input is-invalid" aria_invalid="true" %}
+    {% else %}
+      {% render_field profile_form.terms class="form-check-input" %}
+    {% endif %}
+    <label class="form-check-label" for="{{ profile_form.terms.id_for_label }}">
+      {% trans "J'accepte les conditions générales et confirme sur mon honneur que mon identification est authentique" %}
+    </label>
+    {% for error in profile_form.terms.errors %}
+      <div class="invalid-feedback d-block">{{ error }}</div>
+    {% endfor %}
+  </div>
+
+  {% if next_url %}
+    <input type="hidden" name="next" value="{{ next_url }}">
+  {% endif %}
+
+  <div class="d-grid mt-4">
+    <button type="submit" class="btn btn-success py-2 fw-bold">
+      {% trans "S'inscrire" %}
+    </button>
+  </div>
+</form>
+
+<div class="text-center mt-3">
+  <small>
+    {% trans "Déjà inscrit ?" %}
+    <a href="{% url 'accounts_users:web:auth:login' %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">{% trans "Se connecter" %}</a>
+  </small>
+</div>
+
+{% endwith %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+
+{% comment %} <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const inputId = "{{ profile_form.judicial_record.id_for_label|default:'id_judicial_record' }}";
+    const input = document.getElementById(inputId);
+    const preview = document.getElementById("pdf-preview");
+    if (!input || !preview) return;
+
+    input.addEventListener("change", () => {
+      const file = input.files && input.files[0];
+      if (!file) { preview.innerHTML = ""; return; }
+
+      if (file.type === "application/pdf" || (file.name || "").toLowerCase().endsWith(".pdf")) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          preview.innerHTML = `
+            <embed src="${e.target.result}" type="application/pdf"
+                   width="100%" height="300px" class="rounded border" />
+          `;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        preview.innerHTML = `
+          <p class="text-danger fw-semibold mb-0">
+            {% trans "Format non pris en charge. Le fichier doit être en PDF." %}
+          </p>
+        `;
+      }
+    });
+  });
+</script> {% endcomment %}
+{% endblock %}
+
+
+
+
+
+{% comment %} {# templates/accounts_users/registration/register.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks %}
+
+{% block title %}{% trans "S'inscrire | SOGENTIS" %}{% endblock %}
+{% block auth_title %}{% trans "Créer un compte" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Inscription sécurisée sur SOGENTIS" %}{% endblock %}
+{% block auth_bg_image %}url('{% static "accounts_users/img/auth_bg.png" %}'){% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-{{ message.tags|default:'info' }} text-center" role="alert">
+      {{ message }}
+    </div>
+  {% endfor %}
+{% endif %}
+
+{% if account_created %}
+  <div class="alert alert-success text-center" role="alert">
+    {% trans "Votre compte a été créé avec succès. Vous allez être redirigé vers la page d’accueil…" %}
+  </div>
+  <script>
+    setTimeout(() => { window.location.href = "{% url 'core:home' %}"; }, 5000);
+  </script>
+{% endif %}
+
+<form method="post" enctype="multipart/form-data" novalidate>
+  {% csrf_token %}
+
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger" role="alert">{{ form.non_field_errors }}</div>
+  {% endif %}
+  {% if profile_form.non_field_errors %}
+    <div class="alert alert-danger" role="alert">{{ profile_form.non_field_errors }}</div>
+  {% endif %}
+
+  <h6 class="fw-bold mb-3">{% trans "Informations du compte" %}</h6>
+
+  {% for field in form %}
+    {% with wname=field.field.widget.__class__.__name__|lower %}
+    <div class="mb-3">
+      <label class="form-label" for="{{ field.id_for_label }}">
+        {{ field.label }}{% if field.field.required %} *{% endif %}
+      </label>
+
+      {% if field.field.widget.input_type == "password" %}
+        <div class="input-group">
+          {% if field.errors %}
+            {% render_field field class="form-control is-invalid" aria_invalid="true" %}
+          {% else %}
+            {% render_field field class="form-control" %}
+          {% endif %}
+          <button type="button"
+                  class="btn btn-outline-secondary toggle-password"
+                  data-target="{{ field.id_for_label }}"
+                  aria-label="{% trans 'Afficher/Masquer le mot de passe' %}">
+            👁️
+          </button>
+        </div>
+      {% else %}
+        {% if "select" in wname %}
+          {% if field.errors %}
+            {% render_field field class="form-select is-invalid" aria_invalid="true" %}
+          {% else %}
+            {% render_field field class="form-select" %}
+          {% endif %}
+        {% else %}
+          {% if field.errors %}
+            {% render_field field class="form-control is-invalid" aria_invalid="true" %}
+          {% else %}
+            {% render_field field class="form-control" %}
+          {% endif %}
+        {% endif %}
+      {% endif %}
+
+      {% if field.help_text %}
+        <div class="form-text">{{ field.help_text|safe }}</div>
+      {% endif %}
+      {% for error in field.errors %}
+        <div class="invalid-feedback d-block">{{ error }}</div>
+      {% endfor %}
+    </div>
+    {% endwith %}
+  {% endfor %}
+
+  <h6 class="fw-bold mt-4 mb-3">{% trans "Profil" %}</h6>
+
+  {% for field in profile_form %}
+    {% if field.name not in ("terms","judicial_record","profile_picture") %}
+      {% with wname=field.field.widget.__class__.__name__|lower %}
+      <div class="mb-3">
+        <label class="form-label" for="{{ field.id_for_label }}">
+          {{ field.label }}{% if field.field.required %} *{% endif %}
+        </label>
+
+        {% if "select" in wname %}
+          {% if field.errors %}
+            {% render_field field class="form-select is-invalid" aria_invalid="true" %}
+          {% else %}
+            {% render_field field class="form-select" %}
+          {% endif %}
+        {% elif field.field.widget.input_type == "file" %}
+          {% if field.errors %}
+            {% render_field field class="form-control is-invalid" aria_invalid="true" %}
+          {% else %}
+            {% render_field field class="form-control" %}
+          {% endif %}
+        {% else %}
+          {% if field.errors %}
+            {% render_field field class="form-control is-invalid" aria_invalid="true" %}
+          {% else %}
+            {% render_field field class="form-control" %}
+          {% endif %}
+        {% endif %}
+
+        {% if field.help_text %}
+          <div class="form-text">{{ field.help_text|safe }}</div>
+        {% endif %}
+        {% for error in field.errors %}
+          <div class="invalid-feedback d-block">{{ error }}</div>
+        {% endfor %}
+      </div>
+      {% endwith %}
+    {% endif %}
+  {% endfor %}
+
+  <div class="mb-3">
+    <label class="form-label" for="{{ profile_form.profile_picture.id_for_label }}">
+      {{ profile_form.profile_picture.label }}
+    </label>
+    {% if profile_form.profile_picture.errors %}
+      {% render_field profile_form.profile_picture class="form-control is-invalid" aria_invalid="true" %}
+    {% else %}
+      {% render_field profile_form.profile_picture class="form-control" %}
+    {% endif %}
+    {% for error in profile_form.profile_picture.errors %}
+      <div class="invalid-feedback d-block">{{ error }}</div>
+    {% endfor %}
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label" for="{{ profile_form.judicial_record.id_for_label }}">
+      {{ profile_form.judicial_record.label }} *
+    </label>
+    {% if profile_form.judicial_record.errors %}
+      {% render_field profile_form.judicial_record class="form-control is-invalid" aria_invalid="true" %}
+    {% else %}
+      {% render_field profile_form.judicial_record class="form-control" %}
+    {% endif %}
+    <div id="pdf-preview" class="mt-2"></div>
+    {% for error in profile_form.judicial_record.errors %}
+      <div class="invalid-feedback d-block">{{ error }}</div>
+    {% endfor %}
+  </div>
+
+  <div class="form-check mt-3">
+    {% if profile_form.terms.errors %}
+      {% render_field profile_form.terms class="form-check-input is-invalid" aria_invalid="true" %}
+    {% else %}
+      {% render_field profile_form.terms class="form-check-input" %}
+    {% endif %}
+    <label class="form-check-label" for="{{ profile_form.terms.id_for_label }}">
+      {% trans "J'accepte les conditions générales et confirme sur mon honneur que mon identification est authentique" %}
+    </label>
+    {% for error in profile_form.terms.errors %}
+      <div class="invalid-feedback d-block">{{ error }}</div>
+    {% endfor %}
+  </div>
+
+  {% if next %}
+    <input type="hidden" name="next" value="{{ next }}">
+  {% endif %}
+
+  <div class="d-grid mt-4">
+    <button type="submit" class="btn btn-success py-2 fw-bold">
+      {% trans "S'inscrire" %}
+    </button>
+  </div>
+</form>
+
+<div class="text-center mt-3">
+  <small>
+    {% trans "Déjà inscrit ?" %}
+    <a href="{% url 'accounts_users:web:auth:login' %}">{% trans "Se connecter" %}</a>
+  </small>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const inputId = "{{ profile_form.judicial_record.id_for_label|default:'id_judicial_record' }}";
+    const input = document.getElementById(inputId);
+    const preview = document.getElementById("pdf-preview");
+    if (!input || !preview) return;
+
+    input.addEventListener("change", () => {
+      const file = input.files && input.files[0];
+      if (!file) { preview.innerHTML = ""; return; }
+
+      if (file.type === "application/pdf" || (file.name || "").toLowerCase().endsWith(".pdf")) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          preview.innerHTML = `
+            <embed src="${e.target.result}" type="application/pdf"
+                   width="100%" height="300px" class="rounded border" />
+          `;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        preview.innerHTML = `
+          <p class="text-danger fw-semibold mb-0">
+            {% trans "Format non pris en charge. Le fichier doit être en PDF." %}
+          </p>
+        `;
+      }
+    });
+  });
+</script>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/accounts_users/registration/register.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks %}
+
+{% block title %}{% trans "S'inscrire | SOGENTIS" %}{% endblock %}
+{% block auth_title %}{% trans "Créer un compte" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Inscription sécurisée sur SOGENTIS" %}{% endblock %}
+{% block auth_bg_image %}url('{% static "accounts_users/img/auth_bg.png" %}'){% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-{{ message.tags|default:'info' }} text-center" role="alert">
+      {{ message }}
+    </div>
+  {% endfor %}
+{% endif %}
+
+{% if account_created %}
+  <div class="alert alert-success text-center" role="alert">
+    {% trans "Votre compte a été créé avec succès. Vous allez être redirigé vers la page d’accueil…" %}
+  </div>
+  <script>
+    setTimeout(() => { window.location.href = "{% url 'core:home' %}"; }, 5000);
+  </script>
+{% endif %}
+
+<form method="post" enctype="multipart/form-data" novalidate>
+  {% csrf_token %}
+
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger" role="alert">{{ form.non_field_errors }}</div>
+  {% endif %}
+  {% if profile_form.non_field_errors %}
+    <div class="alert alert-danger" role="alert">{{ profile_form.non_field_errors }}</div>
+  {% endif %}
+
+  <h6 class="fw-bold mb-3">{% trans "Informations du compte" %}</h6>
+
+  {% for field in form %}
+    <div class="mb-3">
+      <label class="form-label" for="{{ field.id_for_label }}">
+        {{ field.label }}{% if field.field.required %} *{% endif %}
+      </label>
+
+      {% if field.field.widget.input_type == "password" %}
+        <div class="input-group">
+          {% if field.errors %}
+            {% render_field field class="form-control is-invalid" %}
+          {% else %}
+            {% render_field field class="form-control" %}
+          {% endif %}
+          <button type="button"
+                  class="btn btn-outline-secondary toggle-password"
+                  data-target="{{ field.id_for_label }}"
+                  aria-label="{% trans 'Afficher/Masquer le mot de passe' %}">
+            👁️
+          </button>
+        </div>
+      {% else %}
+        {% if field.errors %}
+          {% render_field field class="form-control is-invalid" %}
+        {% else %}
+          {% render_field field class="form-control" %}
+        {% endif %}
+      {% endif %}
+
+      {% if field.help_text %}
+        <div class="form-text">{{ field.help_text|safe }}</div>
+      {% endif %}
+      {% for error in field.errors %}
+        <div class="invalid-feedback d-block">{{ error }}</div>
+      {% endfor %}
+    </div>
+  {% endfor %}
+
+  <h6 class="fw-bold mt-4 mb-3">{% trans "Profil" %}</h6>
+
+  {% for field in profile_form %}
+    {% if field.name not in ("terms","judicial_record","profile_picture") %}
+      <div class="mb-3">
+        <label class="form-label" for="{{ field.id_for_label }}">
+          {{ field.label }}{% if field.field.required %} *{% endif %}
+        </label>
+
+        {% if field.field.widget.input_type == "select" %}
+          {% if field.errors %}
+            {% render_field field class="form-select is-invalid" %}
+          {% else %}
+            {% render_field field class="form-select" %}
+          {% endif %}
+        {% elif field.field.widget.input_type == "file" %}
+          {% if field.errors %}
+            {% render_field field class="form-control is-invalid" %}
+          {% else %}
+            {% render_field field class="form-control" %}
+          {% endif %}
+        {% else %}
+          {% if field.errors %}
+            {% render_field field class="form-control is-invalid" %}
+          {% else %}
+            {% render_field field class="form-control" %}
+          {% endif %}
+        {% endif %}
+
+        {% if field.help_text %}
+          <div class="form-text">{{ field.help_text|safe }}</div>
+        {% endif %}
+        {% for error in field.errors %}
+          <div class="invalid-feedback d-block">{{ error }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endfor %}
+
+  <div class="mb-3">
+    <label class="form-label" for="{{ profile_form.profile_picture.id_for_label }}">
+      {{ profile_form.profile_picture.label }}
+    </label>
+    {% if profile_form.profile_picture.errors %}
+      {% render_field profile_form.profile_picture class="form-control is-invalid" %}
+    {% else %}
+      {% render_field profile_form.profile_picture class="form-control" %}
+    {% endif %}
+    {% for error in profile_form.profile_picture.errors %}
+      <div class="invalid-feedback d-block">{{ error }}</div>
+    {% endfor %}
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label" for="{{ profile_form.judicial_record.id_for_label }}">
+      {{ profile_form.judicial_record.label }} *
+    </label>
+    {% if profile_form.judicial_record.errors %}
+      {% render_field profile_form.judicial_record class="form-control is-invalid" %}
+    {% else %}
+      {% render_field profile_form.judicial_record class="form-control" %}
+    {% endif %}
+    <div id="pdf-preview" class="mt-2"></div>
+    {% for error in profile_form.judicial_record.errors %}
+      <div class="invalid-feedback d-block">{{ error }}</div>
+    {% endfor %}
+  </div>
+
+  <div class="form-check mt-3">
+    {% if profile_form.terms.errors %}
+      {% render_field profile_form.terms class="form-check-input is-invalid" %}
+    {% else %}
+      {% render_field profile_form.terms class="form-check-input" %}
+    {% endif %}
+    <label class="form-check-label" for="{{ profile_form.terms.id_for_label }}">
+      {% trans "J'accepte les conditions générales et confirme sur mon honneur que mon identification est authentique" %}
+    </label>
+    {% for error in profile_form.terms.errors %}
+      <div class="invalid-feedback d-block">{{ error }}</div>
+    {% endfor %}
+  </div>
+
+  {% if next %}
+    <input type="hidden" name="next" value="{{ next }}">
+  {% endif %}
+
+  <div class="d-grid mt-4">
+    <button type="submit" class="btn btn-success py-2 fw-bold">
+      {% trans "S'inscrire" %}
+    </button>
+  </div>
+</form>
+
+<div class="text-center mt-3">
+  <small>
+    {% trans "Déjà inscrit ?" %}
+    <a href="{% url 'accounts_users:web:auth:login' %}">{% trans "Se connecter" %}</a>
+  </small>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const input = document.getElementById("id_judicial_record");
+    const preview = document.getElementById("pdf-preview");
+    if (!input || !preview) return;
+
+    input.addEventListener("change", () => {
+      const file = input.files[0];
+      if (!file) return;
+
+      if (file.type === "application/pdf") {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          preview.innerHTML = `
+            <embed src="${e.target.result}" type="application/pdf"
+                   width="100%" height="300px" class="rounded border" />
+          `;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        preview.innerHTML = `
+          <p class="text-danger fw-semibold">
+            {% trans "Format non pris en charge. Le fichier doit être en PDF." %}
+          </p>
+        `;
+      }
+    });
+  });
+</script>
+{% endblock %}
+
+ {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/accounts_users/registration/register.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "S'inscrire | SOGENTIS" %}{% endblock %}
+{% block auth_title %}{% trans "Créer un compte" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Inscription sécurisée sur SOGENTIS" %}{% endblock %}
+{% block auth_bg_image %}{% static "accounts_users/img/auth_bg.png" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} text-center" role="alert">
+      {{ message }}
+    </div>
+  {% endfor %}
+{% endif %}
+
+{% if account_created %}
+  <div class="alert alert-success text-center" role="alert">
+    {% trans "Votre compte a été créé avec succès. Vous allez être redirigé vers la page d’accueil…" %}
+  </div>
+  <script>
+    setTimeout(() => { window.location.href = "{% url 'core:home' %}"; }, 5000);
+  </script>
+{% endif %}
+
+<form method="post" enctype="multipart/form-data" novalidate>
+  {% csrf_token %}
+
+  {{ form.non_field_errors }}
+  {{ profile_form.non_field_errors }}
+
+  {% for field in form %}
+    <div class="mb-3">
+      <label class="form-label" for="{{ field.id_for_label }}">
+        {{ field.label }}{% if field.field.required %} *{% endif %}
+      </label>
+      {{ field }}
+      {% if field.errors %}
+        <div class="text-danger small">{{ field.errors|join:", " }}</div>
+      {% endif %}
+    </div>
+  {% endfor %}
+
+  {% for field in profile_form %}
+    {% if field.name not in "terms judicial_record profile_picture" %}
+      <div class="mb-3">
+        <label class="form-label" for="{{ field.id_for_label }}">
+          {{ field.label }}{% if field.field.required %} *{% endif %}
+        </label>
+        {{ field }}
+        {% if field.errors %}
+          <div class="text-danger small">{{ field.errors|join:", " }}</div>
+        {% endif %}
+      </div>
+    {% endif %}
+  {% endfor %}
+
+  <div class="mb-3">
+    <label class="form-label" for="{{ profile_form.profile_picture.id_for_label }}">
+      {{ profile_form.profile_picture.label }}
+    </label>
+    {{ profile_form.profile_picture }}
+    {% for error in profile_form.profile_picture.errors %}
+      <div class="text-danger small">{{ error }}</div>
+    {% endfor %}
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label" for="{{ profile_form.judicial_record.id_for_label }}">
+      {{ profile_form.judicial_record.label }} *
+    </label>
+    {{ profile_form.judicial_record }}
+    {% for error in profile_form.judicial_record.errors %}
+      <div class="text-danger small">{{ error }}</div>
+    {% endfor %}
+    <div id="pdf-preview" class="mt-2"></div>
+  </div>
+
+  <div class="mb-3 form-check">
+    {{ profile_form.terms }}
+    <label class="form-check-label" for="{{ profile_form.terms.id_for_label }}">
+      {% trans "J'accepte les conditions générales et confirme sur mon honneur que mon identification est authentique" %}
+    </label>
+    {% for error in profile_form.terms.errors %}
+      <div class="text-danger small">{{ error }}</div>
+    {% endfor %}
+  </div>
+
+  {% if next %}
+    <input type="hidden" name="next" value="{{ next }}">
+  {% endif %}
+
+  <div class="d-grid">
+    <button type="submit" class="btn btn-success py-2 fw-bold">
+      {% trans "S'inscrire" %}
+    </button>
+  </div>
+</form>
+
+<div class="text-center mt-3">
+  <small>
+    {% trans "Déjà inscrit ?" %}
+    <a href="{% url 'accounts_users_web:login' %}">{% trans "Se connecter" %}</a>
+  </small>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const input = document.getElementById("id_judicial_record");
+    const preview = document.getElementById("pdf-preview");
+    if (!input || !preview) return;
+
+    input.addEventListener("change", () => {
+      const file = input.files[0];
+      if (!file) return;
+
+      if (file.type === "application/pdf") {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          preview.innerHTML = `
+            <embed src="${e.target.result}" type="application/pdf"
+                   width="100%" height="300px" class="rounded border" />
+          `;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        preview.innerHTML = `
+          <p class="text-danger fw-semibold">
+            {% trans "Format non pris en charge. Le fichier doit être en PDF." %}
+          </p>
+        `;
+      }
+    });
+  });
+</script>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+{% comment %} {# templates/accounts_users/registration/register.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "S'inscrire | SOGENTIS" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} text-center" role="alert">
+      {{ message }}
+    </div>
+  {% endfor %}
+{% endif %}
+
+{% if account_created %}
+  <div class="alert alert-success text-center" role="alert">
+    {% trans "Votre compte a été créé avec succès. Vous allez être redirigé vers la page d’accueil…" %}
+  </div>
+  <script>
+    setTimeout(() => { window.location.href = "{% url 'core:home' %}"; }, 5000);
+  </script>
+{% endif %}
+
+<form method="post" enctype="multipart/form-data" novalidate>
+  {% csrf_token %}
+
+  {{ form.non_field_errors }}
+  {{ profile_form.non_field_errors }}
+
+  {% for field in form %}
+    <div class="mb-3">
+      <label class="form-label" for="{{ field.id_for_label }}">
+        {{ field.label }}{% if field.field.required %} *{% endif %}
+      </label>
+      {{ field }}
+      {% if field.errors %}
+        <div class="text-danger small">{{ field.errors|join:", " }}</div>
+      {% endif %}
+    </div>
+  {% endfor %}
+
+  {% for field in profile_form %}
+    {% if field.name not in "terms judicial_record profile_picture" %}
+      <div class="mb-3">
+        <label class="form-label" for="{{ field.id_for_label }}">
+          {{ field.label }}{% if field.field.required %} *{% endif %}
+        </label>
+        {{ field }}
+        {% if field.errors %}
+          <div class="text-danger small">{{ field.errors|join:", " }}</div>
+        {% endif %}
+      </div>
+    {% endif %}
+  {% endfor %}
+
+  <div class="mb-3">
+    <label class="form-label" for="{{ profile_form.profile_picture.id_for_label }}">
+      {{ profile_form.profile_picture.label }}
+    </label>
+    {{ profile_form.profile_picture }}
+    {% for error in profile_form.profile_picture.errors %}
+      <div class="text-danger small">{{ error }}</div>
+    {% endfor %}
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label" for="{{ profile_form.judicial_record.id_for_label }}">
+      {{ profile_form.judicial_record.label }} *
+    </label>
+    {{ profile_form.judicial_record }}
+    {% for error in profile_form.judicial_record.errors %}
+      <div class="text-danger small">{{ error }}</div>
+    {% endfor %}
+    <div id="pdf-preview" class="mt-2"></div>
+  </div>
+
+  <div class="mb-3 form-check">
+    {{ profile_form.terms }}
+    <label class="form-check-label" for="{{ profile_form.terms.id_for_label }}">
+      {% trans "J'accepte les conditions générales et confirme sur mon honneur que mon identification est authentique" %}
+    </label>
+    {% for error in profile_form.terms.errors %}
+      <div class="text-danger small">{{ error }}</div>
+    {% endfor %}
+  </div>
+
+  {% if next %}
+    <input type="hidden" name="next" value="{{ next }}">
+  {% endif %}
+
+  <div class="d-grid">
+    <button type="submit" class="btn btn-success py-2 fw-bold">
+      {% trans "S'inscrire" %}
+    </button>
+  </div>
+</form>
+
+<div class="text-center mt-3">
+  <small>
+    {% trans "Déjà inscrit ?" %}
+    <a href="{% url 'accounts_users_web:login' %}">{% trans "Se connecter" %}</a>
+  </small>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const input = document.getElementById("id_judicial_record");
+    const preview = document.getElementById("pdf-preview");
+    if (!input || !preview) return;
+
+    input.addEventListener("change", () => {
+      const file = input.files[0];
+      if (!file) return;
+
+      if (file.type === "application/pdf") {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          preview.innerHTML = `
+            <embed src="${e.target.result}" type="application/pdf"
+                   width="100%" height="300px" class="rounded border" />
+          `;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        preview.innerHTML = `
+          <p class="text-danger fw-semibold">
+            {% trans "Format non pris en charge. Le fichier doit être en PDF." %}
+          </p>
+        `;
+      }
+    });
+  });
+</script>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+{% comment %} {# /accounts_users/registration/register.html #}
+
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "S'inscrire | SOGENTIS" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="auth-shell py-4">
+  <div class="auth-card mx-auto">
+    <div class="card-body">
+
+      <h3 class="text-center mb-3 fw-bold">
+        {% trans "Créer un compte" %}
+      </h3>
+
+      {# ----------------------------------------------- #}
+      {#               Messages Django                   #}
+      {# ----------------------------------------------- #}
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} text-center" role="alert">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      {# Message de succès après création #}
+      {% if account_created %}
+        <div class="alert alert-success text-center" role="alert">
+          {% trans "Votre compte a été créé avec succès. Vous allez être redirigé vers la page d’accueil…" %}
+        </div>
+        <script>
+          setTimeout(() => { window.location.href = "{% url 'home' %}"; }, 5000);
+        </script>
+      {% endif %}
+
+      <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+
+        {{ form.non_field_errors }}
+        {{ profile_form.non_field_errors }}
+
+        {# ----------------------------------------------- #}
+        {#             CHAMPS DU FORMULAIRE USER           #}
+        {# ----------------------------------------------- #}
+        {% for field in form %}
+          <div class="mb-3">
+            <label class="form-label" for="{{ field.id_for_label }}">
+              {{ field.label }}{% if field.field.required %} *{% endif %}
+            </label>
+            {{ field }}
+            {% if field.errors %}
+              <div class="text-danger small">{{ field.errors|join:", " }}</div>
+            {% endif %}
+          </div>
+        {% endfor %}
+
+        {# ----------------------------------------------- #}
+        {#        CHAMPS DU PROFILE SAUF spéciaux          #}
+        {# ----------------------------------------------- #}
+        {% for field in profile_form %}
+          {% if field.name not in "terms judicial_record profile_picture" %}
+            <div class="mb-3">
+              <label class="form-label" for="{{ field.id_for_label }}">
+                {{ field.label }}{% if field.field.required %} *{% endif %}
+              </label>
+              {{ field }}
+              {% if field.errors %}
+                <div class="text-danger small">{{ field.errors|join:", " }}</div>
+              {% endif %}
+            </div>
+          {% endif %}
+        {% endfor %}
+
+        {# ----------------------------------------------- #}
+        {#                 PROFILE PICTURE                 #}
+        {# ----------------------------------------------- #}
+        <div class="mb-3">
+          <label class="form-label" for="{{ profile_form.profile_picture.id_for_label }}">
+            {{ profile_form.profile_picture.label }}
+          </label>
+          {{ profile_form.profile_picture }}
+          {% for error in profile_form.profile_picture.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        {# ----------------------------------------------- #}
+        {#                 CASIER JUDICIAIRE PDF           #}
+        {# ----------------------------------------------- #}
+        <div class="mb-3">
+          <label class="form-label" for="{{ profile_form.judicial_record.id_for_label }}">
+            {{ profile_form.judicial_record.label }} *
+          </label>
+          {{ profile_form.judicial_record }}
+          {% for error in profile_form.judicial_record.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+          <div id="pdf-preview" class="mt-2"></div>
+        </div>
+
+        {# ----------------------------------------------- #}
+        {#                        TERMS                    #}
+        {# ----------------------------------------------- #}
+        <div class="mb-3 form-check">
+          {{ profile_form.terms }}
+          <label class="form-check-label" for="{{ profile_form.terms.id_for_label }}">
+            {% trans "J'accepte les conditions générales et confirme sur mon honneur que mon identification est authentique" %}
+          </label>
+          {% for error in profile_form.terms.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        {% if next %}
+          <input type="hidden" name="next" value="{{ next }}">
+        {% endif %}
+
+        <div class="d-grid">
+          <button type="submit" class="btn btn-success py-2 fw-bold">
+            {% trans "S'inscrire" %}
+          </button>
+        </div>
+      </form>
+
+      <div class="text-center mt-3">
+        <small>
+          {% trans "Déjà inscrit ?" %}
+          <a href="{% url 'accounts_users_web:login' %}">{% trans "Se connecter" %}</a>
+        </small>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+
+{# ---- PDF Preview ---- #}
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const input = document.getElementById("id_judicial_record");
+    const preview = document.getElementById("pdf-preview");
+
+    if (input) {
+      input.addEventListener("change", () => {
+        const file = input.files[0];
+        if (!file) return;
+
+        if (file.type === "application/pdf") {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            preview.innerHTML = `
+              <embed src="${e.target.result}" type="application/pdf"
+                     width="100%" height="300px" class="rounded border" />
+            `;
+          };
+          reader.readAsDataURL(file);
+        } else {
+          preview.innerHTML = `
+            <p class="text-danger fw-semibold">
+              {% trans "Format non pris en charge. Le fichier doit être en PDF." %}
+            </p>
+          `;
+        }
+      });
+    }
+  });
+</script>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+
+{% comment %} {% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "S'inscrire | SOGENTIS" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-form-container container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-7 col-lg-6">
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+          <h3 class="mb-4 text-center">{% trans "Créer un compte" %}</h3>
+
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags }} text-center" role="alert">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+
+          {% if account_created %}
+            <div class="alert alert-success text-center" role="alert">
+              {% trans "Votre compte a été créé avec succès. Vous allez être redirigé vers la page d’accueil..." %}
+            </div>
+            <script>
+              setTimeout(function () {
+                window.location.href = "{% url 'home' %}";
+              }, 5000);
+            </script>
+          {% endif %}
+
+          <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+
+            {{ profile_form.non_field_errors }}
+            {{ form.non_field_errors }}
+
+            {% for field in form %}
+              <div class="mb-3">
+                <label class="form-label" for="{{ field.id_for_label }}">
+                  {{ field.label }}{% if field.field.required %} *{% endif %}
+                </label>
+                {{ field }}
+                {% if field.errors %}
+                  <div class="text-danger small">{{ field.errors|join:", " }}</div>
+                {% endif %}
+              </div>
+            {% endfor %}
+
+            {% for field in profile_form %}
+              {% if field.name != "terms" and field.name != "judicial_record" and field.name != "profile_picture" %}
+                <div class="mb-3">
+                  <label class="form-label" for="{{ field.id_for_label }}">
+                    {{ field.label }}{% if field.field.required %} *{% endif %}
+                  </label>
+                  {{ field }}
+                  {% if field.errors %}
+                    <div class="text-danger small">{{ field.errors|join:", " }}</div>
+                  {% endif %}
+                </div>
+              {% endif %}
+            {% endfor %}
+
+            <div class="mb-3">
+              <label class="form-label" for="{{ profile_form.profile_picture.id_for_label }}">
+                {{ profile_form.profile_picture.label }}
+              </label>
+              {{ profile_form.profile_picture }}
+              {% for error in profile_form.profile_picture.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label" for="{{ profile_form.judicial_record.id_for_label }}">
+                {{ profile_form.judicial_record.label }} *
+              </label>
+              {{ profile_form.judicial_record }}
+              {% for error in profile_form.judicial_record.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+              <div id="pdf-preview" class="mt-2"></div>
+            </div>
+
+            <div class="mb-3 form-check">
+              {{ profile_form.terms }}
+              <label class="form-check-label" for="{{ profile_form.terms.id_for_label }}">
+                {% trans "J'accepte les conditions générales et confirme sur mon honneur que mon identification est authentique" %}
+              </label>
+              {% for error in profile_form.terms.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            {% if next %}
+              <input type="hidden" name="next" value="{{ next }}">
+            {% endif %}
+
+            <div class="d-grid">
+              <button type="submit" class="btn btn-success">{% trans "S'inscrire" %}</button>
+            </div>
+          </form>
+
+          <div class="text-center mt-3">
+            <small>
+              {% trans "Déjà inscrit ?" %}
+              <a href="{% url 'accounts_users_web:login' %}">{% trans "Se connecter" %}</a>
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const input = document.getElementById("id_judicial_record");
+    const preview = document.getElementById("pdf-preview");
+    if (input) {
+      input.addEventListener("change", function () {
+        const file = input.files[0];
+        if (file && file.type === "application/pdf") {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            preview.innerHTML = `<embed src="${e.target.result}" type="application/pdf" width="100%" height="300px" />`;
+          };
+          reader.readAsDataURL(file);
+        } else {
+          preview.innerHTML = "<p class='text-danger'>Fichier non pris en charge. Format PDF requis.</p>";
+        }
+      });
+    }
+  });
+</script>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "S'inscrire | SOGENTIS" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-form-container container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+          <h3 class="mb-4 text-center">{% trans "Créer un compte" %}</h3>
+
+          {% if account_created %}
+            <div class="alert alert-success text-center" role="alert">
+              {% trans "Votre compte a été créé avec succès. Vous allez être redirigé vers la page d’accueil..." %}
+            </div>
+            <script>
+              setTimeout(function () {
+                window.location.href = "{% url 'home' %}";
+              }, 5000);
+            </script>
+          {% endif %}
+
+          <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+
+            {{ profile_form.non_field_errors }}
+            {{ form.non_field_errors }}
+
+            <div class="mb-3">
+              <label class="form-label">{{ profile_form.full_name.label }} *</label>
+              {{ profile_form.full_name }}
+              {% for error in profile_form.full_name.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">{{ profile_form.phone.label }} *</label>
+              {{ profile_form.phone }}
+              {% for error in profile_form.phone.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">{{ profile_form.country.label }} *</label>
+              {{ profile_form.country }}
+              {% for error in profile_form.country.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">{{ form.email.label }} *</label>
+              {{ form.email }}
+              {% for error in form.email.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">{{ form.username.label }} *</label>
+              {{ form.username }}
+              {% for error in form.username.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">{{ form.password.label }} *</label>
+              {{ form.password }}
+              {% for error in form.password.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">{{ form.password_confirm.label }} *</label>
+              {{ form.password_confirm }}
+              {% for error in form.password_confirm.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">{{ profile_form.membership_role.label }} *</label>
+              {{ profile_form.membership_role }}
+              {% for error in profile_form.membership_role.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">{{ profile_form.profile_picture.label }}</label>
+              {{ profile_form.profile_picture }}
+              {% for error in profile_form.profile_picture.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">{{ profile_form.judicial_record.label }} *</label>
+              {{ profile_form.judicial_record }}
+              {% for error in profile_form.judicial_record.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+              <div id="pdf-preview" class="mt-2"></div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">{{ profile_form.message.label }}</label>
+              {{ profile_form.message }}
+              {% for error in profile_form.message.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-3 form-check">
+              {{ profile_form.terms }}
+              <label class="form-check-label">
+                {% trans "J'accepte les conditions générales et confirme sur mon honneur que mon identification est authentique" %}
+              </label>
+              {% for error in profile_form.terms.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="d-grid">
+              <button type="submit" class="btn btn-success">{% trans "S'inscrire" %}</button>
+            </div>
+          </form>
+
+          <div class="text-center mt-3">
+            <small>
+              {% trans "Déjà inscrit ?" %}
+              <a href="{% url 'accounts_users_web:login' %}">{% trans "Se connecter" %}</a>
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const input = document.getElementById("id_judicial_record");
+    const preview = document.getElementById("pdf-preview");
+
+    if (input) {
+      input.addEventListener("change", function () {
+        const file = input.files[0];
+        if (file && file.type === "application/pdf") {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            preview.innerHTML = `<embed src="${e.target.result}" type="application/pdf" width="100%" height="300px" />`;
+          };
+          reader.readAsDataURL(file);
+        } else {
+          preview.innerHTML = "<p class='text-danger'>Fichier non pris en charge. Format PDF requis.</p>";
+        }
+      });
+    }
+  });
+</script>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+{% comment %} {% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n user_form_tags %}
+
+{% block title %}{% trans "S'inscrire | SOGENTIS" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-form-container container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+          <h3 class="mb-4 text-center">{% trans "Créer un compte" %}</h3>
+
+          <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+
+            <!-- ✅ Nom complet -->
+            <div class="mb-3">
+              <label for="{{ profile_form.full_name.id_for_label }}" class="form-label">
+                {{ profile_form.full_name.label }} *
+              </label>
+              {{ profile_form.full_name|add_class:"form-control" }}
+              {% for error in profile_form.full_name.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <!-- ✅ Téléphone -->
+            <div class="mb-3">
+              <label for="{{ profile_form.phone.id_for_label }}" class="form-label">
+                {{ profile_form.phone.label }} *
+              </label>
+              {{ profile_form.phone|add_class:"form-control" }}
+              {% for error in profile_form.phone.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <!-- ✅ Pays -->
+            <div class="mb-3">
+              <label for="{{ profile_form.country.id_for_label }}" class="form-label">
+                {{ profile_form.country.label }} *
+              </label>
+              {{ profile_form.country|add_class:"form-control" }}
+              {% for error in profile_form.country.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <!-- ✅ Adresse électronique -->
+            <div class="mb-3">
+              <label for="{{ form.email.id_for_label }}" class="form-label">
+                {{ form.email.label }} *
+              </label>
+              {{ form.email|add_class:"form-control" }}
+              {% for error in form.email.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <!-- ✅ Nom d'utilisateur -->
+            <div class="mb-3">
+              <label for="{{ form.username.id_for_label }}" class="form-label">
+                {{ form.username.label }} *
+              </label>
+              {{ form.username|add_class:"form-control" }}
+              {% for error in form.username.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <!-- ✅ Créer un mot de passe -->
+            <div class="mb-3">
+              <label for="{{ form.password.id_for_label }}" class="form-label">
+                {{ form.password.label }} *
+              </label>
+              {{ form.password|add_class:"form-control" }}
+              {% for error in form.password.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <!-- ✅ Confirmer le mot de passe -->
+            <div class="mb-3">
+              <label for="{{ form.password_confirm.id_for_label }}" class="form-label">
+                {{ form.password_confirm.label }} *
+              </label>
+              {{ form.password_confirm|add_class:"form-control" }}
+              {% for error in form.password_confirm.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <!-- ✅ Type d’adhésion -->
+            <div class="mb-3">
+              <label for="{{ profile_form.membership_role.id_for_label }}" class="form-label">
+                {{ profile_form.membership_role.label }} *
+              </label>
+              {{ profile_form.membership_role|add_class:"form-select" }}
+              {% for error in profile_form.membership_role.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <!-- ✅ Photo de profil -->
+            <div class="mb-3">
+              <label for="{{ profile_form.profile_picture.id_for_label }}" class="form-label">
+                {{ profile_form.profile_picture.label }}
+              </label>
+              {{ profile_form.profile_picture|add_class:"form-control-file" }}
+              {% for error in profile_form.profile_picture.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <!-- ✅ Casier judiciaire -->
+            <div class="mb-3">
+              <label for="{{ profile_form.judicial_record.id_for_label }}" class="form-label">
+                {{ profile_form.judicial_record.label }} *
+              </label>
+              {{ profile_form.judicial_record|add_class:"form-control-file" }}
+              {% if profile_form.judicial_record.help_text %}
+                <div class="form-text small">{{ profile_form.judicial_record.help_text|safe }}</div>
+              {% endif %}
+              {% for error in profile_form.judicial_record.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div id="pdf-preview" class="mb-3"></div>
+
+            <!-- ✅ Message -->
+            <div class="mb-3">
+              <label for="{{ profile_form.message.id_for_label }}" class="form-label">
+                {{ profile_form.message.label }}
+              </label>
+              {{ profile_form.message|add_class:"form-control" }}
+              {% for error in profile_form.message.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <!-- ✅ Terms -->
+            <div class="mb-3 form-check">
+              {{ profile_form.terms }}
+              <label class="form-check-label" for="{{ profile_form.terms.id_for_label }}">
+                {% trans "J'accepte les conditions générales et confirme sur mon honneur que mon identification est authentique" %}
+              </label>
+              {% for error in profile_form.terms.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <!-- ✅ Bouton -->
+            <div class="d-grid">
+              <button type="submit" class="btn btn-success">{% trans "S'inscrire" %}</button>
+            </div>
+          </form>
+
+          <div class="text-center mt-3">
+            <small>
+              {% trans "Déjà inscrit ?" %}
+              <a href="{% url 'accounts_users_web:login' %}">{% trans "Se connecter" %}</a>
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const input = document.getElementById("id_judicial_record");
+    const preview = document.getElementById("pdf-preview");
+
+    if (input) {
+      input.addEventListener("change", function () {
+        const file = input.files[0];
+        if (file && file.type === "application/pdf") {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            preview.innerHTML = `<embed src="${e.target.result}" type="application/pdf" width="100%" height="300px" />`;
+          };
+          reader.readAsDataURL(file);
+        } else {
+          preview.innerHTML = "<p class='text-danger'>Fichier non pris en charge. Format PDF requis.</p>";
+        }
+      });
+    }
+  });
+</script>
+{% endblock %} {% endcomment %}

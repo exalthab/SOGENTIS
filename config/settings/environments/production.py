@@ -206,7 +206,8 @@ HUB_URLNAME = "core:hub"
 
 DOMAIN_BYPASS_PREFIXES = (
     "/admin/",
-    "/accounts/",
+    "/accounts_users/",
+    "accounts",
     "/dashboard/",
     "/i18n/",
     "/static/",

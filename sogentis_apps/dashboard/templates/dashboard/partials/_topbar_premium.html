@@ -1,4 +1,1469 @@
-{% load i18n %}
+{# templates/dashboard/partials/_topbar_premium.html #}
+{% load static i18n dashboard_tags %}
+
+{% trans "Tableau de bord" as default_dashboard_title %}
+
+{# URLs safe pour switcher #}
+{% safe_url "dashboard:hub" as url_hub %}
+{% safe_url "dashboard:user:home" as url_user_home %}
+{% safe_url "dashboard:vendor:home" as url_vendor_home %}
+{% safe_url "dashboard:b2b:home" as url_b2b_home %}
+{% safe_url "dashboard:social:index" as url_social_home %}
+{% safe_url "dashboard:formations:home" as url_formations_home %}
+
+<header class="dashboard-header d-flex align-items-center justify-content-between px-3 px-md-4 py-3 bg-white border-bottom shadow-sm">
+  <div class="d-flex align-items-center gap-3">
+
+    {# Burger (mobile) #}
+    <button class="btn btn-outline-secondary d-lg-none"
+            type="button"
+            data-db-open="sidebar"
+            aria-label="{% trans 'Menu' %}">
+      <i class="fas fa-bars" aria-hidden="true"></i>
+    </button>
+
+    {# Brand (logo + fallback) #}
+    <a class="d-flex align-items-center gap-2 text-decoration-none" href="{{ url_hub|default:'#' }}">
+      <img src="{% static 'dashboard/img/logo_80h.png' %}"
+           height="40"
+           alt="{{ PROJECT_NAME|default:'SOGENTIS' }}"
+           class="d-inline-block"
+           onerror="this.style.display='none'; document.getElementById('dbBrandText').classList.remove('d-none');">
+      <span id="dbBrandText" class="d-none fw-bold text-primary">
+        {{ PROJECT_NAME|default:"SOGENTIS" }}
+      </span>
+    </a>
+
+    {# Title / subtitle (template-safe) #}
+    {% firstof topbar_title page_title default_dashboard_title as title %}
+    {% firstof topbar_subtitle "" as subtitle %}
+
+    <div class="d-none d-md-block">
+      <div class="fw-bold lh-sm d-flex align-items-center gap-2">
+
+        {# Chip espace courant (apps style) #}
+        {% with sp=dashboard_space|default:"dashboard" %}
+          <span class="badge text-bg-light border">
+            {% if sp == "admin" %}🛡️ {% trans "Admin" %}
+            {% elif sp == "vendor" %}🏪 {% trans "Vendeur" %}
+            {% elif sp == "b2b" %}🏢 {% trans "B2B" %}
+            {% elif sp == "social" %}❤️ {% trans "Social" %}
+            {% elif sp == "formations" %}🎓 {% trans "Formations" %}
+            {% elif sp == "user" %}👤 {% trans "Utilisateur" %}
+            {% else %}📌 {% trans "Dashboard" %}
+            {% endif %}
+          </span>
+        {% endwith %}
+
+        <span>{{ title }}</span>
+      </div>
+
+      {% if subtitle %}
+        <div class="text-muted small lh-sm">{{ subtitle }}</div>
+      {% endif %}
+
+      {# Breadcrumbs optionnel (si la vue fournit breadcrumbs) #}
+      {% if breadcrumbs %}
+        <div class="small text-muted mt-1">
+          {% for bc in breadcrumbs %}
+            {% if not forloop.first %}<span class="mx-1">/</span>{% endif %}
+            <span>{{ bc|dget:"label" }}</span>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+
+  <div class="d-flex align-items-center gap-2 gap-md-3">
+
+    {# Actions page courante: injectées depuis la vue #}
+    {% if topbar_actions %}
+      <div class="d-none d-lg-flex align-items-center gap-2">
+        {{ topbar_actions|safe }}
+      </div>
+    {% endif %}
+
+    {# Switcher d'espaces (apps style) #}
+    <div class="dropdown d-none d-md-block">
+      <button class="btn btn-outline-secondary d-flex align-items-center gap-2"
+              type="button"
+              id="dbSpaceMenu"
+              data-bs-toggle="dropdown"
+              aria-expanded="false">
+        <i class="fas fa-th-large" aria-hidden="true"></i>
+        <span class="d-none d-lg-inline">{% trans "Espaces" %}</span>
+      </button>
+
+      <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="dbSpaceMenu">
+        <li>
+          <a class="dropdown-item" href="{{ url_user_home|default:url_hub|default:'#' }}">
+            👤 {% trans "Utilisateur" %}
+          </a>
+        </li>
+
+        {# ===================== VENDOR (NO PARENTHESIS) ===================== #}
+        {% if url_vendor_home %}
+          {% if request.user.is_superuser %}
+            <li><a class="dropdown-item" href="{{ url_vendor_home }}">🏪 {% trans "Vendeur" %}</a></li>
+          {% elif perms.dashboard.access_vendor_space %}
+            <li><a class="dropdown-item" href="{{ url_vendor_home }}">🏪 {% trans "Vendeur" %}</a></li>
+          {% elif can_vendor|default:False %}
+            {% if vendor_approved|default:False %}
+              <li><a class="dropdown-item" href="{{ url_vendor_home }}">🏪 {% trans "Vendeur" %}</a></li>
+            {% else %}
+              <li>
+                <span class="dropdown-item text-muted">
+                  🔒 🏪 {% trans "Vendeur" %}
+                  <small class="d-block">{% trans "En attente / accès restreint" %}</small>
+                </span>
+              </li>
+            {% endif %}
+          {% else %}
+            <li>
+              <span class="dropdown-item text-muted">
+                🔒 🏪 {% trans "Vendeur" %}
+                <small class="d-block">{% trans "En attente / accès restreint" %}</small>
+              </span>
+            </li>
+          {% endif %}
+        {% else %}
+          <li>
+            <span class="dropdown-item text-muted">
+              🔒 🏪 {% trans "Vendeur" %}
+              <small class="d-block">{% trans "En attente / accès restreint" %}</small>
+            </span>
+          </li>
+        {% endif %}
+
+        {# ===================== B2B (NO PARENTHESIS) ===================== #}
+        {% if url_b2b_home %}
+          {% if request.user.is_superuser %}
+            <li><a class="dropdown-item" href="{{ url_b2b_home }}">🏢 {% trans "B2B" %}</a></li>
+          {% elif perms.dashboard.access_b2b_space %}
+            <li><a class="dropdown-item" href="{{ url_b2b_home }}">🏢 {% trans "B2B" %}</a></li>
+          {% elif can_b2b|default:False %}
+            {% if b2b_approved|default:False %}
+              <li><a class="dropdown-item" href="{{ url_b2b_home }}">🏢 {% trans "B2B" %}</a></li>
+            {% else %}
+              <li>
+                <span class="dropdown-item text-muted">
+                  🔒 🏢 {% trans "B2B" %}
+                  <small class="d-block">{% trans "En attente / accès restreint" %}</small>
+                </span>
+              </li>
+            {% endif %}
+          {% else %}
+            <li>
+              <span class="dropdown-item text-muted">
+                🔒 🏢 {% trans "B2B" %}
+                <small class="d-block">{% trans "En attente / accès restreint" %}</small>
+              </span>
+            </li>
+          {% endif %}
+        {% else %}
+          <li>
+            <span class="dropdown-item text-muted">
+              🔒 🏢 {% trans "B2B" %}
+              <small class="d-block">{% trans "En attente / accès restreint" %}</small>
+            </span>
+          </li>
+        {% endif %}
+
+        <li><hr class="dropdown-divider"></li>
+
+        {# ===================== SOCIAL (NO PARENTHESIS) ===================== #}
+        {% if url_social_home %}
+          {% if request.user.is_superuser %}
+            <li>
+              <a class="dropdown-item" href="{{ url_social_home|default:url_hub|default:'#' }}">
+                ❤️ {% trans "Social" %}
+              </a>
+            </li>
+          {% elif perms.dashboard.access_social_space %}
+            <li>
+              <a class="dropdown-item" href="{{ url_social_home|default:url_hub|default:'#' }}">
+                ❤️ {% trans "Social" %}
+              </a>
+            </li>
+          {% elif can_social|default:True %}
+            <li>
+              <a class="dropdown-item" href="{{ url_social_home|default:url_hub|default:'#' }}">
+                ❤️ {% trans "Social" %}
+              </a>
+            </li>
+          {% else %}
+            <li>
+              <span class="dropdown-item text-muted">
+                🔒 ❤️ {% trans "Social" %}
+                <small class="d-block">{% trans "Accès restreint" %}</small>
+              </span>
+            </li>
+          {% endif %}
+        {% else %}
+          <li>
+            <span class="dropdown-item text-muted">
+              🔒 ❤️ {% trans "Social" %}
+              <small class="d-block">{% trans "Accès restreint" %}</small>
+            </span>
+          </li>
+        {% endif %}
+
+        {# ===================== FORMATIONS (NO PARENTHESIS) ===================== #}
+        {% if url_formations_home %}
+          {% if request.user.is_superuser %}
+            <li>
+              <a class="dropdown-item" href="{{ url_formations_home|default:url_hub|default:'#' }}">
+                🎓 {% trans "Formations" %}
+              </a>
+            </li>
+          {% elif perms.dashboard.access_formations_space %}
+            <li>
+              <a class="dropdown-item" href="{{ url_formations_home|default:url_hub|default:'#' }}">
+                🎓 {% trans "Formations" %}
+              </a>
+            </li>
+          {% elif can_formations|default:True %}
+            <li>
+              <a class="dropdown-item" href="{{ url_formations_home|default:url_hub|default:'#' }}">
+                🎓 {% trans "Formations" %}
+              </a>
+            </li>
+          {% else %}
+            <li>
+              <span class="dropdown-item text-muted">
+                🔒 🎓 {% trans "Formations" %}
+                <small class="d-block">{% trans "Accès restreint" %}</small>
+              </span>
+            </li>
+          {% endif %}
+        {% else %}
+          <li>
+            <span class="dropdown-item text-muted">
+              🔒 🎓 {% trans "Formations" %}
+              <small class="d-block">{% trans "Accès restreint" %}</small>
+            </span>
+          </li>
+        {% endif %}
+      </ul>
+    </div>
+
+    {# Notifications (placeholder safe) #}
+    <a class="btn btn-outline-secondary position-relative"
+       href="{{ url_hub|default:'#' }}"
+       aria-label="{% trans 'Notifications' %}">
+      <i class="fas fa-bell" aria-hidden="true"></i>
+      {% if dashboard_notifications and dashboard_notifications|add:0 > 0 %}
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill text-bg-danger">
+          {{ dashboard_notifications }}
+        </span>
+      {% endif %}
+    </a>
+
+    {# Dropdown utilisateur + badges + initial fallback #}
+    <div class="dropdown">
+      {% with initial=request.user.get_short_name|default:request.user.username|slice:":1"|upper %}
+      {% with dps=dashboard_profile_status|default:"" %}
+      <button class="btn btn-light border dropdown-toggle d-flex align-items-center gap-2"
+              type="button"
+              id="dbUserMenu"
+              data-bs-toggle="dropdown"
+              aria-expanded="false">
+
+        <span class="d-none d-md-inline text-truncate" style="max-width: 220px;">
+          {% firstof user.get_full_name user.username %}
+        </span>
+
+        <span class="d-none d-lg-inline-flex align-items-center gap-1">
+          {% if request.user.is_superuser %}
+            <span class="badge text-bg-success">🛡️ {% trans "Admin" %}</span>
+          {% elif request.user.is_staff %}
+            <span class="badge text-bg-success">🛡️ {% trans "Staff" %}</span>
+          {% else %}
+            <span class="badge text-bg-secondary">👤 {% trans "Utilisateur" %}</span>
+          {% endif %}
+
+          {% if dps == "pending" %}
+            <span class="badge text-bg-warning">⏳ {% trans "En attente" %}</span>
+          {% elif dps == "rejected" %}
+            <span class="badge text-bg-danger">⛔ {% trans "Refusé" %}</span>
+          {% endif %}
+        </span>
+
+        <span class="position-relative d-inline-flex align-items-center justify-content-center rounded-circle shadow-sm"
+              style="width:34px;height:34px;font-weight:800;">
+          <img src="{% static 'dashboard/img/avatar.jpg' %}"
+               class="rounded-circle"
+               width="34" height="34"
+               alt="{% trans 'Avatar' %}"
+               onerror="this.remove();">
+          <span class="position-absolute top-50 start-50 translate-middle">
+            {{ initial }}
+          </span>
+        </span>
+
+      </button>
+
+      <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="dbUserMenu">
+
+        <li class="px-3 py-2">
+          <div class="fw-bold">{% firstof user.get_full_name user.username %}</div>
+          {% if request.user.email %}
+            <div class="text-muted small">{{ request.user.email }}</div>
+          {% endif %}
+
+          <div class="mt-2 d-flex flex-wrap gap-2">
+            {% if request.user.is_superuser %}
+              <span class="badge text-bg-success">🛡️ {% trans "Admin" %}</span>
+            {% elif request.user.is_staff %}
+              <span class="badge text-bg-success">🛡️ {% trans "Staff" %}</span>
+            {% else %}
+              <span class="badge text-bg-secondary">👤 {% trans "Utilisateur" %}</span>
+            {% endif %}
+
+            {% if dps == "pending" %}
+              <span class="badge text-bg-warning">⏳ {% trans "En attente" %}</span>
+            {% elif dps == "rejected" %}
+              <span class="badge text-bg-danger">⛔ {% trans "Refusé" %}</span>
+            {% endif %}
+          </div>
+        </li>
+
+        <li><hr class="dropdown-divider"></li>
+
+        <li>
+          <a class="dropdown-item" href="{{ url_hub|default:'#' }}">
+            <i class="fas fa-layer-group me-2" aria-hidden="true"></i>{% trans "Hub" %}
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="{{ url_user_home|default:url_hub|default:'#' }}">
+            <i class="fas fa-chart-line me-2" aria-hidden="true"></i>{% trans "Mon dashboard" %}
+          </a>
+        </li>
+        <li>
+          {% safe_url 'accounts_users:web:profile:profile_edit' as url_profile_edit %}
+          <a class="dropdown-item" href="{{ url_profile_edit|default:'#' }}">
+            <i class="fas fa-user me-2" aria-hidden="true"></i>{% trans "Profil" %}
+          </a>
+        </li>
+
+        <li><hr class="dropdown-divider"></li>
+        <li>
+          {% safe_url 'accounts_users:web:auth:logout' as url_logout %}
+          {% if not url_logout %}{% safe_url 'accounts_users:web:logout' as url_logout %}{% endif %}
+          <a class="dropdown-item text-danger" href="{{ url_logout|default:'#' }}">
+            <i class="fas fa-sign-out-alt me-2" aria-hidden="true"></i>{% trans "Déconnexion" %}
+          </a>
+        </li>
+      </ul>
+      {% endwith %}
+      {% endwith %}
+    </div>
+  </div>
+</header>
+
+
+
+
+
+
+{% comment %} {# templates/dashboard/partials/_topbar_premium.html #}
+{% load static i18n dashboard_tags %}
+
+{% trans "Tableau de bord" as default_dashboard_title %}
+
+{# URLs safe pour switcher #}
+{% safe_url "dashboard:hub" as url_hub %}
+{% safe_url "dashboard:user:home" as url_user_home %}
+{% safe_url "dashboard:vendor:home" as url_vendor_home %}
+{% safe_url "dashboard:b2b:home" as url_b2b_home %}
+{% safe_url "dashboard:social:index" as url_social_home %}
+{% safe_url "dashboard:formations:home" as url_formations_home %}
+
+<header class="dashboard-header d-flex align-items-center justify-content-between px-3 px-md-4 py-3 bg-white border-bottom shadow-sm">
+  <div class="d-flex align-items-center gap-3">
+
+    {# Burger (mobile) #}
+    <button class="btn btn-outline-secondary d-lg-none"
+            type="button"
+            data-db-open="sidebar"
+            aria-label="{% trans 'Menu' %}">
+      <i class="fas fa-bars" aria-hidden="true"></i>
+    </button>
+
+    {# Brand (logo + fallback) #}
+    <a class="d-flex align-items-center gap-2 text-decoration-none" href="{{ url_hub|default:'#' }}">
+      <img src="{% static 'dashboard/img/logo_80h.png' %}"
+           height="40"
+           alt="{{ PROJECT_NAME|default:'SOGENTIS' }}"
+           class="d-inline-block"
+           onerror="this.style.display='none'; document.getElementById('dbBrandText').classList.remove('d-none');">
+      <span id="dbBrandText" class="d-none fw-bold text-primary">
+        {{ PROJECT_NAME|default:"SOGENTIS" }}
+      </span>
+    </a>
+
+    {# Title / subtitle (template-safe) #}
+    {% firstof topbar_title page_title default_dashboard_title as title %}
+    {% firstof topbar_subtitle "" as subtitle %}
+
+    <div class="d-none d-md-block">
+      <div class="fw-bold lh-sm d-flex align-items-center gap-2">
+
+        {# Chip espace courant (apps style) #}
+        {% with sp=dashboard_space|default:"dashboard" %}
+          <span class="badge text-bg-light border">
+            {% if sp == "admin" %}🛡️ {% trans "Admin" %}
+            {% elif sp == "vendor" %}🏪 {% trans "Vendeur" %}
+            {% elif sp == "b2b" %}🏢 {% trans "B2B" %}
+            {% elif sp == "social" %}❤️ {% trans "Social" %}
+            {% elif sp == "formations" %}🎓 {% trans "Formations" %}
+            {% elif sp == "user" %}👤 {% trans "Utilisateur" %}
+            {% else %}📌 {% trans "Dashboard" %}
+            {% endif %}
+          </span>
+        {% endwith %}
+
+        <span>{{ title }}</span>
+      </div>
+
+      {% if subtitle %}
+        <div class="text-muted small lh-sm">{{ subtitle }}</div>
+      {% endif %}
+
+      {# Breadcrumbs optionnel (si la vue fournit breadcrumbs) #}
+      {% if breadcrumbs %}
+        <div class="small text-muted mt-1">
+          {% for bc in breadcrumbs %}
+            {% if not forloop.first %}<span class="mx-1">/</span>{% endif %}
+            <span>{{ bc|dget:"label" }}</span>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+
+  <div class="d-flex align-items-center gap-2 gap-md-3">
+
+    {# Actions page courante: injectées depuis la vue #}
+    {% if topbar_actions %}
+      <div class="d-none d-lg-flex align-items-center gap-2">
+        {{ topbar_actions|safe }}
+      </div>
+    {% endif %}
+
+    {# Switcher d'espaces (apps style) #}
+    <div class="dropdown d-none d-md-block">
+      <button class="btn btn-outline-secondary d-flex align-items-center gap-2"
+              type="button"
+              id="dbSpaceMenu"
+              data-bs-toggle="dropdown"
+              aria-expanded="false">
+        <i class="fas fa-th-large" aria-hidden="true"></i>
+        <span class="d-none d-lg-inline">{% trans "Espaces" %}</span>
+      </button>
+
+      <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="dbSpaceMenu">
+        <li>
+          <a class="dropdown-item" href="{{ url_user_home|default:url_hub|default:'#' }}">
+            👤 {% trans "Utilisateur" %}
+          </a>
+        </li>
+
+        {% if url_vendor_home and can_vendor and vendor_approved %}
+          <li>
+            <a class="dropdown-item" href="{{ url_vendor_home }}">
+              🏪 {% trans "Vendeur" %}
+            </a>
+          </li>
+        {% else %}
+          <li>
+            <span class="dropdown-item text-muted">
+              🔒 🏪 {% trans "Vendeur" %}
+              <small class="d-block">{% trans "En attente / accès restreint" %}</small>
+            </span>
+          </li>
+        {% endif %}
+
+        {% if url_b2b_home and can_b2b and b2b_approved %}
+          <li>
+            <a class="dropdown-item" href="{{ url_b2b_home }}">
+              🏢 {% trans "B2B" %}
+            </a>
+          </li>
+        {% else %}
+          <li>
+            <span class="dropdown-item text-muted">
+              🔒 🏢 {% trans "B2B" %}
+              <small class="d-block">{% trans "En attente / accès restreint" %}</small>
+            </span>
+          </li>
+        {% endif %}
+
+        <li><hr class="dropdown-divider"></li>
+
+        <li>
+          <a class="dropdown-item" href="{{ url_social_home|default:url_hub|default:'#' }}">
+            ❤️ {% trans "Social" %}
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="{{ url_formations_home|default:url_hub|default:'#' }}">
+            🎓 {% trans "Formations" %}
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    {# Notifications (placeholder safe) #}
+    <a class="btn btn-outline-secondary position-relative"
+       href="{{ url_hub|default:'#' }}"
+       aria-label="{% trans 'Notifications' %}">
+      <i class="fas fa-bell" aria-hidden="true"></i>
+      {% if dashboard_notifications and dashboard_notifications|add:0 > 0 %}
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill text-bg-danger">
+          {{ dashboard_notifications }}
+        </span>
+      {% endif %}
+    </a>
+
+    {# Dropdown utilisateur + badges + initial fallback #}
+    <div class="dropdown">
+      {% with initial=request.user.get_short_name|default:request.user.username|slice:":1"|upper %}
+      {% with dps=dashboard_profile_status|default:"" %}
+      <button class="btn btn-light border dropdown-toggle d-flex align-items-center gap-2"
+              type="button"
+              id="dbUserMenu"
+              data-bs-toggle="dropdown"
+              aria-expanded="false">
+
+        <span class="d-none d-md-inline text-truncate" style="max-width: 220px;">
+          {% firstof user.get_full_name user.username %}
+        </span>
+
+        <span class="d-none d-lg-inline-flex align-items-center gap-1">
+          {% if request.user.is_staff %}
+            <span class="badge text-bg-success">🛡️ {% trans "Staff" %}</span>
+          {% else %}
+            <span class="badge text-bg-secondary">👤 {% trans "Utilisateur" %}</span>
+          {% endif %}
+
+          {% if dps == "pending" %}
+            <span class="badge text-bg-warning">⏳ {% trans "En attente" %}</span>
+          {% elif dps == "rejected" %}
+            <span class="badge text-bg-danger">⛔ {% trans "Refusé" %}</span>
+          {% endif %}
+        </span>
+
+        <span class="position-relative d-inline-flex align-items-center justify-content-center rounded-circle shadow-sm"
+              style="width:34px;height:34px;font-weight:800;">
+          <img src="{% static 'dashboard/img/avatar.jpg' %}"
+               class="rounded-circle"
+               width="34" height="34"
+               alt="{% trans 'Avatar' %}"
+               onerror="this.remove();">
+          <span class="position-absolute top-50 start-50 translate-middle">
+            {{ initial }}
+          </span>
+        </span>
+
+      </button>
+
+      <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="dbUserMenu">
+
+        <li class="px-3 py-2">
+          <div class="fw-bold">{% firstof user.get_full_name user.username %}</div>
+          {% if request.user.email %}
+            <div class="text-muted small">{{ request.user.email }}</div>
+          {% endif %}
+
+          <div class="mt-2 d-flex flex-wrap gap-2">
+            {% if request.user.is_staff %}
+              <span class="badge text-bg-success">🛡️ {% trans "Staff" %}</span>
+            {% else %}
+              <span class="badge text-bg-secondary">👤 {% trans "Utilisateur" %}</span>
+            {% endif %}
+
+            {% if dps == "pending" %}
+              <span class="badge text-bg-warning">⏳ {% trans "En attente" %}</span>
+            {% elif dps == "rejected" %}
+              <span class="badge text-bg-danger">⛔ {% trans "Refusé" %}</span>
+            {% endif %}
+          </div>
+        </li>
+
+        <li><hr class="dropdown-divider"></li>
+
+        <li>
+          <a class="dropdown-item" href="{{ url_hub|default:'#' }}">
+            <i class="fas fa-layer-group me-2" aria-hidden="true"></i>{% trans "Hub" %}
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="{{ url_user_home|default:url_hub|default:'#' }}">
+            <i class="fas fa-chart-line me-2" aria-hidden="true"></i>{% trans "Mon dashboard" %}
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="{% url 'accounts_users:web:profile:profile_edit' %}">
+            <i class="fas fa-user me-2" aria-hidden="true"></i>{% trans "Profil" %}
+          </a>
+        </li>
+
+        <li><hr class="dropdown-divider"></li>
+        <li>
+          <a class="dropdown-item text-danger" href="{% url 'accounts_users:web:auth:logout' %}">
+            <i class="fas fa-sign-out-alt me-2" aria-hidden="true"></i>{% trans "Déconnexion" %}
+          </a>
+        </li>
+      </ul>
+      {% endwith %}
+      {% endwith %}
+    </div>
+  </div>
+</header> {% endcomment %}
+
+
+
+
+
+
+
+
+{% comment %} {# templates/dashboard/partials/_topbar_premium.html #}
+{% load static i18n dashboard_tags %}
+
+{% trans "Tableau de bord" as default_dashboard_title %}
+
+{# URLs safe pour switcher #}
+{% safe_url "dashboard:hub" as url_hub %}
+{% safe_url "dashboard:user:home" as url_user_home %}
+{% safe_url "dashboard:vendor:home" as url_vendor_home %}
+{% safe_url "dashboard:b2b:home" as url_b2b_home %}
+{% safe_url "dashboard:social:index" as url_social_home %}
+{% safe_url "dashboard:formations:home" as url_formations_home %}
+
+<header class="dashboard-header d-flex align-items-center justify-content-between px-3 px-md-4 py-3 bg-white border-bottom shadow-sm">
+  <div class="d-flex align-items-center gap-3">
+
+    {# Burger (mobile) #}
+    <button class="btn btn-outline-secondary d-lg-none"
+            type="button"
+            data-db-open="sidebar"
+            aria-label="{% trans 'Menu' %}">
+      <i class="fas fa-bars" aria-hidden="true"></i>
+    </button>
+
+    {# Brand (logo + fallback) #}
+    <a class="d-flex align-items-center gap-2 text-decoration-none" href="{{ url_hub|default:'#' }}">
+      <img src="{% static 'dashboard/img/logo_80h.png' %}"
+           height="40"
+           alt="{{ PROJECT_NAME|default:'SOGENTIS' }}"
+           class="d-inline-block"
+           onerror="this.style.display='none'; document.getElementById('dbBrandText').classList.remove('d-none');">
+      <span id="dbBrandText" class="d-none fw-bold text-primary">
+        {{ PROJECT_NAME|default:"SOGENTIS" }}
+      </span>
+    </a>
+
+    {# Title / subtitle (template-safe) #}
+    {% firstof topbar_title page_title default_dashboard_title as title %}
+    {% firstof topbar_subtitle "" as subtitle %}
+
+    <div class="d-none d-md-block">
+      <div class="fw-bold lh-sm d-flex align-items-center gap-2">
+
+        {# Chip espace courant (apps style) #}
+        {% with sp=dashboard_space|default:"dashboard" %}
+          <span class="badge text-bg-light border">
+            {% if sp == "admin" %}🛡️ {% trans "Admin" %}
+            {% elif sp == "vendor" %}🏪 {% trans "Vendeur" %}
+            {% elif sp == "b2b" %}🏢 {% trans "B2B" %}
+            {% elif sp == "social" %}❤️ {% trans "Social" %}
+            {% elif sp == "formations" %}🎓 {% trans "Formations" %}
+            {% elif sp == "user" %}👤 {% trans "Utilisateur" %}
+            {% else %}📌 {% trans "Dashboard" %}
+            {% endif %}
+          </span>
+        {% endwith %}
+
+        <span>{{ title }}</span>
+      </div>
+
+      {% if subtitle %}
+        <div class="text-muted small lh-sm">{{ subtitle }}</div>
+      {% endif %}
+
+      {# Breadcrumbs optionnel (si la vue fournit breadcrumbs) #}
+      {% if breadcrumbs %}
+        <div class="small text-muted mt-1">
+          {% for bc in breadcrumbs %}
+            {% if not forloop.first %}<span class="mx-1">/</span>{% endif %}
+            <span>{{ bc|dget:"label" }}</span>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+
+  <div class="d-flex align-items-center gap-2 gap-md-3">
+
+    {# Actions page courante: injectées depuis la vue #}
+    {% if topbar_actions %}
+      <div class="d-none d-lg-flex align-items-center gap-2">
+        {{ topbar_actions|safe }}
+      </div>
+    {% endif %}
+
+    {# Badges globaux (desktop) : rôles + statut profil #}
+    <div class="d-none d-lg-flex align-items-center gap-2">
+      {% if request.user.is_staff %}
+        <span class="badge text-bg-success">🛡️ {% trans "Staff" %}</span>
+      {% else %}
+        <span class="badge text-bg-secondary">👤 {% trans "Utilisateur" %}</span>
+      {% endif %}
+
+      {% with ps=dashboard_profile_status|default:"" %}
+        {% if ps == "pending" %}
+          <span class="badge text-bg-warning">⏳ {% trans "En attente" %}</span>
+        {% elif ps == "rejected" %}
+          <span class="badge text-bg-danger">⛔ {% trans "Refusé" %}</span>
+        {% endif %}
+      {% endwith %}
+    </div>
+
+    {# Switcher d'espaces (apps style) #}
+    <div class="dropdown d-none d-md-block">
+      <button class="btn btn-outline-secondary d-flex align-items-center gap-2"
+              type="button"
+              id="dbSpaceMenu"
+              data-bs-toggle="dropdown"
+              aria-expanded="false">
+        <i class="fas fa-th-large" aria-hidden="true"></i>
+        <span class="d-none d-lg-inline">{% trans "Espaces" %}</span>
+      </button>
+
+      <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="dbSpaceMenu">
+        <li>
+          <a class="dropdown-item" href="{{ url_user_home|default:url_hub|default:'#' }}">
+            👤 {% trans "Utilisateur" %}
+          </a>
+        </li>
+
+        {% if url_vendor_home and can_vendor and vendor_approved %}
+          <li>
+            <a class="dropdown-item" href="{{ url_vendor_home }}">
+              🏪 {% trans "Vendeur" %}
+            </a>
+          </li>
+        {% else %}
+          <li>
+            <span class="dropdown-item text-muted">
+              🔒 🏪 {% trans "Vendeur" %}
+              <small class="d-block">{% trans "En attente / accès restreint" %}</small>
+            </span>
+          </li>
+        {% endif %}
+
+        {% if url_b2b_home and can_b2b and b2b_approved %}
+          <li>
+            <a class="dropdown-item" href="{{ url_b2b_home }}">
+              🏢 {% trans "B2B" %}
+            </a>
+          </li>
+        {% else %}
+          <li>
+            <span class="dropdown-item text-muted">
+              🔒 🏢 {% trans "B2B" %}
+              <small class="d-block">{% trans "En attente / accès restreint" %}</small>
+            </span>
+          </li>
+        {% endif %}
+
+        <li><hr class="dropdown-divider"></li>
+
+        <li>
+          <a class="dropdown-item" href="{{ url_social_home|default:url_hub|default:'#' }}">
+            ❤️ {% trans "Social" %}
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="{{ url_formations_home|default:url_hub|default:'#' }}">
+            🎓 {% trans "Formations" %}
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    {# Notifications (placeholder safe) #}
+    <a class="btn btn-outline-secondary position-relative"
+       href="{{ url_hub|default:'#' }}"
+       aria-label="{% trans 'Notifications' %}">
+      <i class="fas fa-bell" aria-hidden="true"></i>
+      {% if dashboard_notifications and dashboard_notifications|add:0 > 0 %}
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill text-bg-danger">
+          {{ dashboard_notifications }}
+        </span>
+      {% endif %}
+    </a>
+
+    {# Dropdown utilisateur #}
+    <div class="dropdown">
+      <button class="btn btn-light border dropdown-toggle d-flex align-items-center gap-2"
+              type="button"
+              id="dbUserMenu"
+              data-bs-toggle="dropdown"
+              aria-expanded="false">
+        <span class="d-none d-md-inline text-truncate" style="max-width: 200px;">
+          {% firstof user.get_full_name user.username %}
+        </span>
+
+        <img src="{% static 'dashboard/img/avatar.jpg' %}"
+             class="rounded-circle shadow avatar-sm"
+             width="34" height="34"
+             alt="{% trans 'Avatar' %}"
+             onerror="this.style.display='none';">
+      </button>
+
+      <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="dbUserMenu">
+        <li>
+          <a class="dropdown-item" href="{{ url_hub|default:'#' }}">
+            <i class="fas fa-layer-group me-2" aria-hidden="true"></i>{% trans "Hub" %}
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="{{ url_user_home|default:url_hub|default:'#' }}">
+            <i class="fas fa-chart-line me-2" aria-hidden="true"></i>{% trans "Mon dashboard" %}
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="{% url 'accounts_users:web:profile:profile_edit' %}">
+            <i class="fas fa-user me-2" aria-hidden="true"></i>{% trans "Profil" %}
+          </a>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        <li>
+          <a class="dropdown-item text-danger" href="{% url 'accounts_users:web:auth:logout' %}">
+            <i class="fas fa-sign-out-alt me-2" aria-hidden="true"></i>{% trans "Déconnexion" %}
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header> {% endcomment %}
+
+
+
+
+
+
+
+
+{% comment %} {# templates/dashboard/partials/_topbar_premium.html #}
+{% load static i18n dashboard_tags %}
+
+{% trans "Tableau de bord" as default_dashboard_title %}
+
+{# URLs safe pour switcher #}
+{% safe_url "dashboard:hub" as url_hub %}
+{% safe_url "dashboard:user:home" as url_user_home %}
+{% safe_url "dashboard:vendor:home" as url_vendor_home %}
+{% safe_url "dashboard:b2b:home" as url_b2b_home %}
+{% safe_url "dashboard:social:index" as url_social_home %}
+{% safe_url "dashboard:formations:home" as url_formations_home %}
+
+<header class="dashboard-header d-flex align-items-center justify-content-between px-3 px-md-4 py-3 bg-white border-bottom shadow-sm">
+  <div class="d-flex align-items-center gap-3">
+
+    {# Burger (mobile) #}
+    <button class="btn btn-outline-secondary d-lg-none"
+            type="button"
+            data-db-open="sidebar"
+            aria-label="{% trans 'Menu' %}">
+      <i class="fas fa-bars" aria-hidden="true"></i>
+    </button>
+
+    {# Brand (logo + fallback) #}
+    <a class="d-flex align-items-center gap-2 text-decoration-none" href="{{ url_hub|default:'#' }}">
+      <img src="{% static 'dashboard/img/logo_80h.png' %}"
+           height="40"
+           alt="{{ PROJECT_NAME|default:'SOGENTIS' }}"
+           class="d-inline-block"
+           onerror="this.style.display='none'; document.getElementById('dbBrandText').classList.remove('d-none');">
+      <span id="dbBrandText" class="d-none fw-bold text-primary">
+        {{ PROJECT_NAME|default:"SOGENTIS" }}
+      </span>
+    </a>
+
+    {# Title / subtitle (template-safe) #}
+    {% firstof topbar_title page_title default_dashboard_title as title %}
+    {% firstof topbar_subtitle "" as subtitle %}
+
+    <div class="d-none d-md-block">
+      <div class="fw-bold lh-sm d-flex align-items-center gap-2">
+
+        {# Chip espace courant (apps style) #}
+        {% with sp=dashboard_space|default:"dashboard" %}
+          <span class="badge text-bg-light border">
+            {% if sp == "admin" %}🛡️ {% trans "Admin" %}
+            {% elif sp == "vendor" %}🏪 {% trans "Vendeur" %}
+            {% elif sp == "b2b" %}🏢 {% trans "B2B" %}
+            {% elif sp == "social" %}❤️ {% trans "Social" %}
+            {% elif sp == "formations" %}🎓 {% trans "Formations" %}
+            {% elif sp == "user" %}👤 {% trans "Utilisateur" %}
+            {% else %}📌 {% trans "Dashboard" %}
+            {% endif %}
+          </span>
+        {% endwith %}
+
+        <span>{{ title }}</span>
+      </div>
+
+      {% if subtitle %}
+        <div class="text-muted small lh-sm">{{ subtitle }}</div>
+      {% endif %}
+
+      {# Breadcrumbs optionnel (si la vue fournit breadcrumbs) #}
+      {% if breadcrumbs %}
+        <div class="small text-muted mt-1">
+          {% for bc in breadcrumbs %}
+            {% if not forloop.first %}<span class="mx-1">/</span>{% endif %}
+            <span>{{ bc|dget:"label" }}</span>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+
+  <div class="d-flex align-items-center gap-2 gap-md-3">
+
+    {# Actions page courante: injectées depuis la vue #}
+    {% if topbar_actions %}
+      <div class="d-none d-lg-flex align-items-center gap-2">
+        {{ topbar_actions|safe }}
+      </div>
+    {% endif %}
+
+    {# Switcher d'espaces (apps style) #}
+    <div class="dropdown d-none d-md-block">
+      <button class="btn btn-outline-secondary d-flex align-items-center gap-2"
+              type="button"
+              id="dbSpaceMenu"
+              data-bs-toggle="dropdown"
+              aria-expanded="false">
+        <i class="fas fa-th-large" aria-hidden="true"></i>
+        <span class="d-none d-lg-inline">{% trans "Espaces" %}</span>
+      </button>
+
+      <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="dbSpaceMenu">
+        <li>
+          <a class="dropdown-item" href="{{ url_user_home|default:url_hub|default:'#' }}">
+            👤 {% trans "Utilisateur" %}
+          </a>
+        </li>
+
+        {% if url_vendor_home and can_vendor and vendor_approved %}
+          <li>
+            <a class="dropdown-item" href="{{ url_vendor_home }}">
+              🏪 {% trans "Vendeur" %}
+            </a>
+          </li>
+        {% else %}
+          <li>
+            <span class="dropdown-item text-muted">
+              🔒 🏪 {% trans "Vendeur" %}
+              <small class="d-block">{% trans "En attente / accès restreint" %}</small>
+            </span>
+          </li>
+        {% endif %}
+
+        {% if url_b2b_home and can_b2b and b2b_approved %}
+          <li>
+            <a class="dropdown-item" href="{{ url_b2b_home }}">
+              🏢 {% trans "B2B" %}
+            </a>
+          </li>
+        {% else %}
+          <li>
+            <span class="dropdown-item text-muted">
+              🔒 🏢 {% trans "B2B" %}
+              <small class="d-block">{% trans "En attente / accès restreint" %}</small>
+            </span>
+          </li>
+        {% endif %}
+
+        <li><hr class="dropdown-divider"></li>
+
+        <li>
+          <a class="dropdown-item" href="{{ url_social_home|default:url_hub|default:'#' }}">
+            ❤️ {% trans "Social" %}
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="{{ url_formations_home|default:url_hub|default:'#' }}">
+            🎓 {% trans "Formations" %}
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    {# Notifications (placeholder safe) #}
+    <a class="btn btn-outline-secondary position-relative"
+       href="{{ url_hub|default:'#' }}"
+       aria-label="{% trans 'Notifications' %}">
+      <i class="fas fa-bell" aria-hidden="true"></i>
+      {% if dashboard_notifications and dashboard_notifications|add:0 > 0 %}
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill text-bg-danger">
+          {{ dashboard_notifications }}
+        </span>
+      {% endif %}
+    </a>
+
+    {# Dropdown utilisateur #}
+    <div class="dropdown">
+      <button class="btn btn-light border dropdown-toggle d-flex align-items-center gap-2"
+              type="button"
+              id="dbUserMenu"
+              data-bs-toggle="dropdown"
+              aria-expanded="false">
+        <span class="d-none d-md-inline text-truncate" style="max-width: 200px;">
+          {% firstof user.get_full_name user.username %}
+        </span>
+
+        <img src="{% static 'dashboard/img/avatar.jpg' %}"
+             class="rounded-circle shadow avatar-sm"
+             width="34" height="34"
+             alt="{% trans 'Avatar' %}"
+             onerror="this.style.display='none';">
+      </button>
+
+      <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="dbUserMenu">
+        <li>
+          <a class="dropdown-item" href="{{ url_hub|default:'#' }}">
+            <i class="fas fa-layer-group me-2" aria-hidden="true"></i>{% trans "Hub" %}
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="{{ url_user_home|default:url_hub|default:'#' }}">
+            <i class="fas fa-chart-line me-2" aria-hidden="true"></i>{% trans "Mon dashboard" %}
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="{% url 'accounts_users:web:profile:profile_edit' %}">
+            <i class="fas fa-user me-2" aria-hidden="true"></i>{% trans "Profil" %}
+          </a>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        <li>
+          <a class="dropdown-item text-danger" href="{% url 'accounts_users:web:auth:logout' %}">
+            <i class="fas fa-sign-out-alt me-2" aria-hidden="true"></i>{% trans "Déconnexion" %}
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+ {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/dashboard/partials/_topbar_premium.html #}
+{% load static i18n dashboard_tags %}
+
+{% trans "Tableau de bord" as default_dashboard_title %}
+
+<header class="dashboard-header d-flex align-items-center justify-content-between px-3 px-md-4 py-3 bg-white border-bottom shadow-sm">
+  <div class="d-flex align-items-center gap-3">
+
+    {# Burger (mobile) #}
+    <button class="btn btn-outline-secondary d-lg-none"
+            type="button"
+            data-db-open="sidebar"
+            aria-label="{% trans 'Menu' %}">
+      <i class="fas fa-bars" aria-hidden="true"></i>
+    </button>
+
+    {# Brand (logo + fallback) #}
+    <a class="d-flex align-items-center gap-2 text-decoration-none" href="{% url 'dashboard:hub' %}">
+      <img src="{% static 'dashboard/img/logo_80h.png' %}"
+           height="40"
+           alt="{{ PROJECT_NAME|default:'SOGENTIS' }}"
+           class="d-inline-block"
+           onerror="this.style.display='none'; document.getElementById('dbBrandText').classList.remove('d-none');">
+      <span id="dbBrandText" class="d-none fw-bold text-primary">
+        {{ PROJECT_NAME|default:"SOGENTIS" }}
+      </span>
+    </a>
+
+    {# Title / subtitle (template-safe) #}
+    {% firstof topbar_title page_title default_dashboard_title as title %}
+    {% firstof topbar_subtitle "" as subtitle %}
+
+    <div class="d-none d-md-block">
+      <div class="fw-bold lh-sm">{{ title }}</div>
+      {% if subtitle %}
+        <div class="text-muted small lh-sm">{{ subtitle }}</div>
+      {% endif %}
+    </div>
+
+  </div>
+
+  <div class="d-flex align-items-center gap-2 gap-md-3">
+
+    {% if topbar_actions %}
+      <div class="d-none d-lg-flex align-items-center gap-2">
+        {{ topbar_actions|safe }}
+      </div>
+    {% endif %}
+
+    <div class="dropdown">
+      <button class="btn btn-light border dropdown-toggle d-flex align-items-center gap-2"
+              type="button"
+              id="dbUserMenu"
+              data-bs-toggle="dropdown"
+              aria-expanded="false">
+        <span class="d-none d-md-inline text-truncate" style="max-width: 200px;">
+          {% firstof user.get_full_name user.username %}
+        </span>
+
+        <img src="{% static 'dashboard/img/avatar.jpg' %}"
+             class="rounded-circle shadow avatar-sm"
+             width="34" height="34"
+             alt="{% trans 'Avatar' %}"
+             onerror="this.style.display='none';">
+      </button>
+
+      <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="dbUserMenu">
+        <li>
+          <a class="dropdown-item" href="{% url 'dashboard:hub' %}">
+            <i class="fas fa-layer-group me-2" aria-hidden="true"></i>{% trans "Hub" %}
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="{% url 'dashboard:user:home' %}">
+            <i class="fas fa-chart-line me-2" aria-hidden="true"></i>{% trans "Mon dashboard" %}
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="{% url 'accounts_users:web:profile:profile_edit' %}">
+            <i class="fas fa-user me-2" aria-hidden="true"></i>{% trans "Profil" %}
+          </a>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        <li>
+          <a class="dropdown-item text-danger" href="{% url 'accounts_users:web:auth:logout' %}">
+            <i class="fas fa-sign-out-alt me-2" aria-hidden="true"></i>{% trans "Déconnexion" %}
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header> {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/dashboard/partials/_topbar_premium.html #}
+{% load static i18n dashboard_tags %}
+
+{# ✅ fallback traduit (template-safe) #}
+{% trans "Tableau de bord" as default_dashboard_title %}
+
+<header class="dashboard-header d-flex align-items-center justify-content-between px-3 px-md-4 py-3 bg-white border-bottom shadow-sm">
+  <div class="d-flex align-items-center gap-3">
+
+    {# Burger (mobile) #}
+    <button class="btn btn-outline-secondary d-lg-none"
+            type="button"
+            data-db-open="sidebar"
+            aria-label="{% trans 'Menu' %}">
+      <i class="fas fa-bars" aria-hidden="true"></i>
+    </button>
+
+    {# Brand (logo + fallback) #}
+    <a class="d-flex align-items-center gap-2 text-decoration-none" href="{% url 'dashboard:hub' %}">
+      <img src="{% static 'dashboard/img/logo_80h.png' %}"
+           height="40"
+           alt="{{ PROJECT_NAME|default:'SOGENTIS' }}"
+           class="d-inline-block"
+           onerror="this.style.display='none'; document.getElementById('dbBrandText').classList.remove('d-none');">
+      <span id="dbBrandText" class="d-none fw-bold text-primary">
+        {{ PROJECT_NAME|default:"SOGENTIS" }}
+      </span>
+    </a>
+
+    {# Title / subtitle #}
+    {% with title=topbar_title|default:page_title|default:default_dashboard_title subtitle=topbar_subtitle|default:"" %}
+      <div class="d-none d-md-block">
+        <div class="fw-bold lh-sm">{{ title }}</div>
+        {% if subtitle %}
+          <div class="text-muted small lh-sm">{{ subtitle }}</div>
+        {% endif %}
+      </div>
+    {% endwith %}
+  </div>
+
+  <div class="d-flex align-items-center gap-2 gap-md-3">
+
+    {# Actions optionnelles injectables depuis la vue via topbar_actions (HTML safe) #}
+    {% if topbar_actions %}
+      <div class="d-none d-lg-flex align-items-center gap-2">
+        {{ topbar_actions|safe }}
+      </div>
+    {% endif %}
+
+    {# Dropdown utilisateur #}
+    <div class="dropdown">
+      <button class="btn btn-light border dropdown-toggle d-flex align-items-center gap-2"
+              type="button"
+              id="dbUserMenu"
+              data-bs-toggle="dropdown"
+              aria-expanded="false">
+        <span class="d-none d-md-inline text-truncate" style="max-width: 200px;">
+          {% firstof user.get_full_name user.username %}
+        </span>
+
+        <img src="{% static 'dashboard/img/avatar.jpg' %}"
+             class="rounded-circle shadow avatar-sm"
+             width="34" height="34"
+             alt="{% trans 'Avatar' %}"
+             onerror="this.style.display='none';">
+      </button>
+
+      <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="dbUserMenu">
+        <li>
+          <a class="dropdown-item" href="{% url 'dashboard:hub' %}">
+            <i class="fas fa-layer-group me-2" aria-hidden="true"></i>{% trans "Hub" %}
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="{% url 'dashboard:user:home' %}">
+            <i class="fas fa-chart-line me-2" aria-hidden="true"></i>{% trans "Mon dashboard" %}
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="{% url 'accounts_users:web:profile:profile_edit' %}">
+            <i class="fas fa-user me-2" aria-hidden="true"></i>{% trans "Profil" %}
+          </a>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        <li>
+          <a class="dropdown-item text-danger" href="{% url 'accounts_users:web:auth:logout' %}">
+            <i class="fas fa-sign-out-alt me-2" aria-hidden="true"></i>{% trans "Déconnexion" %}
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header> {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/dashboard/partials/_topbar_premium.html #}
+{% load static i18n dashboard_tags %}
+
+{# ✅ fallback traduit (template-safe) #}
+{% trans "Tableau de bord" as default_dashboard_title %}
+
+<header class="dashboard-header d-flex align-items-center justify-content-between px-3 px-md-4 py-3 bg-white border-bottom shadow-sm">
+  <div class="d-flex align-items-center gap-3">
+
+    {# Burger (mobile) #}
+    <button class="btn btn-outline-secondary d-lg-none"
+            type="button"
+            data-db-open="sidebar"
+            aria-label="{% trans 'Menu' %}">
+      <i class="fas fa-bars" aria-hidden="true"></i>
+    </button>
+
+    {# Brand (logo + fallback) #}
+    <a class="d-flex align-items-center gap-2 text-decoration-none" href="{% url 'dashboard:hub' %}">
+      <img src="{% static 'dashboard/img/logo_80h.png' %}"
+           height="40"
+           alt="{{ PROJECT_NAME|default:'SOGENTIS' }}"
+           class="d-inline-block"
+           onerror="this.style.display='none'; document.getElementById('dbBrandText').classList.remove('d-none');">
+      <span id="dbBrandText" class="d-none fw-bold text-primary">
+        {{ PROJECT_NAME|default:"SOGENTIS" }}
+      </span>
+    </a>
+
+    {# Title / subtitle (optionnel via variables) #}
+    {% with title=topbar_title|default:page_title|default:default_dashboard_title subtitle=topbar_subtitle|default:"" %}
+      <div class="d-none d-md-block">
+        <div class="fw-bold lh-sm">{{ title }}</div>
+        {% if subtitle %}
+          <div class="text-muted small lh-sm">{{ subtitle }}</div>
+        {% endif %}
+      </div>
+    {% endwith %}
+  </div>
+
+  <div class="d-flex align-items-center gap-2 gap-md-3">
+
+    {# Actions optionnelles injectables depuis la vue via topbar_actions (HTML safe) #}
+    {% if topbar_actions %}
+      <div class="d-none d-lg-flex align-items-center gap-2">
+        {{ topbar_actions|safe }}
+      </div>
+    {% endif %}
+
+    {# Dropdown utilisateur #}
+    <div class="dropdown">
+      <button class="btn btn-light border dropdown-toggle d-flex align-items-center gap-2"
+              type="button"
+              id="dbUserMenu"
+              data-bs-toggle="dropdown"
+              aria-expanded="false">
+        <span class="d-none d-md-inline text-truncate" style="max-width: 200px;">
+          {% firstof user.get_full_name user.username %}
+        </span>
+
+        <img src="{% static 'dashboard/img/avatar.jpg' %}"
+             class="rounded-circle shadow avatar-sm"
+             width="34" height="34"
+             alt="{% trans 'Avatar' %}"
+             onerror="this.style.display='none';">
+      </button>
+
+      <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="dbUserMenu">
+        <li>
+          <a class="dropdown-item" href="{% url 'dashboard:hub' %}">
+            <i class="fas fa-layer-group me-2" aria-hidden="true"></i>{% trans "Hub" %}
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="{% url 'dashboard:user:home' %}">
+            <i class="fas fa-chart-line me-2" aria-hidden="true"></i>{% trans "Mon dashboard" %}
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="{% url 'accounts_users:web:profile:profile_edit' %}">
+            <i class="fas fa-user me-2" aria-hidden="true"></i>{% trans "Profil" %}
+          </a>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        <li>
+          <a class="dropdown-item text-danger" href="{% url 'accounts_users:web:auth:logout' %}">
+            <i class="fas fa-sign-out-alt me-2" aria-hidden="true"></i>{% trans "Déconnexion" %}
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header> {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/dashboard/partials/_topbar_premium.html #}
+{% load static i18n dashboard_tags %}
+ 
+<header class="dashboard-header d-flex align-items-center justify-content-between px-3 px-md-4 py-3 bg-white border-bottom shadow-sm">
+  <div class="d-flex align-items-center gap-3">
+
+    {# Burger (mobile) #}
+    <button class="btn btn-outline-secondary d-lg-none"
+            type="button"
+            data-db-open="sidebar"
+            aria-label="{% trans 'Menu' %}">
+      <i class="fas fa-bars" aria-hidden="true"></i>
+    </button>
+
+    {# Brand (logo + fallback) #}
+    <a class="d-flex align-items-center gap-2 text-decoration-none" href="{% url 'dashboard:hub' %}">
+      <img src="{% static 'dashboard/img/logo.png' %}"
+           height="40"
+           alt="{{ PROJECT_NAME|default:'SOGENTIS' }}"
+           class="d-inline-block"
+           onerror="this.style.display='none'; document.getElementById('dbBrandText').classList.remove('d-none');">
+      <span id="dbBrandText" class="d-none fw-bold text-primary">
+        {{ PROJECT_NAME|default:"SOGENTIS" }}
+      </span>
+    </a>
+ 
+    {# Title / subtitle (optionnel via variables) #}
+    {% with title=topbar_title|default:page_title|default:_("Tableau de bord") subtitle=topbar_subtitle|default:"" %}
+      <div class="d-none d-md-block">
+        <div class="fw-bold lh-sm">{{ title }}</div>
+        {% if subtitle %}
+          <div class="text-muted small lh-sm">{{ subtitle }}</div>
+        {% endif %}
+      </div>
+    {% endwith %}
+  </div>
+
+  <div class="d-flex align-items-center gap-2 gap-md-3">
+
+    {# Actions optionnelles injectables depuis la vue via topbar_actions (HTML safe) #}
+    {% if topbar_actions %}
+      <div class="d-none d-lg-flex align-items-center gap-2">
+        {{ topbar_actions|safe }}
+      </div>
+    {% endif %}
+
+    {# Dropdown utilisateur #}
+    <div class="dropdown">
+      <button class="btn btn-light border dropdown-toggle d-flex align-items-center gap-2"
+              type="button"
+              id="dbUserMenu"
+              data-bs-toggle="dropdown"
+              aria-expanded="false">
+        <span class="d-none d-md-inline text-truncate" style="max-width: 200px;">
+          {{ user.get_full_name|default:user.username }}
+        </span>
+
+        <img src="{% static 'dashboard/img/avatar.jpg' %}"
+             class="rounded-circle shadow avatar-sm"
+             width="34" height="34"
+             alt="{% trans 'Avatar' %}"
+             onerror="this.style.display='none';">
+      </button>
+
+      <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="dbUserMenu">
+        <li>
+          <a class="dropdown-item" href="{% url 'dashboard:hub' %}">
+            <i class="fas fa-layer-group me-2" aria-hidden="true"></i>{% trans "Hub" %}
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="{% url 'dashboard:user:home' %}">
+            <i class="fas fa-chart-line me-2" aria-hidden="true"></i>{% trans "Mon dashboard" %}
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="{% url 'accounts_users:web:profile:profile_edit' %}">
+            <i class="fas fa-user me-2" aria-hidden="true"></i>{% trans "Profil" %}
+          </a>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        <li>
+          <a class="dropdown-item text-danger" href="{% url 'accounts_users:web:auth:logout' %}">
+            <i class="fas fa-sign-out-alt me-2" aria-hidden="true"></i>{% trans "Déconnexion" %}
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header> {% endcomment %}
+
+
+
+
+{% comment %} {% load i18n %}
 <div class="db-topbar">
   <div class="db-topbar-inner container-fluid">
     <div class="d-flex align-items-center gap-2">
@@ -19,4 +1484,4 @@
       <a class="btn btn-sm btn-outline-danger" href="{% url 'accounts_users_web:logout' %}">{% trans "Déconnexion" %}</a>
     </div>
   </div>
-</div>
+</div> {% endcomment %}

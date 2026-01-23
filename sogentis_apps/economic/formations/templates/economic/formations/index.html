@@ -1,6 +1,1740 @@
 {# templates/economic/formations/index.html #}
 {% extends "economic/formations/base_formations.html" %}
-{% load i18n %}
+{% load static i18n dashboard_tags ecom_money  %}
+
+{% block formations_page_title %}{% trans "Pôle formations" %}{% endblock %}
+
+{% block formations_content %}
+
+{% safe_url "economic:formations:course_list" as u_course_list %}
+{% safe_url "economic:formations:course_detail" as u_course_detail %}
+{% safe_url "economic:formations:my_dashboard" as u_my_dashboard %}
+{% safe_url "core:contact" as u_contact %}
+
+{# ========================= #}
+{#   HERO (style Gomycode)    #}
+{# ========================= #}
+<section class="ft-hero">
+  <div class="ft-hero-media">
+    {# ✅ Remplace l’image si tu veux (garde un format large) #}
+    <img src="{% static 'formations/img/hero.jpg' %}" alt="{% trans 'Formations — image de couverture' %}">
+    <div class="ft-hero-overlay"></div>
+  </div>
+
+  <div class="container ft-hero-inner">
+    <div class="ft-hero-topchips">
+      <span class="badge rounded-pill bg-light text-dark border">
+        <i class="fa-solid fa-signal me-1"></i>{% trans "En ligne" %}
+      </span>
+      <span class="badge rounded-pill bg-light text-dark border">
+        <i class="fa-solid fa-location-dot me-1"></i>{% trans "Présentiel" %}
+      </span>
+      <span class="badge rounded-pill bg-light text-dark border">
+        <i class="fa-solid fa-certificate me-1"></i>{% trans "Certifications" %}
+      </span>
+    </div>
+
+    <div class="row align-items-end g-4">
+      <div class="col-lg-8">
+        <h1 class="ft-hero-title">
+          {% trans "Forme-toi aux compétences digitales et IA de demain" %}
+        </h1>
+
+        <p class="ft-hero-subtitle">
+          {% trans "Des formations pratiques en IA, code, data, marketing et design — conçues pour l’emploi, l’entrepreneuriat et les projets réels." %}
+        </p>
+
+        <div class="d-flex flex-wrap gap-2 mt-3">
+          <a href="{{ u_course_list|default:'#' }}"
+             class="btn btn-light btn-lg {% if not u_course_list %}disabled{% endif %}">
+            <i class="fa-solid fa-book-open me-2"></i>{% trans "Explorer le catalogue" %}
+          </a>
+
+          <a href="#parcours" class="btn btn-outline-light btn-lg">
+            <i class="fa-solid fa-route me-2"></i>{% trans "Voir les parcours" %}
+          </a>
+
+          {% if request.user.is_authenticated and u_my_dashboard %}
+            <a href="{{ u_my_dashboard }}"
+               class="btn btn-outline-light btn-lg">
+              <i class="fa-solid fa-graduation-cap me-2"></i>{% trans "Mon espace" %}
+            </a>
+          {% endif %}
+        </div>
+
+        <div class="ft-hero-metas mt-3">
+          <div class="ft-meta">
+            <i class="fa-regular fa-clock"></i>
+            <span>{% trans "Formats flexibles : soir / week-end / cohorte" %}</span>
+          </div>
+          <div class="ft-meta">
+            <i class="fa-solid fa-briefcase"></i>
+            <span>{% trans "Orientation projets & livrables" %}</span>
+          </div>
+          <div class="ft-meta">
+            <i class="fa-solid fa-award"></i>
+            <span>{% trans "Certificats & attestations" %}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4">
+        <div class="ft-hero-card">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <div class="ft-hero-card-kicker">{% trans "Démarrer maintenant" %}</div>
+              <div class="h5 mb-1 fw-bold">{% trans "Choisis ton objectif" %}</div>
+              <div class="text-muted small">
+                {% trans "Niveau débutant à avancé, apprentissage guidé." %}
+              </div>
+            </div>
+            <div class="ft-hero-card-icon">
+              <i class="fa-solid fa-compass"></i>
+            </div>
+          </div>
+
+          <div class="mt-3 d-grid gap-2">
+            <a class="btn btn-primary {% if not u_course_list %}disabled{% endif %}"
+               href="{% if u_course_list %}{{ u_course_list }}?type=online{% else %}#{% endif %}">
+              <i class="fa-solid fa-laptop me-2"></i>{% trans "Formations en ligne" %}
+            </a>
+
+            <a class="btn btn-outline-secondary {% if not u_contact %}disabled{% endif %}"
+               href="{{ u_contact|default:'#' }}">
+              <i class="fa-regular fa-envelope me-2"></i>{% trans "Nous contacter" %}
+            </a>
+          </div>
+
+          <hr class="my-3">
+
+          <div class="small text-muted">
+            <div class="d-flex justify-content-between">
+              <span>{% trans "Sessions" %}</span>
+              <span class="fw-semibold">{% trans "Cohortes" %}</span>
+            </div>
+            <div class="d-flex justify-content-between">
+              <span>{% trans "Présentiel" %}</span>
+              <span class="fw-semibold">{% trans "Hybride" %}</span>
+            </div>
+            <div class="d-flex justify-content-between">
+              <span>{% trans "Certifs" %}</span>
+              <span class="fw-semibold">{% trans "Vérifiables" %}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+{# ========================= #}
+{#   DOMAINES / CATEGORIES    #}
+{# ========================= #}
+<section class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="h5 fw-bold mb-0">{% trans "Domaines de formation" %}</h2>
+    <a href="{{ u_course_list|default:'#' }}"
+       class="small text-decoration-none {% if not u_course_list %}disabled{% endif %}">
+      {% trans "Voir tout le catalogue" %} →
+    </a>
+  </div>
+
+  {% if categories %}
+    <div class="row g-3">
+      {% for category in categories %}
+        <div class="col-6 col-md-4 col-lg-3">
+          <a class="text-decoration-none"
+             href="{% if u_course_list %}{{ u_course_list }}?category={{ category.slug }}{% else %}#{% endif %}">
+            <div class="ft-card h-100">
+              <div class="d-flex justify-content-between align-items-start">
+                <div class="fw-semibold">
+                  {{ category }}
+                </div>
+                <span class="badge bg-light text-muted border">
+                  <i class="fa-solid fa-layer-group"></i>
+                </span>
+              </div>
+              {% if category.short_description %}
+                <div class="small text-muted mt-2">
+                  {{ category.short_description|truncatechars:90 }}
+                </div>
+              {% endif %}
+            </div>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="text-muted small">{% trans "Aucune catégorie publiée pour le moment." %}</div>
+  {% endif %}
+</section>
+
+{# ========================= #}
+{#   FEATURED COURSES         #}
+{# ========================= #}
+<section class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="h5 fw-bold mb-0">{% trans "Formations mises en avant" %}</h2>
+    <a href="{{ u_course_list|default:'#' }}"
+       class="small text-decoration-none {% if not u_course_list %}disabled{% endif %}">
+      {% trans "Catalogue complet" %} →
+    </a>
+  </div>
+
+  {% if featured_courses %}
+    <div class="row g-3 g-md-4">
+      {% for course in featured_courses %}
+        <div class="col-md-6 col-lg-4">
+          <article class="ft-course h-100">
+            <div class="ft-course-top">
+              {% if course.category %}
+                <span class="badge bg-light text-dark border small">{{ course.category }}</span>
+              {% endif %}
+              {% if course.price %}
+                <span class="fw-semibold small">
+                  {{ course.price }} {{ FORMATIONS_CURRENCY|default:"XOF" }}
+                </span>
+              {% else %}
+                <span class="fw-semibold small text-success">{% trans "Gratuit" %}</span>
+              {% endif %}
+            </div>
+
+            <h3 class="h6 fw-bold mt-2 mb-1">
+              {% if u_course_detail %}
+                <a class="text-decoration-none"
+                   href="{% url 'economic:formations:course_detail' slug=course.slug %}">
+                  {{ course }}
+                </a>
+              {% else %}
+                {{ course }}
+              {% endif %}
+            </h3>
+
+            {% if course.short_description %}
+              <p class="small text-muted mb-3">
+                {{ course.short_description|truncatechars:130 }}
+              </p>
+            {% endif %}
+
+            <div class="mt-auto d-flex justify-content-between align-items-center">
+              {% if course.level_label or course.get_level_display %}
+                <span class="badge bg-light text-muted border small">
+                  {{ course.level_label|default:course.get_level_display }}
+                </span>
+              {% endif %}
+
+              {% if u_course_detail %}
+                <a href="{% url 'economic:formations:course_detail' slug=course.slug %}"
+                   class="btn btn-sm btn-outline-primary">
+                  {% trans "Voir le détail" %}
+                </a>
+              {% else %}
+                <a class="btn btn-sm btn-outline-primary disabled" href="#">{% trans "Voir le détail" %}</a>
+              {% endif %}
+            </div>
+          </article>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="text-muted small">{% trans "Aucune formation mise en avant pour le moment." %}</div>
+  {% endif %}
+</section>
+
+{# ========================= #}
+{#   PARCOURS                 #}
+{# ========================= #}
+<section id="parcours" class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="h5 fw-bold mb-0">{% trans "Parcours" %}</h2>
+    <a class="small text-decoration-none" href="#calendar">{% trans "Calendrier" %} →</a>
+  </div>
+
+  <div class="row g-3 g-md-4">
+    <div class="col-lg-4">
+      <div class="ft-card h-100">
+        <div class="fw-bold mb-1">{% trans "Parcours Débutant" %}</div>
+        <div class="small text-muted mb-2">{% trans "Bases solides + pratique guidée." %}</div>
+        <ul class="small mb-3">
+          <li>{% trans "Cours courts et progressifs" %}</li>
+          <li>{% trans "Exercices corrigés" %}</li>
+          <li>{% trans "Suivi de progression" %}</li>
+        </ul>
+        <a class="btn btn-sm btn-outline-primary w-100"
+           href="{% if u_course_list %}{{ u_course_list }}?q={% trans 'débutant' %}{% else %}#{% endif %}">
+          {% trans "Voir le parcours" %}
+        </a>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="ft-card h-100 ft-card-featured">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <div class="fw-bold mb-1">{% trans "Parcours Professionnel" %}</div>
+            <div class="small text-muted mb-2">{% trans "Compétences métiers & livrables." %}</div>
+          </div>
+          <span class="badge bg-primary">{% trans "Populaire" %}</span>
+        </div>
+        <ul class="small mb-3">
+          <li>{% trans "Cas pratiques" %}</li>
+          <li>{% trans "Quiz / évaluations" %}</li>
+          <li>{% trans "Certificat en fin de parcours" %}</li>
+        </ul>
+        <a class="btn btn-sm btn-primary w-100" href="{{ u_course_list|default:'#' }}">
+          {% trans "Explorer" %}
+        </a>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="ft-card h-100">
+        <div class="fw-bold mb-1">{% trans "Parcours Organisation" %}</div>
+        <div class="small text-muted mb-2">{% trans "Entreprises, ONG, cohortes, sur mesure." %}</div>
+        <ul class="small mb-3">
+          <li>{% trans "Sessions planifiées" %}</li>
+          <li>{% trans "Présentiel / hybride" %}</li>
+          <li>{% trans "Suivi & reporting" %}</li>
+        </ul>
+        <a class="btn btn-sm btn-outline-secondary w-100" href="{{ u_contact|default:'#' }}">
+          {% trans "Demander un devis" %}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ========================= #}
+{#   CALENDAR                 #}
+{# ========================= #}
+<section id="calendar" class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="h5 fw-bold mb-0">{% trans "Calendrier" %}</h2>
+    <a class="small text-decoration-none" href="#certifications">{% trans "Certifications" %} →</a>
+  </div>
+
+  <div class="ft-card">
+    <div class="row g-3 align-items-center">
+      <div class="col-lg-8">
+        <div class="fw-bold mb-1">{% trans "Sessions & cohortes" %}</div>
+        <div class="small text-muted">
+          {% trans "Consultez les prochaines sessions (en ligne / présentiel) et les cohortes programmées." %}
+        </div>
+      </div>
+      <div class="col-lg-4 d-grid">
+        {% if request.user.is_authenticated and u_my_dashboard %}
+          <a class="btn btn-outline-primary" href="{{ u_my_dashboard }}">
+            {% trans "Voir mes sessions" %}
+          </a>
+        {% else %}
+          <a class="btn btn-outline-primary" href="{{ u_course_list|default:'#' }}">
+            {% trans "Voir le catalogue" %}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="mt-3 small text-muted">
+      <i class="fa-regular fa-calendar-check me-1"></i>
+      {% trans "Astuce : connectez-vous pour retrouver vos sessions dans votre espace apprenant." %}
+    </div>
+  </div>
+</section>
+
+{# ========================= #}
+{#   CERTIFICATIONS           #}
+{# ========================= #}
+<section id="certifications" class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="h5 fw-bold mb-0">{% trans "Certifications" %}</h2>
+    <a class="small text-decoration-none" href="#instructors">{% trans "Formateurs" %} →</a>
+  </div>
+
+  <div class="row g-3 g-md-4">
+    <div class="col-md-6 col-lg-4">
+      <div class="ft-card h-100">
+        <div class="fw-bold mb-1">{% trans "Certificat de réussite" %}</div>
+        <div class="small text-muted mb-2">
+          {% trans "Après complétion du parcours et validation des évaluations." %}
+        </div>
+        <ul class="small mb-0">
+          <li>{% trans "Code unique de vérification" %}</li>
+          <li>{% trans "Téléchargement PDF" %}</li>
+          <li>{% trans "Historique dans votre espace" %}</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+      <div class="ft-card h-100">
+        <div class="fw-bold mb-1">{% trans "Attestation de participation" %}</div>
+        <div class="small text-muted mb-2">
+          {% trans "Selon présence et critères (sessions / ateliers / cohorte)." %}
+        </div>
+        <ul class="small mb-0">
+          <li>{% trans "Présentiel / hybride" %}</li>
+          <li>{% trans "Suivi d’assiduité" %}</li>
+          <li>{% trans "Émission contrôlée" %}</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-md-12 col-lg-4">
+      <div class="ft-card h-100 ft-card-soft">
+        <div class="fw-bold mb-1">{% trans "Certification personnalisée ?" %}</div>
+        <div class="small text-muted mb-3">
+          {% trans "Pour entreprises et organisations : contenus, évaluations et attestations sur mesure." %}
+        </div>
+        <a class="btn btn-sm btn-outline-secondary w-100" href="{{ u_contact|default:'#' }}">
+          {% trans "Nous contacter" %}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ========================= #}
+{#   INSTRUCTORS              #}
+{# ========================= #}
+<section id="instructors" class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="h5 fw-bold mb-0">{% trans "Formateurs" %}</h2>
+    <a class="small text-decoration-none" href="#pricing">{% trans "Tarifs" %} →</a>
+  </div>
+
+  <div class="row g-3 g-md-4">
+    <div class="col-md-6 col-lg-4">
+      <div class="ft-card h-100">
+        <div class="fw-bold mb-1">{% trans "Experts terrain" %}</div>
+        <div class="small text-muted">
+          {% trans "Des praticiens avec expérience projet et déploiement réel." %}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+      <div class="ft-card h-100">
+        <div class="fw-bold mb-1">{% trans "Approche pédagogique" %}</div>
+        <div class="small text-muted">
+          {% trans "Objectifs clairs, exercices, correction, progression." %}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-12 col-lg-4">
+      <div class="ft-card h-100 ft-card-soft">
+        <div class="fw-bold mb-1">{% trans "Devenir formateur" %}</div>
+        <div class="small text-muted mb-3">
+          {% trans "Proposer un cours ou animer une cohorte ?" %}
+        </div>
+        <a class="btn btn-sm btn-outline-primary w-100" href="{{ u_contact|default:'#' }}">
+          {% trans "Candidater" %}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ========================= #}
+{#   PRICING                  #}
+{# ========================= #}
+<section id="pricing" class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="h5 fw-bold mb-0">{% trans "Tarifs" %}</h2>
+    {% if request.user.is_authenticated and u_my_dashboard %}
+      <a class="small text-decoration-none" href="{{ u_my_dashboard }}">
+        {% trans "Mon espace" %} →
+      </a>
+    {% endif %}
+  </div>
+
+  <div class="row g-3 g-md-4">
+    <div class="col-md-4">
+      <div class="ft-card h-100">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <div class="fw-bold">{% trans "Gratuit" %}</div>
+          <span class="badge bg-success">0 {{ FORMATIONS_CURRENCY|default:"XOF" }}</span>
+        </div>
+        <div class="small text-muted mb-3">{% trans "Pour découvrir et accéder à des contenus d’introduction." %}</div>
+        <ul class="small mb-3">
+          <li>{% trans "Modules gratuits" %}</li>
+          <li>{% trans "Ressources de base" %}</li>
+          <li>{% trans "Suivi de progression" %}</li>
+        </ul>
+        <a class="btn btn-sm btn-outline-primary w-100"
+           href="{% if u_course_list %}{{ u_course_list }}?price=free{% else %}#{% endif %}">
+          {% trans "Voir les gratuits" %}
+        </a>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="ft-card h-100 ft-card-featured position-relative">
+        <span class="badge bg-primary position-absolute top-0 end-0 m-3">{% trans "Le plus demandé" %}</span>
+        <div class="fw-bold mb-2">{% trans "Standard" %}</div>
+        <div class="h4 mb-2">
+          {% trans "À partir de" %} <span class="fw-bold">15 000</span>
+          <span class="fs-6 text-muted">{{ FORMATIONS_CURRENCY|default:"XOF" }}</span>
+        </div>
+        <div class="small text-muted mb-3">
+          {% trans "Formations complètes, exercices et accompagnement léger." %}
+        </div>
+        <ul class="small mb-3">
+          <li>{% trans "Accès complet" %}</li>
+          <li>{% trans "Quiz / exercices" %}</li>
+          <li>{% trans "Certificat si complété" %}</li>
+        </ul>
+        <a class="btn btn-sm btn-primary w-100" href="{{ u_course_list|default:'#' }}">
+          {% trans "Explorer" %}
+        </a>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="ft-card h-100">
+        <div class="fw-bold mb-2">{% trans "Pro / Cohorte" %}</div>
+        <div class="h4 mb-2">{% trans "Sur devis" %}</div>
+        <div class="small text-muted mb-3">
+          {% trans "Entreprises, ONG, groupes : sessions, coaching, présentiel, suivi dédié." %}
+        </div>
+        <ul class="small mb-3">
+          <li>{% trans "Sessions planifiées (présentiel / hybride)" %}</li>
+          <li>{% trans "Coaching & évaluation" %}</li>
+          <li>{% trans "Attestations / certificats" %}</li>
+        </ul>
+        <a class="btn btn-sm btn-outline-secondary w-100" href="{{ u_contact|default:'#' }}">
+          {% trans "Demander un devis" %}
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-3 small text-muted">
+    <i class="fa-regular fa-circle-check me-1"></i>
+    {% trans "Les prix varient selon le niveau, la durée, le format et l’accompagnement." %}
+  </div>
+</section>
+
+{# ========================= #}
+{#   FINANCING                #}
+{# ========================= #}
+<section id="financing" class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="h5 fw-bold mb-0">{% trans "Financements possibles" %}</h2>
+    <a class="small text-decoration-none" href="#recognized">{% trans "Certifications reconnues" %} →</a>
+  </div>
+
+  <div class="row g-3 g-md-4">
+    <div class="col-md-6 col-lg-4">
+      <div class="ft-card h-100">
+        <div class="fw-bold mb-1">{% trans "Auto-financement" %}</div>
+        <div class="small text-muted">{% trans "Paiement direct selon le programme et la formule." %}</div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+      <div class="ft-card h-100">
+        <div class="fw-bold mb-1">{% trans "Entreprise / ONG" %}</div>
+        <div class="small text-muted">{% trans "Sessions de groupe, cohorte, plan de formation, facture." %}</div>
+      </div>
+    </div>
+    <div class="col-md-12 col-lg-4">
+      <div class="ft-card h-100 ft-card-soft">
+        <div class="fw-bold mb-1">{% trans "Bourse / partenariat" %}</div>
+        <div class="small text-muted mb-3">{% trans "Selon programmes et disponibilités." %}</div>
+        <a class="btn btn-sm btn-outline-secondary w-100" href="{{ u_contact|default:'#' }}">
+          {% trans "Demander des infos" %}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ========================= #}
+{#   RECOGNIZED CERTS         #}
+{# ========================= #}
+<section id="recognized" class="container mt-5 mb-5">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="h5 fw-bold mb-0">{% trans "Certifications reconnues" %}</h2>
+    <a class="small text-decoration-none" href="#top">{% trans "Haut de page" %} ↑</a>
+  </div>
+
+  <div class="ft-card">
+    <div class="row g-3 align-items-center">
+      <div class="col-lg-8">
+        <div class="fw-bold mb-1">{% trans "Vérification & traçabilité" %}</div>
+        <div class="small text-muted">
+          {% trans "Certificats avec identifiant unique, téléchargeables et consultables depuis votre espace apprenant." %}
+        </div>
+      </div>
+      <div class="col-lg-4 d-grid">
+        {% if request.user.is_authenticated and u_my_dashboard %}
+          <a class="btn btn-outline-primary" href="{{ u_my_dashboard }}">
+            {% trans "Voir mes certificats" %}
+          </a>
+        {% else %}
+          <a class="btn btn-outline-primary" href="#faq">
+            {% trans "Comprendre le fonctionnement" %}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+
+{# ========================= #}
+{#   FAQ                      #}
+{# ========================= #}
+<section id="faq" class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="h5 fw-bold mb-0">{% trans "FAQs" %}</h2>
+    <a class="small text-decoration-none" href="#financing">{% trans "Financements" %} →</a>
+  </div>
+
+  <div class="accordion" id="ftFaq">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="ftFaq1">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#ftFaqCol1" aria-expanded="true" aria-controls="ftFaqCol1">
+          {% trans "Comment m’inscrire à une formation ?" %}
+        </button>
+      </h2>
+      <div id="ftFaqCol1" class="accordion-collapse collapse show" aria-labelledby="ftFaq1" data-bs-parent="#ftFaq">
+        <div class="accordion-body">
+          {% trans "Choisissez une formation dans le catalogue, puis cliquez sur s’inscrire. Si vous n’avez pas de compte, créez-en un et revenez sur la formation." %}
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="ftFaq2">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ftFaqCol2" aria-expanded="false" aria-controls="ftFaqCol2">
+          {% trans "Les formations sont-elles en ligne ou en présentiel ?" %}
+        </button>
+      </h2>
+      <div id="ftFaqCol2" class="accordion-collapse collapse" aria-labelledby="ftFaq2" data-bs-parent="#ftFaq">
+        <div class="accordion-body">
+          {% trans "Nous proposons les deux : en ligne, présentiel, ou hybride selon la session et la cohorte." %}
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="ftFaq3">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ftFaqCol3" aria-expanded="false" aria-controls="ftFaqCol3">
+          {% trans "Comment obtenir un certificat ?" %}
+        </button>
+      </h2>
+      <div id="ftFaqCol3" class="accordion-collapse collapse" aria-labelledby="ftFaq3" data-bs-parent="#ftFaq">
+        <div class="accordion-body">
+          {% trans "Après complétion du parcours et validation des évaluations. Vos certificats sont accessibles dans votre espace apprenant." %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{# ========================= #}
+{#   HERO STYLES (inline safe) #}
+{# ========================= #}
+<style>
+  .ft-hero{
+    position: relative;
+    border-radius: 1.25rem;
+    overflow: hidden;
+    margin: 0; /* ✅ pas de gap sous menubar */
+  }
+  .ft-hero-media{
+    position: absolute;
+    inset: 0;
+  }
+  .ft-hero-media img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transform: scale(1.02);
+  }
+  .ft-hero-overlay{
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(1200px 520px at 25% 35%, rgba(0,0,0,.65), rgba(0,0,0,.30) 60%, rgba(0,0,0,.15)),
+      linear-gradient(90deg, rgba(0,0,0,.60), rgba(0,0,0,.10));
+  }
+  .ft-hero-inner{
+    position: relative;
+    padding: 3.25rem 0 2.75rem;
+    color: #fff;
+  }
+  .ft-hero-topchips{
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+  .ft-hero-title{
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    line-height: 1.02;
+    font-size: clamp(2.2rem, 4.3vw, 4.3rem);
+    margin-bottom: .8rem;
+  }
+  .ft-hero-subtitle{
+    max-width: 58ch;
+    font-size: 1.05rem;
+    color: rgba(255,255,255,.88);
+    margin: 0;
+  }
+  .ft-hero-metas{
+    display: flex;
+    flex-wrap: wrap;
+    gap: .75rem 1.25rem;
+    color: rgba(255,255,255,.88);
+    font-size: .95rem;
+  }
+  .ft-meta{
+    display: inline-flex;
+    align-items: center;
+    gap: .55rem;
+  }
+  .ft-meta i{ opacity: .95; }
+
+  .ft-hero-card{
+    background: rgba(255,255,255,.94);
+    border: 1px solid rgba(15,23,42,.10);
+    border-radius: 1.25rem;
+    padding: 1.25rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,.18);
+    color: #0f172a;
+  }
+  .ft-hero-card-kicker{
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: .75rem;
+    letter-spacing: .08em;
+    color: rgba(15,23,42,.55);
+  }
+  .ft-hero-card-icon{
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    background: rgba(13,110,253,.10);
+    color: #0b5ed7;
+  }
+
+  .ft-card{
+    background: #fff;
+    border: 1px solid rgba(16,24,40,.10);
+    border-radius: 1rem;
+    padding: 1rem;
+    box-shadow: 0 8px 24px rgba(16,24,40,.06);
+  }
+  .ft-card-soft{
+    background: rgba(13,110,253,.04);
+  }
+  .ft-card-featured{
+    border-color: rgba(13,110,253,.30);
+    box-shadow: 0 12px 32px rgba(13,110,253,.10);
+  }
+
+  .ft-course{
+    background: #fff;
+    border: 1px solid rgba(16,24,40,.10);
+    border-radius: 1rem;
+    padding: 1rem;
+    box-shadow: 0 8px 24px rgba(16,24,40,.06);
+    display: flex;
+    flex-direction: column;
+  }
+  .ft-course-top{
+    display: flex;
+    justify-content: space-between;
+    gap: .75rem;
+    align-items: start;
+  }
+
+  @media (max-width: 991.98px){
+    .ft-hero-inner{ padding: 2.25rem 0 1.75rem; }
+    .ft-hero-card{ margin-top: .5rem; }
+  }
+</style>
+
+{% endblock %}
+
+
+
+
+
+{% comment %} {# templates/economic/formations/index.html #}
+{% extends "economic/formations/base_formations.html" %}
+{% load static i18n dashboard_tags %}
+
+{% block formations_title %}{% trans "Pôle formations" %}{% endblock %}
+
+{% block formations_content %}
+
+{% safe_url "economic:formations:course_list" as u_course_list %}
+{% safe_url "economic:formations:course_detail" as u_course_detail %}
+{% safe_url "economic:formations:my_dashboard" as u_my_dashboard %}
+{% safe_url "core:contact" as u_contact %}
+
+<section class="formations-hero mb-4">
+  <div class="row align-items-center g-4">
+    <div class="col-lg-7">
+      <h1 class="display-6 fw-bold mb-3">
+        {% trans "Développez vos compétences avec SOGENTIS" %}
+      </h1>
+      <p class="lead text-muted">
+        {% trans "Des formations pratiques, ancrées dans le terrain : numérique, gestion de projet, entrepreneuriat, ONG, et plus encore." %}
+      </p>
+
+      <div class="d-flex flex-wrap gap-2 mt-3">
+        <a href="{{ u_course_list|default:'#' }}"
+           class="btn btn-primary btn-lg {% if not u_course_list %}disabled{% endif %}">
+          {% trans "Voir toutes les formations" %}
+        </a>
+
+        <a href="{% if u_course_list %}{{ u_course_list }}?type=online{% else %}#{% endif %}"
+           class="btn btn-outline-secondary {% if not u_course_list %}disabled{% endif %}">
+          {% trans "Formations en ligne" %}
+        </a>
+
+        {% if u_my_dashboard and request.user.is_authenticated %}
+          <a href="{{ u_my_dashboard }}" class="btn btn-outline-primary btn-lg">
+            {% trans "Mon espace apprenant" %}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="col-lg-5">
+      <div class="p-3 p-lg-4 bg-light rounded-3 shadow-sm">
+        <h2 class="h5 mb-3">
+          {% trans "Pourquoi se former avec SOGENTIS ?" %}
+        </h2>
+        <ul class="small mb-0">
+          <li>{% trans "Contenus adaptés au contexte africain." %}</li>
+          <li>{% trans "Cas pratiques issus de projets réels." %}</li>
+          <li>{% trans "Accompagnement par des praticiens." %}</li>
+          <li>{% trans "Possibilités de suivi et de mentorat." %}</li>
+        </ul>
+
+        <hr class="my-3">
+
+        <div class="d-flex flex-wrap gap-2">
+          <a class="btn btn-sm btn-outline-secondary" href="#parcours">{% trans "Voir les parcours" %}</a>
+          <a class="btn btn-sm btn-outline-secondary" href="#calendar">{% trans "Calendrier" %}</a>
+          <a class="btn btn-sm btn-outline-secondary" href="#pricing">{% trans "Tarifs" %}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% if categories %}
+<section class="mb-4">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="h6 mb-0">{% trans "Domaines de formation" %}</h2>
+
+    <a href="{{ u_course_list|default:'#' }}"
+       class="small text-decoration-none {% if not u_course_list %}disabled{% endif %}">
+      {% trans "Voir tout le catalogue" %} →
+    </a>
+  </div>
+
+  <div class="row g-3">
+    {% for category in categories %}
+      <div class="col-6 col-md-3">
+        <a href="{% if u_course_list %}{{ u_course_list }}?category={{ category.slug }}{% else %}#{% endif %}"
+           class="text-decoration-none {% if not u_course_list %}disabled{% endif %}">
+          <div class="p-3 bg-white border rounded-3 h-100">
+            <div class="fw-semibold small mb-1">
+              {{ category }}
+            </div>
+            {% if category.short_description %}
+              <div class="small text-muted">
+                {{ category.short_description|truncatechars:80 }}
+              </div>
+            {% endif %}
+          </div>
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<section class="mb-4">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="h6 mb-0">{% trans "Formations mises en avant" %}</h2>
+
+    <a href="{{ u_course_list|default:'#' }}"
+       class="small text-decoration-none {% if not u_course_list %}disabled{% endif %}">
+      {% trans "Voir le catalogue complet" %} →
+    </a>
+  </div>
+
+  {% if featured_courses %}
+    <div class="row g-3 g-md-4">
+      {% for course in featured_courses %}
+        <div class="col-md-6 col-lg-4">
+          <article class="p-3 bg-white border rounded-3 h-100 d-flex flex-column">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              {% if course.category %}
+                <span class="badge bg-light text-dark border small">
+                  {{ course.category }}
+                </span>
+              {% endif %}
+
+              {% if course.price %}
+                <span class="fw-semibold small">
+                  {{ course.price }} {{ FORMATIONS_CURRENCY|default:"XOF" }}
+                </span>
+              {% else %}
+                <span class="fw-semibold small text-success">
+                  {% trans "Gratuit" %}
+                </span>
+              {% endif %}
+            </div>
+
+            <h3 class="h6 mb-1">
+              {% if u_course_detail %}
+                <a href="{% url 'economic:formations:course_detail' slug=course.slug %}" class="text-decoration-none">
+                  {{ course }}
+                </a>
+              {% else %}
+                <span>{{ course }}</span>
+              {% endif %}
+            </h3>
+
+            {% if course.short_description %}
+              <p class="small text-muted mb-3">
+                {{ course.short_description|truncatechars:120 }}
+              </p>
+            {% endif %}
+
+            <div class="mt-auto d-flex justify-content-between align-items-center">
+              {% if course.level_label or course.get_level_display %}
+                <span class="badge bg-light text-muted border small">
+                  {{ course.level_label|default:course.get_level_display }}
+                </span>
+              {% endif %}
+
+              {% if u_course_detail %}
+                <a href="{% url 'economic:formations:course_detail' slug=course.slug %}"
+                   class="btn btn-sm btn-outline-primary">
+                  {% trans "Voir le détail" %}
+                </a>
+              {% else %}
+                <a href="#" class="btn btn-sm btn-outline-primary disabled">{% trans "Voir le détail" %}</a>
+              {% endif %}
+            </div>
+          </article>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="small text-muted mb-0">
+      {% trans "Aucune formation mise en avant pour le moment." %}
+    </p>
+  {% endif %}
+</section>
+
+{# ========================= #}
+{#    PARCOURS               #}
+{# ========================= #}
+<section id="parcours" class="mb-4">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="h6 mb-0">{% trans "Parcours" %}</h2>
+    <a class="small text-decoration-none" href="#calendar">{% trans "Calendrier" %} →</a>
+  </div>
+
+  <div class="row g-3 g-md-4">
+    <div class="col-lg-4">
+      <div class="p-3 bg-white border rounded-3 h-100">
+        <div class="fw-semibold mb-1">{% trans "Parcours Débutant" %}</div>
+        <div class="small text-muted mb-2">{% trans "Prise en main + bases solides." %}</div>
+        <ul class="small mb-3">
+          <li>{% trans "Cours courts et progressifs" %}</li>
+          <li>{% trans "Exercices guidés" %}</li>
+          <li>{% trans "Suivi de progression" %}</li>
+        </ul>
+        <a class="btn btn-sm btn-outline-primary w-100"
+           href="{% if u_course_list %}{{ u_course_list }}?q={% trans 'débutant' %}{% else %}#{% endif %}">
+          {% trans "Voir le parcours" %}
+        </a>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="p-3 bg-white border rounded-3 h-100">
+        <div class="fw-semibold mb-1">{% trans "Parcours Professionnel" %}</div>
+        <div class="small text-muted mb-2">{% trans "Compétences métiers & livrables." %}</div>
+        <ul class="small mb-3">
+          <li>{% trans "Cas pratiques" %}</li>
+          <li>{% trans "Quiz / évaluations" %}</li>
+          <li>{% trans "Certificat en fin de parcours" %}</li>
+        </ul>
+        <a class="btn btn-sm btn-primary w-100"
+           href="{{ u_course_list|default:'#' }}">
+          {% trans "Explorer" %}
+        </a>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="p-3 bg-white border rounded-3 h-100">
+        <div class="fw-semibold mb-1">{% trans "Parcours Organisation" %}</div>
+        <div class="small text-muted mb-2">{% trans "Groupes, ONG, entreprises, cohorte." %}</div>
+        <ul class="small mb-3">
+          <li>{% trans "Sessions planifiées" %}</li>
+          <li>{% trans "Présentiel / hybride" %}</li>
+          <li>{% trans "Suivi & rapports" %}</li>
+        </ul>
+        <a class="btn btn-sm btn-outline-secondary w-100"
+           href="{{ u_contact|default:'#' }}">
+          {% trans "Demander un devis" %}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ========================= #}
+{#    CALENDAR (INDEX)        #}
+{# ========================= #}
+<section id="calendar" class="mb-4">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="h6 mb-0">{% trans "Calendrier" %}</h2>
+    <a class="small text-decoration-none" href="#certifications">{% trans "Certifications" %} →</a>
+  </div>
+
+  <div class="p-3 bg-white border rounded-3">
+    <div class="row g-3 align-items-center">
+      <div class="col-lg-8">
+        <div class="fw-semibold mb-1">{% trans "Sessions & cohortes" %}</div>
+        <div class="small text-muted">
+          {% trans "Consultez le calendrier des prochaines sessions (présentiel/hybride) et les cohortes programmées." %}
+        </div>
+      </div>
+      <div class="col-lg-4 d-grid">
+        {% if request.user.is_authenticated and u_my_dashboard %}
+          <a class="btn btn-outline-primary" href="{{ u_my_dashboard }}">
+            {% trans "Voir mes sessions" %}
+          </a>
+        {% else %}
+          <a class="btn btn-outline-primary" href="{{ u_course_list|default:'#' }}">
+            {% trans "Voir le catalogue" %}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+
+    {# Optionnel : si un jour tu passes sessions au context, tu peux afficher une table ici #}
+    <div class="mt-3 small text-muted">
+      <i class="fa-regular fa-calendar-check me-1"></i>
+      {% trans "Astuce : connectez-vous pour retrouver vos sessions dans votre espace apprenant." %}
+    </div>
+  </div>
+</section>
+
+{# ========================= #}
+{#    CERTIFICATIONS (INDEX)  #}
+{# ========================= #}
+<section id="certifications" class="mb-4">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="h6 mb-0">{% trans "Certifications" %}</h2>
+    <a class="small text-decoration-none" href="#instructors">{% trans "Formateurs" %} →</a>
+  </div>
+
+  <div class="row g-3 g-md-4">
+    <div class="col-md-6 col-lg-4">
+      <div class="p-3 bg-white border rounded-3 h-100">
+        <div class="fw-semibold mb-1">{% trans "Certificat de réussite" %}</div>
+        <div class="small text-muted mb-2">
+          {% trans "Délivré après complétion du parcours et validation des évaluations." %}
+        </div>
+        <ul class="small mb-0">
+          <li>{% trans "Code unique de vérification" %}</li>
+          <li>{% trans "Téléchargement PDF" %}</li>
+          <li>{% trans "Historique dans votre espace" %}</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+      <div class="p-3 bg-white border rounded-3 h-100">
+        <div class="fw-semibold mb-1">{% trans "Attestation de participation" %}</div>
+        <div class="small text-muted mb-2">
+          {% trans "Pour sessions / ateliers / cohorte, selon présence et critères." %}
+        </div>
+        <ul class="small mb-0">
+          <li>{% trans "Présentiel / hybride" %}</li>
+          <li>{% trans "Suivi d’assiduité" %}</li>
+          <li>{% trans "Émission contrôlée" %}</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-md-12 col-lg-4">
+      <div class="p-3 bg-light border rounded-3 h-100">
+        <div class="fw-semibold mb-1">{% trans "Besoin d’une certification personnalisée ?" %}</div>
+        <div class="small text-muted mb-3">
+          {% trans "Pour entreprises et organisations : contenus, évaluations et attestations sur mesure." %}
+        </div>
+        <a class="btn btn-sm btn-outline-secondary w-100" href="{{ u_contact|default:'#' }}">
+          {% trans "Nous contacter" %}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ========================= #}
+{#    INSTRUCTORS (INDEX)     #}
+{# ========================= #}
+<section id="instructors" class="mb-4">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="h6 mb-0">{% trans "Formateurs" %}</h2>
+    <a class="small text-decoration-none" href="#pricing">{% trans "Tarifs" %} →</a>
+  </div>
+
+  <div class="row g-3 g-md-4">
+    <div class="col-md-6 col-lg-4">
+      <div class="p-3 bg-white border rounded-3 h-100">
+        <div class="fw-semibold mb-1">{% trans "Experts terrain" %}</div>
+        <div class="small text-muted">
+          {% trans "Des praticiens avec expérience projet et déploiement réel." %}
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+      <div class="p-3 bg-white border rounded-3 h-100">
+        <div class="fw-semibold mb-1">{% trans "Approche pédagogique" %}</div>
+        <div class="small text-muted">
+          {% trans "Méthode simple : objectifs, exercices, correction, progression." %}
+        </div>
+      </div>
+    </div>
+    <div class="col-md-12 col-lg-4">
+      <div class="p-3 bg-light border rounded-3 h-100">
+        <div class="fw-semibold mb-1">{% trans "Devenir formateur" %}</div>
+        <div class="small text-muted mb-3">
+          {% trans "Vous souhaitez proposer un cours ou animer une cohorte ?" %}
+        </div>
+        <a class="btn btn-sm btn-outline-primary w-100" href="{{ u_contact|default:'#' }}">
+          {% trans "Candidater" %}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ========================= #}
+{#    PRICING / TARIFS       #}
+{# ========================= #}
+<section id="pricing" class="mb-4">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="h6 mb-0">{% trans "Tarifs" %}</h2>
+    {% if request.user.is_authenticated %}
+      <a class="small text-decoration-none" href="{{ u_my_dashboard|default:'#' }}">
+        {% trans "Mon espace" %} →
+      </a>
+    {% endif %}
+  </div>
+
+  <div class="row g-3 g-md-4">
+    {# --- Gratuit --- #}
+    <div class="col-md-4">
+      <div class="p-3 bg-white border rounded-3 h-100">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <div class="fw-semibold">{% trans "Gratuit" %}</div>
+          <span class="badge bg-success">{% trans "0" %} {{ FORMATIONS_CURRENCY|default:"XOF" }}</span>
+        </div>
+
+        <div class="text-muted small mb-3">
+          {% trans "Pour découvrir, tester, et accéder à des contenus d’introduction." %}
+        </div>
+
+        <ul class="small mb-3">
+          <li>{% trans "Accès aux modules gratuits" %}</li>
+          <li>{% trans "Ressources & supports de base" %}</li>
+          <li>{% trans "Suivi de progression" %}</li>
+        </ul>
+
+        <a class="btn btn-sm btn-outline-primary w-100"
+           href="{% if u_course_list %}{{ u_course_list }}?type=online{% else %}#{% endif %}">
+          {% trans "Voir les formations gratuites" %}
+        </a>
+      </div>
+    </div>
+
+    {# --- Standard --- #}
+    <div class="col-md-4">
+      <div class="p-3 bg-white border rounded-3 h-100 position-relative">
+        <span class="badge bg-primary position-absolute top-0 end-0 m-3">
+          {% trans "Le plus demandé" %}
+        </span>
+
+        <div class="fw-semibold mb-2">{% trans "Standard" %}</div>
+        <div class="h4 mb-2">
+          {% trans "À partir de" %} <span class="fw-bold">15 000</span>
+          <span class="fs-6 text-muted">{{ FORMATIONS_CURRENCY|default:"XOF" }}</span>
+        </div>
+
+        <div class="text-muted small mb-3">
+          {% trans "Formations complètes, supports, exercices et accompagnement léger." %}
+        </div>
+
+        <ul class="small mb-3">
+          <li>{% trans "Accès complet au contenu" %}</li>
+          <li>{% trans "Quiz / exercices" %}</li>
+          <li>{% trans "Certificat si complété" %}</li>
+        </ul>
+
+        <a class="btn btn-sm btn-primary w-100"
+           href="{{ u_course_list|default:'#' }}">
+          {% trans "Explorer le catalogue" %}
+        </a>
+      </div>
+    </div>
+
+    {# --- Pro / Cohorte --- #}
+    <div class="col-md-4">
+      <div class="p-3 bg-white border rounded-3 h-100">
+        <div class="fw-semibold mb-2">{% trans "Pro / Cohorte" %}</div>
+        <div class="h4 mb-2">{% trans "Sur devis" %}</div>
+
+        <div class="text-muted small mb-3">
+          {% trans "Pour entreprises, ONG, groupes : sessions, coaching, présentiel, suivi dédié." %}
+        </div>
+
+        <ul class="small mb-3">
+          <li>{% trans "Sessions planifiées (présentiel / hybride)" %}</li>
+          <li>{% trans "Accompagnement et évaluation" %}</li>
+          <li>{% trans "Attestations / certificats" %}</li>
+        </ul>
+
+        <a class="btn btn-sm btn-outline-secondary w-100"
+           href="{{ u_contact|default:'#' }}">
+          {% trans "Demander un devis" %}
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-3 small text-muted">
+    <i class="fa-regular fa-circle-check me-1"></i>
+    {% trans "Les prix varient selon le niveau, la durée, le format et le mode d’accompagnement." %}
+  </div>
+</section>
+
+{% endblock %}
+
+ {% endcomment %}
+
+
+
+
+{% comment %} {# templates/economic/formations/index.html #}
+{% extends "economic/formations/base_formations.html" %}
+{% load static i18n dashboard_tags %}
+
+{% block formations_title %}{% trans "Pôle formations" %}{% endblock %}
+
+{% block formations_content %}
+
+{% safe_url "economic:formations:course_list" as u_course_list %}
+{% safe_url "economic:formations:course_detail" as u_course_detail %}
+{% safe_url "economic:formations:my_dashboard" as u_my_dashboard %}
+{% safe_url "core:contact" as u_contact %}
+
+<section class="formations-hero mb-4">
+  <div class="row align-items-center g-4">
+    <div class="col-lg-7">
+      <h1 class="display-6 fw-bold mb-3">
+        {% trans "Développez vos compétences avec SOGENTIS" %}
+      </h1>
+      <p class="lead text-muted">
+        {% trans "Des formations pratiques, ancrées dans le terrain : numérique, gestion de projet, entrepreneuriat, ONG, et plus encore." %}
+      </p>
+
+      <div class="d-flex flex-wrap gap-2 mt-3">
+        <a href="{{ u_course_list|default:'#' }}"
+           class="btn btn-primary btn-lg {% if not u_course_list %}disabled{% endif %}">
+          {% trans "Voir toutes les formations" %}
+        </a>
+
+        <a href="{% if u_course_list %}{{ u_course_list }}?type=online{% else %}#{% endif %}"
+           class="btn btn-outline-secondary {% if not u_course_list %}disabled{% endif %}">
+          {% trans "Formations en ligne" %}
+        </a>
+      </div>
+    </div>
+
+    <div class="col-lg-5">
+      <div class="p-3 p-lg-4 bg-light rounded-3 shadow-sm">
+        <h2 class="h5 mb-3">
+          {% trans "Pourquoi se former avec SOGENTIS ?" %}
+        </h2>
+        <ul class="small mb-0">
+          <li>{% trans "Contenus adaptés au contexte africain." %}</li>
+          <li>{% trans "Cas pratiques issus de projets réels." %}</li>
+          <li>{% trans "Accompagnement par des praticiens." %}</li>
+          <li>{% trans "Possibilités de suivi et de mentorat." %}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% if categories %}
+<section class="mb-4">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="h6 mb-0">{% trans "Domaines de formation" %}</h2>
+
+    <a href="{{ u_course_list|default:'#' }}"
+       class="small text-decoration-none {% if not u_course_list %}disabled{% endif %}">
+      {% trans "Voir tout le catalogue" %} →
+    </a>
+  </div>
+
+  <div class="row g-3">
+    {% for category in categories %}
+      <div class="col-6 col-md-3">
+        <a href="{% if u_course_list %}{{ u_course_list }}?category={{ category.slug }}{% else %}#{% endif %}"
+           class="text-decoration-none {% if not u_course_list %}disabled{% endif %}">
+          <div class="p-3 bg-white border rounded-3 h-100">
+            <div class="fw-semibold small mb-1">
+              {{ category }}
+            </div>
+            {% if category.short_description %}
+              <div class="small text-muted">
+                {{ category.short_description|truncatechars:80 }}
+              </div>
+            {% endif %}
+          </div>
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<section class="mb-4">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="h6 mb-0">{% trans "Formations mises en avant" %}</h2>
+
+    <a href="{{ u_course_list|default:'#' }}"
+       class="small text-decoration-none {% if not u_course_list %}disabled{% endif %}">
+      {% trans "Voir le catalogue complet" %} →
+    </a>
+  </div>
+
+  {% if featured_courses %}
+    <div class="row g-3 g-md-4">
+      {% for course in featured_courses %}
+        <div class="col-md-6 col-lg-4">
+          <article class="p-3 bg-white border rounded-3 h-100 d-flex flex-column">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              {% if course.category %}
+                <span class="badge bg-light text-dark border small">
+                  {{ course.category }}
+                </span>
+              {% endif %}
+
+              {% if course.price %}
+                <span class="fw-semibold small">
+                  {{ course.price }} {{ FORMATIONS_CURRENCY|default:"XOF" }}
+                </span>
+              {% else %}
+                <span class="fw-semibold small text-success">
+                  {% trans "Gratuit" %}
+                </span>
+              {% endif %}
+            </div>
+
+            <h3 class="h6 mb-1">
+              {% if u_course_detail %}
+                <a href="{% url 'economic:formations:course_detail' slug=course.slug %}" class="text-decoration-none">
+                  {{ course }}
+                </a>
+              {% else %}
+                <span>{{ course }}</span>
+              {% endif %}
+            </h3>
+
+            {% if course.short_description %}
+              <p class="small text-muted mb-3">
+                {{ course.short_description|truncatechars:120 }}
+              </p>
+            {% endif %}
+
+            <div class="mt-auto d-flex justify-content-between align-items-center">
+              {% if course.level_label or course.get_level_display %}
+                <span class="badge bg-light text-muted border small">
+                  {{ course.level_label|default:course.get_level_display }}
+                </span>
+              {% endif %}
+
+              {% if u_course_detail %}
+                <a href="{% url 'economic:formations:course_detail' slug=course.slug %}"
+                   class="btn btn-sm btn-outline-primary">
+                  {% trans "Voir le détail" %}
+                </a>
+              {% else %}
+                <a href="#" class="btn btn-sm btn-outline-primary disabled">{% trans "Voir le détail" %}</a>
+              {% endif %}
+            </div>
+          </article>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="small text-muted mb-0">
+      {% trans "Aucune formation mise en avant pour le moment." %}
+    </p>
+  {% endif %}
+</section>
+
+{# ========================= #}
+{#    PRICING / TARIFS       #}
+{# ========================= #}
+<section id="pricing" class="mb-4">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="h6 mb-0">{% trans "Tarifs" %}</h2>
+    {% if request.user.is_authenticated %}
+      <a class="small text-decoration-none" href="{{ u_my_dashboard|default:'#' }}">
+        {% trans "Mon espace" %} →
+      </a>
+    {% endif %}
+  </div>
+
+  <div class="row g-3 g-md-4">
+    {# --- Gratuit --- #}
+    <div class="col-md-4">
+      <div class="p-3 bg-white border rounded-3 h-100">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <div class="fw-semibold">{% trans "Gratuit" %}</div>
+          <span class="badge bg-success">{% trans "0" %} {{ FORMATIONS_CURRENCY|default:"XOF" }}</span>
+        </div>
+
+        <div class="text-muted small mb-3">
+          {% trans "Pour découvrir, tester, et accéder à des contenus d’introduction." %}
+        </div>
+
+        <ul class="small mb-3">
+          <li>{% trans "Accès aux modules gratuits" %}</li>
+          <li>{% trans "Ressources & supports de base" %}</li>
+          <li>{% trans "Suivi de progression" %}</li>
+        </ul>
+
+        <a class="btn btn-sm btn-outline-primary w-100"
+           href="{% if u_course_list %}{{ u_course_list }}?type=online{% else %}#{% endif %}">
+          {% trans "Voir les formations gratuites" %}
+        </a>
+      </div>
+    </div>
+
+    {# --- Standard --- #}
+    <div class="col-md-4">
+      <div class="p-3 bg-white border rounded-3 h-100 position-relative">
+        <span class="badge bg-primary position-absolute top-0 end-0 m-3">
+          {% trans "Le plus demandé" %}
+        </span>
+
+        <div class="fw-semibold mb-2">{% trans "Standard" %}</div>
+        <div class="h4 mb-2">
+          {% trans "À partir de" %} <span class="fw-bold">15 000</span>
+          <span class="fs-6 text-muted">{{ FORMATIONS_CURRENCY|default:"XOF" }}</span>
+        </div>
+
+        <div class="text-muted small mb-3">
+          {% trans "Formations complètes, supports, exercices et accompagnement léger." %}
+        </div>
+
+        <ul class="small mb-3">
+          <li>{% trans "Accès complet au contenu" %}</li>
+          <li>{% trans "Quiz / exercices" %}</li>
+          <li>{% trans "Certificat si complété" %}</li>
+        </ul>
+
+        <a class="btn btn-sm btn-primary w-100"
+           href="{{ u_course_list|default:'#' }}">
+          {% trans "Explorer le catalogue" %}
+        </a>
+      </div>
+    </div>
+
+    {# --- Pro / Cohorte --- #}
+    <div class="col-md-4">
+      <div class="p-3 bg-white border rounded-3 h-100">
+        <div class="fw-semibold mb-2">{% trans "Pro / Cohorte" %}</div>
+        <div class="h4 mb-2">{% trans "Sur devis" %}</div>
+
+        <div class="text-muted small mb-3">
+          {% trans "Pour entreprises, ONG, groupes : sessions, coaching, présentiel, suivi dédié." %}
+        </div>
+
+        <ul class="small mb-3">
+          <li>{% trans "Sessions planifiées (présentiel / hybride)" %}</li>
+          <li>{% trans "Accompagnement et évaluation" %}</li>
+          <li>{% trans "Attestations / certificats" %}</li>
+        </ul>
+
+        <a class="btn btn-sm btn-outline-secondary w-100"
+           href="{{ u_contact|default:'#' }}">
+          {% trans "Demander un devis" %}
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-3 small text-muted">
+    <i class="fa-regular fa-circle-check me-1"></i>
+    {% trans "Les prix varient selon le niveau, la durée, le format et le mode d’accompagnement." %}
+  </div>
+</section>
+
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/formations/index.html #}
+{% extends "economic/formations/base_formations.html" %}
+{% load static i18n dashboard_tags %}
+
+{% block formations_title %}{% trans "Pôle formations" %}{% endblock %}
+
+{% block formations_content %}
+
+{% safe_url "economic:formations:course_list" as u_course_list %}
+{% safe_url "economic:formations:course_detail" as u_course_detail %}
+
+<section class="formations-hero mb-4">
+  <div class="row align-items-center g-4">
+    <div class="col-lg-7">
+      <h1 class="display-6 fw-bold mb-3">
+        {% trans "Développez vos compétences avec SOGENTIS" %}
+      </h1>
+      <p class="lead text-muted">
+        {% trans "Des formations pratiques, ancrées dans le terrain : numérique, gestion de projet, entrepreneuriat, ONG, et plus encore." %}
+      </p>
+
+      <div class="d-flex flex-wrap gap-2 mt-3">
+        <a href="{{ u_course_list|default:'#' }}"
+           class="btn btn-primary btn-lg {% if not u_course_list %}disabled{% endif %}">
+          {% trans "Voir toutes les formations" %}
+        </a>
+
+        <a href="{% if u_course_list %}{{ u_course_list }}?type=online{% else %}#{% endif %}"
+           class="btn btn-outline-secondary {% if not u_course_list %}disabled{% endif %}">
+          {% trans "Formations en ligne" %}
+        </a>
+      </div>
+    </div>
+
+    <div class="col-lg-5">
+      <div class="p-3 p-lg-4 bg-light rounded-3 shadow-sm">
+        <h2 class="h5 mb-3">
+          {% trans "Pourquoi se former avec SOGENTIS ?" %}
+        </h2>
+        <ul class="small mb-0">
+          <li>{% trans "Contenus adaptés au contexte africain." %}</li>
+          <li>{% trans "Cas pratiques issus de projets réels." %}</li>
+          <li>{% trans "Accompagnement par des praticiens." %}</li>
+          <li>{% trans "Possibilités de suivi et de mentorat." %}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% if categories %}
+<section class="mb-4">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="h6 mb-0">{% trans "Domaines de formation" %}</h2>
+
+    <a href="{{ u_course_list|default:'#' }}"
+       class="small text-decoration-none {% if not u_course_list %}disabled{% endif %}">
+      {% trans "Voir tout le catalogue" %} →
+    </a>
+  </div>
+
+  <div class="row g-3">
+    {% for category in categories %}
+      <div class="col-6 col-md-3">
+        <a href="{% if u_course_list %}{{ u_course_list }}?category={{ category.slug }}{% else %}#{% endif %}"
+           class="text-decoration-none {% if not u_course_list %}disabled{% endif %}">
+          <div class="p-3 bg-white border rounded-3 h-100">
+            <div class="fw-semibold small mb-1">
+              {{ category }}
+            </div>
+            {% if category.short_description %}
+              <div class="small text-muted">
+                {{ category.short_description|truncatechars:80 }}
+              </div>
+            {% endif %}
+          </div>
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<section class="mb-4">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="h6 mb-0">{% trans "Formations mises en avant" %}</h2>
+
+    <a href="{{ u_course_list|default:'#' }}"
+       class="small text-decoration-none {% if not u_course_list %}disabled{% endif %}">
+      {% trans "Voir le catalogue complet" %} →
+    </a>
+  </div>
+
+  {% if featured_courses %}
+    <div class="row g-3 g-md-4">
+      {% for course in featured_courses %}
+        <div class="col-md-6 col-lg-4">
+          <article class="p-3 bg-white border rounded-3 h-100 d-flex flex-column">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              {% if course.category %}
+                <span class="badge bg-light text-dark border small">
+                  {{ course.category }}
+                </span>
+              {% endif %}
+
+              {% if course.price %}
+                <span class="fw-semibold small">
+                  {{ course.price }} {{ FORMATIONS_CURRENCY|default:"XOF" }}
+                </span>
+              {% else %}
+                <span class="fw-semibold small text-success">
+                  {% trans "Gratuit" %}
+                </span>
+              {% endif %}
+            </div>
+
+            <h3 class="h6 mb-1">
+              {% if u_course_detail %}
+                <a href="{% url 'economic:formations:course_detail' slug=course.slug %}" class="text-decoration-none">
+                  {{ course }}
+                </a>
+              {% else %}
+                <span>{{ course }}</span>
+              {% endif %}
+            </h3>
+
+            {% if course.short_description %}
+              <p class="small text-muted mb-3">
+                {{ course.short_description|truncatechars:120 }}
+              </p>
+            {% endif %}
+
+            <div class="mt-auto d-flex justify-content-between align-items-center">
+              {% if course.level_label or course.get_level_display %}
+                <span class="badge bg-light text-muted border small">
+                  {{ course.level_label|default:course.get_level_display }}
+                </span>
+              {% endif %}
+
+              {% if u_course_detail %}
+                <a href="{% url 'economic:formations:course_detail' slug=course.slug %}"
+                   class="btn btn-sm btn-outline-primary">
+                  {% trans "Voir le détail" %}
+                </a>
+              {% else %}
+                <a href="#" class="btn btn-sm btn-outline-primary disabled">{% trans "Voir le détail" %}</a>
+              {% endif %}
+            </div>
+          </article>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="small text-muted mb-0">
+      {% trans "Aucune formation mise en avant pour le moment." %}
+    </p>
+  {% endif %}
+</section>
+
+{% endblock %}
+ {% endcomment %}
+
+
+
+
+{% comment %} {# templates/economic/formations/index.html #}
+{% extends "economic/formations/base_formations.html" %}
+{% load static i18n %}
+
+{% block formations_title %}{% trans "Formations" %}{% endblock %}
+
+{% block formations_content %}
+
+  {% include "economic/formations/partials/_hero.html" with
+      title=_("Apprendre, certifier, évoluer")
+      subtitle=_("Des formations en ligne, en présentiel et hybrides — avec progression et certificats.")
+  %}
+
+  <div class="d-flex align-items-center justify-content-between mt-4 mb-2">
+    <h2 class="h5 fw-bold mb-0">{% trans "Catégories" %}</h2>
+    <a class="btn btn-sm btn-outline-secondary" href="{% url 'economic:formations:courses:list' %}">
+      {% trans "Voir tout" %}
+    </a>
+  </div>
+
+  {% if categories %}
+    <div class="mb-4">
+      {% include "economic/formations/partials/_category_pills.html" with categories=categories %}
+    </div>
+  {% else %}
+    {% include "economic/formations/partials/_empty_state.html" with
+        title=_("Aucune catégorie disponible")
+        text=_("Ajoute des catégories dans l’admin pour organiser le catalogue.")
+    %}
+  {% endif %}
+
+  <div class="d-flex align-items-center justify-content-between mt-4 mb-2">
+    <h2 class="h5 fw-bold mb-0">{% trans "Formations en vedette" %}</h2>
+    <a class="btn btn-sm btn-primary" href="{% url 'economic:formations:courses:list' %}">
+      {% trans "Explorer le catalogue" %}
+    </a>
+  </div>
+
+  {% if featured_courses %}
+    <div class="row g-3">
+      {% for course in featured_courses %}
+        <div class="col-12 col-md-6 col-lg-4">
+          {% include "economic/formations/partials/_course_card.html" with course=course %}
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    {% include "economic/formations/partials/_empty_state.html" with
+        title=_("Aucune formation en vedette")
+        text=_("Active « Mise en avant » sur des cours pour les afficher ici.")
+    %}
+  {% endif %}
+
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/formations/index.html #}
+{% extends "economic/formations/base_formations.html" %}
+{% load static i18n %}
 
 {% block formations_title %}{% trans "Pôle formations" %}{% endblock %}
 
@@ -152,7 +1886,7 @@
   {% endif %}
 </section>
 
-{% endblock %}
+{% endblock %} {% endcomment %}
 
 
 

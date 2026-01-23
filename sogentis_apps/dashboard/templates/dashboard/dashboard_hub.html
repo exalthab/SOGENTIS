@@ -1,0 +1,1971 @@
+{# templates/dashboard/dashboard_hub.html #}
+{% extends "dashboard/base.html" %}
+{% load static i18n dashboard_tags %}
+
+{% block title %}{% trans "Hub" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block dashboard_header %}{% trans "Hub" %}{% endblock %}
+{% block dashboard_subheader %}{% trans "Choisissez votre espace." %}{% endblock %}
+
+{% block header_actions %}
+  {% safe_url 'dashboard:hub' as url_hub %}
+  {% safe_url 'dashboard:user:home' as url_user_home %}
+  {% safe_url 'dashboard:profile_edit' as url_profile_edit %}
+  {% safe_url 'accounts_users:web:auth:logout' as url_logout %}
+  {% if not url_logout %}{% safe_url 'accounts_users:web:logout' as url_logout %}{% endif %}
+
+  <div class="d-flex flex-wrap gap-2">
+    <a class="btn btn-outline-primary"
+       href="{{ url_hub|default:'#' }}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+      <i class="fas fa-layer-group me-2" aria-hidden="true"></i>{% trans "Hub" %}
+    </a>
+
+    <a class="btn btn-primary"
+       href="{{ url_user_home|default:'#' }}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+      <i class="fas fa-chart-line me-2" aria-hidden="true"></i>{% trans "Mon dashboard" %}
+    </a>
+
+    <a class="btn btn-outline-secondary"
+       href="{{ url_profile_edit|default:'#' }}">
+      <i class="fas fa-user me-2" aria-hidden="true"></i>{% trans "Profil" %}
+    </a>
+
+    <a class="btn btn-outline-danger"
+       href="{{ url_logout|default:'#' }}">
+      <i class="fas fa-sign-out-alt me-2" aria-hidden="true"></i>{% trans "Déconnexion" %}
+    </a>
+  </div>
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="mb-3 d-flex flex-wrap align-items-center gap-2">
+
+  {% if auth_pole %}
+    <span class="badge text-bg-light border">
+      {% if auth_pole == "social" %}❤️ {% trans "Social" %}
+      {% elif auth_pole == "economic" %}💼 {% trans "Économique" %}
+      {% else %}👤 {% trans "Général" %}
+      {% endif %}
+    </span>
+  {% endif %}
+
+  {% if is_admin_user %}
+    <span class="badge text-bg-success">🛡️ {% trans "Admin" %}</span>
+  {% elif is_staff_user %}
+    <span class="badge text-bg-success">🛡️ {% trans "Staff" %}</span>
+  {% else %}
+    <span class="badge text-bg-secondary">👤 {% trans "Utilisateur" %}</span>
+  {% endif %}
+
+  {% with ps=dashboard_profile_status|default:"" %}
+    {% if ps == "pending" %}
+      <span class="badge text-bg-warning">⏳ {% trans "En attente" %}</span>
+    {% elif ps == "rejected" %}
+      <span class="badge text-bg-danger">⛔ {% trans "Refusé" %}</span>
+    {% endif %}
+  {% endwith %}
+
+</div>
+
+{% if show_pending_banner %}
+  <div class="alert alert-{{ pending_banner_level }} d-flex align-items-start justify-content-between gap-3" role="alert">
+    <div>
+      <div class="fw-bold mb-1">
+        <i class="fas fa-info-circle me-1" aria-hidden="true"></i>
+        {{ pending_banner_title }}
+      </div>
+
+      <div class="small">
+        {{ pending_banner_text }}
+        {% if pending_kinds %}
+          <div class="mt-1">
+            <span class="fw-semibold">{% trans "En attente" %}:</span> {{ pending_kinds|join:", " }}
+          </div>
+        {% endif %}
+        {% if rejected_kinds %}
+          <div>
+            <span class="fw-semibold">{% trans "Refusé" %}:</span> {{ rejected_kinds|join:", " }}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if account_pending_url %}
+      <a class="btn btn-sm btn-outline-dark" href="{{ account_pending_url }}">
+        <i class="fas fa-eye me-1" aria-hidden="true"></i>{% trans "Détails" %}
+      </a>
+    {% endif %}
+  </div>
+{% endif %}
+
+{% if cards %}
+  {% include "dashboard/partials/_stats_cards.html" with cards=cards %}
+{% endif %}
+
+<div class="row g-3 g-md-4 mt-1">
+
+  <div class="col-md-6 col-xl-4">
+    {% safe_url 'dashboard:user:home' as url_user_home %}
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+       href="{{ url_user_home|default:'#' }}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <strong class="h5 mb-0">👤 {% trans "Utilisateur" %}</strong>
+          <span class="text-muted">→</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">{% trans "Commandes, profil, notes." %}</p>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-md-6 col-xl-4">
+    {% safe_url 'dashboard:formations:home' as url_formations_home %}
+    {% if can_formations_space %}
+      <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+         href="{{ url_formations_home|default:'#' }}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <strong class="h5 mb-0">🎓 {% trans "Formations" %}</strong>
+            <span class="text-muted">→</span>
+          </div>
+          <p class="text-muted mt-2 mb-0">{% trans "Mes cours, sessions, certificats." %}</p>
+        </div>
+      </a>
+    {% else %}
+      <div class="card shadow-sm border-0 h-100 opacity-75">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <strong class="h5 mb-0">🎓 {% trans "Formations" %}</strong>
+            <span class="badge text-bg-light border">{% trans "Accès restreint" %}</span>
+          </div>
+          <p class="text-muted mt-2 mb-0">{% trans "Disponible selon vos droits." %}</p>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="col-md-6 col-xl-4">
+    {% safe_url 'dashboard:vendor:home' as url_vendor_home %}
+    {% if can_vendor_space %}
+      <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+         href="{{ url_vendor_home|default:'#' }}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <strong class="h5 mb-0">🏪 {% trans "Vendeur" %}</strong>
+            <span class="text-muted">→</span>
+          </div>
+          <p class="text-muted mt-2 mb-0">{% trans "Boutique, produits, commandes." %}</p>
+        </div>
+      </a>
+    {% else %}
+      <div class="card shadow-sm border-0 h-100 opacity-75">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <strong class="h5 mb-0">🏪 {% trans "Vendeur" %}</strong>
+            <span class="badge text-bg-light border">{% trans "Accès restreint" %}</span>
+          </div>
+          {% if can_vendor and not vendor_approved %}
+            <p class="text-muted mt-2 mb-0">{% trans "Disponible après activation / validation." %}</p>
+          {% else %}
+            <p class="text-muted mt-2 mb-0">{% trans "Disponible selon vos droits." %}</p>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="col-md-6 col-xl-4">
+    {% safe_url 'dashboard:b2b:home' as url_b2b_home %}
+    {% if can_b2b_space %}
+      <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+         href="{{ url_b2b_home|default:'#' }}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <strong class="h5 mb-0">🏢 {% trans "B2B" %}</strong>
+            <span class="text-muted">→</span>
+          </div>
+          <p class="text-muted mt-2 mb-0">{% trans "Achats en gros, facturation." %}</p>
+        </div>
+      </a>
+    {% else %}
+      <div class="card shadow-sm border-0 h-100 opacity-75">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <strong class="h5 mb-0">🏢 {% trans "B2B" %}</strong>
+            <span class="badge text-bg-light border">{% trans "Accès restreint" %}</span>
+          </div>
+          {% if can_b2b and not b2b_approved %}
+            <p class="text-muted mt-2 mb-0">{% trans "Disponible après validation entreprise." %}</p>
+          {% else %}
+            <p class="text-muted mt-2 mb-0">{% trans "Disponible selon vos droits." %}</p>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="col-md-6 col-xl-4">
+    {% safe_url 'dashboard:social:index' as url_social_home %}
+    {% if can_social_space %}
+      <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+         href="{{ url_social_home|default:'#' }}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <strong class="h5 mb-0">❤️ {% trans "Social" %}</strong>
+            <span class="text-muted">→</span>
+          </div>
+          <p class="text-muted mt-2 mb-0">{% trans "Dons, engagement, impact." %}</p>
+        </div>
+      </a>
+    {% else %}
+      <div class="card shadow-sm border-0 h-100 opacity-75">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <strong class="h5 mb-0">❤️ {% trans "Social" %}</strong>
+            <span class="badge text-bg-light border">{% trans "Accès restreint" %}</span>
+          </div>
+          <p class="text-muted mt-2 mb-0">{% trans "Disponible selon votre rôle et vos droits." %}</p>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  {% if can_admin_area %}
+    <div class="col-md-6 col-xl-4">
+      {% safe_url 'dashboard:admin:index' as url_admin_home %}
+      <a class="card shadow-sm border-0 h-100 dashboard-card-link" href="{{ url_admin_home|default:'#' }}">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <strong class="h5 mb-0">🛡️ {% trans "Administration" %}</strong>
+            <span class="text-muted">→</span>
+          </div>
+          <p class="text-muted mt-2 mb-0">{% trans "Paramètres, accès, validation, supervision." %}</p>
+        </div>
+      </a>
+    </div>
+  {% endif %}
+
+  <div class="col-md-6 col-xl-4">
+    {% safe_url 'dashboard:notes_list' as url_notes %}
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link" href="{{ url_notes|default:'#' }}">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <strong class="h5 mb-0">📝 {% trans "Notes" %}</strong>
+          <span class="text-muted">→</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">{% trans "Vos notes personnelles." %}</p>
+      </div>
+    </a>
+  </div>
+
+</div>
+{% endblock %}
+
+
+
+
+
+{% comment %} {# templates/dashboard/dashboard_hub.html #}
+{% extends "dashboard/base.html" %}
+{% load static i18n dashboard_tags %}
+
+{% block title %}{% trans "Hub" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{# ✅ Topbar: on alimente title/subtitle/actions (style apps) #}
+{% block dashboard_header %}{% trans "Hub" %}{% endblock %}
+{% block dashboard_subheader %}{% trans "Choisissez votre espace." %}{% endblock %}
+
+{% block header_actions %}
+  {% safe_url 'dashboard:hub' as url_hub %}
+  {% safe_url 'dashboard:user:home' as url_user_home %}
+  {% safe_url 'dashboard:profile_edit' as url_profile_edit %}
+  {% safe_url 'accounts_users:web:auth:logout' as url_logout %}
+  {% if not url_logout %}{% safe_url 'accounts_users:web:logout' as url_logout %}{% endif %}
+
+  <div class="d-flex flex-wrap gap-2">
+    <a class="btn btn-outline-primary"
+       href="{{ url_hub|default:'#' }}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+      <i class="fas fa-layer-group me-2" aria-hidden="true"></i>{% trans "Hub" %}
+    </a>
+
+    <a class="btn btn-primary"
+       href="{{ url_user_home|default:'#' }}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+      <i class="fas fa-chart-line me-2" aria-hidden="true"></i>{% trans "Mon dashboard" %}
+    </a>
+
+    <a class="btn btn-outline-secondary"
+       href="{{ url_profile_edit|default:'#' }}">
+      <i class="fas fa-user me-2" aria-hidden="true"></i>{% trans "Profil" %}
+    </a>
+
+    <a class="btn btn-outline-danger"
+       href="{{ url_logout|default:'#' }}">
+      <i class="fas fa-sign-out-alt me-2" aria-hidden="true"></i>{% trans "Déconnexion" %}
+    </a>
+  </div>
+{% endblock %}
+
+{% block dashboard_content %}
+
+{# ✅ Badges "apps style" : contexte + rôle + statut #}
+<div class="mb-3 d-flex flex-wrap align-items-center gap-2">
+
+  {% if auth_pole %}
+    <span class="badge text-bg-light border">
+      {% if auth_pole == "social" %}❤️ {% trans "Social" %}
+      {% elif auth_pole == "economic" %}💼 {% trans "Économique" %}
+      {% else %}👤 {% trans "Général" %}
+      {% endif %}
+    </span>
+  {% endif %}
+
+  {% if request.user.is_superuser %}
+    <span class="badge text-bg-success">🛡️ {% trans "Admin" %}</span>
+  {% elif request.user.is_staff %}
+    <span class="badge text-bg-success">🛡️ {% trans "Staff" %}</span>
+  {% else %}
+    <span class="badge text-bg-secondary">👤 {% trans "Utilisateur" %}</span>
+  {% endif %}
+
+  {% with ps=dashboard_profile_status|default:"" %}
+    {% if ps == "pending" %}
+      <span class="badge text-bg-warning">⏳ {% trans "En attente" %}</span>
+    {% elif ps == "rejected" %}
+      <span class="badge text-bg-danger">⛔ {% trans "Refusé" %}</span>
+    {% endif %}
+  {% endwith %}
+
+</div>
+
+{% if show_pending_banner %}
+  <div class="alert alert-{{ pending_banner_level }} d-flex align-items-start justify-content-between gap-3" role="alert">
+    <div>
+      <div class="fw-bold mb-1">
+        <i class="fas fa-info-circle me-1" aria-hidden="true"></i>
+        {{ pending_banner_title }}
+      </div>
+
+      <div class="small">
+        {{ pending_banner_text }}
+        {% if pending_kinds %}
+          <div class="mt-1">
+            <span class="fw-semibold">{% trans "En attente" %}:</span> {{ pending_kinds|join:", " }}
+          </div>
+        {% endif %}
+        {% if rejected_kinds %}
+          <div>
+            <span class="fw-semibold">{% trans "Refusé" %}:</span> {{ rejected_kinds|join:", " }}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if account_pending_url %}
+      <a class="btn btn-sm btn-outline-dark" href="{{ account_pending_url }}">
+        <i class="fas fa-eye me-1" aria-hidden="true"></i>{% trans "Détails" %}
+      </a>
+    {% endif %}
+  </div>
+{% endif %}
+
+{% if cards %}
+  {% include "dashboard/partials/_stats_cards.html" with cards=cards %}
+{% endif %}
+
+<div class="row g-3 g-md-4 mt-1">
+
+  <div class="col-md-6 col-xl-4">
+    {% safe_url 'dashboard:user:home' as url_user_home %}
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+       href="{{ url_user_home|default:'#' }}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <strong class="h5 mb-0">👤 {% trans "Utilisateur" %}</strong>
+          <span class="text-muted">→</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">{% trans "Commandes, profil, notes." %}</p>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-md-6 col-xl-4">
+    {% safe_url 'dashboard:formations:home' as url_formations_home %}
+    {% if request.user.is_superuser or perms.dashboard.access_formations_space or can_formations %}
+      <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+         href="{{ url_formations_home|default:'#' }}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <strong class="h5 mb-0">🎓 {% trans "Formations" %}</strong>
+            <span class="text-muted">→</span>
+          </div>
+          <p class="text-muted mt-2 mb-0">{% trans "Mes cours, sessions, certificats." %}</p>
+        </div>
+      </a>
+    {% else %}
+      <div class="card shadow-sm border-0 h-100 opacity-75">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <strong class="h5 mb-0">🎓 {% trans "Formations" %}</strong>
+            <span class="badge text-bg-light border">{% trans "Accès restreint" %}</span>
+          </div>
+          <p class="text-muted mt-2 mb-0">{% trans "Disponible selon vos droits." %}</p>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="col-md-6 col-xl-4">
+    {% safe_url 'dashboard:vendor:home' as url_vendor_home %}
+    {% if request.user.is_superuser or perms.dashboard.access_vendor_space or (can_vendor and vendor_approved) %}
+      <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+         href="{{ url_vendor_home|default:'#' }}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <strong class="h5 mb-0">🏪 {% trans "Vendeur" %}</strong>
+            <span class="text-muted">→</span>
+          </div>
+          <p class="text-muted mt-2 mb-0">{% trans "Boutique, produits, commandes." %}</p>
+        </div>
+      </a>
+    {% else %}
+      <div class="card shadow-sm border-0 h-100 opacity-75">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <strong class="h5 mb-0">🏪 {% trans "Vendeur" %}</strong>
+            <span class="badge text-bg-light border">{% trans "Accès restreint" %}</span>
+          </div>
+          {% if can_vendor and not vendor_approved %}
+            <p class="text-muted mt-2 mb-0">{% trans "Disponible après activation / validation." %}</p>
+          {% else %}
+            <p class="text-muted mt-2 mb-0">{% trans "Disponible selon vos droits." %}</p>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="col-md-6 col-xl-4">
+    {% safe_url 'dashboard:b2b:home' as url_b2b_home %}
+    {% if request.user.is_superuser or perms.dashboard.access_b2b_space or (can_b2b and b2b_approved) %}
+      <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+         href="{{ url_b2b_home|default:'#' }}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <strong class="h5 mb-0">🏢 {% trans "B2B" %}</strong>
+            <span class="text-muted">→</span>
+          </div>
+          <p class="text-muted mt-2 mb-0">{% trans "Achats en gros, facturation." %}</p>
+        </div>
+      </a>
+    {% else %}
+      <div class="card shadow-sm border-0 h-100 opacity-75">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <strong class="h5 mb-0">🏢 {% trans "B2B" %}</strong>
+            <span class="badge text-bg-light border">{% trans "Accès restreint" %}</span>
+          </div>
+          {% if can_b2b and not b2b_approved %}
+            <p class="text-muted mt-2 mb-0">{% trans "Disponible après validation entreprise." %}</p>
+          {% else %}
+            <p class="text-muted mt-2 mb-0">{% trans "Disponible selon vos droits." %}</p>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="col-md-6 col-xl-4">
+    {% safe_url 'dashboard:social:index' as url_social_home %}
+    {% if request.user.is_superuser or perms.dashboard.access_social_space or can_social %}
+      <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+         href="{{ url_social_home|default:'#' }}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <strong class="h5 mb-0">❤️ {% trans "Social" %}</strong>
+            <span class="text-muted">→</span>
+          </div>
+          <p class="text-muted mt-2 mb-0">{% trans "Dons, engagement, impact." %}</p>
+        </div>
+      </a>
+    {% else %}
+      <div class="card shadow-sm border-0 h-100 opacity-75">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <strong class="h5 mb-0">❤️ {% trans "Social" %}</strong>
+            <span class="badge text-bg-light border">{% trans "Accès restreint" %}</span>
+          </div>
+          <p class="text-muted mt-2 mb-0">{% trans "Disponible selon votre rôle et vos droits." %}</p>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  {% if request.user.is_superuser or perms.dashboard.access_admin_area or perms.dashboard.validate_profiles %}
+    <div class="col-md-6 col-xl-4">
+      {% safe_url 'dashboard:admin:index' as url_admin_home %}
+      <a class="card shadow-sm border-0 h-100 dashboard-card-link" href="{{ url_admin_home|default:'#' }}">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <strong class="h5 mb-0">🛡️ {% trans "Administration" %}</strong>
+            <span class="text-muted">→</span>
+          </div>
+          <p class="text-muted mt-2 mb-0">{% trans "Paramètres, accès, validation, supervision." %}</p>
+        </div>
+      </a>
+    </div>
+  {% endif %}
+
+  <div class="col-md-6 col-xl-4">
+    {% safe_url 'dashboard:notes_list' as url_notes %}
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link" href="{{ url_notes|default:'#' }}">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <strong class="h5 mb-0">📝 {% trans "Notes" %}</strong>
+          <span class="text-muted">→</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">{% trans "Vos notes personnelles." %}</p>
+      </div>
+    </a>
+  </div>
+
+</div>
+{% endblock %}
+
+ {% endcomment %}
+
+
+
+
+{% comment %} {# templates/dashboard/dashboard_hub.html #}
+{% extends "dashboard/base.html" %}
+{% load static i18n dashboard_tags %}
+
+{% block title %}{% trans "Hub" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{# ✅ Topbar: on alimente title/subtitle/actions (style apps) #}
+{% block dashboard_header %}{% trans "Hub" %}{% endblock %}
+{% block dashboard_subheader %}{% trans "Choisissez votre espace." %}{% endblock %}
+
+{% block header_actions %}
+  {% safe_url 'dashboard:hub' as url_hub %}
+  {% safe_url 'dashboard:user:home' as url_user_home %}
+  {% safe_url 'dashboard:profile_edit' as url_profile_edit %}
+  {% safe_url 'accounts_users:web:auth:logout' as url_logout %}
+  {% if not url_logout %}{% safe_url 'accounts_users:web:logout' as url_logout %}{% endif %}
+
+  <div class="d-flex flex-wrap gap-2">
+    <a class="btn btn-outline-primary"
+       href="{{ url_hub|default:'#' }}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+      <i class="fas fa-layer-group me-2" aria-hidden="true"></i>{% trans "Hub" %}
+    </a>
+
+    <a class="btn btn-primary"
+       href="{{ url_user_home|default:'#' }}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+      <i class="fas fa-chart-line me-2" aria-hidden="true"></i>{% trans "Mon dashboard" %}
+    </a>
+
+    <a class="btn btn-outline-secondary"
+       href="{{ url_profile_edit|default:'#' }}">
+      <i class="fas fa-user me-2" aria-hidden="true"></i>{% trans "Profil" %}
+    </a>
+
+    <a class="btn btn-outline-danger"
+       href="{{ url_logout|default:'#' }}">
+      <i class="fas fa-sign-out-alt me-2" aria-hidden="true"></i>{% trans "Déconnexion" %}
+    </a>
+  </div>
+{% endblock %}
+
+{% block dashboard_content %}
+
+{# ✅ Badges "apps style" : contexte + rôle + statut #}
+<div class="mb-3 d-flex flex-wrap align-items-center gap-2">
+
+  {% if auth_pole %}
+    <span class="badge text-bg-light border">
+      {% if auth_pole == "social" %}❤️ {% trans "Social" %}
+      {% elif auth_pole == "economic" %}💼 {% trans "Économique" %}
+      {% else %}👤 {% trans "Général" %}
+      {% endif %}
+    </span>
+  {% endif %}
+
+  {% if request.user.is_staff %}
+    <span class="badge text-bg-success">🛡️ {% trans "Staff" %}</span>
+  {% else %}
+    <span class="badge text-bg-secondary">👤 {% trans "Utilisateur" %}</span>
+  {% endif %}
+
+  {% with ps=dashboard_profile_status|default:"" %}
+    {% if ps == "pending" %}
+      <span class="badge text-bg-warning">⏳ {% trans "En attente" %}</span>
+    {% elif ps == "rejected" %}
+      <span class="badge text-bg-danger">⛔ {% trans "Refusé" %}</span>
+    {% endif %}
+  {% endwith %}
+
+</div>
+
+{% if show_pending_banner %}
+  <div class="alert alert-{{ pending_banner_level }} d-flex align-items-start justify-content-between gap-3" role="alert">
+    <div>
+      <div class="fw-bold mb-1">
+        <i class="fas fa-info-circle me-1" aria-hidden="true"></i>
+        {{ pending_banner_title }}
+      </div>
+
+      <div class="small">
+        {{ pending_banner_text }}
+        {% if pending_kinds %}
+          <div class="mt-1">
+            <span class="fw-semibold">{% trans "En attente" %}:</span> {{ pending_kinds|join:", " }}
+          </div>
+        {% endif %}
+        {% if rejected_kinds %}
+          <div>
+            <span class="fw-semibold">{% trans "Refusé" %}:</span> {{ rejected_kinds|join:", " }}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if account_pending_url %}
+      <a class="btn btn-sm btn-outline-dark" href="{{ account_pending_url }}">
+        <i class="fas fa-eye me-1" aria-hidden="true"></i>{% trans "Détails" %}
+      </a>
+    {% endif %}
+  </div>
+{% endif %}
+
+{% if cards %}
+  {% include "dashboard/partials/_stats_cards.html" with cards=cards %}
+{% endif %}
+
+<div class="row g-3 g-md-4 mt-1">
+
+  <div class="col-md-6 col-xl-4">
+    {% safe_url 'dashboard:user:home' as url_user_home %}
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+       href="{{ url_user_home|default:'#' }}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <strong class="h5 mb-0">👤 {% trans "Utilisateur" %}</strong>
+          <span class="text-muted">→</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">{% trans "Commandes, profil, notes." %}</p>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-md-6 col-xl-4">
+    {% safe_url 'dashboard:formations:home' as url_formations_home %}
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+       href="{{ url_formations_home|default:'#' }}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <strong class="h5 mb-0">🎓 {% trans "Formations" %}</strong>
+          <span class="text-muted">→</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">{% trans "Mes cours, sessions, certificats." %}</p>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-md-6 col-xl-4">
+    {% safe_url 'dashboard:vendor:home' as url_vendor_home %}
+    {% if can_vendor %}
+      <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+         href="{{ url_vendor_home|default:'#' }}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <strong class="h5 mb-0">🏪 {% trans "Vendeur" %}</strong>
+            <span class="text-muted">→</span>
+          </div>
+          <p class="text-muted mt-2 mb-0">{% trans "Boutique, produits, commandes." %}</p>
+        </div>
+      </a>
+    {% else %}
+      <div class="card shadow-sm border-0 h-100 opacity-75">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <strong class="h5 mb-0">🏪 {% trans "Vendeur" %}</strong>
+            <span class="badge text-bg-light border">{% trans "Accès restreint" %}</span>
+          </div>
+          <p class="text-muted mt-2 mb-0">{% trans "Disponible après activation / validation." %}</p>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="col-md-6 col-xl-4">
+    {% safe_url 'dashboard:b2b:home' as url_b2b_home %}
+    {% if can_b2b %}
+      <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+         href="{{ url_b2b_home|default:'#' }}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <strong class="h5 mb-0">🏢 {% trans "B2B" %}</strong>
+            <span class="text-muted">→</span>
+          </div>
+          <p class="text-muted mt-2 mb-0">{% trans "Achats en gros, facturation." %}</p>
+        </div>
+      </a>
+    {% else %}
+      <div class="card shadow-sm border-0 h-100 opacity-75">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <strong class="h5 mb-0">🏢 {% trans "B2B" %}</strong>
+            <span class="badge text-bg-light border">{% trans "Accès restreint" %}</span>
+          </div>
+          <p class="text-muted mt-2 mb-0">{% trans "Disponible après validation entreprise." %}</p>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="col-md-6 col-xl-4">
+    {% safe_url 'dashboard:social:index' as url_social_home %}
+    {% if can_social %}
+      <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+         href="{{ url_social_home|default:'#' }}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <strong class="h5 mb-0">❤️ {% trans "Social" %}</strong>
+            <span class="text-muted">→</span>
+          </div>
+          <p class="text-muted mt-2 mb-0">{% trans "Dons, engagement, impact." %}</p>
+        </div>
+      </a>
+    {% else %}
+      <div class="card shadow-sm border-0 h-100 opacity-75">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <strong class="h5 mb-0">❤️ {% trans "Social" %}</strong>
+            <span class="badge text-bg-light border">{% trans "Accès restreint" %}</span>
+          </div>
+          <p class="text-muted mt-2 mb-0">{% trans "Rôle social non défini." %}</p>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  {% if request.user.is_staff %}
+    <div class="col-md-6 col-xl-4">
+      {% safe_url 'dashboard:admin:index' as url_admin_home %}
+      <a class="card shadow-sm border-0 h-100 dashboard-card-link" href="{{ url_admin_home|default:'#' }}">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <strong class="h5 mb-0">🛡️ {% trans "Admin" %}</strong>
+            <span class="text-muted">→</span>
+          </div>
+          <p class="text-muted mt-2 mb-0">{% trans "Validation profils, supervision." %}</p>
+        </div>
+      </a>
+    </div>
+  {% endif %}
+
+  <div class="col-md-6 col-xl-4">
+    {% safe_url 'dashboard:notes_list' as url_notes %}
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link" href="{{ url_notes|default:'#' }}">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <strong class="h5 mb-0">📝 {% trans "Notes" %}</strong>
+          <span class="text-muted">→</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">{% trans "Vos notes personnelles." %}</p>
+      </div>
+    </a>
+  </div>
+
+</div>
+{% endblock %}
+ {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/dashboard/dashboard_hub.html #}
+{% extends "dashboard/base.html" %}
+{% load static i18n dashboard_tags %}
+
+{% block title %}{% trans "Hub" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block dashboard_header %}📌 {% trans "Espace Dashboard" %}{% endblock %}
+
+{% block dashboard_subheader %}
+  <div class="text-muted">{% trans "Choisissez votre espace." %}</div>
+
+  <div class="mt-2 d-flex flex-wrap gap-2">
+    {% if auth_pole %}
+      <span class="badge text-bg-light border">
+        {% if auth_pole == "social" %}❤️ {% trans "Social" %}
+        {% elif auth_pole == "economic" %}💼 {% trans "Économique" %}
+        {% else %}👤 {% trans "Général" %}
+        {% endif %}
+      </span>
+    {% endif %}
+
+    {% if request.user.is_staff %}
+      <span class="badge text-bg-success">🛡️ {% trans "Staff" %}</span>
+    {% else %}
+      <span class="badge text-bg-secondary">👤 {% trans "Utilisateur" %}</span>
+    {% endif %}
+  </div>
+{% endblock %}
+
+{% block header_actions %}
+  <div class="d-flex flex-wrap gap-2">
+    <a class="btn btn-outline-primary"
+       href="{% url 'dashboard:hub' %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+      <i class="fas fa-layer-group me-2" aria-hidden="true"></i>{% trans "Hub" %}
+    </a>
+
+    <a class="btn btn-primary"
+       href="{% url 'dashboard:user:home' %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+      <i class="fas fa-chart-line me-2" aria-hidden="true"></i>{% trans "Mon dashboard" %}
+    </a>
+
+    <a class="btn btn-outline-secondary" href="{% url 'dashboard:profile_edit' %}">
+      <i class="fas fa-user me-2" aria-hidden="true"></i>{% trans "Profil" %}
+    </a>
+
+    <a class="btn btn-outline-danger" href="{% url 'accounts_users:web:auth:logout' %}">
+      <i class="fas fa-sign-out-alt me-2" aria-hidden="true"></i>{% trans "Déconnexion" %}
+    </a>
+  </div>
+{% endblock %}
+
+{% block dashboard_content %}
+
+{% if show_pending_banner %}
+  <div class="alert alert-{{ pending_banner_level }} d-flex align-items-start justify-content-between gap-3" role="alert">
+    <div>
+      <div class="fw-bold mb-1">
+        <i class="fas fa-info-circle me-1" aria-hidden="true"></i>
+        {{ pending_banner_title }}
+      </div>
+
+      <div class="small">
+        {{ pending_banner_text }}
+        {% if pending_kinds %}
+          <div class="mt-1">
+            <span class="fw-semibold">{% trans "En attente" %}:</span> {{ pending_kinds|join:", " }}
+          </div>
+        {% endif %}
+        {% if rejected_kinds %}
+          <div>
+            <span class="fw-semibold">{% trans "Refusé" %}:</span> {{ rejected_kinds|join:", " }}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if account_pending_url %}
+      <a class="btn btn-sm btn-outline-dark" href="{{ account_pending_url }}">
+        <i class="fas fa-eye me-1" aria-hidden="true"></i>{% trans "Détails" %}
+      </a>
+    {% endif %}
+  </div>
+{% endif %}
+
+{% if cards %}
+  {% include "dashboard/partials/_stats_cards.html" with cards=cards %}
+{% endif %}
+
+<div class="row g-3 g-md-4 mt-1">
+
+  <div class="col-md-6 col-xl-4">
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+       href="{% url 'dashboard:user:home' %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <strong class="h5 mb-0">👤 {% trans "Utilisateur" %}</strong>
+          <span class="text-muted">→</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">{% trans "Commandes, profil, notes." %}</p>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-md-6 col-xl-4">
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+       href="{% url 'dashboard:formations:home' %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <strong class="h5 mb-0">🎓 {% trans "Formations" %}</strong>
+          <span class="text-muted">→</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">{% trans "Mes cours, sessions, certificats." %}</p>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-md-6 col-xl-4">
+    {% if can_vendor %}
+      <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+         href="{% url 'dashboard:vendor:home' %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <strong class="h5 mb-0">🏪 {% trans "Vendeur" %}</strong>
+            <span class="text-muted">→</span>
+          </div>
+          <p class="text-muted mt-2 mb-0">{% trans "Boutique, produits, commandes." %}</p>
+        </div>
+      </a>
+    {% else %}
+      <div class="card shadow-sm border-0 h-100 opacity-75">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <strong class="h5 mb-0">🏪 {% trans "Vendeur" %}</strong>
+            <span class="badge text-bg-light border">{% trans "Accès restreint" %}</span>
+          </div>
+          <p class="text-muted mt-2 mb-0">{% trans "Disponible après activation / validation." %}</p>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="col-md-6 col-xl-4">
+    {% if can_b2b %}
+      <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+         href="{% url 'dashboard:b2b:home' %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <strong class="h5 mb-0">🏢 {% trans "B2B" %}</strong>
+            <span class="text-muted">→</span>
+          </div>
+          <p class="text-muted mt-2 mb-0">{% trans "Achats en gros, facturation." %}</p>
+        </div>
+      </a>
+    {% else %}
+      <div class="card shadow-sm border-0 h-100 opacity-75">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <strong class="h5 mb-0">🏢 {% trans "B2B" %}</strong>
+            <span class="badge text-bg-light border">{% trans "Accès restreint" %}</span>
+          </div>
+          <p class="text-muted mt-2 mb-0">{% trans "Disponible après validation entreprise." %}</p>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="col-md-6 col-xl-4">
+    {% if can_social %}
+      <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+         href="{% url 'dashboard:social:index' %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <strong class="h5 mb-0">❤️ {% trans "Social" %}</strong>
+            <span class="text-muted">→</span>
+          </div>
+          <p class="text-muted mt-2 mb-0">{% trans "Dons, engagement, impact." %}</p>
+        </div>
+      </a>
+    {% else %}
+      <div class="card shadow-sm border-0 h-100 opacity-75">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <strong class="h5 mb-0">❤️ {% trans "Social" %}</strong>
+            <span class="badge text-bg-light border">{% trans "Accès restreint" %}</span>
+          </div>
+          <p class="text-muted mt-2 mb-0">{% trans "Rôle social non défini." %}</p>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  {% if request.user.is_staff %}
+  <div class="col-md-6 col-xl-4">
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link" href="{% url 'dashboard:admin:index' %}">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <strong class="h5 mb-0">🛡️ {% trans "Admin" %}</strong>
+          <span class="text-muted">→</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">{% trans "Validation profils, supervision." %}</p>
+      </div>
+    </a>
+  </div>
+  {% endif %}
+
+  <div class="col-md-6 col-xl-4">
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link" href="{% url 'dashboard:notes_list' %}">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <strong class="h5 mb-0">📝 {% trans "Notes" %}</strong>
+          <span class="text-muted">→</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">{% trans "Vos notes personnelles." %}</p>
+      </div>
+    </a>
+  </div>
+
+</div>
+{% endblock %}
+ {% endcomment %}
+
+
+
+{% comment %} {# templates/dashboard/dashboard_hub.html #}
+{% extends "dashboard/base.html" %}
+{% load static i18n dashboard_tags %}
+
+{% block title %}{% trans "Hub" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{# ---- HEADER (compat premium) ---- #}
+{% block dashboard_header %}📌 {% trans "Espace Dashboard" %}{% endblock %}
+
+{% block dashboard_subheader %}
+{% with pole=auth_pole|default:""|default:login_context|default:"" %}
+    <div class="text-muted">{% trans "Choisissez votre espace." %}</div>
+
+    <div class="mt-2 d-flex flex-wrap gap-2">
+      {% if pole %}
+        <span class="badge text-bg-light border">
+          {% if pole == "social" %}❤️ {% trans "Social" %}
+          {% elif pole == "economic" %}💼 {% trans "Économique" %}
+          {% else %}👤 {% trans "Général" %}
+          {% endif %}
+        </span>
+      {% endif %}
+
+      {% if request.user.is_staff %}
+        <span class="badge text-bg-success">🛡️ {% trans "Staff" %}</span>
+      {% else %}
+        <span class="badge text-bg-secondary">👤 {% trans "Utilisateur" %}</span>
+      {% endif %}
+    </div>
+{% endwith %}
+{% endblock %}
+
+{% block header_actions %}
+{% with next_url=next_url|default:next|default:"" %}
+  <div class="d-flex flex-wrap gap-2">
+    <a class="btn btn-outline-primary"
+       href="{% url 'dashboard:hub' %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+      <i class="fas fa-layer-group me-2" aria-hidden="true"></i>{% trans "Hub" %}
+    </a>
+
+    <a class="btn btn-primary"
+       href="{% url 'dashboard:user:home' %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+      <i class="fas fa-chart-line me-2" aria-hidden="true"></i>{% trans "Mon dashboard" %}
+    </a>
+
+    <a class="btn btn-outline-secondary"
+       href="{% url 'accounts_users:web:profile:profile_edit' %}">
+      <i class="fas fa-user me-2" aria-hidden="true"></i>{% trans "Profil" %}
+    </a>
+
+    <a class="btn btn-outline-danger"
+       href="{% url 'accounts_users:web:auth:logout' %}">
+      <i class="fas fa-sign-out-alt me-2" aria-hidden="true"></i>{% trans "Déconnexion" %}
+    </a>
+  </div>
+{% endwith %}
+{% endblock %}
+
+{% block dashboard_content %}
+{% if show_pending_banner %}
+  <div class="alert alert-{{ pending_banner_level|default:'warning' }} d-flex align-items-start justify-content-between gap-3" role="alert">
+    <div>
+      <div class="fw-bold mb-1">
+        <i class="fas fa-info-circle me-1" aria-hidden="true"></i>
+        {{ pending_banner_title }}
+      </div>
+
+      <div class="small">
+        {{ pending_banner_text }}
+        {% if pending_kinds %}
+          <div class="mt-1"><span class="fw-semibold">{% trans "En attente" %}:</span> {{ pending_kinds|join:", " }}</div>
+        {% endif %}
+        {% if rejected_kinds %}
+          <div><span class="fw-semibold">{% trans "Refusé" %}:</span> {{ rejected_kinds|join:", " }}</div>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if account_pending_url %}
+      <a class="btn btn-sm btn-outline-dark" href="{{ account_pending_url }}">
+        <i class="fas fa-eye me-1" aria-hidden="true"></i>{% trans "Détails" %}
+      </a>
+    {% endif %}
+  </div>
+{% endif %}
+
+{% if cards %}
+  {% include "dashboard/partials/_stats_cards.html" with cards=cards %}
+{% endif %}
+
+{% with next_url=next_url|default:next|default:"" %}
+<div class="row g-3 g-md-4 mt-1">
+
+  {# -------- Utilisateur -------- #}
+  <div class="col-md-6 col-xl-4">
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+       href="{% url 'dashboard:user:home' %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <strong class="h5 mb-0">👤 {% trans "Utilisateur" %}</strong>
+          <span class="text-muted">→</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">{% trans "Commandes, profil, notes." %}</p>
+      </div>
+    </a>
+  </div>
+
+  {# -------- Formations -------- #}
+  <div class="col-md-6 col-xl-4">
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+       href="{% url 'dashboard:formations:home' %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <strong class="h5 mb-0">🎓 {% trans "Formations" %}</strong>
+          <span class="text-muted">→</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">{% trans "Mes cours, sessions, certificats." %}</p>
+      </div>
+    </a>
+  </div>
+
+  {# -------- Vendeur -------- #}
+  {% with ok=can_vendor|default:True %}
+  <div class="col-md-6 col-xl-4">
+    {% if ok %}
+      <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+         href="{% url 'dashboard:vendor:home' %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <strong class="h5 mb-0">🏪 {% trans "Vendeur" %}</strong>
+            <span class="text-muted">→</span>
+          </div>
+          <p class="text-muted mt-2 mb-0">{% trans "Boutique, produits, commandes." %}</p>
+        </div>
+      </a>
+    {% else %}
+      <div class="card shadow-sm border-0 h-100 opacity-75">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <strong class="h5 mb-0">🏪 {% trans "Vendeur" %}</strong>
+            <span class="badge text-bg-light border">{% trans "Accès restreint" %}</span>
+          </div>
+          <p class="text-muted mt-2 mb-0">{% trans "Disponible après validation ou activation du rôle." %}</p>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+  {% endwith %}
+
+  {# -------- B2B -------- #}
+  {% with ok=can_b2b|default:True %}
+  <div class="col-md-6 col-xl-4">
+    {% if ok %}
+      <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+         href="{% url 'dashboard:b2b:home' %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <strong class="h5 mb-0">🏢 {% trans "B2B" %}</strong>
+            <span class="text-muted">→</span>
+          </div>
+          <p class="text-muted mt-2 mb-0">{% trans "Achats en gros, facturation." %}</p>
+        </div>
+      </a>
+    {% else %}
+      <div class="card shadow-sm border-0 h-100 opacity-75">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <strong class="h5 mb-0">🏢 {% trans "B2B" %}</strong>
+            <span class="badge text-bg-light border">{% trans "Accès restreint" %}</span>
+          </div>
+          <p class="text-muted mt-2 mb-0">{% trans "Disponible après validation du compte entreprise." %}</p>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+  {% endwith %}
+
+  {# -------- Social -------- #}
+  {% with ok=can_social|default:True %}
+  <div class="col-md-6 col-xl-4">
+    {% if ok %}
+      <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+         href="{% url 'dashboard:social:index' %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <strong class="h5 mb-0">❤️ {% trans "Social" %}</strong>
+            <span class="text-muted">→</span>
+          </div>
+          <p class="text-muted mt-2 mb-0">{% trans "Dons, engagement, impact." %}</p>
+        </div>
+      </a>
+    {% else %}
+      <div class="card shadow-sm border-0 h-100 opacity-75">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <strong class="h5 mb-0">❤️ {% trans "Social" %}</strong>
+            <span class="badge text-bg-light border">{% trans "Accès restreint" %}</span>
+          </div>
+          <p class="text-muted mt-2 mb-0">{% trans "Disponible après activation / validation du profil." %}</p>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+  {% endwith %}
+
+  {# -------- Admin (staff) -------- #}
+  {% if request.user.is_staff %}
+  <div class="col-md-6 col-xl-4">
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+       href="{% url 'dashboard:admin:index' %}">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <strong class="h5 mb-0">🛡️ {% trans "Admin" %}</strong>
+          <span class="text-muted">→</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">{% trans "Validation profils, supervision." %}</p>
+      </div>
+    </a>
+  </div>
+  {% endif %}
+
+  {# -------- Notes -------- #}
+  <div class="col-md-6 col-xl-4">
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+       href="{% url 'dashboard:notes_list' %}">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <strong class="h5 mb-0">📝 {% trans "Notes" %}</strong>
+          <span class="text-muted">→</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">{% trans "Vos notes personnelles." %}</p>
+      </div>
+    </a>
+  </div>
+
+</div>
+{% endwith %}
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/dashboard/dashboard_hub.html #}
+{% extends "dashboard/base.html" %}
+{% load static i18n dashboard_tags %}
+
+{% block title %}{% trans "Hub" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{# ---- HEADER (compat premium) ---- #}
+{% block dashboard_header %}📌 {% trans "Espace Dashboard" %}{% endblock %}
+
+{% block dashboard_subheader %}
+{% with pole=auth_pole|default:login_context|default:"" %}
+    <div class="text-muted">{% trans "Choisissez votre espace." %}</div>
+
+    <div class="mt-2 d-flex flex-wrap gap-2">
+      {% if pole %}
+        <span class="badge text-bg-light border">
+          {% if pole == "social" %}❤️ {% trans "Social" %}
+          {% elif pole == "economic" %}💼 {% trans "Économique" %}
+          {% else %}👤 {% trans "Général" %}
+          {% endif %}
+        </span>
+      {% endif %}
+
+      {% if request.user.is_staff %}
+        <span class="badge text-bg-success">🛡️ {% trans "Staff" %}</span>
+      {% else %}
+        <span class="badge text-bg-secondary">👤 {% trans "Utilisateur" %}</span>
+      {% endif %}
+    </div>
+  {% endwith %}
+{% endblock %}
+
+{% block header_actions %}
+  {% with next_url=next_url|default:next|default:"" %}
+    <div class="d-flex flex-wrap gap-2">
+      <a class="btn btn-outline-primary"
+         href="{% url 'dashboard:hub' %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+        <i class="fas fa-layer-group me-2" aria-hidden="true"></i>{% trans "Hub" %}
+      </a>
+
+      <a class="btn btn-primary"
+         href="{% url 'dashboard:user:home' %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+        <i class="fas fa-chart-line me-2" aria-hidden="true"></i>{% trans "Mon dashboard" %}
+      </a>
+
+      {# IMPORTANT: harmonisé avec tes URLs “anciens chats” #}
+      <a class="btn btn-outline-secondary"
+         href="{% url 'accounts_users:web:profile:profile_edit' %}">
+        <i class="fas fa-user me-2" aria-hidden="true"></i>{% trans "Profil" %}
+      </a>
+
+      <a class="btn btn-outline-danger"
+         href="{% url 'accounts_users:web:auth:logout' %}">
+        <i class="fas fa-sign-out-alt me-2" aria-hidden="true"></i>{% trans "Déconnexion" %}
+      </a>
+    </div>
+  {% endwith %}
+{% endblock %}
+
+{# ---- CONTENT ---- #}
+{% block dashboard_content %}
+{# Banner pending/rejected (informatif, pas bloquant) #}
+{% if show_pending_banner %}
+  <div class="alert alert-{{ pending_banner_level|default:'warning' }} d-flex align-items-start justify-content-between gap-3" role="alert">
+    <div>
+      <div class="fw-bold mb-1">
+        <i class="fas fa-info-circle me-1" aria-hidden="true"></i>
+        {{ pending_banner_title }}
+      </div>
+
+      <div class="small">
+        {{ pending_banner_text }}
+        {% if pending_kinds %}
+          <div class="mt-1"><span class="fw-semibold">{% trans "En attente" %}:</span> {{ pending_kinds|join:", " }}</div>
+        {% endif %}
+        {% if rejected_kinds %}
+          <div><span class="fw-semibold">{% trans "Refusé" %}:</span> {{ rejected_kinds|join:", " }}</div>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if account_pending_url %}
+      <a class="btn btn-sm btn-outline-dark" href="{{ account_pending_url }}">
+        <i class="fas fa-eye me-1" aria-hidden="true"></i>{% trans "Détails" %}
+      </a>
+    {% endif %}
+  </div>
+{% endif %}
+
+  {# ========================= #}
+  {#        Stats cards        #}
+  {# ========================= #}
+  {% if cards %}
+    {% include "dashboard/partials/_stats_cards.html" with cards=cards %}
+  {% endif %}
+
+  {# ========================= #}
+  {#          Grille           #}
+  {# ========================= #}
+  {% with next_url=next_url|default:next|default:"" %}
+    <div class="row g-3 g-md-4 mt-1">
+
+      {# -------- Utilisateur -------- #}
+      <div class="col-md-6 col-xl-4">
+        <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+           href="{% url 'dashboard:user:home' %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between">
+              <strong class="h5 mb-0">👤 {% trans "Utilisateur" %}</strong>
+              <span class="text-muted">→</span>
+            </div>
+            <p class="text-muted mt-2 mb-0">{% trans "Commandes, profil, notes." %}</p>
+          </div>
+        </a>
+      </div>
+
+      {# -------- Formations -------- #}
+      <div class="col-md-6 col-xl-4">
+        <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+           href="{% url 'dashboard:formations:home' %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between">
+              <strong class="h5 mb-0">🎓 {% trans "Formations" %}</strong>
+              <span class="text-muted">→</span>
+            </div>
+            <p class="text-muted mt-2 mb-0">{% trans "Mes cours, sessions, certificats." %}</p>
+          </div>
+        </a>
+      </div>
+
+      {# -------- Vendeur -------- #}
+      {% with ok=can_vendor|default:True %}
+      <div class="col-md-6 col-xl-4">
+        {% if ok %}
+          <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+             href="{% url 'dashboard:vendor:home' %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+            <div class="card-body">
+              <div class="d-flex align-items-center justify-content-between">
+                <strong class="h5 mb-0">🏪 {% trans "Vendeur" %}</strong>
+                <span class="text-muted">→</span>
+              </div>
+              <p class="text-muted mt-2 mb-0">{% trans "Boutique, produits, commandes." %}</p>
+            </div>
+          </a>
+        {% else %}
+          <div class="card shadow-sm border-0 h-100 opacity-75">
+            <div class="card-body">
+              <div class="d-flex align-items-center justify-content-between">
+                <strong class="h5 mb-0">🏪 {% trans "Vendeur" %}</strong>
+                <span class="badge text-bg-light border">{% trans "Accès restreint" %}</span>
+              </div>
+              <p class="text-muted mt-2 mb-0">{% trans "Disponible après validation ou activation du rôle." %}</p>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+      {% endwith %}
+
+      {# -------- B2B -------- #}
+      {% with ok=can_b2b|default:True %}
+      <div class="col-md-6 col-xl-4">
+        {% if ok %}
+          <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+             href="{% url 'dashboard:b2b:home' %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+            <div class="card-body">
+              <div class="d-flex align-items-center justify-content-between">
+                <strong class="h5 mb-0">🏢 {% trans "B2B" %}</strong>
+                <span class="text-muted">→</span>
+              </div>
+              <p class="text-muted mt-2 mb-0">{% trans "Achats en gros, facturation." %}</p>
+            </div>
+          </a>
+        {% else %}
+          <div class="card shadow-sm border-0 h-100 opacity-75">
+            <div class="card-body">
+              <div class="d-flex align-items-center justify-content-between">
+                <strong class="h5 mb-0">🏢 {% trans "B2B" %}</strong>
+                <span class="badge text-bg-light border">{% trans "Accès restreint" %}</span>
+              </div>
+              <p class="text-muted mt-2 mb-0">{% trans "Disponible après validation du compte entreprise." %}</p>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+      {% endwith %}
+
+      {# -------- Social -------- #}
+      {% with ok=can_social|default:True %}
+      <div class="col-md-6 col-xl-4">
+        {% if ok %}
+          <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+             href="{% url 'dashboard:social:index' %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+            <div class="card-body">
+              <div class="d-flex align-items-center justify-content-between">
+                <strong class="h5 mb-0">❤️ {% trans "Social" %}</strong>
+                <span class="text-muted">→</span>
+              </div>
+              <p class="text-muted mt-2 mb-0">{% trans "Dons, engagement, impact." %}</p>
+            </div>
+          </a>
+        {% else %}
+          <div class="card shadow-sm border-0 h-100 opacity-75">
+            <div class="card-body">
+              <div class="d-flex align-items-center justify-content-between">
+                <strong class="h5 mb-0">❤️ {% trans "Social" %}</strong>
+                <span class="badge text-bg-light border">{% trans "Accès restreint" %}</span>
+              </div>
+              <p class="text-muted mt-2 mb-0">{% trans "Disponible après activation / validation du profil." %}</p>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+      {% endwith %}
+
+      {# -------- Admin (staff) -------- #}
+      {% if request.user.is_staff %}
+        <div class="col-md-6 col-xl-4">
+          <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+             href="{% url 'dashboard:admin:index' %}">
+            <div class="card-body">
+              <div class="d-flex align-items-center justify-content-between">
+                <strong class="h5 mb-0">🛡️ {% trans "Admin" %}</strong>
+                <span class="text-muted">→</span>
+              </div>
+              <p class="text-muted mt-2 mb-0">{% trans "Validation profils, supervision." %}</p>
+            </div>
+          </a>
+        </div>
+      {% endif %}
+
+      {# -------- Notes -------- #}
+      <div class="col-md-6 col-xl-4">
+        <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+           href="{% url 'dashboard:notes_list' %}">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between">
+              <strong class="h5 mb-0">📝 {% trans "Notes" %}</strong>
+              <span class="text-muted">→</span>
+            </div>
+            <p class="text-muted mt-2 mb-0">{% trans "Vos notes personnelles." %}</p>
+          </div>
+        </a>
+      </div>
+
+    </div>
+  {% endwith %}
+{% endblock %} {% endcomment %}
+
+
+
+
+{% comment %} {# templates/dashboard/dashboard_hub.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n dashboard_tags %}
+
+{% block title %}{% trans "Hub" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block dashboard_header %}
+  {% with next_url=next_url|default:next|default:"" pole=auth_pole|default:login_context|default:"" %}
+  <div class="d-flex flex-wrap align-items-start justify-content-between gap-2">
+    <div>
+      <div class="h4 fw-bold mb-1">📌 {% trans "Espace Dashboard" %}</div>
+      <div class="text-muted">{% trans "Choisissez votre espace." %}</div>
+
+      {# ========================= #}
+      {#          Badges           #}
+      {# ========================= #}
+      <div class="mt-2 d-flex flex-wrap gap-2">
+        {% if pole %}
+          <span class="badge text-bg-light border">
+            {% if pole == "social" %}❤️ {% trans "Social" %}
+            {% elif pole == "economic" %}💼 {% trans "Économique" %}
+            {% else %}👤 {% trans "Général" %}
+            {% endif %}
+          </span>
+        {% endif %}
+
+        {% if request.user.is_staff %}
+          <span class="badge text-bg-success">🛡️ {% trans "Staff" %}</span>
+        {% else %}
+          <span class="badge text-bg-secondary">👤 {% trans "Utilisateur" %}</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="d-flex flex-wrap gap-2">
+      <a class="btn btn-outline-primary"
+         href="{% url 'dashboard:hub' %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+        <i class="fas fa-layer-group me-2"></i>{% trans "Hub" %}
+      </a>
+
+      <a class="btn btn-primary"
+         href="{% url 'dashboard:user:home' %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+        <i class="fas fa-chart-line me-2"></i>{% trans "Mon dashboard" %}
+      </a>
+
+      <a class="btn btn-outline-secondary"
+         href="{% url 'dashboard:profile' %}">
+        <i class="fas fa-user me-2"></i>{% trans "Profil" %}
+      </a>
+
+      <a class="btn btn-outline-danger"
+         href="{% url 'accounts_users:web:auth:logout' %}">
+        <i class="fas fa-sign-out-alt me-2"></i>{% trans "Déconnexion" %}
+      </a>
+    </div>
+  </div>
+  {% endwith %}
+{% endblock %}
+
+{% block dashboard_content %}
+  {# ========================= #}
+  {#        Stats cards        #}
+  {# ========================= #}
+  {% if cards %}
+    {% include "dashboard/partials/_stats_cards.html" with cards=cards %}
+  {% endif %}
+
+  {# ========================= #}
+  {#          Grille           #}
+  {# ========================= #}
+  {% with next_url=next_url|default:next|default:"" %}
+  <div class="row g-3 g-md-4 mt-1">
+
+    {# ========================= #}
+    {#         Utilisateur       #}
+    {# ========================= #}
+    <div class="col-md-6 col-xl-4">
+      <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+         href="{% url 'dashboard:user:home' %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <strong class="h5 mb-0">👤 {% trans "Utilisateur" %}</strong>
+            <span class="text-muted">→</span>
+          </div>
+          <p class="text-muted mt-2 mb-0">{% trans "Commandes, profil, notes." %}</p>
+        </div>
+      </a>
+    </div>
+
+    {# ========================= #}
+    {#         Formations        #}
+    {# ========================= #}
+
+    <div class="col-md-6 col-xl-4">
+      <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+        href="{% url 'dashboard:formations:home' %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <strong class="h5 mb-0">🎓 {% trans "Formations" %}</strong>
+            <span class="text-muted">→</span>
+          </div>
+          <p class="text-muted mt-2 mb-0">{% trans "Mes cours, sessions, certificats." %}</p>
+        </div>
+      </a>
+    </div>
+
+
+    {# ========================= #}
+    {#           Vendeur         #}
+    {# ========================= #}
+    {% with ok=can_vendor|default:True %}
+    <div class="col-md-6 col-xl-4">
+      {% if ok %}
+        <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+           href="{% url 'dashboard:vendor:home' %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between">
+              <strong class="h5 mb-0">🏪 {% trans "Vendeur" %}</strong>
+              <span class="text-muted">→</span>
+            </div>
+            <p class="text-muted mt-2 mb-0">{% trans "Boutique, produits, commandes." %}</p>
+          </div>
+        </a>
+      {% else %}
+        <div class="card shadow-sm border-0 h-100 opacity-75">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between">
+              <strong class="h5 mb-0">🏪 {% trans "Vendeur" %}</strong>
+              <span class="badge text-bg-light border">{% trans "Accès restreint" %}</span>
+            </div>
+            <p class="text-muted mt-2 mb-0">{% trans "Disponible après validation ou activation du rôle." %}</p>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+    {% endwith %}
+
+    {# ========================= #}
+    {#            B2B            #}
+    {# ========================= #}
+    {% with ok=can_b2b|default:True %}
+    <div class="col-md-6 col-xl-4">
+      {% if ok %}
+        <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+           href="{% url 'dashboard:b2b:home' %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between">
+              <strong class="h5 mb-0">🏢 {% trans "B2B" %}</strong>
+              <span class="text-muted">→</span>
+            </div>
+            <p class="text-muted mt-2 mb-0">{% trans "Achats en gros, facturation." %}</p>
+          </div>
+        </a>
+      {% else %}
+        <div class="card shadow-sm border-0 h-100 opacity-75">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between">
+              <strong class="h5 mb-0">🏢 {% trans "B2B" %}</strong>
+              <span class="badge text-bg-light border">{% trans "Accès restreint" %}</span>
+            </div>
+            <p class="text-muted mt-2 mb-0">{% trans "Disponible après validation du compte entreprise." %}</p>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+    {% endwith %}
+
+    {# ========================= #}
+    {#           Social          #}
+    {# ========================= #}
+    {% with ok=can_social|default:True %}
+    <div class="col-md-6 col-xl-4">
+      {% if ok %}
+        <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+           href="{% url 'dashboard:social:index' %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between">
+              <strong class="h5 mb-0">❤️ {% trans "Social" %}</strong>
+              <span class="text-muted">→</span>
+            </div>
+            <p class="text-muted mt-2 mb-0">{% trans "Dons, engagement, impact." %}</p>
+          </div>
+        </a>
+      {% else %}
+        <div class="card shadow-sm border-0 h-100 opacity-75">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between">
+              <strong class="h5 mb-0">❤️ {% trans "Social" %}</strong>
+              <span class="badge text-bg-light border">{% trans "Accès restreint" %}</span>
+            </div>
+            <p class="text-muted mt-2 mb-0">{% trans "Disponible après activation / validation du profil." %}</p>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+    {% endwith %}
+
+    {# ========================= #}
+    {#            Admin          #}
+    {# ========================= #}
+    {% if request.user.is_staff %}
+      <div class="col-md-6 col-xl-4">
+        <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+           href="{% url 'dashboard:admin:index' %}">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between">
+              <strong class="h5 mb-0">🛡️ {% trans "Admin" %}</strong>
+              <span class="text-muted">→</span>
+            </div>
+            <p class="text-muted mt-2 mb-0">{% trans "Validation profils, supervision." %}</p>
+          </div>
+        </a>
+      </div>
+    {% endif %}
+
+    {# ========================= #}
+    {#            Notes          #}
+    {# ========================= #}
+    <div class="col-md-6 col-xl-4">
+      <a class="card shadow-sm border-0 h-100 dashboard-card-link"
+         href="{% url 'dashboard:notes_list' %}">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <strong class="h5 mb-0">📝 {% trans "Notes" %}</strong>
+            <span class="text-muted">→</span>
+          </div>
+          <p class="text-muted mt-2 mb-0">{% trans "Vos notes personnelles." %}</p>
+        </div>
+      </a>
+    </div>
+
+  </div>
+  {% endwith %}
+{% endblock %}
+
+ {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/dashboard/dashboard_hub.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Hub" %} | {{ PROJECT_NAME }}{% endblock %}
+
+{% block dashboard_header %}
+  <div class="db-page">
+    <h1 class="fw-bold mb-2">📌 {% trans "Espace Dashboard" %}</h1>
+    <p class="text-muted mb-0">{% trans "Choisissez votre espace." %}</p>
+  </div>
+{% endblock %}
+
+{% block dashboard_content %}
+
+{% if cards %}
+  {% include "dashboard/partials/_stats_cards.html" with cards=cards %}
+{% endif %}
+
+<div class="row g-3 g-md-4 mt-1">
+
+  <div class="col-md-6 col-xl-4">
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link" href="{% url 'dashboard:user:home' %}">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <strong class="h5 mb-0">👤 {% trans "Utilisateur" %}</strong>
+          <span class="text-muted">→</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">{% trans "Commandes, profil, notes." %}</p>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-md-6 col-xl-4">
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link" href="{% url 'dashboard:vendor:home' %}">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <strong class="h5 mb-0">🏪 {% trans "Vendeur" %}</strong>
+          <span class="text-muted">→</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">{% trans "Boutique, produits, commandes." %}</p>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-md-6 col-xl-4">
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link" href="{% url 'dashboard:b2b:home' %}">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <strong class="h5 mb-0">🏢 {% trans "B2B" %}</strong>
+          <span class="text-muted">→</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">{% trans "Achats en gros, facturation." %}</p>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-md-6 col-xl-4">
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link" href="{% url 'dashboard:social:index' %}">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <strong class="h5 mb-0">❤️ {% trans "Social" %}</strong>
+          <span class="text-muted">→</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">{% trans "Dons, engagement, impact." %}</p>
+      </div>
+    </a>
+  </div>
+
+  {% if request.user.is_staff %}
+  <div class="col-md-6 col-xl-4">
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link" href="{% url 'dashboard:admin:index' %}">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <strong class="h5 mb-0">🛡️ {% trans "Admin" %}</strong>
+          <span class="text-muted">→</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">{% trans "Validation profils, supervision." %}</p>
+      </div>
+    </a>
+  </div>
+  {% endif %}
+
+  <div class="col-md-6 col-xl-4">
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link" href="{% url 'dashboard:notes_list' %}">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <strong class="h5 mb-0">📝 {% trans "Notes" %}</strong>
+          <span class="text-muted">→</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">{% trans "Vos notes personnelles." %}</p>
+      </div>
+    </a>
+  </div>
+
+</div>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/dashboard/hub.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Hub" %} | {{ PROJECT_NAME }}{% endblock %}
+
+{% block dashboard_header %}
+<h1 class="fw-bold mb-2">📌 {% trans "Espace Dashboard" %}</h1>
+<p class="text-muted mb-0">{% trans "Choisissez votre espace." %}</p>
+{% endblock %}
+
+{% block dashboard_content %}
+{% if cards %}
+  {% include "dashboard/partials/_stats_cards.html" with cards=cards %}
+{% endif %}
+
+<div class="row g-3 g-md-4 mt-1">
+  <div class="col-md-6 col-xl-4">
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link" href="{% url 'dashboard:user:home' %}">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <strong class="h5 mb-0">👤 {% trans "Utilisateur" %}</strong>
+          <span class="text-muted">→</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">{% trans "Commandes, profil, notes." %}</p>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-md-6 col-xl-4">
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link" href="{% url 'dashboard:vendor:home' %}">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <strong class="h5 mb-0">🏪 {% trans "Vendeur" %}</strong>
+          <span class="text-muted">→</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">{% trans "Boutique, produits, commandes." %}</p>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-md-6 col-xl-4">
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link" href="{% url 'dashboard:b2b:home' %}">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <strong class="h5 mb-0">🏢 {% trans "B2B" %}</strong>
+          <span class="text-muted">→</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">{% trans "Achats en gros, facturation." %}</p>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-md-6 col-xl-4">
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link" href="{% url 'dashboard:social:index' %}">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <strong class="h5 mb-0">❤️ {% trans "Social" %}</strong>
+          <span class="text-muted">→</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">{% trans "Dons, engagement, impact." %}</p>
+      </div>
+    </a>
+  </div>
+
+  {% if request.user.is_staff %}
+  <div class="col-md-6 col-xl-4">
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link" href="{% url 'dashboard:admin:index' %}">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <strong class="h5 mb-0">🛡️ {% trans "Admin" %}</strong>
+          <span class="text-muted">→</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">{% trans "Validation profils, supervision." %}</p>
+      </div>
+    </a>
+  </div>
+  {% endif %}
+
+  <div class="col-md-6 col-xl-4">
+    <a class="card shadow-sm border-0 h-100 dashboard-card-link" href="{% url 'dashboard:notes_list' %}">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <strong class="h5 mb-0">📝 {% trans "Notes" %}</strong>
+          <span class="text-muted">→</span>
+        </div>
+        <p class="text-muted mt-2 mb-0">{% trans "Vos notes personnelles." %}</p>
+      </div>
+    </a>
+  </div>
+</div>
+{% endblock %}
+ {% endcomment %}
+
+
+
+
+
+{% comment %} {% load i18n %}
+
+<h2>{% trans "Tableau de bord" %}</h2>
+
+<div class="hub-grid">
+
+    {% if has_social_access %}
+    <a class="hub-card social" href="{% url 'dashboard:social_router' %}">
+        🟣
+        <h3>{% trans "Pôle Social" %}</h3>
+        <p>{% trans "Dons, engagements, impact social" %}</p>
+    </a>
+    {% endif %}
+
+    {% if has_eco_access %}
+    <a class="hub-card eco" href="{% url 'dashboard:router' %}">
+        🔵
+        <h3>{% trans "Pôle Économique" %}</h3>
+        <p>{% trans "Commandes, ventes, services" %}</p>
+    </a>
+    {% endif %}
+
+</div> {% endcomment %}

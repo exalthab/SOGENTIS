@@ -1,0 +1,580 @@
+{% comment %} {# accounts_users/registration/register_social_form.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Inscription – Engagement social | SOGENTIS" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<form method="post" enctype="multipart/form-data" novalidate>
+  {% csrf_token %}
+
+  <!-- =============================== -->
+  <!-- ERREURS GLOBALES -->
+  <!-- =============================== -->
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger">
+      {{ form.non_field_errors }}
+    </div>
+  {% endif %}
+
+  {% if profile_form.non_field_errors %}
+    <div class="alert alert-danger">
+      {{ profile_form.non_field_errors }}
+    </div>
+  {% endif %}
+
+  <!-- =============================== -->
+  <!-- COMPTE UTILISATEUR -->
+  <!-- =============================== -->
+  <h5 class="fw-bold mb-3">{% trans "Informations du compte" %}</h5>
+
+  {% for field in form %}
+    <div class="mb-3">
+      <label class="form-label">
+        {{ field.label }} <span class="text-danger">*</span>
+      </label>
+      {{ field }}
+      {% if field.errors %}
+        <div class="invalid-feedback d-block">
+          {{ field.errors }}
+        </div>
+      {% endif %}
+    </div>
+  {% endfor %}
+
+  <!-- =============================== -->
+  <!-- IDENTITÉ PERSONNELLE -->
+  <!-- =============================== -->
+  <h5 class="fw-bold mt-4 mb-3">{% trans "Identité personnelle" %}</h5>
+
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <label class="form-label">
+        {{ profile_form.last_name.label }} <span class="text-danger">*</span>
+      </label>
+      {{ profile_form.last_name }}
+      {{ profile_form.last_name.errors }}
+    </div>
+
+    <div class="col-md-6 mb-3">
+      <label class="form-label">
+        {{ profile_form.first_name.label }} <span class="text-danger">*</span>
+      </label>
+      {{ profile_form.first_name }}
+      {{ profile_form.first_name.errors }}
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <label class="form-label">{{ profile_form.middle_names.label }}</label>
+      {{ profile_form.middle_names }}
+      {{ profile_form.middle_names.errors }}
+    </div>
+
+    <div class="col-md-6 mb-3">
+      <label class="form-label">{{ profile_form.nickname.label }}</label>
+      {{ profile_form.nickname }}
+      {{ profile_form.nickname.errors }}
+    </div>
+  </div>
+
+  <!-- =============================== -->
+  <!-- NAISSANCE -->
+  <!-- =============================== -->
+  <h5 class="fw-bold mt-4 mb-3">{% trans "Informations de naissance" %}</h5>
+
+  <div class="row">
+    <div class="col-md-4 mb-3">
+      <label class="form-label">{{ profile_form.date_of_birth.label }}</label>
+      {{ profile_form.date_of_birth }}
+      {{ profile_form.date_of_birth.errors }}
+    </div>
+
+    <div class="col-md-4 mb-3">
+      <label class="form-label">{{ profile_form.place_of_birth.label }}</label>
+      {{ profile_form.place_of_birth }}
+      {{ profile_form.place_of_birth.errors }}
+    </div>
+
+    <div class="col-md-4 mb-3">
+      <label class="form-label">{{ profile_form.country_of_birth.label }}</label>
+      {{ profile_form.country_of_birth }}
+      {{ profile_form.country_of_birth.errors }}
+    </div>
+  </div>
+
+  <!-- =============================== -->
+  <!-- RÉSIDENCE -->
+  <!-- =============================== -->
+  <h5 class="fw-bold mt-4 mb-3">{% trans "Lieu de résidence" %}</h5>
+
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <label class="form-label">
+        {{ profile_form.country_of_residence.label }}
+        <span class="text-danger">*</span>
+      </label>
+      {{ profile_form.country_of_residence }}
+      {{ profile_form.country_of_residence.errors }}
+    </div>
+
+    <div class="col-md-6 mb-3">
+      <label class="form-label">
+        {{ profile_form.city_of_residence.label }}
+        <span class="text-danger">*</span>
+      </label>
+      {{ profile_form.city_of_residence }}
+      {{ profile_form.city_of_residence.errors }}
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">{{ profile_form.address.label }}</label>
+    {{ profile_form.address }}
+    {{ profile_form.address.errors }}
+  </div>
+
+  <!-- =============================== -->
+  <!-- ACTIVITÉ PROFESSIONNELLE -->
+  <!-- =============================== -->
+  <h5 class="fw-bold mt-4 mb-3">{% trans "Activité professionnelle" %}</h5>
+
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <label class="form-label">{{ profile_form.profession.label }}</label>
+      {{ profile_form.profession }}
+      {{ profile_form.profession.errors }}
+    </div>
+
+    <div class="col-md-6 mb-3">
+      <label class="form-label">{{ profile_form.function.label }}</label>
+      {{ profile_form.function }}
+      {{ profile_form.function.errors }}
+    </div>
+  </div>
+
+  <!-- =============================== -->
+  <!-- ENGAGEMENT SOCIAL -->
+  <!-- =============================== -->
+  <h5 class="fw-bold mt-4 mb-3">{% trans "Engagement social" %}</h5>
+
+  <div class="mb-3">
+    <label class="form-label">
+      {{ profile_form.membership_role.label }}
+      <span class="text-danger">*</span>
+    </label>
+    {{ profile_form.membership_role }}
+    {{ profile_form.membership_role.errors }}
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">{{ profile_form.message.label }}</label>
+    {{ profile_form.message }}
+    {{ profile_form.message.errors }}
+  </div>
+
+  <!-- =============================== -->
+  <!-- DOCUMENTS -->
+  <!-- =============================== -->
+  <h5 class="fw-bold mt-4 mb-3">{% trans "Documents" %}</h5>
+
+  <div class="mb-3">
+    <label class="form-label">{{ profile_form.profile_picture.label }}</label>
+    {{ profile_form.profile_picture }}
+    {{ profile_form.profile_picture.errors }}
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">
+      {{ profile_form.judicial_record.label }}
+      <span class="text-danger">*</span>
+    </label>
+    {{ profile_form.judicial_record }}
+    {{ profile_form.judicial_record.errors }}
+  </div>
+
+  <!-- =============================== -->
+  <!-- CONDITIONS -->
+  <!-- =============================== -->
+  <div class="form-check mt-4 mb-4">
+    {{ profile_form.terms }}
+    <label class="form-check-label">
+      {% trans "J’accepte les conditions générales et certifie l’authenticité de mes informations." %}
+    </label>
+    {{ profile_form.terms.errors }}
+  </div>
+
+  <div class="d-grid">
+    <button type="submit" class="btn btn-success fw-bold py-2">
+      {% trans "Créer mon compte" %}
+    </button>
+  </div>
+</form>
+
+<div class="text-center mt-3 small">
+  {% trans "Déjà inscrit ?" %}
+  <a href="{% url 'accounts_users_web:login' %}">
+    {% trans "Se connecter" %}
+  </a>
+</div>
+
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+
+
+{% comment %} {# accounts_users/registration/register_social_form.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "S'inscrire | SOGENTIS" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="auth-shell py-4">
+  <div class="auth-card mx-auto">
+    <div class="card-body">
+
+      <h3 class="text-center mb-3 fw-bold">
+        {% trans "Créer un compte" %}
+      </h3>
+
+      {# ===== Messages Django ===== #}
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} text-center">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+
+        {{ form.non_field_errors }}
+        {{ profile_form.non_field_errors }}
+
+        {# ===================================================== #}
+        {#                   COMPTE UTILISATEUR                #}
+        {# ===================================================== #}
+        {% for field in form %}
+          <div class="mb-3">
+            <label class="form-label" for="{{ field.id_for_label }}">
+              {{ field.label }}{% if field.field.required %} *{% endif %}
+            </label>
+            {{ field }}
+            {% if field.errors %}
+              <div class="text-danger small">{{ field.errors|join:", " }}</div>
+            {% endif %}
+          </div>
+        {% endfor %}
+
+        {# ===================================================== #}
+        {#                   PROFIL SOCIAL                     #}
+        {# ===================================================== #}
+
+        {# Nom complet #}
+        <div class="mb-3">
+          <label class="form-label">{{ profile_form.full_name.label }} *</label>
+          {{ profile_form.full_name }}
+          {{ profile_form.full_name.errors }}
+        </div>
+
+        {# Téléphone #}
+        <div class="mb-3">
+          <label class="form-label">{{ profile_form.phone.label }} *</label>
+          {{ profile_form.phone }}
+          {{ profile_form.phone.errors }}
+        </div>
+
+        {# Pays #}
+        <div class="mb-3">
+          <label class="form-label">{{ profile_form.country.label }} *</label>
+          {{ profile_form.country }}
+          {{ profile_form.country.errors }}
+        </div>
+
+        {# Type d’adhésion #}
+        <div class="mb-3">
+          <label class="form-label">{{ profile_form.membership_role.label }} *</label>
+          {{ profile_form.membership_role }}
+          {{ profile_form.membership_role.errors }}
+        </div>
+
+        {# Message #}
+        <div class="mb-3">
+          <label class="form-label">{{ profile_form.message.label }}</label>
+          {{ profile_form.message }}
+          {{ profile_form.message.errors }}
+        </div>
+
+        {# Photo de profil #}
+        <div class="mb-3">
+          <label class="form-label">{{ profile_form.profile_picture.label }}</label>
+          {{ profile_form.profile_picture }}
+          {{ profile_form.profile_picture.errors }}
+        </div>
+
+        {# Casier judiciaire #}
+        <div class="mb-3">
+          <label class="form-label">{{ profile_form.judicial_record.label }} *</label>
+          {{ profile_form.judicial_record }}
+          {{ profile_form.judicial_record.errors }}
+          <div id="pdf-preview" class="mt-2"></div>
+        </div>
+
+        {# Conditions générales #}
+        <div class="mb-3 form-check">
+          {{ profile_form.terms }}
+          <label class="form-check-label">
+            {% trans "J'accepte les conditions générales et confirme sur mon honneur que mon identification est authentique" %}
+          </label>
+          {{ profile_form.terms.errors }}
+        </div>
+
+        <div class="d-grid">
+          <button type="submit" class="btn btn-success fw-bold">
+            {% trans "S'inscrire" %}
+          </button>
+        </div>
+      </form>
+
+      <div class="text-center mt-3">
+        <small>
+          {% trans "Déjà inscrit ?" %}
+          <a href="{% url 'accounts_users_web:login' %}">
+            {% trans "Se connecter" %}
+          </a>
+        </small>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+{% endblock %}
+ {% endcomment %}
+
+
+
+
+
+{% comment %} {# /accounts_users/registration/social.html #}
+
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "S'inscrire | SOGENTIS" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="auth-shell py-4">
+  <div class="auth-card mx-auto">
+    <div class="card-body">
+
+      <h3 class="text-center mb-3 fw-bold">
+        {% trans "Créer un compte" %}
+      </h3>
+
+      {# ----------------------------------------------- #}
+      {#               Messages Django                   #}
+      {# ----------------------------------------------- #}
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} text-center" role="alert">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      {# Message de succès après création #}
+      {% if account_created %}
+        <div class="alert alert-success text-center" role="alert">
+          {% trans "Votre compte a été créé avec succès. Vous allez être redirigé vers la page d’accueil…" %}
+        </div>
+        <script>
+          setTimeout(() => { window.location.href = "{% url 'home' %}"; }, 5000);
+        </script>
+      {% endif %}
+
+      <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+
+        {{ form.non_field_errors }}
+        {{ profile_form.non_field_errors }}
+
+        {# ----------------------------------------------- #}
+        {#             CHAMPS DU FORMULAIRE USER           #}
+        {# ----------------------------------------------- #}
+        {% for field in form %}
+          <div class="mb-3">
+            <label class="form-label" for="{{ field.id_for_label }}">
+              {{ field.label }}{% if field.field.required %} *{% endif %}
+            </label>
+            {{ field }}
+            {% if field.errors %}
+              <div class="text-danger small">{{ field.errors|join:", " }}</div>
+            {% endif %}
+          </div>
+        {% endfor %}
+
+        {# ----------------------------------------------- #}
+        {#        CHAMPS DU PROFILE SAUF spéciaux          #}
+        {# ----------------------------------------------- #}
+        {% for field in profile_form %}
+          {% if field.name not in "terms judicial_record profile_picture" %}
+            <div class="mb-3">
+              <label class="form-label" for="{{ field.id_for_label }}">
+                {{ field.label }}{% if field.field.required %} *{% endif %}
+              </label>
+              {{ field }}
+              {% if field.errors %}
+                <div class="text-danger small">{{ field.errors|join:", " }}</div>
+              {% endif %}
+            </div>
+          {% endif %}
+        {% endfor %}
+
+        {# ----------------------------------------------- #}
+        {#                 PROFILE PICTURE                 #}
+        {# ----------------------------------------------- #}
+        <div class="mb-3">
+          <label class="form-label" for="{{ profile_form.profile_picture.id_for_label }}">
+            {{ profile_form.profile_picture.label }}
+          </label>
+          {{ profile_form.profile_picture }}
+          {% for error in profile_form.profile_picture.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        {# ----------------------------------------------- #}
+        {#                 CASIER JUDICIAIRE PDF           #}
+        {# ----------------------------------------------- #}
+        <div class="mb-3">
+          <label class="form-label" for="{{ profile_form.judicial_record.id_for_label }}">
+            {{ profile_form.judicial_record.label }} *
+          </label>
+          {{ profile_form.judicial_record }}
+          {% for error in profile_form.judicial_record.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+          <div id="pdf-preview" class="mt-2"></div>
+        </div>
+
+        {# ----------------------------------------------- #}
+        {#                        TERMS                    #}
+        {# ----------------------------------------------- #}
+        <div class="mb-3 form-check">
+          {{ profile_form.terms }}
+          <label class="form-check-label" for="{{ profile_form.terms.id_for_label }}">
+            {% trans "J'accepte les conditions générales et confirme sur mon honneur que mon identification est authentique" %}
+          </label>
+          {% for error in profile_form.terms.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        {% if next %}
+          <input type="hidden" name="next" value="{{ next }}">
+        {% endif %}
+
+        <div class="d-grid">
+          <button type="submit" class="btn btn-success py-2 fw-bold">
+            {% trans "S'inscrire" %}
+          </button>
+        </div>
+      </form>
+
+      <div class="text-center mt-3">
+        <small>
+          {% trans "Déjà inscrit ?" %}
+          <a href="{% url 'accounts_users_web:login' %}">{% trans "Se connecter" %}</a>
+        </small>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+
+{# ---- PDF Preview ---- #}
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const input = document.getElementById("id_judicial_record");
+    const preview = document.getElementById("pdf-preview");
+
+    if (input) {
+      input.addEventListener("change", () => {
+        const file = input.files[0];
+        if (!file) return;
+
+        if (file.type === "application/pdf") {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            preview.innerHTML = `
+              <embed src="${e.target.result}" type="application/pdf"
+                     width="100%" height="300px" class="rounded border" />
+            `;
+          };
+          reader.readAsDataURL(file);
+        } else {
+          preview.innerHTML = `
+            <p class="text-danger fw-semibold">
+              {% trans "Format non pris en charge. Le fichier doit être en PDF." %}
+            </p>
+          `;
+        }
+      });
+    }
+  });
+</script>
+{% endblock %}
+ {% endcomment %}
+
+
+
+
+
+{% comment %} {% extends "main.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="container py-5">
+    <h1>{% trans "Inscription – Engagement social" %}</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-primary">
+            {% trans "Créer mon compte" %}
+        </button>
+    </form>
+</div>
+{% endblock %} {% endcomment %}

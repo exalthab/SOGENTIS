@@ -1,4 +1,194 @@
+{# core/cgu.html #}
 {% extends "core/base.html" %}
+{% load static i18n domain_urls language_tags %}
+
+{% block title %}{% trans "Conditions Générales d’Utilisation" %}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+  <!-- Retour -->
+  <div class="mb-4">
+    <button
+      type="button"
+      id="back-button"
+      class="btn btn-outline-secondary"
+      aria-label="{% trans 'Retour' %}">
+      ← {% trans "Retour" %}
+    </button>
+  </div>
+
+  <header class="mb-4">
+    <h1 class="mb-2">{% trans "Conditions Générales d’Utilisation" %}</h1>
+    <p class="text-muted mb-0">
+      {% blocktrans with project=PROJECT_NAME|default:"Nom du projet" %}
+      Les présentes CGU encadrent l’accès et l’utilisation du site {{ project }}.
+      {% endblocktrans %}
+    </p>
+  </header>
+
+  <section class="mb-4">
+    <h3 class="h5">1. {% trans "Acceptation des CGU" %}</h3>
+    <p class="mb-0">
+      {% blocktrans with project=PROJECT_NAME|default:"Nom du projet" %}
+      L'accès et l'utilisation du site {{ project }} impliquent l'acceptation sans réserve des présentes Conditions Générales d’Utilisation.
+      {% endblocktrans %}
+    </p>
+  </section>
+
+  <section class="mb-4">
+    <h3 class="h5">2. {% trans "Accès au site" %}</h3>
+    <p class="mb-0">
+      {% trans "Le site est accessible gratuitement à tout utilisateur disposant d’un accès à Internet. Tous les frais afférents à l'accès au site (matériel, logiciels, connexion Internet, etc.) sont à la charge de l'utilisateur." %}
+    </p>
+  </section>
+
+  <section class="mb-4">
+    <h3 class="h5">3. {% trans "Obligations de l'utilisateur" %}</h3>
+    <p class="mb-0">
+      {% trans "L'utilisateur s'engage à utiliser le site de manière légale, éthique et respectueuse des droits de tiers." %}
+    </p>
+  </section>
+
+  <section class="mb-4">
+    <h3 class="h5">4. {% trans "Responsabilités" %}</h3>
+    <p class="mb-0">
+      {% blocktrans with project=PROJECT_NAME|default:"Nom du projet" %}
+      {{ project }} ne saurait être tenu responsable des dommages directs ou indirects résultant de l’utilisation du site.
+      {% endblocktrans %}
+    </p>
+  </section>
+
+  <section class="mb-4">
+    <h3 class="h5">5. {% trans "Modifications" %}</h3>
+    <p class="mb-0">
+      {% trans "L’éditeur se réserve le droit de modifier à tout moment les présentes CGU. Les utilisateurs sont invités à les consulter régulièrement." %}
+    </p>
+  </section>
+
+  <section class="mt-5">
+    <div class="p-4 border rounded-3 bg-light">
+      <h3 class="h5 mb-2">{% trans "Contact" %}</h3>
+      <p class="text-muted mb-3">
+        {% trans "Pour toute question, merci d’utiliser notre formulaire de contact." %}
+      </p>
+      <a class="btn btn-primary" href="{% url 'core:contact' %}">
+        {% trans "Accéder au formulaire de contact" %}
+      </a>
+    </div>
+  </section>
+
+</div>
+
+<!-- Script pour le bouton Retour -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const backButton = document.getElementById('back-button');
+    backButton.addEventListener('click', function() {
+        if (window.history.length > 1) {
+            window.history.back();
+        } else {
+            // Fallback vers la page d'accueil
+            window.location.href = "{% url 'core:home' %}";
+        }
+    });
+});
+</script>
+
+{% endblock %}
+
+
+
+
+
+
+{% comment %} {# core/cgu.html #}
+{% extends "core/base.html" %}
+{% load static i18n domain_urls language_tags %}
+
+{% block title %}{% trans "Conditions Générales d’Utilisation" %}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+  <!-- Retour -->
+  <div class="mb-4">
+    <button type="button" onclick="window.history.back()" class="btn btn-outline-secondary" aria-label="{% trans 'Retour' %}">
+      ← {% trans "Retour" %}
+    </button>
+  </div>
+
+  <header class="mb-4">
+    <h1 class="mb-2">{% trans "Conditions Générales d’Utilisation" %}</h1>
+    <p class="text-muted mb-0">
+      {% blocktrans with project=PROJECT_NAME|default:"Nom du projet" %}
+      Les présentes CGU encadrent l’accès et l’utilisation du site {{ project }}.
+      {% endblocktrans %}
+    </p>
+  </header>
+
+  <section class="mb-4">
+    <h3 class="h5">1. {% trans "Acceptation des CGU" %}</h3>
+    <p class="mb-0">
+      {% blocktrans with project=PROJECT_NAME|default:"Nom du projet" %}
+      L'accès et l'utilisation du site {{ project }} impliquent l'acceptation sans réserve des présentes Conditions Générales d’Utilisation.
+      {% endblocktrans %}
+    </p>
+  </section>
+
+  <section class="mb-4">
+    <h3 class="h5">2. {% trans "Accès au site" %}</h3>
+    <p class="mb-0">
+      {% trans "Le site est accessible gratuitement à tout utilisateur disposant d’un accès à Internet. Tous les frais afférents à l'accès au site (matériel, logiciels, connexion Internet, etc.) sont à la charge de l'utilisateur." %}
+    </p>
+  </section>
+
+  <section class="mb-4">
+    <h3 class="h5">3. {% trans "Obligations de l'utilisateur" %}</h3>
+    <p class="mb-0">
+      {% trans "L'utilisateur s'engage à utiliser le site de manière légale, éthique et respectueuse des droits de tiers." %}
+    </p>
+  </section>
+
+  <section class="mb-4">
+    <h3 class="h5">4. {% trans "Responsabilités" %}</h3>
+    <p class="mb-0">
+      {% blocktrans with project=PROJECT_NAME|default:"Nom du projet" %}
+      {{ project }} ne saurait être tenu responsable des dommages directs ou indirects résultant de l’utilisation du site.
+      {% endblocktrans %}
+    </p>
+  </section>
+
+  <section class="mb-4">
+    <h3 class="h5">5. {% trans "Modifications" %}</h3>
+    <p class="mb-0">
+      {% trans "L’éditeur se réserve le droit de modifier à tout moment les présentes CGU. Les utilisateurs sont invités à les consulter régulièrement." %}
+    </p>
+  </section>
+
+  <section class="mt-5">
+    <div class="p-4 border rounded-3 bg-light">
+      <h3 class="h5 mb-2">{% trans "Contact" %}</h3>
+      <p class="text-muted mb-3">
+        {% trans "Pour toute question, merci d’utiliser notre formulaire de contact." %}
+      </p>
+      <a class="btn btn-primary" href="{% url 'core:contact' %}">
+        {% trans "Accéder au formulaire de contact" %}
+      </a>
+    </div>
+  </section>
+
+</div>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+
+{% comment %} {% extends "core/base.html" %}
 {% load static i18n domain_urls language_tags %}
 
 {% block title %}Conditions Générales d’Utilisation{% endblock %}
@@ -41,4 +231,4 @@
     <a href="mailto:{{ CONTACT_EMAIL|default:'contact@example.com' }}">{{ CONTACT_EMAIL|default:'contact@example.com' }}</a>
   </p>
 </div>
-{% endblock %}
+{% endblock %} {% endcomment %}

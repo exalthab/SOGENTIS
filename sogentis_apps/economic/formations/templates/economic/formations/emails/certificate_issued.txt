@@ -1,0 +1,13 @@
+Bonjour {{ user.get_short_name|default:user.get_username }},
+
+Votre certificat est disponible pour la formation :
+- {{ course.title }}
+
+Code : {{ certificate.code }}
+Date : {{ certificate.issued_at|date:"d/m/Y" }}
+
+Vous pouvez le télécharger depuis votre espace apprenant.
+{% if site_url %}Site : {{ site_url }}{% endif %}
+
+Merci,
+{{ project_name }}

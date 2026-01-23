@@ -1,5 +1,781 @@
 {# templates/core/contact.html #}
 {% extends "core/base.html" %}
+{% load static i18n widget_tweaks %}
+
+{% block seo_title %}{% trans "Contact" %} | {{ SEO_TITLE_DEFAULT }}{% endblock %}
+{% block seo_description %}{% trans "Envoyez-nous un message et nous vous répondrons dès que possible." %}{% endblock %}
+
+{% block extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'core/css/contacte_form.css' %}">
+  {% comment %} <link rel="stylesheet" href="{% static 'core/css/old_contact_form.css' %}"> {% endcomment %}
+
+  {% endblock %}
+
+{% block core_content %}
+<section class="contact-wrap" aria-labelledby="contactTitle">
+  <div class="contact-card">
+
+    {# ========================== #}
+    {#  PROGRESS BAR (SUBMIT)      #}
+    {# ========================== #}
+    <div class="contact-progress" aria-hidden="true">
+      <div class="contact-progress-bar"></div>
+    </div>
+
+    {# ========================== #}
+    {#  HEADER                     #}
+    {# ========================== #}
+    <header class="contact-head">
+      <h1 id="contactTitle" class="contact-title">{% trans "Contact" %}</h1>
+      <p class="contact-subtitle">
+        {% trans "Envoyez-nous un message et nous vous répondrons dès que possible." %}
+      </p>
+    </header>
+
+    {# ========================== #}
+    {#  MESSAGES DJANGO (OPTIONNEL)#}
+    {#  ⚠️ Si déjà en base: enlever#}
+    {# ========================== #}
+    {% if messages %}
+      <div class="contact-messages" aria-live="polite" aria-atomic="true">
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags|default:'info' }}" role="alert">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {# ========================== #}
+    {#  LAYOUT (FORM + ASIDE)      #}
+    {# ========================== #}
+    <div class="contact-layout">
+
+      {# ========================== #}
+      {#  FORMULAIRE                #}
+      {# ========================== #}
+      <form method="post"
+            action="{% url 'core:contact' %}"
+            class="contact-form"
+            autocomplete="on"
+            novalidate
+            aria-describedby="contactHint">
+
+        {% csrf_token %}
+
+        <p id="contactHint" class="visually-hidden">
+          {% trans "Tous les champs marqués d’un astérisque sont obligatoires." %}
+        </p>
+
+        {# ========================== #}
+        {#  ERREURS GLOBALES           #}
+        {# ========================== #}
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger" role="alert">
+            {{ form.non_field_errors }}
+          </div>
+        {% endif %}
+
+        {# ========================== #}
+        {#  CHAMPS (GRID)              #}
+        {# ========================== #}
+        <div class="grid">
+
+          {# ========================== #}
+          {#  CHAMP : NOM               #}
+          {# ========================== #}
+          {% with f=form.name %}
+            <div class="field {% if f.errors %}is-invalid{% endif %}">
+              <label for="{{ f.id_for_label }}">
+                {% trans "Nom" %} <span aria-hidden="true">*</span>
+              </label>
+
+              {% if f.errors %}
+                {{ f|add_class:"form-control"|attr:"autocomplete:name"|attr:"autocapitalize:words"|attr:"aria-invalid:true"|attr:"aria-describedby:err-name" }}
+              {% else %}
+                {{ f|add_class:"form-control"|attr:"autocomplete:name"|attr:"autocapitalize:words"|attr:"aria-invalid:false" }}
+              {% endif %}
+
+              {% if f.errors %}
+                <div id="err-name" class="field-error" role="alert">
+                  {{ f.errors }}
+                </div>
+              {% endif %}
+            </div>
+          {% endwith %}
+
+          {# ========================== #}
+          {#  CHAMP : EMAIL             #}
+          {# ========================== #}
+          {% with f=form.email %}
+            <div class="field {% if f.errors %}is-invalid{% endif %}">
+              <label for="{{ f.id_for_label }}">
+                {% trans "Courriel" %} <span aria-hidden="true">*</span>
+              </label>
+
+              {% if f.errors %}
+                {{ f|add_class:"form-control"|attr:"autocomplete:email"|attr:"inputmode:email"|attr:"aria-invalid:true"|attr:"aria-describedby:err-email" }}
+              {% else %}
+                {{ f|add_class:"form-control"|attr:"autocomplete:email"|attr:"inputmode:email"|attr:"aria-invalid:false" }}
+              {% endif %}
+
+              {% if f.errors %}
+                <div id="err-email" class="field-error" role="alert">
+                  {{ f.errors }}
+                </div>
+              {% endif %}
+            </div>
+          {% endwith %}
+
+        </div>
+
+        {# ========================== #}
+        {#  CHAMP : MESSAGE            #}
+        {# ========================== #}
+        {% with f=form.message %}
+          <div class="field {% if f.errors %}is-invalid{% endif %}">
+            <label for="{{ f.id_for_label }}">
+              {% trans "Message" %} <span aria-hidden="true">*</span>
+            </label>
+
+            {% if f.errors %}
+              {{ f|add_class:"form-control"|attr:"rows:6"|attr:"aria-invalid:true"|attr:"aria-describedby:err-message" }}
+            {% else %}
+              {{ f|add_class:"form-control"|attr:"rows:6"|attr:"aria-invalid:false" }}
+            {% endif %}
+
+            {% if f.errors %}
+              <div id="err-message" class="field-error" role="alert">
+                {{ f.errors }}
+              </div>
+            {% endif %}
+          </div>
+        {% endwith %}
+
+        {# ========================== #}
+        {#  HCAPTCHA                   #}
+        {# ========================== #}
+        {% if HCAPTCHA_ENABLED and HCAPTCHA_SITEKEY %}
+          <fieldset class="captcha-wrap">
+            <legend class="visually-hidden">{% trans "Vérification de sécurité" %}</legend>
+
+            <div class="h-captcha" data-sitekey="{{ HCAPTCHA_SITEKEY }}"></div>
+
+            <small class="captcha-hint">
+              {% trans "Veuillez compléter le captcha avant d’envoyer le formulaire." %}
+            </small>
+
+            <noscript>
+              <small class="captcha-hint">
+                {% trans "Activez JavaScript pour afficher le captcha." %}
+              </small>
+            </noscript>
+          </fieldset>
+        {% endif %}
+
+        {# ========================== #}
+        {#  ACTIONS                    #}
+        {# ========================== #}
+        <div class="actions">
+          <button type="submit"
+                  class="btn btn-primary"
+                  id="contactSubmit"
+                  data-disable-on-submit="1">
+            <span class="btn-text">{% trans "Envoyer" %}</span>
+            <span class="btn-spinner" aria-hidden="true"></span>
+          </button>
+        </div>
+
+      </form>
+
+      {# ========================== #}
+      {#  ASIDE INFOS                #}
+      {# ========================== #}
+      <aside class="contact-aside" aria-label="{% trans 'Informations de contact' %}">
+        <div class="contact-aside-card">
+          <h2 class="contact-aside-title">{% trans "Besoin d’aide ?" %}</h2>
+
+          <p class="contact-aside-text">
+            {% trans "Notre équipe vous répond généralement sous 24 à 48 heures (jours ouvrés)." %}
+          </p>
+
+          {% comment %} {% if CONTACT_EMAIL %}
+            <div class="contact-aside-row">
+              <span class="contact-aside-ico" aria-hidden="true">📧</span>
+              <a class="contact-aside-link" href="mailto:{{ CONTACT_EMAIL }}">{{ CONTACT_EMAIL }}</a>
+            </div>
+          {% endif %} {% endcomment %}
+
+          {% if CONTACT_PHONE %}
+            <div class="contact-aside-row">
+              <span class="contact-aside-ico" aria-hidden="true">📞</span>
+              <a class="contact-aside-link" href="tel:{{ CONTACT_PHONE|cut:' ' }}">{{ CONTACT_PHONE }}</a>
+            </div>
+          {% endif %}
+
+          <hr class="contact-aside-sep">
+
+          <div class="contact-aside-mini">
+            <strong>{% trans "Conseil :" %}</strong>
+            <span class="opacity-75">
+              {% trans "Indiquez le contexte (social / économique / institution) et votre besoin." %}
+            </span>
+          </div>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+  {{ block.super }}
+
+  {# ========================== #}
+  {#  HCAPTCHA SCRIPT            #}
+  {# ========================== #}
+  {% if HCAPTCHA_ENABLED and HCAPTCHA_SITEKEY %}
+    <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+  {% endif %}
+
+  {# ========================== #}
+  {#  JS FORM                    #}
+  {# ========================== #}
+  <script src="{% static 'core/js/contact_form.js' %}" defer></script>
+{% endblock %}
+
+
+
+
+
+
+
+
+{% comment %} {# templates/core/contact.html #}
+{% extends "core/base.html" %}
+{% load static i18n %}
+
+{% block seo_title %}{% trans "Contact" %} | {{ SEO_TITLE_DEFAULT }}{% endblock %}
+{% block seo_description %}{% trans "Envoyez-nous un message et nous vous répondrons dès que possible." %}{% endblock %}
+
+{% block extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'core/css/contact_form.css' %}">
+{% endblock %}
+
+{% block core_content %}
+<section class="contact-wrap" aria-labelledby="contactTitle">
+  <div class="contact-card">
+
+    <header class="contact-head">
+      <h1 id="contactTitle" class="contact-title">{% trans "Contact" %}</h1>
+      <p class="contact-subtitle">
+        {% trans "Envoyez-nous un message et nous vous répondrons dès que possible." %}
+      </p>
+    </header>
+
+    {# ⚠️ Les messages Django doivent être affichés UNE SEULE FOIS (idéalement dans base.html) #}
+
+    <div class="contact-layout">
+
+      {# ==========================
+         FORMULAIRE
+         ========================== #}
+      <form method="post"
+            action="{% url 'core:contact' %}"
+            class="contact-form"
+            autocomplete="on"
+            aria-describedby="contactHint">
+
+        {% csrf_token %}
+
+        <p id="contactHint" class="visually-hidden">
+          {% trans "Tous les champs marqués d’un astérisque sont obligatoires." %}
+        </p>
+
+        {# erreurs globales #}
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger" role="alert">
+            {{ form.non_field_errors }}
+          </div>
+        {% endif %}
+
+        <div class="grid">
+
+          {# ==========================
+             NOM
+             ========================== #}
+          <div class="field">
+            <label for="{{ form.name.id_for_label }}">
+              {% trans "Nom" %} <span aria-hidden="true">*</span>
+            </label>
+
+            {{ form.name.as_widget|safe }}
+
+            {% if form.name.errors %}
+              <div id="err-name" class="field-error" role="alert">
+                {{ form.name.errors }}
+              </div>
+            {% endif %}
+          </div>
+
+          {# ==========================
+             EMAIL
+             ========================== #}
+          <div class="field">
+            <label for="{{ form.email.id_for_label }}">
+              {% trans "Email" %} <span aria-hidden="true">*</span>
+            </label>
+
+            {{ form.email.as_widget|safe }}
+
+            {% if form.email.errors %}
+              <div id="err-email" class="field-error" role="alert">
+                {{ form.email.errors }}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+
+        {# ==========================
+           MESSAGE
+           ========================== #}
+        <div class="field">
+          <label for="{{ form.message.id_for_label }}">
+            {% trans "Message" %} <span aria-hidden="true">*</span>
+          </label>
+
+          {{ form.message.as_widget|safe }}
+
+          {% if form.message.errors %}
+            <div id="err-message" class="field-error" role="alert">
+              {{ form.message.errors }}
+            </div>
+          {% endif %}
+        </div>
+
+        {# ==========================
+           hCaptcha
+           ========================== #}
+        {% if HCAPTCHA_ENABLED and HCAPTCHA_SITEKEY %}
+          <fieldset class="captcha-wrap">
+            <legend class="visually-hidden">
+              {% trans "Vérification de sécurité" %}
+            </legend>
+
+            <div class="h-captcha"
+                 data-sitekey="{{ HCAPTCHA_SITEKEY }}"
+                 aria-describedby="captchaHelp"></div>
+
+            <small id="captchaHelp" class="captcha-hint">
+              {% trans "Veuillez compléter le captcha avant d’envoyer le formulaire." %}
+            </small>
+
+            <noscript>
+              <small class="captcha-hint">
+                {% trans "Activez JavaScript pour afficher le captcha." %}
+              </small>
+            </noscript>
+          </fieldset>
+        {% endif %}
+
+        {# ==========================
+           ACTIONS
+           ========================== #}
+        <div class="actions">
+          <button type="submit"
+                  class="btn btn-primary"
+                  id="contactSubmit"
+                  data-disable-on-submit="1"
+                  aria-live="polite">
+            <span class="btn-text">{% trans "Envoyer" %}</span>
+            <span class="btn-spinner" aria-hidden="true"></span>
+          </button>
+        </div>
+
+      </form>
+
+      {# ==========================
+         ASIDE INFO
+         ========================== #}
+      <aside class="contact-aside" aria-label="{% trans 'Informations de contact' %}">
+        <div class="contact-aside-card">
+          <h2 class="contact-aside-title">{% trans "Besoin d’aide ?" %}</h2>
+
+          <p class="contact-aside-text">
+            {% trans "Notre équipe vous répond généralement sous 24 à 48 heures (jours ouvrés)." %}
+          </p>
+
+          {% if CONTACT_EMAIL %}
+            <div class="contact-aside-row">
+              <span aria-hidden="true">📧</span>
+              <a href="mailto:{{ CONTACT_EMAIL }}">{{ CONTACT_EMAIL }}</a>
+            </div>
+          {% endif %}
+
+          {% if CONTACT_PHONE %}
+            <div class="contact-aside-row">
+              <span aria-hidden="true">📞</span>
+              <a href="tel:{{ CONTACT_PHONE|cut:' ' }}">{{ CONTACT_PHONE }}</a>
+            </div>
+          {% endif %}
+
+        </div>
+      </aside>
+
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+  {{ block.super }}
+
+  {% if HCAPTCHA_ENABLED and HCAPTCHA_SITEKEY %}
+    <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+  {% endif %}
+
+  <script src="{% static 'core/js/contact_form.js' %}" defer></script>
+{% endblock %}
+
+ {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/core/contact.html #}
+{% extends "core/base.html" %}
+{% load static i18n language_tags domain_urls %}
+
+{% block seo_title %}{% trans "Contact" %} | {{ SEO_TITLE_DEFAULT }}{% endblock %}
+{% block seo_description %}{% trans "Envoyez-nous un message et nous vous répondrons dès que possible." %}{% endblock %}
+
+{% block extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'core/css/contact_form.css' %}">
+{% endblock %}
+
+{% block core_content %}
+<section class="contact-wrap">
+  <div class="contact-card">
+
+    <header class="contact-head">
+      <h1 class="contact-title">{% trans "Contact" %}</h1>
+      <p class="contact-subtitle">
+        {% trans "Envoyez-nous un message et nous vous répondrons dès que possible." %}
+      </p>
+    </header>
+
+    {% if messages %}
+      <div class="contact-messages" aria-live="polite" aria-atomic="true">
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags|default:'info' }}" role="alert">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <form method="post"
+          action="{% url 'core:contact' %}"
+          class="contact-form"
+          novalidate
+          autocomplete="on">
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="alert alert-danger" role="alert">
+          {{ form.non_field_errors }}
+        </div>
+      {% endif %}
+
+      <div class="grid">
+        {# NAME #}
+        <div class="field {% if form.name.errors %}is-invalid{% endif %}">
+          <label for="{{ form.name.id_for_label }}">
+            {% trans "Nom" %} <span aria-hidden="true">*</span>
+          </label>
+
+          {# Accessibilité: aria-invalid + aria-describedby si erreurs #}
+          {% if form.name.errors %}
+            {{ form.name.as_widget|safe }}
+          {% else %}
+            {{ form.name }}
+          {% endif %}
+
+          {% if form.name.help_text %}
+            <small class="field-help" id="help-{{ form.name.id_for_label }}">{{ form.name.help_text }}</small>
+          {% endif %}
+
+          {% if form.name.errors %}
+            <div class="field-error" role="alert" id="err-{{ form.name.id_for_label }}">
+              {{ form.name.errors }}
+            </div>
+          {% endif %}
+        </div>
+
+        {# EMAIL #}
+        <div class="field {% if form.email.errors %}is-invalid{% endif %}">
+          <label for="{{ form.email.id_for_label }}">
+            {% trans "Email" %} <span aria-hidden="true">*</span>
+          </label>
+
+          {{ form.email }}
+
+          {% if form.email.help_text %}
+            <small class="field-help" id="help-{{ form.email.id_for_label }}">{{ form.email.help_text }}</small>
+          {% endif %}
+
+          {% if form.email.errors %}
+            <div class="field-error" role="alert" id="err-{{ form.email.id_for_label }}">
+              {{ form.email.errors }}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      {# MESSAGE #}
+      <div class="field {% if form.message.errors %}is-invalid{% endif %}">
+        <label for="{{ form.message.id_for_label }}">
+          {% trans "Message" %} <span aria-hidden="true">*</span>
+        </label>
+
+        {{ form.message }}
+
+        {% if form.message.help_text %}
+          <small class="field-help" id="help-{{ form.message.id_for_label }}">{{ form.message.help_text }}</small>
+        {% endif %}
+
+        {% if form.message.errors %}
+          <div class="field-error" role="alert" id="err-{{ form.message.id_for_label }}">
+            {{ form.message.errors }}
+          </div>
+        {% endif %}
+      </div>
+
+      {% if HCAPTCHA_ENABLED and HCAPTCHA_SITEKEY %}
+        <div class="captcha-wrap">
+          <div id="hcaptcha-contact" class="h-captcha" data-sitekey="{{ HCAPTCHA_SITEKEY }}"></div>
+
+          <small class="captcha-hint">
+            {% trans "Veuillez compléter le captcha avant d’envoyer." %}
+          </small>
+
+          <noscript>
+            <small class="captcha-hint">
+              {% trans "Activez JavaScript pour afficher le captcha." %}
+            </small>
+          </noscript>
+        </div>
+      {% endif %}
+
+      <div class="actions">
+        <button type="submit"
+                class="btn btn-primary"
+                id="contactSubmit"
+                data-disable-on-submit="1">
+          <span class="btn-text">{% trans "Envoyer" %}</span>
+          <span class="btn-spinner" aria-hidden="true"></span>
+        </button>
+      </div>
+    </form>
+
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+  {{ block.super }}
+
+  {% if HCAPTCHA_ENABLED and HCAPTCHA_SITEKEY %}
+  <script>
+    function hcaptchaOnload() {
+      try {
+        const el = document.getElementById("hcaptcha-contact");
+        if (!el || !window.hcaptcha) return;
+        if (el.dataset.rendered === "1") return;
+        window.hcaptcha.render(el, { sitekey: el.dataset.sitekey });
+        el.dataset.rendered = "1";
+      } catch (e) {
+        console.error("hCaptcha render error:", e);
+      }
+    }
+  </script>
+  <script src="https://js.hcaptcha.com/1/api.js?render=explicit&onload=hcaptchaOnload" defer></script>
+  {% endif %}
+
+  <script src="{% static 'core/js/contact_form.js' %}" defer></script>
+{% endblock %}
+
+ {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/core/contact.html #}
+{% extends "core/base.html" %}
+{% load static i18n language_tags domain_urls %}
+
+{% block seo_title %}{% trans "Contact" %} | {{ SEO_TITLE_DEFAULT }}{% endblock %}
+{% block seo_description %}{% trans "Envoyez-nous un message et nous vous répondrons dès que possible." %}{% endblock %}
+
+{% block extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'core/css/contact_form.css' %}">
+{% endblock %}
+
+{% block core_content %}
+<section class="contact-wrap">
+  <div class="contact-card">
+
+    <header class="contact-head">
+      <h1 class="contact-title">{% trans "Contact" %}</h1>
+      <p class="contact-subtitle">
+        {% trans "Envoyez-nous un message et nous vous répondrons dès que possible." %}
+      </p>
+    </header>
+
+    {% if messages %}
+      <div class="contact-messages" aria-live="polite" aria-atomic="true">
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags|default:'info' }}" role="alert">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <form method="post"
+          action="{% url 'core:contact' %}"
+          class="contact-form"
+          novalidate
+          autocomplete="on">
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="alert alert-danger" role="alert">
+          {{ form.non_field_errors }}
+        </div>
+      {% endif %}
+
+      <div class="grid">
+        <div class="field">
+          <label for="{{ form.name.id_for_label }}">
+            {% trans "Nom" %}
+          </label>
+
+          {{ form.name }}
+
+          {% if form.name.help_text %}
+            <small class="field-help">{{ form.name.help_text }}</small>
+          {% endif %}
+
+          {% if form.name.errors %}
+            <div class="field-error" role="alert">{{ form.name.errors }}</div>
+          {% endif %}
+        </div>
+
+        <div class="field">
+          <label for="{{ form.email.id_for_label }}">
+            {% trans "Email" %}
+          </label>
+
+          {{ form.email }}
+
+          {% if form.email.help_text %}
+            <small class="field-help">{{ form.email.help_text }}</small>
+          {% endif %}
+
+          {% if form.email.errors %}
+            <div class="field-error" role="alert">{{ form.email.errors }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="{{ form.message.id_for_label }}">
+          {% trans "Message" %}
+        </label>
+
+        {{ form.message }}
+
+        {% if form.message.help_text %}
+          <small class="field-help">{{ form.message.help_text }}</small>
+        {% endif %}
+
+        {% if form.message.errors %}
+          <div class="field-error" role="alert">{{ form.message.errors }}</div>
+        {% endif %}
+      </div>
+
+      {% if HCAPTCHA_ENABLED and HCAPTCHA_SITEKEY %}
+        <div class="captcha-wrap">
+          <div id="hcaptcha-contact" class="h-captcha" data-sitekey="{{ HCAPTCHA_SITEKEY }}"></div>
+
+          <small class="captcha-hint">
+            {% trans "Veuillez compléter le captcha avant d’envoyer." %}
+          </small>
+
+          <noscript>
+            <small class="captcha-hint">
+              {% trans "Activez JavaScript pour afficher le captcha." %}
+            </small>
+          </noscript>
+        </div>
+      {% endif %}
+
+      <div class="actions">
+        <button type="submit"
+                class="btn btn-primary"
+                id="contactSubmit"
+                data-disable-on-submit="1">
+          <span class="btn-text">{% trans "Envoyer" %}</span>
+          <span class="btn-spinner" aria-hidden="true"></span>
+        </button>
+      </div>
+    </form>
+
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+  {{ block.super }}
+
+  {% if HCAPTCHA_ENABLED and HCAPTCHA_SITEKEY %}
+  <script>
+    function hcaptchaOnload() {
+      try {
+        const el = document.getElementById("hcaptcha-contact");
+        if (!el || !window.hcaptcha) return;
+        if (el.dataset.rendered === "1") return;
+        window.hcaptcha.render(el, { sitekey: el.dataset.sitekey });
+        el.dataset.rendered = "1";
+      } catch (e) {
+        console.error("hCaptcha render error:", e);
+      }
+    }
+  </script>
+  <script src="https://js.hcaptcha.com/1/api.js?render=explicit&onload=hcaptchaOnload" defer></script>
+  {% endif %}
+
+  <script src="{% static 'core/js/contact_form.js' %}" defer></script>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+{% comment %} {# templates/core/contact.html #}
+{% extends "core/base.html" %}
 {% load static i18n language_tags domain_urls %}
 
 {% block seo_title %}{% trans "Contact" %} | {{ SEO_TITLE_DEFAULT }}{% endblock %}
@@ -103,7 +879,7 @@
   {% endif %}
 
   <script src="{% static 'core/js/contact_form.js' %}" defer></script>
-{% endblock %}
+{% endblock %} {% endcomment %}
 
 
 

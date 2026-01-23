@@ -1,0 +1,15 @@
+Bonjour {{ name }},
+
+Nous avons bien reçu votre message et vous remercions de nous avoir contactés.
+
+Votre message :
+"{{ message }}"
+
+Notre équipe vous répondra dans un délai de 24 à 48 heures (jours ouvrés).
+
+Cordialement,
+{{ PROJECT_NAME|default:"SOGENTIS" }}
+
+{% if CONTACT_EMAIL %}
+Contact : {{ CONTACT_EMAIL }}
+{% endif %}

@@ -1,81 +1,81 @@
-# accounts_users/views/profiles.py
-from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
-from django.utils.translation import gettext_lazy as _
+# # accounts_users/views/profiles.py
+# from django.contrib import messages
+# from django.contrib.auth.decorators import login_required
+# from django.shortcuts import render, redirect
+# from django.utils.translation import gettext_lazy as _
 
-from accounts_users.forms.social.social_signup_forms import UserSignupForm
-from accounts_users.forms.user_forms import UserEmailUpdateForm
-
-
-@login_required
-def update_profile_logic(request):
-    """
-    Logique pure de mise à jour du profil utilisateur.
-    - Ne retourne PAS de HttpResponse
-    - Ne fait PAS de render()
-
-    Retourne :
-        form  : UserProfileForm
-        state :
-            True  -> profil mis à jour
-            False -> POST invalide
-            None  -> GET initial
-    """
-    profile = request.user.userprofile
-
-    if request.method == "POST":
-        form = UserSignupForm(
-            request.POST,
-            request.FILES,
-            instance=profile,
-        )
-        if form.is_valid():
-            form.save()
-            return form, True
-        return form, False
-
-    # GET : pré-remplissage
-    form = UserSignupForm(instance=profile)
-    return form, None
+# from accounts_users.forms.social.social_signup_forms import UserSignupForm
+# from accounts_users.forms.user_forms import UserEmailUpdateForm
 
 
-@login_required
-def profile_edit_view(request):
-    user = request.user
-    profile = user.userprofile
+# @login_required
+# def update_profile_logic(request):
+#     """
+#     Logique pure de mise à jour du profil utilisateur.
+#     - Ne retourne PAS de HttpResponse
+#     - Ne fait PAS de render()
 
-    if request.method == "POST":
-        profile_form = UserSignupForm(
-            request.POST,
-            request.FILES,
-            instance=profile,
-        )
-        email_form = UserEmailUpdateForm(
-            request.POST,
-            instance=user,
-        )
+#     Retourne :
+#         form  : UserProfileForm
+#         state :
+#             True  -> profil mis à jour
+#             False -> POST invalide
+#             None  -> GET initial
+#     """
+#     profile = request.user.userprofile
 
-        if profile_form.is_valid() and email_form.is_valid():
-            profile_form.save()
-            email_form.save()
-            messages.success(
-                request,
-                _("Profil mis à jour avec succès.")
-            )
-            return redirect("accounts_users:profile")
-    else:
-        profile_form = UserSignupForm(instance=profile)
-        email_form = UserEmailUpdateForm(instance=user)
+#     if request.method == "POST":
+#         form = UserSignupForm(
+#             request.POST,
+#             request.FILES,
+#             instance=profile,
+#         )
+#         if form.is_valid():
+#             form.save()
+#             return form, True
+#         return form, False
 
-    return render(
-        request,
-        "accounts_users/profile_edit.html",
-        {
-            "profile_form": profile_form,
-            "email_form": email_form,
-        },
-    )
+#     # GET : pré-remplissage
+#     form = UserSignupForm(instance=profile)
+#     return form, None
+
+
+# @login_required
+# def profile_edit_view(request):
+#     user = request.user
+#     profile = user.userprofile
+
+#     if request.method == "POST":
+#         profile_form = UserSignupForm(
+#             request.POST,
+#             request.FILES,
+#             instance=profile,
+#         )
+#         email_form = UserEmailUpdateForm(
+#             request.POST,
+#             instance=user,
+#         )
+
+#         if profile_form.is_valid() and email_form.is_valid():
+#             profile_form.save()
+#             email_form.save()
+#             messages.success(
+#                 request,
+#                 _("Profil mis à jour avec succès.")
+#             )
+#             return redirect("accounts_users:profile")
+#     else:
+#         profile_form = UserSignupForm(instance=profile)
+#         email_form = UserEmailUpdateForm(instance=user)
+
+#     return render(
+#         request,
+#         "accounts_users/profile_edit.html",
+#         {
+#             "profile_form": profile_form,
+#             "email_form": email_form,
+#         },
+#     )
 
 
 

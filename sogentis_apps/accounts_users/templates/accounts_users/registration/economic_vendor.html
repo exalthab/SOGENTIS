@@ -1,0 +1,37 @@
+{# templates/accounts_users/registration/economic_vendor.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Inscription Vendeur" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+{% block auth_title %}🏪 {% trans "Inscription — Vendeur" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Vendre, gérer catalogue, stock et commandes." %}{% endblock %}
+
+{% block content %}
+{% with next_url=request.GET.next|default:request.get_full_path %}
+{% url "accounts_users:web:registration:register_economic" as eco_register_url %}
+{% url "accounts_users:web:registration:register_economic_choice" as reg_choice_url %}
+
+<div class="alert alert-warning">
+  <i class="bi bi-shield-lock me-1"></i>
+  {% trans "L’accès vendeur peut nécessiter une validation selon ton workflow." %}
+</div>
+
+<ul class="small text-muted mb-4">
+  <li>{% trans "Créer & gérer des produits" %}</li>
+  <li>{% trans "Suivre les commandes" %}</li>
+  <li>{% trans "Gestion stock & prix" %}</li>
+</ul>
+
+<a class="btn btn-primary w-100"
+   href="{{ eco_register_url }}?track=vendor&context=economic&next={{ next_url|urlencode }}">
+  ✍️ {% trans "Demander un compte vendeur" %}
+</a>
+
+<div class="text-center mt-3">
+  <a class="small text-muted" href="{{ reg_choice_url }}?next={{ next_url|urlencode }}#economic">
+    ← {% trans "Retour au hub économique" %}
+  </a>
+</div>
+
+{% endwith %}
+{% endblock %}

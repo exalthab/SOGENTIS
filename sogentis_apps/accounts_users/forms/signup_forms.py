@@ -1,3 +1,4 @@
+# accounts_users/forms/signup_forms.py
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
@@ -8,22 +9,60 @@ User = get_user_model()
 
 
 class UserSignupForm(forms.ModelForm):
+    """
+    Formulaire inscription :
+    - email + mot de passe
+    - OTP email (validé dans la vue, pas ici)
+    """
+
     password1 = forms.CharField(
         label=_("Mot de passe"),
-        widget=forms.PasswordInput(attrs={"class": "form-control", "autocomplete": "new-password"}),
         strip=False,
+        widget=forms.PasswordInput(
+            attrs={
+                "class": "form-control password-strong",
+                "autocomplete": "new-password",
+            }
+        ),
     )
+
     password2 = forms.CharField(
         label=_("Confirmer le mot de passe"),
-        widget=forms.PasswordInput(attrs={"class": "form-control", "autocomplete": "new-password"}),
         strip=False,
+        widget=forms.PasswordInput(
+            attrs={
+                "class": "form-control password-confirm",
+                "autocomplete": "new-password",
+            }
+        ),
+    )
+
+    email_otp_code = forms.CharField(
+        label=_("Code OTP email"),
+        max_length=6,
+        required=True,
+        help_text=_("Entrez le code que vous avez reçu par email (6 chiffres)."),
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "autocomplete": "one-time-code",
+                "inputmode": "numeric",
+                "pattern": "[0-9]{6}",
+                "maxlength": "6",
+            }
+        ),
     )
 
     class Meta:
         model = User
         fields = ("email",)
         widgets = {
-            "email": forms.EmailInput(attrs={"class": "form-control", "autocomplete": "email"}),
+            "email": forms.EmailInput(
+                attrs={
+                    "class": "form-control",
+                    "autocomplete": "email",
+                }
+            )
         }
 
     def clean_email(self):
@@ -33,6 +72,15 @@ class UserSignupForm(forms.ModelForm):
         if User.objects.filter(email__iexact=email).exists():
             raise ValidationError(_("Un compte avec cet email existe déjà."))
         return email
+
+    def clean_email_otp_code(self):
+        """
+        Normalisation légère : on garde uniquement les chiffres, max 6.
+        La validation en base (match + expiry + attempts) se fait dans la vue.
+        """
+        code = (self.cleaned_data.get("email_otp_code") or "").strip()
+        code = "".join(ch for ch in code if ch.isdigit())
+        return code[:6]
 
     def clean(self):
         cleaned = super().clean()
@@ -48,6 +96,7 @@ class UserSignupForm(forms.ModelForm):
             except ValidationError as e:
                 self.add_error("password1", e)
 
+        # OTP validé en base dans la vue (pas ici)
         return cleaned
 
     def save(self, commit=True):
@@ -57,6 +106,224 @@ class UserSignupForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
+
+
+
+
+
+# # accounts_users/forms/signup_forms.py
+# from django import forms
+# from django.contrib.auth import get_user_model
+# from django.contrib.auth.password_validation import validate_password
+# from django.core.exceptions import ValidationError
+# from django.utils.translation import gettext_lazy as _
+
+# User = get_user_model()
+
+
+# class UserSignupForm(forms.ModelForm):
+#     """
+#     Formulaire inscription :
+#     - email + mot de passe
+#     - OTP email (validé en vue)
+#     """
+
+#     password1 = forms.CharField(
+#         label=_("Mot de passe"),
+#         widget=forms.PasswordInput(attrs={"class": "form-control", "autocomplete": "new-password"}),
+#         strip=False,
+#     )
+#     password2 = forms.CharField(
+#         label=_("Confirmer le mot de passe"),
+#         widget=forms.PasswordInput(attrs={"class": "form-control", "autocomplete": "new-password"}),
+#         strip=False,
+#     )
+
+#     email_otp_code = forms.CharField(
+#         label=_("Code OTP email"),
+#         max_length=6,
+#         required=True,
+#         help_text=_("Entrez le code que vous avez reçu par email (6 chiffres)."),
+#         widget=forms.TextInput(attrs={"class": "form-control", "autocomplete": "one-time-code"}),
+#     )
+
+#     class Meta:
+#         model = User
+#         fields = ("email",)
+#         widgets = {
+#             "email": forms.EmailInput(attrs={"class": "form-control", "autocomplete": "email"}),
+#         }
+
+#     def clean_email(self):
+#         email = (self.cleaned_data.get("email") or "").strip().lower()
+#         if not email:
+#             raise ValidationError(_("Email requis."))
+#         if User.objects.filter(email__iexact=email).exists():
+#             raise ValidationError(_("Un compte avec cet email existe déjà."))
+#         return email
+
+#     def clean(self):
+#         cleaned = super().clean()
+#         p1 = cleaned.get("password1")
+#         p2 = cleaned.get("password2")
+
+#         if p1 and p2 and p1 != p2:
+#             self.add_error("password2", _("Les mots de passe ne correspondent pas."))
+
+#         if p1:
+#             try:
+#                 validate_password(p1)
+#             except ValidationError as e:
+#                 self.add_error("password1", e)
+
+#         # OTP validé en base dans la vue (pas ici)
+#         return cleaned
+
+#     def save(self, commit=True):
+#         user = super().save(commit=False)
+#         user.email = self.cleaned_data["email"]
+#         user.set_password(self.cleaned_data["password1"])
+#         if commit:
+#             user.save()
+#         return user
+
+
+
+
+
+# # accounts_users/forms/signup_forms.py
+# from django import forms
+# from django.contrib.auth import get_user_model
+# from django.contrib.auth.password_validation import validate_password
+# from django.core.exceptions import ValidationError
+# from django.utils.translation import gettext_lazy as _
+
+# User = get_user_model()
+
+# class UserSignupForm(forms.ModelForm):
+#     password1 = forms.CharField(
+#         label=_("Mot de passe"),
+#         widget=forms.PasswordInput(attrs={"class": "form-control", "autocomplete": "new-password"}),
+#         strip=False,
+#     )
+#     password2 = forms.CharField(
+#         label=_("Confirmer le mot de passe"),
+#         widget=forms.PasswordInput(attrs={"class": "form-control", "autocomplete": "new-password"}),
+#         strip=False,
+#     )
+#     email_otp_code = forms.CharField(
+#         label=_("Code OTP email"),
+#         max_length=6,
+#         required=True,
+#         help_text=_("Entrez le code que vous avez reçu par email."),
+#         widget=forms.TextInput(attrs={"class": "form-control"}),
+#     )
+
+#     class Meta:
+#         model = User
+#         fields = ("email",)
+#         widgets = {
+#             "email": forms.EmailInput(attrs={"class": "form-control", "autocomplete": "email"}),
+#         }
+
+#     def clean_email(self):
+#         email = (self.cleaned_data.get("email") or "").strip().lower()
+#         if not email:
+#             raise ValidationError(_("Email requis."))
+#         if User.objects.filter(email__iexact=email).exists():
+#             raise ValidationError(_("Un compte avec cet email existe déjà."))
+#         return email
+
+#     def clean(self):
+#         cleaned = super().clean()
+#         p1 = cleaned.get("password1")
+#         p2 = cleaned.get("password2")
+
+#         if p1 and p2 and p1 != p2:
+#             self.add_error("password2", _("Les mots de passe ne correspondent pas."))
+
+#         if p1:
+#             try:
+#                 validate_password(p1)
+#             except ValidationError as e:
+#                 self.add_error("password1", e)
+
+#         # La validation du code OTP se fait dans la vue
+
+#         return cleaned
+
+#     def save(self, commit=True):
+#         user = super().save(commit=False)
+#         user.email = self.cleaned_data["email"]
+#         user.set_password(self.cleaned_data["password1"])
+#         if commit:
+#             user.save()
+#         return user
+
+
+
+
+# # accounts_users/forms/signup_forms.py
+# from django import forms
+# from django.contrib.auth import get_user_model
+# from django.contrib.auth.password_validation import validate_password
+# from django.core.exceptions import ValidationError
+# from django.utils.translation import gettext_lazy as _
+
+# User = get_user_model()
+
+
+# class UserSignupForm(forms.ModelForm):
+#     password1 = forms.CharField(
+#         label=_("Mot de passe"),
+#         widget=forms.PasswordInput(attrs={"class": "form-control", "autocomplete": "new-password"}),
+#         strip=False,
+#     )
+#     password2 = forms.CharField(
+#         label=_("Confirmer le mot de passe"),
+#         widget=forms.PasswordInput(attrs={"class": "form-control", "autocomplete": "new-password"}),
+#         strip=False,
+#     )
+
+#     class Meta:
+#         model = User
+#         fields = ("email",)
+#         widgets = {
+#             "email": forms.EmailInput(attrs={"class": "form-control", "autocomplete": "email"}),
+#         }
+
+#     def clean_email(self):
+#         email = (self.cleaned_data.get("email") or "").strip().lower()
+#         if not email:
+#             raise ValidationError(_("Email requis."))
+#         if User.objects.filter(email__iexact=email).exists():
+#             raise ValidationError(_("Un compte avec cet email existe déjà."))
+#         return email
+
+#     def clean(self):
+#         cleaned = super().clean()
+#         p1 = cleaned.get("password1")
+#         p2 = cleaned.get("password2")
+
+#         if p1 and p2 and p1 != p2:
+#             self.add_error("password2", _("Les mots de passe ne correspondent pas."))
+
+#         if p1:
+#             try:
+#                 validate_password(p1)
+#             except ValidationError as e:
+#                 self.add_error("password1", e)
+
+#         return cleaned
+
+#     def save(self, commit=True):
+#         user = super().save(commit=False)
+#         user.email = self.cleaned_data["email"]
+#         user.set_password(self.cleaned_data["password1"])
+#         if commit:
+#             user.save()
+#         return user
 
 
 

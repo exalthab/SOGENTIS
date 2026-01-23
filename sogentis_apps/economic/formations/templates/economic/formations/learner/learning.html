@@ -1,0 +1,61 @@
+{# templates/economic/formations/learning/learning.html #}
+{% extends "economic/formations/base_formations.html" %}
+{% load i18n %}
+
+{% block formations_title %}{{ course.title }} — {% trans "Apprentissage" %}{% endblock %}
+
+{% block formations_content %}
+<div class="row g-3">
+  <div class="col-lg-4">
+    <div class="p-3 bg-white border rounded-3">
+      <div class="fw-semibold mb-2">{% trans "Modules & leçons" %}</div>
+
+      {% if modules %}
+        {% for m in modules %}
+          <div class="mb-2">
+            <div class="small fw-bold">{{ m.title }}</div>
+            <ul class="small mb-2">
+              {% for l in m.lessons.all %}
+                <li>
+                  <a href="?lesson={{ l.id }}" class="text-decoration-none">
+                    {{ l.title }}
+                  </a>
+                </li>
+              {% empty %}
+                <li class="text-muted">{% trans "Aucune leçon." %}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="text-muted small">{% trans "Aucun module pour le moment." %}</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="col-lg-8">
+    <div class="p-3 bg-white border rounded-3">
+      {% if current_lesson %}
+        <h1 class="h5 mb-2">{{ current_lesson.title }}</h1>
+        <div class="text-muted small mb-3">
+          {% trans "Cours" %} : {{ course.title }}
+        </div>
+
+        {% if current_lesson.video_url %}
+          <div class="mb-3">
+            <a class="btn btn-sm btn-outline-primary" href="{{ current_lesson.video_url }}" target="_blank" rel="noopener">
+              {% trans "Voir la vidéo" %}
+            </a>
+          </div>
+        {% endif %}
+
+        <div>{{ current_lesson.content|safe }}</div>
+      {% else %}
+        <div class="text-muted">
+          {% trans "Sélectionnez une leçon à gauche." %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,3 +1,219 @@
+{# templates/dashboard/profile/profile_edit.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n widget_tweaks %}
+
+{% block title %}{{ title|default:_("Modifier le profil") }} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block dashboard_header %}
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div>
+      <div class="h4 fw-bold mb-1">
+        <i class="fas fa-user-edit me-2 text-primary" aria-hidden="true"></i>
+        {{ title|default:_("Modifier le profil") }}
+      </div>
+      <div class="text-muted">{% trans "Mettez à jour vos informations." %}</div>
+    </div>
+
+    <div class="d-flex gap-2">
+      <a class="btn btn-outline-secondary" href="{% url 'dashboard:profile' %}">
+        <i class="fas fa-arrow-left me-2" aria-hidden="true"></i>{% trans "Retour" %}
+      </a>
+      <a class="btn btn-outline-secondary" href="{% url 'dashboard:hub' %}">
+        <i class="fas fa-layer-group me-2" aria-hidden="true"></i>{% trans "Hub" %}
+      </a>
+    </div>
+  </div>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="card shadow-sm border-0">
+  <div class="card-body p-4">
+
+    {# Erreurs globales #}
+    {% if user_form and user_form.non_field_errors %}
+      <div class="alert alert-danger">
+        {{ user_form.non_field_errors }}
+      </div>
+    {% endif %}
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger">
+        {{ form.non_field_errors }}
+      </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+
+      {# ===================== USER ===================== #}
+      {% if user_form %}
+        <div class="mb-4">
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="fw-bold">
+              <i class="fas fa-id-card me-2 text-primary" aria-hidden="true"></i>
+              {% trans "Informations du compte" %}
+            </div>
+          </div>
+          <div class="text-muted small mt-1">{% trans "Nom, identifiant et email." %}</div>
+
+          <div class="row g-3 mt-2">
+            {% for field in user_form %}
+              <div class="col-md-6">
+                {% if field.field.widget.input_type == "checkbox" %}
+                  <div class="form-check">
+                    {% render_field field class="form-check-input" %}
+                    <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                  </div>
+                {% else %}
+                  <label class="form-label fw-semibold" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                  {% render_field field class="form-control" %}
+                {% endif %}
+
+                {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+                {% if field.errors %}<div class="text-danger small mt-1">{{ field.errors }}</div>{% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <hr class="my-4">
+      {% endif %}
+
+      {# ===================== PROFILE ===================== #}
+      <div class="mb-2">
+        <div class="fw-bold">
+          <i class="fas fa-user-shield me-2 text-primary" aria-hidden="true"></i>
+          {% trans "Profil" %}
+        </div>
+        <div class="text-muted small mt-1">{% trans "Téléphone, localisation, photo et autres informations." %}</div>
+      </div>
+
+      <div class="row g-3 mt-2">
+        {% for field in form %}
+          <div class="col-md-6">
+            <label class="form-label fw-semibold" for="{{ field.id_for_label }}">{{ field.label }}</label>
+
+            {% if field.field.widget.input_type == "file" %}
+              {% render_field field class="form-control" %}
+              <div class="form-text">{% trans "Formats usuels acceptés selon configuration." %}</div>
+            {% elif field.field.widget.input_type == "checkbox" %}
+              <div class="form-check">
+                {% render_field field class="form-check-input" %}
+                <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+              </div>
+            {% else %}
+              {% render_field field class="form-control" %}
+            {% endif %}
+
+            {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+            {% if field.errors %}<div class="text-danger small mt-1">{{ field.errors }}</div>{% endif %}
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="d-flex flex-wrap justify-content-between gap-2 mt-4">
+        <a class="btn btn-outline-secondary" href="{% url 'dashboard:profile' %}">
+          <i class="fas fa-times me-2" aria-hidden="true"></i>{% trans "Annuler" %}
+        </a>
+
+        <button class="btn btn-primary" type="submit">
+          <i class="fas fa-save me-2" aria-hidden="true"></i>{% trans "Enregistrer" %}
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+
+
+
+
+
+{% comment %} {# templates/dashboard/profile/profile_edit.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n widget_tweaks %}
+
+{% block title %}{{ title|default:_("Modifier le profil") }} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block dashboard_header %}
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div>
+      <h1 class="fw-bold mb-1">✏️ {{ title|default:_("Modifier le profil") }}</h1>
+      <p class="text-muted mb-0">{% trans "Mettez à jour vos informations." %}</p>
+    </div>
+  </div>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="card shadow-sm border-0">
+  <div class="card-body">
+    <form method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+
+      {% if user_form %}
+        <div class="mb-4">
+          <div class="text-muted small mb-2">{% trans "Informations du compte" %}</div>
+          <div class="row g-3">
+            {% for field in user_form %}
+              <div class="col-md-6">
+                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+
+                {% if field.field.widget.input_type == "checkbox" %}
+                  <div class="form-check">
+                    {% render_field field class="form-check-input" %}
+                    <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                  </div>
+                {% else %}
+                  {% render_field field class="form-control" %}
+                {% endif %}
+
+                {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+                {% if field.errors %}<div class="text-danger small mt-1">{{ field.errors }}</div>{% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+        <hr>
+      {% endif %}
+
+      <div class="mb-2 text-muted small">{% trans "Profil" %}</div>
+      <div class="row g-3">
+        {% for field in form %}
+          <div class="col-md-6">
+            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+
+            {% if field.field.widget.input_type == "file" %}
+              {% render_field field class="form-control" %}
+            {% elif field.field.widget.input_type == "checkbox" %}
+              <div class="form-check">
+                {% render_field field class="form-check-input" %}
+                <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+              </div>
+            {% else %}
+              {% render_field field class="form-control" %}
+            {% endif %}
+
+            {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+            {% if field.errors %}<div class="text-danger small mt-1">{{ field.errors }}</div>{% endif %}
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="d-flex justify-content-between mt-4">
+        <a class="btn btn-outline-secondary" href="{% url 'dashboard:profile' %}">{% trans "Annuler" %}</a>
+        <button class="btn btn-primary" type="submit">{% trans "Enregistrer" %}</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+{% comment %} {# dashboard/profile/profile_edit.html #}
 {% extends "dashboard/base.html" %}
 {% load i18n widget_tweaks %}
 
@@ -47,7 +263,7 @@
   </div>
 </div>
 {% endblock %}
-
+ {% endcomment %}
 
 
 

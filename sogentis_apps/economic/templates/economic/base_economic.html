@@ -9,7 +9,10 @@
 
 {% block extra_css %}
   {{ block.super }}
-  <link rel="stylesheet" href="{% static 'economic/css/economic.css' %}">
+  {% comment %} <link rel="stylesheet" href="{% static 'economic/css/economic.css' %}"> {% endcomment %}
+  <link rel="stylesheet" href="{% static 'economic/css/eco_hub_menu.css' %}">
+  <link rel="stylesheet" href="{% static 'economic/css/eco_navbar.css' %}">
+
   {% block economic_extra_css %}{% endblock %}
 {% endblock %}
 

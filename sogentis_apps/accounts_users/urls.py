@@ -1,16 +1,36 @@
 # accounts_users/urls.py
-
-from django.urls import path
-
-# On importe la vue *web* correcte
-from accounts_users.web.views.profile_web_views import profile_edit_view
+from django.urls import path, include
 
 app_name = "accounts_users"
 
 urlpatterns = [
-    # Modification du profil utilisateur
-    path("profile/edit/", profile_edit_view, name="profile_edit"),
+    path(
+        "web/",
+        include(
+            ("accounts_users.web.urls", "web"),
+            namespace="web",
+        ),
+    ),
 ]
+
+
+
+
+
+
+# # accounts_users/urls.py
+
+# from django.urls import path
+
+# # On importe la vue *web* correcte
+# from accounts_users.web.views.profile_web_views import profile_edit_view
+
+# app_name = "accounts_users"
+
+# urlpatterns = [
+#     # Modification du profil utilisateur
+#     path("profile/edit/", profile_edit_view, name="profile_edit"),
+# ]
 
 
 

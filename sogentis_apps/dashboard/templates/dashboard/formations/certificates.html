@@ -1,0 +1,186 @@
+{# templates/dashboard/formations/certificates.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+
+{% block title %}
+  {{ page_title|default:_("Mes certificats") }} | {{ PROJECT_NAME|default:"SOGENTIS" }}
+{% endblock %}
+
+{% block dashboard_header %}
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+  <div>
+    <div class="h4 fw-bold mb-1">🏅 {% trans "Mes certificats" %}</div>
+    <div class="text-muted">
+      {% trans "Téléchargements sécurisés. Les PDFs sont générés si nécessaire." %}
+    </div>
+  </div>
+
+  <div class="d-flex flex-wrap gap-2">
+    <a class="btn btn-outline-secondary" href="{% url 'dashboard:formations:home' %}">← {% trans "Retour" %}</a>
+    <a class="btn btn-outline-primary" href="{% url 'dashboard:formations:courses' %}">
+      <i class="fas fa-book me-2"></i>{% trans "Mes cours" %}
+    </a>
+  </div>
+</div>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="db-card">
+  <div class="db-card-header">
+    <h3 class="db-card-title">{% trans "Liste des certificats" %}</h3>
+    <p class="db-card-subtitle mb-0">{% trans "Téléchargement sécurisé des PDFs." %}</p>
+  </div>
+  <div class="db-card-body">
+    <div class="table-responsive">
+      <table class="db-table">
+        <thead>
+          <tr>
+            <th>{% trans "Cours" %}</th>
+            <th>{% trans "Code" %}</th>
+            <th class="text-nowrap">{% trans "Émis le" %}</th>
+            <th class="text-end">{% trans "PDF" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for c in certificates %}
+            {% url "dashboard:formations_certificate_download" uuid=c.uuid as u_dl %}
+            <tr>
+              <td><strong>{{ c.course }}</strong></td>
+              <td class="text-muted">{{ c.code|default:"—" }}</td>
+              <td class="text-muted text-nowrap">{{ c.issued_at|date:"d/m/Y H:i" }}</td>
+              <td class="text-end">
+                <a class="btn btn-sm btn-outline-primary" href="{{ u_dl|default:'#' }}">
+                  <i class="fas fa-download me-1"></i>{% trans "Télécharger" %}
+                </a>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="4" class="db-muted p-3">{% trans "Aucun certificat disponible." %}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+
+
+
+{% comment %} {# templates/dashboard/formations/certificates.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+
+{% block title %}
+  {% trans "Certificats" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}
+{% endblock %}
+
+{% block dashboard_header %}
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+  <div>
+    <div class="h4 fw-bold mb-1">
+      🏅 {% trans "Mes certificats" %}
+    </div>
+    <div class="text-muted">
+      {% trans "Téléchargements sécurisés." %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>{% trans "Cours" %}</th>
+          <th>{% trans "Code" %}</th>
+          <th class="text-nowrap">{% trans "Émis le" %}</th>
+          <th class="text-end">{% trans "PDF" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in certificates %}
+          {% url "dashboard:formations_certificate_download" uuid=c.uuid as u_dl %}
+          <tr>
+            <td class="fw-semibold">{{ c.course }}</td>
+            <td class="text-muted">{{ c.code }}</td>
+            <td class="text-muted text-nowrap">
+              {{ c.issued_at|date:"d/m/Y" }}
+            </td>
+            <td class="text-end">
+              <a class="btn btn-sm btn-outline-primary" href="{{ u_dl|default:'#' }}">
+                <i class="fas fa-download me-1"></i>
+                {% trans "Télécharger" %}
+              </a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="4" class="text-muted p-3">
+              {% trans "Aucun certificat." %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/dashboard/formations/certificates.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Certificats" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block dashboard_header %}
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div>
+      <div class="h4 fw-bold mb-1">{% trans "Mes certificats" %}</div>
+      <div class="text-muted">{% trans "Téléchargements sécurisés." %}</div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>{% trans "Cours" %}</th>
+          <th>{% trans "Code" %}</th>
+          <th>{% trans "Émis le" %}</th>
+          <th class="text-end">{% trans "PDF" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in certificates %}
+          {% url "dashboard:formations_certificate_download" uuid=c.uuid as u_dl %}
+          <tr>
+            <td class="fw-semibold">{{ c.course }}</td>
+            <td class="text-muted">{{ c.code }}</td>
+            <td class="text-muted text-nowrap">{{ c.issued_at|date:"d/m/Y" }}</td>
+            <td class="text-end">
+              <a class="btn btn-sm btn-outline-primary" href="{{ u_dl|default:'#' }}">
+                {% trans "Télécharger" %}
+              </a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="4" class="text-muted p-3">{% trans "Aucun certificat." %}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %} {% endcomment %}

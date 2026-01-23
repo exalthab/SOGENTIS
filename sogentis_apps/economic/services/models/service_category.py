@@ -2,52 +2,23 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
+from django.utils.text import slugify
+
 from parler.models import TranslatableModel, TranslatedFields
 
 
 class ServiceCategory(TranslatableModel):
-    """
-    Catégorie de service (translatable via Django-Parler).
-    """
-
-    # ===============================
-    # CHAMPS TRADUITS
-    # ===============================
     translations = TranslatedFields(
-        name=models.CharField(
-            max_length=150,
-            verbose_name=_("Nom"),
-        ),
-        description=models.TextField(
-            blank=True,
-            verbose_name=_("Description"),
-        ),
+        name=models.CharField(max_length=150, verbose_name=_("Nom")),
+        description=models.TextField(blank=True, verbose_name=_("Description")),
     )
 
-    # ===============================
-    # CHAMPS PARTAGÉS (NON TRADUITS)
-    # ===============================
-    slug = models.SlugField(
-        unique=True,
-        blank=True,
-        null=True,
-        verbose_name=_("Slug"),
-    )
+    slug = models.SlugField(unique=True, blank=True, null=True, verbose_name=_("Slug"))
 
-    is_active = models.BooleanField(
-        default=True,
-        verbose_name=_("Active"),
-    )
+    is_active = models.BooleanField(default=True, verbose_name=_("Active"))
 
-    created_at = models.DateTimeField(
-        default=timezone.now,
-        editable=False,
-        verbose_name=_("Créé le"),
-    )
-    updated_at = models.DateTimeField(
-        auto_now=True,
-        verbose_name=_("Mis à jour le"),
-    )
+    created_at = models.DateTimeField(default=timezone.now, editable=False, verbose_name=_("Créé le"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Mis à jour le"))
 
     class Meta:
         verbose_name = _("Catégorie de service")
@@ -56,6 +27,93 @@ class ServiceCategory(TranslatableModel):
 
     def __str__(self):
         return self.safe_translation_getter("name", any_language=True) or f"ServiceCategory #{self.pk}"
+
+    def _base_slug_source(self) -> str:
+        return (self.safe_translation_getter("name", any_language=True) or "").strip()
+
+    def _ensure_unique_slug(self):
+        if self.slug:
+            return
+        base = slugify(self._base_slug_source()) or "categorie"
+        slug = base
+        i = 2
+        Model = self.__class__
+        while Model.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+            slug = f"{base}-{i}"
+            i += 1
+        self.slug = slug
+
+    def save(self, *args, **kwargs):
+        # 1er save pour obtenir pk si besoin
+        if not self.pk and not self.slug:
+            super().save(*args, **kwargs)
+        self._ensure_unique_slug()
+        super().save(*args, **kwargs)
+
+
+
+
+
+
+
+
+# from django.db import models
+# from django.utils.translation import gettext_lazy as _
+# from django.utils import timezone
+# from parler.models import TranslatableModel, TranslatedFields
+
+
+# class ServiceCategory(TranslatableModel):
+#     """
+#     Catégorie de service (translatable via Django-Parler).
+#     """
+
+#     # ===============================
+#     # CHAMPS TRADUITS
+#     # ===============================
+#     translations = TranslatedFields(
+#         name=models.CharField(
+#             max_length=150,
+#             verbose_name=_("Nom"),
+#         ),
+#         description=models.TextField(
+#             blank=True,
+#             verbose_name=_("Description"),
+#         ),
+#     )
+
+#     # ===============================
+#     # CHAMPS PARTAGÉS (NON TRADUITS)
+#     # ===============================
+#     slug = models.SlugField(
+#         unique=True,
+#         blank=True,
+#         null=True,
+#         verbose_name=_("Slug"),
+#     )
+
+#     is_active = models.BooleanField(
+#         default=True,
+#         verbose_name=_("Active"),
+#     )
+
+#     created_at = models.DateTimeField(
+#         default=timezone.now,
+#         editable=False,
+#         verbose_name=_("Créé le"),
+#     )
+#     updated_at = models.DateTimeField(
+#         auto_now=True,
+#         verbose_name=_("Mis à jour le"),
+#     )
+
+#     class Meta:
+#         verbose_name = _("Catégorie de service")
+#         verbose_name_plural = _("Catégories de services")
+#         ordering = ["-created_at", "-id"]
+
+#     def __str__(self):
+#         return self.safe_translation_getter("name", any_language=True) or f"ServiceCategory #{self.pk}"
 
 
 

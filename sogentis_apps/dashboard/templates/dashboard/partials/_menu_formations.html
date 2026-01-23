@@ -1,0 +1,27 @@
+{% load i18n %}
+{% with rm=request.resolver_match %}
+  {% url "dashboard:formations_home" as u_home %}
+  {% url "dashboard:formations_courses" as u_courses %}
+  {% url "dashboard:formations_calendar" as u_cal %}
+  {% url "dashboard:formations_certificates" as u_cert %}
+
+  <div class="mt-3">
+    <div class="text-uppercase small text-muted px-3 mb-2">{% trans "Formations" %}</div>
+
+    <a class="nav-link px-3 {% if rm and rm.url_name == 'formations_home' %}active{% endif %}" href="{{ u_home|default:'#' }}">
+      <i class="fa-solid fa-graduation-cap me-2"></i>{% trans "Aperçu" %}
+    </a>
+
+    <a class="nav-link px-3 {% if rm and rm.url_name == 'formations_courses' %}active{% endif %}" href="{{ u_courses|default:'#' }}">
+      <i class="fa-solid fa-book-open me-2"></i>{% trans "Mes cours" %}
+    </a>
+
+    <a class="nav-link px-3 {% if rm and rm.url_name == 'formations_calendar' %}active{% endif %}" href="{{ u_cal|default:'#' }}">
+      <i class="fa-regular fa-calendar-days me-2"></i>{% trans "Calendrier" %}
+    </a>
+
+    <a class="nav-link px-3 {% if rm and rm.url_name == 'formations_certificates' %}active{% endif %}" href="{{ u_cert|default:'#' }}">
+      <i class="fa-solid fa-award me-2"></i>{% trans "Certificats" %}
+    </a>
+  </div>
+{% endwith %}

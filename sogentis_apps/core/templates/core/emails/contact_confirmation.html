@@ -1,0 +1,108 @@
+<!doctype html>
+
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% trans "Confirmation de votre message" %}</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f4f6f8;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      color: #212529;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 24px;
+    }
+    .header {
+      text-align: center;
+      border-bottom: 1px solid #e9ecef;
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+    }
+    .brand {
+      font-size: 20px;
+      font-weight: 700;
+      color: #0d6efd;
+    }
+    .content h1 {
+      font-size: 20px;
+      margin-bottom: 16px;
+    }
+    .content p {
+      line-height: 1.6;
+      margin: 0 0 16px;
+    }
+    .footer {
+      border-top: 1px solid #e9ecef;
+      margin-top: 24px;
+      padding-top: 16px;
+      font-size: 13px;
+      color: #6c757d;
+      text-align: center;
+    }
+    .message-box {
+      background: #f8f9fa;
+      border-left: 4px solid #0d6efd;
+      padding: 12px 16px;
+      margin: 16px 0;
+      font-style: italic;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container" role="article" aria-label="{% trans 'Email de confirmation de contact' %}">
+
+```
+<div class="header">
+  <div class="brand">{{ PROJECT_NAME|default:"SOGENTIS" }}</div>
+</div>
+
+<div class="content">
+  <h1>{% trans "Message bien reçu" %} ✅</h1>
+
+  <p>
+    {% trans "Bonjour" %} {{ name }},
+  </p>
+
+  <p>
+    {% trans "Nous confirmons la bonne réception de votre message. Notre équipe va l’examiner et vous répondra dans les plus brefs délais." %}
+  </p>
+
+  <div class="message-box">
+    “{{ message|linebreaksbr }}”
+  </div>
+
+  <p>
+    {% trans "En général, nous répondons sous 24 à 48 heures (jours ouvrés)." %}
+  </p>
+
+  <p>
+    {% trans "Si votre demande est urgente, vous pouvez également nous contacter directement par email ou téléphone." %}
+  </p>
+
+  <p>
+    {% trans "Cordialement," %}<br>
+    <strong>{{ PROJECT_NAME|default:"SOGENTIS" }}</strong>
+  </p>
+</div>
+
+<div class="footer">
+  <p>
+    © {{ PROJECT_NAME|default:"SOGENTIS" }} — {% trans "Tous droits réservés." %}
+  </p>
+  {% if CONTACT_EMAIL %}
+    <p>{{ CONTACT_EMAIL }}</p>
+  {% endif %}
+</div>
+```
+
+  </div>
+</body>
+</html>

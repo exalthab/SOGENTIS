@@ -1,28 +1,68 @@
 # dashboard/views/b2b/home.py
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.utils.translation import gettext_lazy as _
 
+from dashboard.access import require_b2b_approved
 from dashboard.views.utils import StatCard, breadcrumb
 
 
-@login_required
+@require_b2b_approved
 def b2b_dashboard_home_view(request):
     cards = []
     recent_orders = []
 
     try:
-        from economic.b2b.models.bulk_order import BulkOrder
-        recent_orders = BulkOrder.objects.filter(user=request.user).order_by("-created_at")[:8]
-        cards.append(StatCard(label=_("Commandes B2B"), value=BulkOrder.objects.filter(user=request.user).count(), icon="🏢"))
+        from economic.b2b.models.bulk_order import BulkOrder  # type: ignore
+        qs = BulkOrder.objects.filter(user=request.user).order_by("-created_at")[:8]
+        recent_orders = list(qs)
+
+        # count safe
+        try:
+            total = BulkOrder.objects.filter(user=request.user).count()
+        except Exception:
+            total = len(recent_orders)
+
+        cards.append(StatCard(label=_("Commandes B2B"), value=total, icon="🏢"))
     except Exception:
         recent_orders = []
 
     return render(request, "dashboard/b2b/index.html", {
+        "page_title": _("Espace entreprise"),
         "breadcrumbs": breadcrumb((_('Dashboard'), "/dashboard/"), (_("B2B"), None)),
         "cards": [c.__dict__ for c in cards],
         "recent_orders": recent_orders,
     })
+
+
+
+
+
+# # dashboard/views/b2b/home.py
+# from django.contrib.auth.decorators import login_required
+# from django.shortcuts import render
+# from django.utils.translation import gettext_lazy as _
+
+# from dashboard.views.utils import StatCard, breadcrumb
+# from dashboard.access import require_b2b_approved
+
+
+# @require_b2b_approved
+# def b2b_dashboard_home_view(request):
+#     cards = []
+#     recent_orders = []
+
+#     try:
+#         from economic.b2b.models.bulk_order import BulkOrder
+#         recent_orders = BulkOrder.objects.filter(user=request.user).order_by("-created_at")[:8]
+#         cards.append(StatCard(label=_("Commandes B2B"), value=BulkOrder.objects.filter(user=request.user).count(), icon="🏢"))
+#     except Exception:
+#         recent_orders = []
+
+#     return render(request, "dashboard/b2b/index.html", {
+#         "breadcrumbs": breadcrumb((_('Dashboard'), "/dashboard/"), (_("B2B"), None)),
+#         "cards": [c.__dict__ for c in cards],
+#         "recent_orders": recent_orders,
+#     })
 
 
 

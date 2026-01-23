@@ -1,4 +1,156 @@
 {# templates/economic/services/quote_form.html #}
+{% extends "economic/base_economic.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Demande de devis" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'economic/css/services.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+
+  <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+    <div>
+      <div class="text-muted small mb-1">{% trans "Demande de devis" %}</div>
+      <h1 class="h4 fw-bold mb-1">{{ service.title|default:_("Service") }}</h1>
+      <div class="text-muted">{% trans "Décrivez votre besoin, nous vous répondrons rapidement." %}</div>
+    </div>
+
+    <div class="text-end">
+      <a class="btn btn-outline-secondary" href="{% url 'economic:services:detail' slug=service.slug %}">
+        {% trans "Retour au service" %}
+      </a>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+          <form method="post" novalidate>
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+            {% endif %}
+
+            {% for field in form %}
+              <div class="mb-3">
+                <label class="form-label fw-semibold" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+                {% for e in field.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+              </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-primary">
+              {% trans "Envoyer la demande" %}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+          <h3 class="h6 fw-bold mb-3">{% trans "Récapitulatif" %}</h3>
+
+          <div class="mb-2">
+            <div class="fw-semibold">{{ service.title|default:_("Service") }}</div>
+            <div class="text-muted small">
+              {{ service.get_service_type_display|default:service.service_type }}
+              · {{ service.get_deliverable_display|default:service.deliverable }}
+            </div>
+          </div>
+
+          <div class="border-top pt-3">
+            <div class="d-flex justify-content-between">
+              <span class="text-muted">{% trans "Budget" %}</span>
+              <span class="fw-semibold">
+                {% if service.base_price and service.base_price > 0 %}
+                  {{ service.base_price }}
+                {% else %}
+                  {% trans "Sur devis" %}
+                {% endif %}
+              </span>
+            </div>
+            <div class="d-flex justify-content-between mt-2">
+              <span class="text-muted">{% trans "Délai" %}</span>
+              <span class="fw-semibold">{{ service.turnaround_days }}j</span>
+            </div>
+          </div>
+
+          <div class="small text-muted mt-3">
+            {% trans "Plus vous donnez de détails, plus le devis sera précis." %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+
+
+
+
+{% comment %} {% extends "economic/base_economic.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Demande de devis" %} | {{ service }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'economic/services/services.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-4 services-shell">
+
+  <div class="mb-3">
+    <div class="text-muted small">{% trans "Demande de devis" %}</div>
+    <h1 class="h4 fw-bold mb-1">{{ service }}</h1>
+    <p class="text-muted mb-0">{% trans "Décrivez votre besoin : objectifs, délais, budget estimatif, exemples, contraintes." %}</p>
+  </div>
+
+  <div class="card border rounded-4">
+    <div class="card-body">
+      <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="form-label fw-semibold">{{ form.subject.label }}</label>
+          {{ form.subject }}
+          {% if form.subject.errors %}<div class="text-danger small mt-1">{{ form.subject.errors }}</div>{% endif %}
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">{{ form.message.label }}</label>
+          {{ form.message }}
+          {% if form.message.errors %}<div class="text-danger small mt-1">{{ form.message.errors }}</div>{% endif %}
+        </div>
+
+        <div class="d-flex flex-wrap gap-2">
+          <button class="btn btn-primary" type="submit">
+            <i class="fas fa-paper-plane me-2"></i>{% trans "Envoyer" %}
+          </button>
+          <a class="btn btn-outline-secondary" href="{% url 'economic:services:detail' slug=service.slug %}">
+            {% trans "Annuler" %}
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+ {% endcomment %}
+
+
+
+{% comment %} {# templates/economic/services/quote_form.html #}
 {% extends "economic/services/base_services.html" %}
 {% load static i18n widget_tweaks %}
 
@@ -154,4 +306,4 @@
   </div>
 
 </div>
-{% endblock %}
+{% endblock %} {% endcomment %}

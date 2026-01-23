@@ -33,7 +33,7 @@ def signup_view(request):
 
         # URL d’activation
         activation_url = request.build_absolute_uri(
-            reverse("accounts_users_web:activate", kwargs={"uidb64": uid, "token": token})
+            reverse("accounts_users:web:registration:activate", kwargs={"uidb64": uid, "token": token})
         )
 
         # ---------------------------------------------------------
@@ -57,7 +57,7 @@ def signup_view(request):
             )
 
         messages.success(request, _("Votre inscription est enregistrée. Vérifiez votre email."))
-        return redirect("accounts_users_web:login")
+        return redirect("accounts_users:web:auth:login")
 
     return render(request, "accounts_users/registration/signup.html", {
         "form": UserSignupForm(),
@@ -76,10 +76,10 @@ def activate_view(request, uidb64, token):
 
     if user:
         messages.success(request, _("Votre compte a été activé avec succès !"))
-        return redirect("accounts_users_web:login")
+        return redirect("accounts_users:web:auth:login")
 
     messages.error(request, _("Le lien d'activation est invalide ou expiré."))
-    return redirect("accounts_users_web:signup")
+    return redirect("accounts_users:web:auth:signup")
 
 
 # -----------------------------------------------------
@@ -96,18 +96,18 @@ def resend_activation_view(request):
             user = User.objects.get(email=email)
         except User.DoesNotExist:
             messages.error(request, _("Aucun compte trouvé avec cet email."))
-            return redirect("accounts_users_web:resend_activation")
+            return redirect("accounts_users:web:registration:resend_activation")
 
         if user.is_active:
             messages.info(request, _("Ce compte est déjà actif."))
-            return redirect("accounts_users_web:login")
+            return redirect("accounts_users:web:auth:login")
 
         # Recréation du lien
         from accounts_users.views.registration import generate_activation_token
         uid, token = generate_activation_token(user)
 
         activation_url = request.build_absolute_uri(
-            reverse("accounts_users_web:activate", kwargs={"uidb64": uid, "token": token})
+            reverse("accounts_users:web:registration:activate", kwargs={"uidb64": uid, "token": token})
         )
 
         # Envoi email
@@ -125,6 +125,6 @@ def resend_activation_view(request):
         )
 
         messages.success(request, _("Un nouveau lien d’activation a été envoyé."))
-        return redirect("accounts_users_web:login")
+        return redirect("accounts_users:web:auth:login")
 
     return render(request, "accounts_users/registration/resend_activation.html")

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1600" y2="900" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#050B16"/>
+      <stop offset="0.52" stop-color="#0A1C33"/>
+      <stop offset="1" stop-color="#2A1A05"/>
+    </linearGradient>
+
+    <radialGradient id="glowA" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse"
+      gradientTransform="translate(1180 210) rotate(130) scale(580 580)">
+      <stop stop-color="#F59E0B" stop-opacity="0.40"/>
+      <stop offset="1" stop-color="#F59E0B" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="glowB" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse"
+      gradientTransform="translate(420 740) rotate(20) scale(760 760)">
+      <stop stop-color="#38BDF8" stop-opacity="0.20"/>
+      <stop offset="1" stop-color="#38BDF8" stop-opacity="0"/>
+    </radialGradient>
+
+    <filter id="blur" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+
+    <pattern id="grid" width="52" height="52" patternUnits="userSpaceOnUse">
+      <path d="M52 0H0V52" stroke="#FFFFFF" stroke-opacity="0.07" stroke-width="1"/>
+    </pattern>
+
+    <pattern id="dots" width="26" height="26" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.4" fill="#FFFFFF" opacity="0.08"/>
+    </pattern>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <rect width="1600" height="900" fill="url(#grid)" opacity="0.55"/>
+  <rect width="1600" height="900" fill="url(#dots)" opacity="0.42"/>
+
+  <circle cx="1180" cy="210" r="370" fill="url(#glowA)" filter="url(#blur)"/>
+  <circle cx="420" cy="740" r="460" fill="url(#glowB)" filter="url(#blur)"/>
+
+  <path d="M-40 280C190 130 500 120 720 280C950 445 1180 450 1460 325C1540 285 1610 255 1660 244V0H-40V280Z"
+        fill="#FFFFFF" opacity="0.055"/>
+  <path d="M-40 940V700C110 595 260 550 410 572C590 598 690 760 900 760C1110 760 1260 585 1470 548C1550 534 1620 528 1660 530V940H-40Z"
+        fill="#000000" opacity="0.30"/>
+
+  <!-- Subtle store + badge (vendor vibe) -->
+  <g opacity="0.16" fill="#FFFFFF">
+    <!-- store -->
+    <path d="M1210 610h180v34h-180v-34zm10 44h160v90h-160v-90z"/>
+    <path d="M1210 610l18-46h144l18 46H1210z" opacity="0.85"/>
+    <path d="M1240 690h50v54h-50v-54zm70 0h50v30h-50v-30z" opacity="0.85"/>
+    <!-- badge/star -->
+    <path opacity="0.55" d="M275 245l18 36 40 6-29 28 7 40-36-19-36 19 7-40-29-28 40-6 18-36z"/>
+  </g>
+</svg>

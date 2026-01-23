@@ -1,3 +1,231 @@
+{# core/templates/core/cookies.html #}
+{% extends "core/base.html" %}
+{% load static i18n domain_urls language_tags %}
+
+{% block title %}{% trans "Politique de cookies" %}{% endblock %}
+
+{% block extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'core/css/cookies_consent.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+  {{ block.super }}
+  <script defer src="{% static 'core/js/cookies_consent.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+  <!-- Retour -->
+  <div class="mb-4 d-flex justify-content-between align-items-center gap-2 flex-wrap">
+    <button type="button" onclick="window.history.back()" class="btn btn-outline-secondary" aria-label="{% trans 'Retour' %}">
+      ← {% trans "Retour" %}
+    </button>
+
+    <div class="d-flex gap-2 flex-wrap">
+      <button type="button" class="btn btn-outline-primary"
+              data-cookie-open="preferences"
+              aria-haspopup="dialog">
+        <i class="fa fa-sliders-h me-2"></i>{% trans "Préférences cookies" %}
+      </button>
+      <button type="button" class="btn btn-primary" data-cookie-action="accept_all">
+        <i class="fa fa-check me-2"></i>{% trans "Accepter tout" %}
+      </button>
+      <button type="button" class="btn btn-outline-dark" data-cookie-action="reject_all">
+        <i class="fa fa-ban me-2"></i>{% trans "Refuser tout" %}
+      </button>
+    </div>
+  </div>
+
+  <header class="mb-4">
+    <h1 class="mb-2">{% trans "Politique de cookies" %}</h1>
+    <p class="text-muted mb-0">
+      {% blocktrans with project=PROJECT_NAME|default:"Nom du projet" %}
+      Cette page explique comment {{ project }} utilise les cookies et comment vous pouvez les gérer (accepter, refuser ou personnaliser).
+      {% endblocktrans %}
+    </p>
+  </header>
+
+  <section class="mb-4">
+    <h3 class="h5">1. {% trans "Qu’est-ce qu’un cookie ?" %}</h3>
+    <p class="mb-0">
+      {% trans "Un cookie est un petit fichier texte enregistré sur votre appareil lors de la consultation d’un site. Il peut servir au bon fonctionnement du site, à mémoriser vos choix, ou à mesurer l’audience (selon votre consentement)." %}
+    </p>
+  </section>
+
+  <section class="mb-4">
+    <h3 class="h5">2. {% trans "Catégories de cookies et options" %}</h3>
+    <p class="text-muted">
+      {% trans "Vous pouvez choisir catégorie par catégorie. Les cookies strictement nécessaires sont indispensables au fonctionnement du site et ne peuvent pas être désactivés." %}
+    </p>
+
+    <div class="table-responsive">
+      <table class="table align-middle cookie-table">
+        <thead>
+          <tr>
+            <th>{% trans "Catégorie" %}</th>
+            <th>{% trans "But" %}</th>
+            <th>{% trans "Exemples" %}</th>
+            <th class="text-nowrap">{% trans "Durée typique" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="fw-semibold">{% trans "Strictement nécessaires" %}</td>
+            <td>{% trans "Sécurité, session, authentification, équilibre de charge, paramètres indispensables." %}</td>
+            <td><code>sessionid</code>, <code>csrftoken</code>, langue (<code>django_language</code>)</td>
+            <td>{% trans "Session à 12 mois" %}</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold">{% trans "Préférences" %}</td>
+            <td>{% trans "Mémoriser vos choix (ex. thème, langue, options UI) pour améliorer le confort." %}</td>
+            <td>{% trans "Préférence d’affichage, consentement, choix interface" %}</td>
+            <td>{% trans "1 à 12 mois" %}</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold">{% trans "Statistiques / Mesure d’audience" %}</td>
+            <td>{% trans "Comprendre l’utilisation du site (pages vues, clics, performance) pour l’améliorer." %}</td>
+            <td>{% trans "Outils de mesure (selon votre choix)" %}</td>
+            <td>{% trans "1 jour à 13 mois" %}</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold">{% trans "Marketing" %}</td>
+            <td>{% trans "Publicité personnalisée, limitation de fréquence, suivi inter-sites (si activé)." %}</td>
+            <td>{% trans "Pixels / tags marketing (selon votre choix)" %}</td>
+            <td>{% trans "1 jour à 13 mois" %}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="alert alert-info mt-3 mb-0">
+      <strong>{% trans "Votre choix :" %}</strong>
+      {% trans "Accepter tout, refuser tout, ou personnaliser. Vous pouvez aussi changer d’avis à tout moment via “Préférences cookies”." %}
+    </div>
+  </section>
+
+  <section class="mb-4">
+    <h3 class="h5">3. {% trans "Cookies tiers" %}</h3>
+    <p class="mb-0">
+      {% trans "Certains cookies peuvent être déposés par des services tiers (mesure d’audience, lecteurs vidéo, réseaux sociaux). Ces cookies ne sont activés que si vous les acceptez dans vos préférences." %}
+    </p>
+  </section>
+
+  <section class="mb-4">
+    <h3 class="h5">4. {% trans "Gestion via navigateur" %}</h3>
+    <p class="mb-2">
+      {% trans "Vous pouvez aussi bloquer ou supprimer les cookies depuis votre navigateur. Attention : bloquer certains cookies peut dégrader des fonctionnalités (connexion, panier, formulaires, etc.)." %}
+    </p>
+    <ul class="mb-0">
+      <li>{% trans "Chrome / Edge : Paramètres → Confidentialité → Cookies" %}</li>
+      <li>{% trans "Firefox : Paramètres → Vie privée → Cookies et données" %}</li>
+      <li>{% trans "Safari : Réglages → Confidentialité → Cookies" %}</li>
+    </ul>
+  </section>
+
+  <section class="mt-5">
+    <div class="p-4 border rounded-3 bg-light">
+      <h3 class="h5 mb-2">5. {% trans "Contact" %}</h3>
+      <p class="text-muted mb-3">
+        {% trans "Une question sur notre politique de cookies ? Utilisez le formulaire de contact." %}
+      </p>
+      <a class="btn btn-primary" href="{% url 'core:contact' %}">
+        {% trans "Contacter le support" %}
+      </a>
+    </div>
+  </section>
+
+</div>
+
+{# IMPORTANT: Le modal de préférences est global, inclus ci-dessous #}
+{% include "core/partials/_cookie_consent_modal.html" %}
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+{% comment %} {% extends "core/base.html" %}
+{% load static i18n domain_urls language_tags %}
+
+{% block title %}{% trans "Politique de cookies" %}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+  <!-- Retour -->
+  <div class="mb-4">
+    <button type="button" onclick="window.history.back()" class="btn btn-outline-secondary" aria-label="{% trans 'Retour' %}">
+      ← {% trans "Retour" %}
+    </button>
+  </div>
+
+  <header class="mb-4">
+    <h1 class="mb-2">{% trans "Politique de cookies" %}</h1>
+    <p class="text-muted mb-0">
+      {% blocktrans with project=PROJECT_NAME|default:"Nom du projet" %}
+      Cette page explique comment {{ project }} utilise les cookies et comment vous pouvez les gérer.
+      {% endblocktrans %}
+    </p>
+  </header>
+
+  <section class="mb-4">
+    <h3 class="h5">1. {% trans "Qu’est-ce qu’un cookie ?" %}</h3>
+    <p class="mb-0">
+      {% trans "Un cookie est un petit fichier texte stocké sur votre appareil lors de votre visite sur un site web." %}
+    </p>
+  </section>
+
+  <section class="mb-4">
+    <h3 class="h5">2. {% trans "Utilisation des cookies" %}</h3>
+    <p class="mb-0">
+      {% blocktrans with project=PROJECT_NAME|default:"Nom du projet" %}
+      Le site {{ project }} utilise des cookies pour améliorer votre expérience utilisateur, mesurer l’audience et faciliter certaines fonctionnalités comme l’authentification.
+      {% endblocktrans %}
+    </p>
+  </section>
+
+  <section class="mb-4">
+    <h3 class="h5">3. {% trans "Cookies tiers" %}</h3>
+    <p class="mb-0">
+      {% trans "Certains cookies peuvent être déposés par des services tiers comme des outils de mesure d’audience ou les réseaux sociaux." %}
+    </p>
+  </section>
+
+  <section class="mb-4">
+    <h3 class="h5">4. {% trans "Gestion des cookies" %}</h3>
+    <p class="mb-0">
+      {% trans "Vous pouvez à tout moment configurer votre navigateur pour refuser ou supprimer les cookies. Le refus des cookies peut altérer certaines fonctionnalités du site." %}
+    </p>
+  </section>
+
+  <section class="mt-5">
+    <div class="p-4 border rounded-3 bg-light">
+      <h3 class="h5 mb-2">5. {% trans "Contact" %}</h3>
+      <p class="text-muted mb-3">
+        {% trans "Une question sur notre politique de cookies ? Utilisez le formulaire de contact." %}
+      </p>
+      <a class="btn btn-primary" href="{% url 'core:contact' %}">
+        {% trans "Contacter le support" %}
+      </a>
+    </div>
+  </section>
+
+</div>
+{% endblock %}
+
+ {% endcomment %}
+
+
+
+
+{% comment %} {# Core/cookies.html #}
 {% extends "core/base.html" %}
 {% load static i18n domain_urls language_tags %}
 
@@ -45,4 +273,4 @@
     {% endblocktrans %}
   </p>
 </div>
-{% endblock %}
+{% endblock %} {% endcomment %}

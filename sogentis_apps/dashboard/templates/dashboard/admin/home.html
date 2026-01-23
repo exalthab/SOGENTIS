@@ -1,3 +1,71 @@
+{# templates/dashboard/admin/home.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Administration" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block dashboard_header %}
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div>
+      <h1 class="fw-bold mb-1">🛡 {% trans "Admin dashboard" %}</h1>
+      <p class="text-muted mb-0">{% trans "Supervision, validation et pilotage de la plateforme." %}</p>
+    </div>
+
+    <div class="d-flex gap-2">
+      <a class="btn btn-sm btn-outline-secondary" href="/admin/">{% trans "Admin Django" %}</a>
+      <a class="btn btn-sm btn-outline-primary" href="{% url 'dashboard:pending_profiles' %}">
+        {% trans "Profils en attente" %}
+      </a>
+    </div>
+  </div>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="row g-3">
+
+  <div class="col-lg-8">
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+        <h2 class="h6 fw-bold mb-3">{% trans "Raccourcis" %}</h2>
+        <div class="d-flex flex-wrap gap-2">
+          <a class="btn btn-sm btn-outline-primary" href="{% url 'dashboard:admin:users' %}">👥 {% trans "Utilisateurs" %}</a>
+          <a class="btn btn-sm btn-outline-warning" href="{% url 'dashboard:admin:moderation' %}">🛡 {% trans "Modération" %}</a>
+          <a class="btn btn-sm btn-outline-info" href="{% url 'dashboard:admin:reports' %}">📊 {% trans "Rapports" %}</a>
+          <a class="btn btn-sm btn-outline-secondary" href="{% url 'dashboard:admin:settings' %}">⚙️ {% trans "Paramètres" %}</a>
+          <a class="btn btn-sm btn-outline-dark" href="{% url 'dashboard:notes_list' %}">📝 {% trans "Notes" %}</a>
+        </div>
+        <p class="text-muted small mb-0 mt-3">
+          {% trans "Astuce : centralise ici tes outils staff (validation profils, supervision dons, logs, etc.)." %}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card shadow-sm border-0 h-100">
+      <div class="card-body">
+        <h2 class="h6 fw-bold mb-3">{% trans "Validation" %}</h2>
+        <p class="text-muted small mb-3">{% trans "Accès direct aux profils en attente." %}</p>
+        <a class="btn btn-sm btn-primary w-100" href="{% url 'dashboard:pending_profiles' %}">
+          ⏳ {% trans "Ouvrir la file de validation" %}
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{# Optionnel : menu admin latéral si tu l’utilises dans tes pages #}
+<div class="mt-3">
+  {% include "dashboard/admin/_menu.html" %}
+</div>
+{% endblock %}
+
+
+
+
+
+{% comment %} {# templates/dashboard/admin/home.html #}
 {% extends "dashboard/base.html" %}
 {% load i18n %}
 {% block dashboard_header %}
@@ -7,7 +75,7 @@
 {% block dashboard_content %}
 {% include "dashboard/partials/_empty_state.html" with icon="🧭" title=_("Admin Social") text=_("Ajoutez ici les panneaux de supervision (dons, profils, projets).") %}
 {% endblock %}
-
+ {% endcomment %}
 
 
 

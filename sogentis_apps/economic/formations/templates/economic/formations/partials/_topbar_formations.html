@@ -1,0 +1,355 @@
+{# templates/economic/formations/partials/_topbar_formations.html #}
+{% load static i18n dashboard_tags %}
+{% get_current_language as lang %}
+
+{# ================================== #}
+{#   SAFE URLS (anti NoReverseMatch)   #}
+{# ================================== #}
+{% safe_url "economic:index" as u_b2c %}
+{% safe_url "economic:services:index" as u_services %}
+{% safe_url "economic:formations:index" as u_formations_home %}
+{% safe_url "economic:formations:course_list" as u_course_list %}
+{% safe_url "economic:formations:my_dashboard" as u_my_dashboard %}
+{% safe_url "economic:formations:my_courses" as u_my_courses %}
+{% safe_url "economic:formations:my_calendar" as u_my_calendar %}
+{% safe_url "economic:formations:my_certificates" as u_my_certificates %}
+{% safe_url "core:contact" as u_contact %}
+
+{# Auth (safe_url protège si tes noms diffèrent) #}
+{% safe_url "accounts_users:web:auth:login" as u_login %}
+{% safe_url "accounts_users:web:auth:logout" as u_logout %}
+{% safe_url "accounts_users:web:registration:choice" as u_signup %}
+
+{# B2B (safe_url protège si pas encore branché) #}
+{% safe_url "economic:b2b:index" as u_b2b %}
+
+{% with rm=request.resolver_match ns=request.resolver_match.namespace|default:'' cur=ECOMMERCE_CURRENCY|default:"XOF" lang=request.LANGUAGE_CODE|default:"fr"|upper country=request.session.ECOMMERCE_COUNTRY|default:"SN" %}
+
+{% with path=request.path|default:"" %}
+<header class="ft-topbar sticky-top bg-white border-bottom">
+  <nav class="navbar navbar-expand-lg navbar-light py-2">
+    <div class="container-fluid px-2 px-md-3">
+
+      {# --------------------------- #}
+      {#   LEFT: Retour + Primary     #}
+      {# --------------------------- #}
+      <div class="d-flex align-items-center gap-2">
+
+        <a class="btn btn-outline-secondary rounded-pill px-3"
+           href="{{ u_b2c|default:'#' }}">
+          <i class="fa-solid fa-arrow-left me-2"></i>{% trans "Retour" %}
+        </a>
+
+        <button class="navbar-toggler ms-1"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#ftFormationsOffcanvas"
+                aria-controls="ftFormationsOffcanvas"
+                aria-label="{% trans 'Menu' %}">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse">
+          <ul class="navbar-nav align-items-lg-center ms-0 gap-lg-1">
+
+            <li class="nav-item">
+              <a class="nav-link px-3 rounded-pill {% if u_b2c and path == u_b2c %}active fw-semibold{% endif %}"
+                 href="{{ u_b2c|default:'#' }}">
+                {% trans "B2C" %}
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link px-3 rounded-pill {% if '/services/' in path %}active fw-semibold{% endif %}"
+                 href="{{ u_services|default:'#' }}">
+                {% trans "Services" %}
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link px-3 rounded-pill {% if request.resolver_match and request.resolver_match.app_name == 'formations' %}active fw-semibold{% endif %}"
+                 href="{{ u_formations_home|default:'#' }}">
+                {% trans "Formations" %}
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link px-3 rounded-pill {% if '/b2b/' in path %}active fw-semibold{% endif %}"
+                 href="{{ u_b2b|default:'#' }}">
+                {% trans "B2B" %}
+              </a>
+            </li>
+
+            {# --------------------------- #}
+            {#   Dropdown "Nos formations"  #}
+            {#   (évite doublons menu)       #}
+            {# --------------------------- #}
+            <li class="nav-item dropdown ms-lg-2">
+              <a class="nav-link dropdown-toggle px-3 rounded-pill"
+                 href="#"
+                 role="button"
+                 data-bs-toggle="dropdown"
+                 aria-expanded="false">
+                {% trans "Nos formations" %}
+              </a>
+
+              <div class="dropdown-menu p-2 shadow-sm">
+                <div class="px-2 pt-1 pb-2 small text-muted fw-semibold text-uppercase">
+                  {% trans "Accès rapide" %}
+                </div>
+
+                <a class="dropdown-item rounded-2" href="{{ u_course_list|default:'#' }}">
+                  <i class="fa-solid fa-book-open me-2"></i>{% trans "Catalogue" %}
+                </a>
+
+                <a class="dropdown-item rounded-2" href="{% if u_formations_home %}{{ u_formations_home }}#parcours{% else %}#{% endif %}">
+                  <i class="fa-solid fa-route me-2"></i>{% trans "Parcours" %}
+                </a>
+
+                <a class="dropdown-item rounded-2" href="{% if u_formations_home %}{{ u_formations_home }}#calendar{% else %}#{% endif %}">
+                  <i class="fa-regular fa-calendar me-2"></i>{% trans "Calendrier" %}
+                </a>
+
+                <a class="dropdown-item rounded-2" href="{% if u_formations_home %}{{ u_formations_home }}#certifications{% else %}#{% endif %}">
+                  <i class="fa-solid fa-certificate me-2"></i>{% trans "Certifications" %}
+                </a>
+
+                <a class="dropdown-item rounded-2" href="{% if u_formations_home %}{{ u_formations_home }}#instructors{% else %}#{% endif %}">
+                  <i class="fa-solid fa-chalkboard-user me-2"></i>{% trans "Formateurs" %}
+                </a>
+
+                <a class="dropdown-item rounded-2" href="{% if u_formations_home %}{{ u_formations_home }}#pricing{% else %}#{% endif %}">
+                  <i class="fa-solid fa-tag me-2"></i>{% trans "Tarifs" %}
+                </a>
+
+                <div class="dropdown-divider my-2"></div>
+
+                <a class="dropdown-item rounded-2" href="{% if u_formations_home %}{{ u_formations_home }}#faq{% else %}#{% endif %}">
+                  <i class="fa-regular fa-circle-question me-2"></i>{% trans "FAQs" %}
+                </a>
+
+                <a class="dropdown-item rounded-2" href="{% if u_formations_home %}{{ u_formations_home }}#financing{% else %}#{% endif %}">
+                  <i class="fa-solid fa-hand-holding-dollar me-2"></i>{% trans "Financements possibles" %}
+                </a>
+
+                <a class="dropdown-item rounded-2" href="{% if u_formations_home %}{{ u_formations_home }}#recognized{% else %}#{% endif %}">
+                  <i class="fa-solid fa-award me-2"></i>{% trans "Certifications reconnues" %}
+                </a>
+              </div>
+            </li>
+
+          </ul>
+        </div>
+      </div>
+
+      {# --------------------------- #}
+      {#   RIGHT: Search + Lang + Account #}
+      {# --------------------------- #}
+      <div class="d-flex align-items-center gap-2 ms-auto">
+
+        {# Search (redirige vers course_list) #}
+        <form class="d-none d-lg-flex align-items-center"
+              method="get"
+              action="{{ u_course_list|default:'#' }}">
+          <div class="input-group">
+            <span class="input-group-text bg-white">
+              <i class="fa-solid fa-magnifying-glass"></i>
+            </span>
+            <input class="form-control"
+                   type="search"
+                   name="q"
+                   value="{{ request.GET.q|default:'' }}"
+                   placeholder="{% trans 'Rechercher une formation, une certification…' %}">
+            <button class="btn btn-primary" type="submit">{% trans "OK" %}</button>
+          </div>
+        </form>
+
+        {# --------------------------- #}
+        {#   Lang / Country / Currency  #}
+        {# --------------------------- #}
+        <div class="dropdown economic-lang-menu">
+          <a class="eco-hub-link dropdown-toggle small"
+            href="#"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false">
+            🌍 {{ lang }} / {{ country }} / {{ cur }}
+          </a>
+
+          <div class="dropdown-menu dropdown-menu-end p-3 small" style="min-width:220px;">
+            <form method="post" action="{% url 'switch_language' %}">
+              {% csrf_token %}
+              <input type="hidden" name="next" value="{{ request.get_full_path }}">
+
+              <div class="mb-2">
+                <label class="form-label mb-1">{% trans "Pays" %}</label>
+                <select class="form-select form-select-sm" name="country">
+                  <option value="SN" {% if country == "SN" %}selected{% endif %}>🇸🇳 {% trans "Sénégal" %}</option>
+                  <option value="CI" {% if country == "CI" %}selected{% endif %}>🇨🇮 {% trans "Côte d’Ivoire" %}</option>
+                  <option value="FR" {% if country == "FR" %}selected{% endif %}>🇫🇷 {% trans "France" %}</option>
+                </select>
+              </div>
+
+              <div class="mb-2">
+                <label class="form-label mb-1">{% trans "Langue" %}</label>
+                <select class="form-select form-select-sm" name="language">
+                  <option value="fr" {% if request.LANGUAGE_CODE == 'fr' %}selected{% endif %}>{% trans "Français" %}</option>
+                  <option value="en" {% if request.LANGUAGE_CODE == 'en' %}selected{% endif %}>{% trans "Anglais" %}</option>
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label mb-1">{% trans "Devise" %}</label>
+                <select class="form-select form-select-sm" name="currency">
+                  <option value="XOF" {% if cur == 'XOF' %}selected{% endif %}>XOF (CFA BCEAO)</option>
+                  <option value="EUR" {% if cur == 'EUR' %}selected{% endif %}>EUR (€)</option>
+                  <option value="USD" {% if cur == 'USD' %}selected{% endif %}>USD ($)</option>
+                </select>
+              </div>
+
+              <button type="submit" class="btn btn-dark btn-sm w-100">{% trans "Enregistrer" %}</button>
+            </form>
+          </div>
+        </div>
+
+        {# --------------------------- #}
+        {#   Compte (Espace + Auth + Infos) #}
+        {# --------------------------- #}
+        <div class="dropdown">
+          <a class="btn btn-success rounded-pill px-3 dropdown-toggle"
+             href="#"
+             role="button"
+             data-bs-toggle="dropdown"
+             aria-expanded="false">
+            <i class="fa-solid fa-user-graduate me-2"></i>
+            {% trans "Compte" %}
+            <span class="ms-2 small fw-semibold">
+              {% if request.user.is_authenticated %}
+                {% trans "En ligne" %}
+              {% else %}
+                {% trans "Hors ligne" %}
+              {% endif %}
+            </span>
+          </a>
+
+          <div class="dropdown-menu dropdown-menu-end p-2 shadow-sm" style="min-width: 260px;">
+
+            <div class="px-2 pt-1 pb-2 small text-muted fw-semibold text-uppercase">
+              {% trans "Espace apprenant" %}
+            </div>
+
+            {% if request.user.is_authenticated %}
+              <a class="dropdown-item rounded-2" href="{{ u_my_dashboard|default:'#' }}">
+                <i class="fa-solid fa-gauge-high me-2"></i>{% trans "Tableau de bord" %}
+              </a>
+              <a class="dropdown-item rounded-2" href="{{ u_my_courses|default:'#' }}">
+                <i class="fa-solid fa-book me-2"></i>{% trans "Mes cours" %}
+              </a>
+              <a class="dropdown-item rounded-2" href="{{ u_my_calendar|default:'#' }}">
+                <i class="fa-regular fa-calendar me-2"></i>{% trans "Mon calendrier" %}
+              </a>
+              <a class="dropdown-item rounded-2" href="{{ u_my_certificates|default:'#' }}">
+                <i class="fa-solid fa-certificate me-2"></i>{% trans "Mes certificats" %}
+              </a>
+
+              <div class="dropdown-divider my-2"></div>
+
+              <a class="dropdown-item rounded-2 text-danger" href="{{ u_logout|default:'#' }}">
+                <i class="fa-solid fa-right-from-bracket me-2"></i>{% trans "Se déconnecter" %}
+              </a>
+            {% else %}
+              <a class="dropdown-item rounded-2" href="{{ u_login|default:'#' }}">
+                <i class="fa-solid fa-right-to-bracket me-2"></i>{% trans "Se connecter" %}
+              </a>
+              <a class="dropdown-item rounded-2" href="{{ u_signup|default:'#' }}">
+                <i class="fa-solid fa-user-plus me-2"></i>{% trans "S'inscrire" %}
+              </a>
+            {% endif %}
+
+            <div class="dropdown-divider my-2"></div>
+
+            <div class="px-2 pt-1 pb-2 small text-muted fw-semibold text-uppercase">
+              {% trans "Infos & aides" %}
+            </div>
+
+            <a class="dropdown-item rounded-2" href="{% if u_formations_home %}{{ u_formations_home }}#faq{% else %}#{% endif %}">
+              <i class="fa-regular fa-circle-question me-2"></i>{% trans "FAQs" %}
+            </a>
+
+            <a class="dropdown-item rounded-2" href="{% if u_formations_home %}{{ u_formations_home }}#financing{% else %}#{% endif %}">
+              <i class="fa-solid fa-hand-holding-dollar me-2"></i>{% trans "Financements possibles" %}
+            </a>
+
+            <a class="dropdown-item rounded-2" href="{% if u_formations_home %}{{ u_formations_home }}#recognized{% else %}#{% endif %}">
+              <i class="fa-solid fa-award me-2"></i>{% trans "Certifications reconnues" %}
+            </a>
+
+            <a class="dropdown-item rounded-2" href="{{ u_contact|default:'#' }}">
+              <i class="fa-regular fa-envelope me-2"></i>{% trans "Contact" %}
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </nav>
+
+  {# ================================== #}
+  {#   OFFCANVAS (mobile)                 #}
+  {# ================================== #}
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="ftFormationsOffcanvas" aria-labelledby="ftFormationsOffcanvasLabel">
+    <div class="offcanvas-header">
+      <div class="fw-bold" id="ftFormationsOffcanvasLabel">{% trans "Menu Formations" %}</div>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="{% trans 'Fermer' %}"></button>
+    </div>
+
+    <div class="offcanvas-body">
+
+      <form class="mb-3" method="get" action="{{ u_course_list|default:'#' }}">
+        <div class="input-group">
+          <span class="input-group-text bg-white"><i class="fa-solid fa-magnifying-glass"></i></span>
+          <input class="form-control" type="search" name="q" value="{{ request.GET.q|default:'' }}"
+                 placeholder="{% trans 'Rechercher une formation…' %}">
+          <button class="btn btn-primary" type="submit">{% trans "OK" %}</button>
+        </div>
+      </form>
+
+      <div class="list-group mb-3">
+        <a class="list-group-item list-group-item-action" href="{{ u_b2c|default:'#' }}">{% trans "B2C" %}</a>
+        <a class="list-group-item list-group-item-action" href="{{ u_services|default:'#' }}">{% trans "Services" %}</a>
+        <a class="list-group-item list-group-item-action" href="{{ u_formations_home|default:'#' }}">{% trans "Formations" %}</a>
+        <a class="list-group-item list-group-item-action" href="{{ u_b2b|default:'#' }}">{% trans "B2B" %}</a>
+      </div>
+
+      <div class="list-group">
+        <a class="list-group-item list-group-item-action" href="{{ u_course_list|default:'#' }}">
+          <i class="fa-solid fa-book-open me-2"></i>{% trans "Catalogue" %}
+        </a>
+        <a class="list-group-item list-group-item-action" href="{% if u_formations_home %}{{ u_formations_home }}#parcours{% else %}#{% endif %}">
+          <i class="fa-solid fa-route me-2"></i>{% trans "Parcours" %}
+        </a>
+        <a class="list-group-item list-group-item-action" href="{% if u_formations_home %}{{ u_formations_home }}#calendar{% else %}#{% endif %}">
+          <i class="fa-regular fa-calendar me-2"></i>{% trans "Calendrier" %}
+        </a>
+        <a class="list-group-item list-group-item-action" href="{% if u_formations_home %}{{ u_formations_home }}#certifications{% else %}#{% endif %}">
+          <i class="fa-solid fa-certificate me-2"></i>{% trans "Certifications" %}
+        </a>
+        <a class="list-group-item list-group-item-action" href="{% if u_formations_home %}{{ u_formations_home }}#instructors{% else %}#{% endif %}">
+          <i class="fa-solid fa-chalkboard-user me-2"></i>{% trans "Formateurs" %}
+        </a>
+        <a class="list-group-item list-group-item-action" href="{% if u_formations_home %}{{ u_formations_home }}#pricing{% else %}#{% endif %}">
+          <i class="fa-solid fa-tag me-2"></i>{% trans "Tarifs" %}
+        </a>
+        <a class="list-group-item list-group-item-action" href="{% if u_formations_home %}{{ u_formations_home }}#faq{% else %}#{% endif %}">
+          <i class="fa-regular fa-circle-question me-2"></i>{% trans "FAQs" %}
+        </a>
+        <a class="list-group-item list-group-item-action" href="{{ u_contact|default:'#' }}">
+          <i class="fa-regular fa-envelope me-2"></i>{% trans "Contact" %}
+        </a>
+      </div>
+
+    </div>
+  </div>
+</header>
+{% endwith %}
+{% endwith %}

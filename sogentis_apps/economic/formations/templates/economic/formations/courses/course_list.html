@@ -1,0 +1,441 @@
+{# templates/economic/formations/courses/course_list.html #}
+{% extends "economic/formations/base_formations.html" %}
+{% load i18n dashboard_tags %}
+
+{% block formations_title %}{% trans "Catalogue des formations" %}{% endblock %}
+
+{% block formations_content %}
+
+{% safe_url "economic:formations:course_detail" as u_course_detail %}
+
+<section class="mb-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <h1 class="h4 mb-0">{% trans "Catalogue des formations" %}</h1>
+    <div class="text-muted small d-none d-md-block">{% trans "Filtrez, recherchez et inscrivez-vous en quelques clics." %}</div>
+
+    <form method="get" class="row g-2 align-items-center mt-2 mt-md-0">
+      <div class="col-12 col-md-5">
+        <input type="search"
+               name="q"
+               value="{{ request.GET.q|default:q }}"
+               class="form-control form-control-sm"
+               placeholder="{% trans 'Rechercher une formation…' %}">
+      </div>
+
+      <div class="col-6 col-md-3">
+        <select class="form-select form-select-sm" name="category">
+          <option value="">{% trans "Toutes catégories" %}</option>
+          {% for category in categories %}
+            <option value="{{ category.slug }}"
+                    {% if request.GET.category == category.slug or category_selected == category.slug %}selected{% endif %}>
+              {{ category }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-6 col-md-2">
+        <select class="form-select form-select-sm" name="type">
+          <option value="">{% trans "Tous formats" %}</option>
+          <option value="online" {% if type_selected == 'online' %}selected{% endif %}>{% trans "En ligne" %}</option>
+          <option value="onsite" {% if type_selected == 'onsite' %}selected{% endif %}>{% trans "Présentiel" %}</option>
+          <option value="blended" {% if type_selected == 'blended' %}selected{% endif %}>{% trans "Hybride" %}</option>
+        </select>
+      </div>
+
+      <div class="col-12 col-md-2 d-grid">
+        <button class="btn btn-sm btn-primary">{% trans "Filtrer" %}</button>
+      </div>
+    </form>
+  </div>
+
+  {% if courses %}
+    <div class="row g-3 g-md-4">
+      {% for course in courses %}
+        <div class="col-md-6 col-lg-4">
+          <article class="p-3 bg-white border rounded-3 h-100 d-flex flex-column">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              {% if course.category %}
+                <span class="badge bg-light text-dark border small">{{ course.category }}</span>
+              {% endif %}
+
+              {% if course.price %}
+                <span class="fw-semibold small">{{ course.price }} {{ FORMATIONS_CURRENCY|default:"XOF" }}</span>
+              {% else %}
+                <span class="fw-semibold small text-success">{% trans "Gratuit" %}</span>
+              {% endif %}
+            </div>
+
+            <h2 class="h6 mb-1">
+              {% if u_course_detail %}
+                <a href="{% url 'economic:formations:course_detail' slug=course.slug %}" class="text-decoration-none">
+                  {{ course }}
+                </a>
+              {% else %}
+                <span>{{ course }}</span>
+              {% endif %}
+            </h2>
+
+            {% if course.short_description %}
+              <p class="small text-muted mb-3">{{ course.short_description|truncatechars:140 }}</p>
+            {% endif %}
+
+            <div class="mt-auto d-flex justify-content-between align-items-center">
+              {% if course.level_label or course.get_level_display %}
+                <span class="badge bg-light text-muted border small">
+                  {{ course.level_label|default:course.get_level_display }}
+                </span>
+              {% endif %}
+              {% if u_course_detail %}
+                <a href="{% url 'economic:formations:course_detail' slug=course.slug %}" class="btn btn-sm btn-outline-primary">
+                  {% trans "Voir le détail" %}
+                </a>
+              {% else %}
+                <a href="#" class="btn btn-sm btn-outline-primary disabled">{% trans "Voir le détail" %}</a>
+              {% endif %}
+            </div>
+          </article>
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if is_paginated and page_obj %}
+      <nav class="mt-4" aria-label="{% trans 'Pagination' %}">
+        <ul class="pagination pagination-sm">
+          {% if page_obj.has_previous %}
+            <li class="page-item">
+              <a class="page-link"
+                 href="?page={{ page_obj.previous_page_number }}&q={{ request.GET.q|urlencode }}&category={{ request.GET.category|urlencode }}&type={{ type_selected|urlencode }}">←</a>
+            </li>
+          {% endif %}
+
+          <li class="page-item disabled">
+            <span class="page-link">{{ page_obj.number }}/{{ page_obj.paginator.num_pages }}</span>
+          </li>
+
+          {% if page_obj.has_next %}
+            <li class="page-item">
+              <a class="page-link"
+                 href="?page={{ page_obj.next_page_number }}&q={{ request.GET.q|urlencode }}&category={{ request.GET.category|urlencode }}&type={{ type_selected|urlencode }}">→</a>
+            </li>
+          {% endif %}
+        </ul>
+      </nav>
+    {% endif %}
+
+  {% else %}
+    <p class="text-muted">{% trans "Aucune formation disponible pour le moment." %}</p>
+  {% endif %}
+</section>
+
+{% endblock %}
+
+
+
+{% comment %} {# templates/economic/formations/courses/course_list.html #}
+{% extends "economic/formations/base_formations.html" %}
+{% load i18n %}
+
+{% block formations_title %}{% trans "Catalogue des formations" %}{% endblock %}
+
+{% block formations_content %}
+
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <div>
+      <h1 class="h4 fw-bold mb-1">{% trans "Catalogue" %}</h1>
+      <div class="text-muted">{% trans "Cherchez une formation et filtrez par catégorie et type." %}</div>
+    </div>
+    {% if user.is_authenticated %}
+      <a class="btn btn-outline-secondary" href="{% url 'economic:formations:learner:dashboard' %}">{% trans "Mon espace" %}</a>
+    {% endif %}
+  </div>
+
+  <form method="get" class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+      <div class="row g-2 align-items-end">
+        <div class="col-12 col-lg-5">
+          <label class="form-label fw-semibold">{% trans "Recherche" %}</label>
+          <input type="text" class="form-control" name="q" value="{{ q }}" placeholder="{% trans 'Ex: Python, Marketing…' %}">
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-3">
+          <label class="form-label fw-semibold">{% trans "Catégorie" %}</label>
+          <select class="form-select" name="category">
+            <option value="">{% trans "Toutes" %}</option>
+            {% for cat in categories %}
+              <option value="{{ cat.slug }}" {% if cat.slug == category_selected %}selected{% endif %}>
+                {{ cat }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-2">
+          <label class="form-label fw-semibold">{% trans "Type" %}</label>
+          <select class="form-select" name="type">
+            <option value="">{% trans "Tous" %}</option>
+            <option value="online" {% if type_selected == "online" %}selected{% endif %}>{% trans "En ligne" %}</option>
+            <option value="onsite" {% if type_selected == "onsite" %}selected{% endif %}>{% trans "Présentiel" %}</option>
+            <option value="blended" {% if type_selected == "blended" %}selected{% endif %}>{% trans "Hybride" %}</option>
+          </select>
+        </div>
+
+        <div class="col-12 col-lg-2 d-grid">
+          <button class="btn btn-primary" type="submit">{% trans "Filtrer" %}</button>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  {% if courses %}
+    <div class="row g-3">
+      {% for course in courses %}
+        <div class="col-12 col-md-6 col-lg-4">
+          {% include "economic/formations/partials/_course_card.html" with course=course %}
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    {% include "economic/formations/partials/_empty_state.html" with
+      title=_("Aucun résultat")
+      text=_("Essayez un autre mot-clé ou retirez certains filtres.")
+    %}
+  {% endif %}
+
+{% endblock %} {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/economic/formations/courses/course_list.html #}
+{% extends "economic/formations/base_formations.html" %}
+{% load i18n %}
+
+{% block formations_title %}{% trans "Catalogue des formations" %}{% endblock %}
+
+{% block formations_content %}
+
+<section class="mb-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <h1 class="h4 mb-0">{% trans "Catalogue des formations" %}</h1>
+    <div class="text-muted small d-none d-md-block">{% trans "Filtrez, recherchez et inscrivez-vous en quelques clics." %}</div>
+
+    <form method="get" class="row g-2 align-items-center mt-2 mt-md-0">
+      <div class="col-12 col-md-5">
+        <input type="search"
+               name="q"
+               value="{{ request.GET.q|default:q }}"
+               class="form-control form-control-sm"
+               placeholder="{% trans 'Rechercher une formation…' %}">
+      </div>
+
+      <div class="col-6 col-md-3">
+        <select class="form-select form-select-sm" name="category">
+          <option value="">{% trans "Toutes catégories" %}</option>
+          {% for category in categories %}
+            <option value="{{ category.slug }}"
+                    {% if request.GET.category == category.slug or category_selected == category.slug %}selected{% endif %}>
+              {{ category.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-6 col-md-2">
+        <select class="form-select form-select-sm" name="type">
+          <option value="">{% trans "Tous formats" %}</option>
+          <option value="online" {% if type_selected == 'online' %}selected{% endif %}>{% trans "En ligne" %}</option>
+          <option value="onsite" {% if type_selected == 'onsite' %}selected{% endif %}>{% trans "Présentiel" %}</option>
+          <option value="blended" {% if type_selected == 'blended' %}selected{% endif %}>{% trans "Hybride" %}</option>
+        </select>
+      </div>
+
+      <div class="col-12 col-md-2 d-grid">
+        <button class="btn btn-sm btn-primary">{% trans "Filtrer" %}</button>
+      </div>
+    </form>
+  </div>
+
+  {% if courses %}
+    <div class="row g-3 g-md-4">
+      {% for course in courses %}
+        <div class="col-md-6 col-lg-4">
+          <article class="p-3 bg-white border rounded-3 h-100 d-flex flex-column">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              {% if course.category %}
+                <span class="badge bg-light text-dark border small">{{ course.category.name }}</span>
+              {% endif %}
+
+              {% if course.price %}
+                <span class="fw-semibold small">{{ course.price }} {{ FORMATIONS_CURRENCY|default:"XOF" }}</span>
+              {% else %}
+                <span class="fw-semibold small text-success">{% trans "Gratuit" %}</span>
+              {% endif %}
+            </div>
+
+            <h2 class="h6 mb-1">
+              {% url 'economic:formations:course_detail' slug=course.slug as course_url %}
+              <a href="{{ course_url|default:'#' }}" class="text-decoration-none">{{ course.title }}</a>
+            </h2>
+
+            {% if course.short_description %}
+              <p class="small text-muted mb-3">{{ course.short_description|truncatechars:140 }}</p>
+            {% endif %}
+
+            <div class="mt-auto d-flex justify-content-between align-items-center">
+              {% if course.level_label or course.get_level_display %}
+                <span class="badge bg-light text-muted border small">
+                  {{ course.level_label|default:course.get_level_display }}
+                </span>
+              {% endif %}
+              <a href="{{ course_url|default:'#' }}" class="btn btn-sm btn-outline-primary">
+                {% trans "Voir le détail" %}
+              </a>
+            </div>
+          </article>
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if is_paginated %}
+      <nav class="mt-4" aria-label="{% trans 'Pagination' %}">
+        <ul class="pagination pagination-sm">
+          {% if page_obj.has_previous %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ request.GET.q }}&category={{ request.GET.category }}&type={{ type_selected }}">←</a>
+            </li>
+          {% endif %}
+
+          <li class="page-item disabled">
+            <span class="page-link">{{ page_obj.number }}/{{ page_obj.paginator.num_pages }}</span>
+          </li>
+
+          {% if page_obj.has_next %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ request.GET.q }}&category={{ request.GET.category }}&type={{ type_selected }}">→</a>
+            </li>
+          {% endif %}
+        </ul>
+      </nav>
+    {% endif %}
+
+  {% else %}
+    <p class="text-muted">{% trans "Aucune formation disponible pour le moment." %}</p>
+  {% endif %}
+</section>
+
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/formations/course_list.html #}
+{% extends "economic/formations/base_formations.html" %}
+{% load i18n %}
+
+{% block formations_title %}{% trans "Catalogue des formations" %}{% endblock %}
+
+{% block formations_content %}
+
+<section class="mb-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <h1 class="h4 mb-0">
+      {% trans "Catalogue des formations" %}
+    </h1>
+
+    <form method="get" class="d-flex gap-2 align-items-center">
+      <input type="search"
+             name="q"
+             value="{{ request.GET.q }}"
+             class="form-control form-control-sm"
+             placeholder="{% trans 'Rechercher une formation' %}">
+      <button class="btn btn-sm btn-outline-primary" type="submit">
+        {% trans "Filtrer" %}
+      </button>
+    </form>
+  </div>
+
+  {% if categories %}
+    <div class="mb-3">
+      <div class="small text-muted mb-1">
+        {% trans "Filtrer par domaine" %} :
+      </div>
+      <div class="d-flex flex-wrap gap-2">
+        <a href="{% url 'economic:formations:course_list' %}"
+           class="badge {% if not request.GET.category %}bg-primary{% else %}bg-light text-dark border{% endif %}">
+          {% trans "Tous" %}
+        </a>
+        {% for category in categories %}
+          <a href="{% url 'economic:formations:course_list' %}?category={{ category.slug }}"
+             class="badge {% if request.GET.category == category.slug %}bg-primary{% else %}bg-light text-dark border{% endif %}">
+            {{ category.name }}
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+</section>
+
+<section>
+  {% if courses %}
+    <div class="row g-3 g-md-4">
+      {% for course in courses %}
+        <div class="col-md-6 col-lg-4">
+          <article class="p-3 bg-white border rounded-3 h-100 d-flex flex-column">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              {% if course.category %}
+                <span class="badge bg-light text-dark border small">
+                  {{ course.category }}
+                </span>
+              {% endif %}
+              {% if course.price %}
+                <span class="fw-semibold small">
+                  {{ course.price }} {{ FORMATIONS_CURRENCY|default:"XOF" }}
+                </span>
+              {% else %}
+                <span class="fw-semibold small text-success">
+                  {% trans "Gratuit" %}
+                </span>
+              {% endif %}
+            </div>
+
+            <h2 class="h6 mb-1">
+              <a href="{% url 'economic:formations:course_detail' slug=course.slug %}"
+                 class="text-decoration-none">
+                {{ course.title }}
+              </a>
+            </h2>
+
+            {% if course.short_description %}
+              <p class="small text-muted mb-3">
+                {{ course.short_description|truncatechars:140 }}
+              </p>
+            {% endif %}
+
+            <div class="mt-auto d-flex justify-content-between align-items-center">
+              {% if course.level_label %}
+                <span class="badge bg-light text-muted border small">
+                  {{ course.level_label }}
+                </span>
+              {% endif %}
+              <a href="{% url 'economic:formations:course_detail' slug=course.slug %}"
+                 class="btn btn-sm btn-outline-primary">
+                {% trans "Voir le détail" %}
+              </a>
+            </div>
+          </article>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-muted">
+      {% trans "Aucune formation disponible pour le moment." %}
+    </p>
+  {% endif %}
+</section>
+
+{% endblock %} {% endcomment %}

@@ -1,0 +1,776 @@
+{% comment %} {# templates/accounts_users/registration/register_economic_choice.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Choisir un type de compte | SOGENTIS" %}{% endblock %}
+{% block auth_title %}{% trans "Créer un compte économique" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Choisissez votre profil pour accéder au pôle économique SOGENTIS" %}{% endblock %}
+{% block auth_bg_image %}url('{% static "economic/img/bg/eco-register-bg.svg" %}'){% endblock %}
+
+{% block auth_wrapper_class %}auth-wrapper-wide{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+<link rel="stylesheet" href="{% static 'accounts_users/css/register_economic_choice.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="eco-choice-header">
+  <div>
+    <h5 class="fw-bold mb-1">{% trans "Sélectionnez votre type de compte" %}</h5>
+    <p class="text-muted mb-0">
+      {% trans "Chaque type de compte vous donne accès à des fonctionnalités différentes." %}
+    </p>
+  </div>
+
+  <a href="{% url 'accounts_users:web:auth:login' %}" class="btn btn-outline-secondary btn-sm">
+    {% trans "J’ai déjà un compte" %}
+  </a>
+</div>
+
+<div class="eco-choice-grid">
+  {% for key, cfg in choices.items %}
+    <div class="eco-card">
+      <div class="eco-card-top">
+        <div class="eco-icon" aria-hidden="true">
+          {% if key == "client" %}🛒{% elif key == "vendor" %}🏪{% elif key == "b2b" %}🏢{% else %}👤{% endif %}
+        </div>
+
+        <div class="eco-head">
+          <div class="eco-topline">
+            <h6 class="eco-title">{{ cfg.label }}</h6>
+
+            {% if key == "vendor" or key == "b2b" %}
+              <span class="eco-badge">⏳ {% trans "Validation" %}</span>
+            {% else %}
+              <span class="eco-badge">✅ {% trans "Immédiat" %}</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <p class="eco-desc">
+        {% if key == "client" %}
+          {% trans "Acheter des produits, suivre vos commandes et gérer votre profil." %}
+        {% elif key == "vendor" %}
+          {% trans "Vendre, gérer un catalogue, recevoir des paiements et suivre les ventes." %}
+        {% elif key == "b2b" %}
+          {% trans "Accès entreprise : demandes B2B, gestion d’organisation et documents légaux." %}
+        {% else %}
+          {% trans "Compte économique standard." %}
+        {% endif %}
+      </p>
+
+      <div class="d-grid mt-3">
+        <a class="btn btn-success fw-bold"
+           href="{% url 'accounts_users:web:registration:register_economic' %}?type={{ key }}">
+          {% trans "Continuer" %}
+        </a>
+      </div>
+
+      {% if key == "vendor" %}
+        <div class="eco-footnote">
+          {% trans "Un document légal (PDF) est requis. Votre compte sera activé après validation." %}
+        </div>
+      {% elif key == "b2b" %}
+        <div class="eco-footnote">
+          {% trans "Documents d’enregistrement requis. Activation après validation." %}
+        </div>
+      {% endif %}
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}
+
+ {% endcomment %}
+
+
+
+
+{% comment %} {# templates/accounts_users/registration/register_economic_choice.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Choisir un type de compte | SOGENTIS" %}{% endblock %}
+{% block auth_title %}{% trans "Créer un compte économique" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Choisissez votre profil pour accéder au pôle économique SOGENTIS" %}{% endblock %}
+{% block auth_bg_image %}url('{% static "economic/img/bg/eco-register-bg.svg" %}'){% endblock %}
+
+{% block auth_wrapper_class %}auth-wrapper-wide{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+<link rel="stylesheet" href="{% static 'accounts_users/css/register_economic_choice.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="eco-choice-header">
+  <div>
+    <h5 class="fw-bold mb-1">{% trans "Sélectionnez votre type de compte" %}</h5>
+    <p class="text-muted mb-0">{% trans "Chaque type de compte vous donne accès à des fonctionnalités différentes." %}</p>
+  </div>
+
+  <a href="{% url 'accounts_users_web:login' %}" class="btn btn-outline-secondary btn-sm">
+    {% trans "J’ai déjà un compte" %}
+  </a>
+</div>
+
+<div class="eco-choice-grid">
+  {% for key, cfg in choices.items %}
+    <div class="eco-card">
+      <div class="eco-card-top">
+        <div class="eco-icon" aria-hidden="true">
+          {% if key == "client" %}🛒{% elif key == "vendor" %}🏪{% elif key == "b2b" %}🏢{% else %}👤{% endif %}
+        </div>
+
+        <div class="eco-head">
+          <div class="eco-topline">
+            <h6 class="eco-title">{{ cfg.label }}</h6>
+
+            {% if key == "vendor" or key == "b2b" %}
+              <span class="eco-badge">⏳ {% trans "Validation" %}</span>
+            {% else %}
+              <span class="eco-badge">✅ {% trans "Immédiat" %}</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <p class="eco-desc">
+        {% if key == "client" %}
+          {% trans "Acheter des produits, suivre vos commandes et gérer votre profil." %}
+        {% elif key == "vendor" %}
+          {% trans "Vendre, gérer un catalogue, recevoir des paiements et suivre les ventes." %}
+        {% elif key == "b2b" %}
+          {% trans "Accès entreprise : demandes B2B, gestion d’organisation et documents légaux." %}
+        {% else %}
+          {% trans "Compte économique standard." %}
+        {% endif %}
+      </p>
+
+      <div class="d-grid mt-3">
+        <a class="btn btn-success fw-bold" href="{% url 'accounts_users_web:register_economic' %}?type={{ key }}">
+          {% trans "Continuer" %}
+        </a>
+      </div>
+
+      {% if key == "vendor" %}
+        <div class="eco-footnote">{% trans "Un document légal (PDF) est requis. Votre compte sera activé après validation." %}</div>
+      {% elif key == "b2b" %}
+        <div class="eco-footnote">{% trans "Documents d’enregistrement requis. Activation après validation." %}</div>
+      {% endif %}
+    </div>
+  {% endfor %}
+</div>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+
+{% comment %} {# templates/accounts_users/registration/register_economic_choice.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Choisir un type de compte | SOGENTIS" %}{% endblock %}
+{% block auth_title %}{% trans "Créer un compte économique" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Choisissez votre profil pour accéder au pôle économique SOGENTIS" %}{% endblock %}
+{% block auth_bg_image %}{% static "economic/img/bg/eco-register-bg.svg" %}{% endblock %}
+
+{% block auth_wrapper_class %}auth-wrapper-wide{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+<style>
+  .auth-wrapper-wide{ max-width: 1120px !important; }
+
+  .eco-choice-header{
+    display:flex; align-items:flex-start; justify-content:space-between;
+    gap:12px; flex-wrap:wrap;
+    margin-bottom:14px;
+  }
+
+  .eco-choice-grid{ display:grid; gap:16px; }
+  @media(min-width: 768px){
+    .eco-choice-grid{ grid-template-columns: repeat(3, minmax(0,1fr)); }
+  }
+
+  .eco-card{
+    background: rgba(255,255,255,.96);
+    border: 1px solid rgba(0,0,0,.08);
+    border-radius: 16px;
+    padding: 16px;
+    display:flex;
+    flex-direction:column;
+    height:100%;
+  }
+
+  .eco-card-top{
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+    margin-bottom:10px;
+    min-width:0;
+  }
+
+  .eco-icon{
+    width:46px; height:46px;
+    border-radius:14px;
+    display:flex; align-items:center; justify-content:center;
+    background: rgba(25,135,84,.12);
+    font-size:22px;
+    flex:0 0 auto;
+  }
+
+  .eco-head{ flex:1; min-width:0; }
+
+  .eco-topline{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    min-width:0;
+  }
+
+  .eco-title{
+    margin:0;
+    font-weight:800;
+    font-size:1.05rem;
+    line-height:1.2;
+    white-space:normal !important;
+    overflow:visible !important;
+    text-overflow:clip !important;
+    max-width:none !important;
+  }
+
+  .eco-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:6px 10px;
+    border-radius:999px;
+    font-size:.82rem;
+    border:1px solid rgba(0,0,0,.10);
+    background:#fff;
+    white-space:nowrap;
+    flex:0 0 auto;
+  }
+
+  .eco-desc{
+    color:#6c757d;
+    font-size:.95rem;
+    margin:0;
+    flex:1;
+  }
+
+  .eco-footnote{
+    margin-top:10px;
+    color:#6c757d;
+    font-size:.85rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="eco-choice-header">
+  <div>
+    <h5 class="fw-bold mb-1">{% trans "Sélectionnez votre type de compte" %}</h5>
+    <p class="text-muted mb-0">
+      {% trans "Chaque type de compte vous donne accès à des fonctionnalités différentes." %}
+    </p>
+  </div>
+
+  <a href="{% url 'accounts_users_web:login' %}" class="btn btn-outline-secondary btn-sm">
+    {% trans "J’ai déjà un compte" %}
+  </a>
+</div>
+
+<div class="eco-choice-grid">
+  {% for key, cfg in choices.items %}
+    <div class="eco-card">
+      <div class="eco-card-top">
+        <div class="eco-icon" aria-hidden="true">
+          {% if key == "client" %}🛒{% elif key == "vendor" %}🏪{% elif key == "b2b" %}🏢{% else %}👤{% endif %}
+        </div>
+
+        <div class="eco-head">
+          <div class="eco-topline">
+            <h6 class="eco-title">{{ cfg.label }}</h6>
+
+            {% if key == "vendor" or key == "b2b" %}
+              <span class="eco-badge">⏳ {% trans "Validation" %}</span>
+            {% else %}
+              <span class="eco-badge">✅ {% trans "Immédiat" %}</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <p class="eco-desc">
+        {% if key == "client" %}
+          {% trans "Acheter des produits, suivre vos commandes et gérer votre profil." %}
+        {% elif key == "vendor" %}
+          {% trans "Vendre, gérer un catalogue, recevoir des paiements et suivre les ventes." %}
+        {% elif key == "b2b" %}
+          {% trans "Accès entreprise : demandes B2B, gestion d’organisation et documents légaux." %}
+        {% else %}
+          {% trans "Compte économique standard." %}
+        {% endif %}
+      </p>
+
+      <div class="d-grid mt-3">
+        <a class="btn btn-success fw-bold"
+           href="{% url 'accounts_users_web:register_economic' %}?type={{ key }}">
+          {% trans "Continuer" %}
+        </a>
+      </div>
+
+      {% if key == "vendor" %}
+        <div class="eco-footnote">
+          {% trans "Un document légal (PDF) est requis. Votre compte sera activé après validation." %}
+        </div>
+      {% elif key == "b2b" %}
+        <div class="eco-footnote">
+          {% trans "Documents d’enregistrement requis. Activation après validation." %}
+        </div>
+      {% endif %}
+    </div>
+  {% endfor %}
+</div>
+
+<hr class="my-4">
+
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+  <a href="{% url 'core:home' %}" class="btn btn-link px-0">← {% trans "Retour au site" %}</a>
+  <small class="text-muted">{% trans "Besoin d’aide ? Contactez le support SOGENTIS." %}</small>
+</div>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/accounts_users/registration/register_economic_choice.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Choisir un type de compte | SOGENTIS" %}{% endblock %}
+{% block auth_title %}{% trans "Créer un compte économique" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Choisissez votre profil pour accéder au pôle économique SOGENTIS" %}{% endblock %}
+{% block auth_bg_image %}{% static "economic/img/bg/eco-register-bg.svg" %}{% endblock %}
+
+{# ✅ largeur large pour 3 cards #}
+{% block auth_wrapper_class %}auth-wrapper-wide{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+<style>
+  /* Force la largeur même si auth_base.css met un !important */
+  .auth-wrapper-wide{ max-width: 1120px !important; }
+
+  .eco-choice-header{
+    display:flex; align-items:flex-start; justify-content:space-between;
+    gap:12px; flex-wrap:wrap;
+    margin-bottom:14px;
+  }
+
+  .eco-choice-grid{
+    display:grid; gap:16px;
+  }
+  @media(min-width: 768px){
+    .eco-choice-grid{ grid-template-columns: repeat(3, minmax(0,1fr)); }
+  }
+
+  .eco-card{
+    background: rgba(255,255,255,.96);
+    border: 1px solid rgba(0,0,0,.08);
+    border-radius: 16px;
+    padding: 16px;
+    display:flex;
+    flex-direction:column;
+    height:100%;
+  }
+
+  .eco-card-top{
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+    margin-bottom:10px;
+    min-width:0;
+  }
+
+  .eco-icon{
+    width:46px; height:46px;
+    border-radius:14px;
+    display:flex; align-items:center; justify-content:center;
+    background: rgba(25,135,84,.12);
+    font-size:22px;
+    flex:0 0 auto;
+  }
+
+  .eco-head{
+    flex:1;
+    min-width:0;
+  }
+
+  .eco-topline{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    min-width:0;
+  }
+
+  .eco-title{
+    margin:0;
+    font-weight:800;
+    font-size:1.05rem;
+    line-height:1.2;
+    white-space:normal !important;
+    overflow:visible !important;
+    text-overflow:clip !important;
+    max-width:none !important;
+  }
+
+  .eco-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:6px 10px;
+    border-radius:999px;
+    font-size:.82rem;
+    border:1px solid rgba(0,0,0,.10);
+    background:#fff;
+    white-space:nowrap;
+    flex:0 0 auto;
+  }
+
+  .eco-desc{
+    color:#6c757d;
+    font-size:.95rem;
+    margin:0;
+    flex:1; /* pousse bouton vers le bas */
+  }
+
+  .eco-footnote{
+    margin-top:10px;
+    color:#6c757d;
+    font-size:.85rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="eco-choice-header">
+  <div>
+    <h5 class="fw-bold mb-1">{% trans "Sélectionnez votre type de compte" %}</h5>
+    <p class="text-muted mb-0">
+      {% trans "Chaque type de compte vous donne accès à des fonctionnalités différentes." %}
+    </p>
+  </div>
+
+  <a href="{% url 'accounts_users_web:login' %}" class="btn btn-outline-secondary btn-sm">
+    {% trans "J’ai déjà un compte" %}
+  </a>
+</div>
+
+<div class="eco-choice-grid">
+  {% for key, cfg in choices.items %}
+    <div class="eco-card">
+
+      <div class="eco-card-top">
+        <div class="eco-icon" aria-hidden="true">
+          {% if key == "client" %}🛒{% elif key == "vendor" %}🏪{% elif key == "b2b" %}🏢{% else %}👤{% endif %}
+        </div>
+
+        <div class="eco-head">
+          <div class="eco-topline">
+            <h6 class="eco-title">{{ cfg.label }}</h6>
+
+            {% if key == "vendor" or key == "b2b" %}
+              <span class="eco-badge">⏳ {% trans "Validation" %}</span>
+            {% else %}
+              <span class="eco-badge">✅ {% trans "Immédiat" %}</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <p class="eco-desc">
+        {% if key == "client" %}
+          {% trans "Acheter des produits, suivre vos commandes et gérer votre profil." %}
+        {% elif key == "vendor" %}
+          {% trans "Vendre, gérer un catalogue, recevoir des paiements et suivre les ventes." %}
+        {% elif key == "b2b" %}
+          {% trans "Accès entreprise : demandes B2B, gestion d’organisation et documents légaux." %}
+        {% else %}
+          {% trans "Compte économique standard." %}
+        {% endif %}
+      </p>
+
+      <div class="d-grid mt-3">
+        <a class="btn btn-success fw-bold"
+           href="{% url 'accounts_users_web:register_economic' %}?type={{ key }}">
+          {% trans "Continuer" %}
+        </a>
+      </div>
+
+      {% if key == "vendor" %}
+        <div class="eco-footnote">
+          {% trans "Un document légal (PDF) est requis. Votre compte sera activé après validation." %}
+        </div>
+      {% elif key == "b2b" %}
+        <div class="eco-footnote">
+          {% trans "Documents d’enregistrement requis. Activation après validation." %}
+        </div>
+      {% endif %}
+
+    </div>
+  {% endfor %}
+</div>
+
+<hr class="my-4">
+
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+  <a href="{% url 'core:home' %}" class="btn btn-link px-0">← {% trans "Retour au site" %}</a>
+  <small class="text-muted">{% trans "Besoin d’aide ? Contactez le support SOGENTIS." %}</small>
+</div>
+{% endblock %}
+
+ {% endcomment %}
+
+
+
+
+{% comment %} {# templates/accounts_users/registration/register_economic_choice.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Choisir un type de compte | SOGENTIS" %}{% endblock %}
+
+{% block auth_title %}{% trans "Créer un compte économique" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Choisissez votre profil pour accéder au pôle économique SOGENTIS" %}{% endblock %}
+
+{% block auth_bg_image %}{% static "economic/img/business.jpg" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+<style>
+  /* ✅ Page choice: on élargit le wrapper (sinon 3 cards trop serrées) */
+  .auth-wrapper{ max-width: 1100px; }
+
+  .eco-choice-grid{display:grid;gap:14px}
+  @media(min-width:768px){.eco-choice-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+  .eco-choice-card{
+    background:rgba(255,255,255,.92);
+    border:1px solid rgba(0,0,0,.08);
+    border-radius:14px;
+    padding:16px;
+    transition:transform .15s ease, box-shadow .15s ease;
+    height:100%;
+    overflow:hidden; /* ✅ empêche tout “débordement visuel” */
+  }
+  .eco-choice-card:hover{
+    transform:translateY(-2px);
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+  }
+
+  .eco-choice-icon{
+    width:44px;height:44px;border-radius:12px;
+    display:flex;align-items:center;justify-content:center;
+    background:rgba(25,135,84,.12);
+    font-size:22px;
+    flex:0 0 auto;
+  }
+
+  .eco-choice-desc{color:#6c757d;font-size:.95rem}
+
+  /* ✅ IMPORTANT: on neutralise toute règle globale qui sortirait le badge du flux */
+  .eco-choice-badge{
+    position:static !important;
+    float:none !important;
+    inset:auto !important;
+    transform:none !important;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:6px 10px;
+    border-radius:999px;
+    font-size:.82rem;
+    border:1px solid rgba(0,0,0,.08);
+    background:#fff;
+    white-space:nowrap;
+  }
+
+  .eco-choice-head{display:flex;align-items:flex-start;gap:12px}
+  .eco-choice-title{margin:0;font-weight:800}
+  .eco-choice-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:6px}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card auth-card shadow-sm">
+  <div class="card-body">
+
+    <div class="d-flex align-items-start justify-content-between flex-wrap gap-2 mb-3">
+      <div>
+        <h5 class="fw-bold mb-1">{% trans "Sélectionnez votre type de compte" %}</h5>
+        <p class="eco-choice-desc mb-0">
+          {% trans "Chaque type de compte vous donne accès à des fonctionnalités différentes." %}
+        </p>
+      </div>
+
+      <a href="{% url 'accounts_users_web:login' %}" class="btn btn-outline-secondary btn-sm">
+        {% trans "J’ai déjà un compte" %}
+      </a>
+    </div>
+
+    <div class="eco-choice-grid mt-3">
+      {% for key, cfg in choices.items %}
+        <div class="eco-choice-card">
+
+          <div class="eco-choice-head">
+            <div class="eco-choice-icon" aria-hidden="true">
+              {% if key == "client" %}🛒{% elif key == "vendor" %}🏪{% elif key == "b2b" %}🏢{% else %}👤{% endif %}
+            </div>
+
+            <div class="flex-grow-1">
+              <h6 class="eco-choice-title">{{ cfg.label }}</h6>
+
+              <div class="eco-choice-meta">
+                {% if key == "vendor" or key == "b2b" %}
+                  <span class="eco-choice-badge">
+                    ⏳ {% trans "Validation" %}
+                  </span>
+                {% else %}
+                  <span class="eco-choice-badge">
+                    ✅ {% trans "Immédiat" %}
+                  </span>
+                {% endif %}
+              </div>
+
+              <p class="eco-choice-desc mt-2 mb-0">
+                {% if key == "client" %}
+                  {% trans "Acheter des produits, suivre vos commandes et gérer votre profil." %}
+                {% elif key == "vendor" %}
+                  {% trans "Vendre, gérer un catalogue, recevoir des paiements et suivre les ventes." %}
+                {% elif key == "b2b" %}
+                  {% trans "Accès entreprise : demandes B2B, gestion d’organisation et documents légaux." %}
+                {% else %}
+                  {% trans "Compte économique standard." %}
+                {% endif %}
+              </p>
+            </div>
+          </div>
+
+          <div class="d-grid mt-3">
+            <a class="btn btn-success fw-bold"
+               href="{% url 'accounts_users_web:register_economic' %}?type={{ key }}">
+              {% trans "Continuer" %}
+            </a>
+          </div>
+
+          {% if key == "vendor" %}
+            <div class="form-text mt-2">
+              {% trans "Un document légal (PDF) est requis. Votre compte sera activé après validation." %}
+            </div>
+          {% elif key == "b2b" %}
+            <div class="form-text mt-2">
+              {% trans "Documents d’enregistrement requis. Activation après validation." %}
+            </div>
+          {% endif %}
+
+        </div>
+      {% endfor %}
+    </div>
+
+    <hr class="my-4">
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <a href="{% url 'core:home' %}" class="btn btn-link px-0">
+        ← {% trans "Retour au site" %}
+      </a>
+      <small class="text-muted">
+        {% trans "Besoin d’aide ? Contactez le support SOGENTIS." %}
+      </small>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+ {% endcomment %}
+
+
+
+
+
+
+
+{% comment %} {% extends 'accounts_users/registration/base_auth.html' %}
+{% load i18n %}
+
+{% block content %}
+<div class="container py-5 text-center">
+
+    <h1 class="mb-4">{% trans "Créer un compte économique" %}</h1>
+    <p class="text-muted">
+        {% trans "Choisissez votre profil économique pour accéder aux services adaptés." %}
+    </p>
+
+    <div class="row justify-content-center g-4 mt-4">
+
+        <!-- CLIENT -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{% trans "Client" %}</h5>
+                    <p class="card-text flex-grow-1">
+                        {% trans "Acheter des produits et services sur la plateforme." %}
+                    </p>
+                    <a href="{% url 'accounts_users_web:register_economic' %}?type=client"
+                       class="btn btn-primary w-100">
+                        {% trans "Créer un compte client" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- VENDEUR -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{% trans "Vendeur" %}</h5>
+                    <p class="card-text flex-grow-1">
+                        {% trans "Vendre vos produits et gérer vos commandes." %}
+                    </p>
+                    <a href="{% url 'accounts_users_web:register_economic' %}?type=vendor"
+                       class="btn btn-success w-100">
+                        {% trans "Créer un compte vendeur" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ENTREPRISE / B2B -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{% trans "Entreprise / B2B" %}</h5>
+                    <p class="card-text flex-grow-1">
+                        {% trans "Commandes en gros, contrats et partenariats." %}
+                    </p>
+                    <a href="{% url 'accounts_users_web:register_economic' %}?type=b2b"
+                       class="btn btn-outline-primary w-100">
+                        {% trans "Créer un compte entreprise" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %} {% endcomment %}

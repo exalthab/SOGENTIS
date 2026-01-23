@@ -1,17 +1,18 @@
 # accounts_users/signals/membership_role_signals.py
+from __future__ import annotations
+
 from django.db.models.signals import post_migrate
 from django.dispatch import receiver
 
 from accounts_users.models.membership_role import MembershipRole
 
 
-@receiver(post_migrate)
+@receiver(post_migrate, dispatch_uid="accounts_users.seed_membership_roles")
 def seed_membership_roles(sender, **kwargs):
     """
     Seed idempotent des rôles d’adhésion.
     Déclenché après migrate. On limite à l’app accounts_users.
     """
-    # post_migrate est appelé pour chaque app → on filtre
     if getattr(sender, "label", None) != "accounts_users":
         return
 
@@ -24,9 +25,47 @@ def seed_membership_roles(sender, **kwargs):
 
     for code, label in roles:
         MembershipRole.objects.update_or_create(
-            code=code,  # ton save() upper/strip + contrainte CI => OK
+            code=code,
             defaults={
                 "label": label,
                 "is_active": True,
             },
         )
+
+
+
+
+
+
+# # accounts_users/signals/membership_role_signals.py
+# from django.db.models.signals import post_migrate
+# from django.dispatch import receiver
+
+# from accounts_users.models.membership_role import MembershipRole
+
+
+# @receiver(post_migrate)
+# def seed_membership_roles(sender, **kwargs):
+#     """
+#     Seed idempotent des rôles d’adhésion.
+#     Déclenché après migrate. On limite à l’app accounts_users.
+#     """
+#     # post_migrate est appelé pour chaque app → on filtre
+#     if getattr(sender, "label", None) != "accounts_users":
+#         return
+
+#     roles = [
+#         ("MEMBER", "Membre"),
+#         ("VOLUNTEER", "Volontaire"),
+#         ("SPONSOR", "Donateur"),
+#         ("INSTITUTION", "Institution"),
+#     ]
+
+#     for code, label in roles:
+#         MembershipRole.objects.update_or_create(
+#             code=code,  # ton save() upper/strip + contrainte CI => OK
+#             defaults={
+#                 "label": label,
+#                 "is_active": True,
+#             },
+#         )

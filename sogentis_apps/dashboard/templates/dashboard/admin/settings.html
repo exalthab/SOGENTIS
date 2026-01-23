@@ -1,5 +1,94 @@
 {# templates/dashboard/admin/settings.html #}
 {% extends "dashboard/base.html" %}
+{% load i18n dashboard_tags %}
+
+{% block title %}{% trans "Paramètres" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block dashboard_header %}
+  <h1 class="fw-bold mb-1">⚙️ {% trans "Paramètres de la plateforme" %}</h1>
+  <p class="text-muted mb-0">{% trans "Configuration globale (site, support, maintenance, intégrations)." %}</p>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="row g-4">
+
+  <div class="col-lg-6">
+    <div class="card shadow-sm border-0 h-100">
+      <div class="card-header bg-white">
+        <h2 class="h6 mb-0 fw-bold">{% trans "Paramètres généraux" %}</h2>
+      </div>
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+
+          <div class="mb-3">
+            <label class="form-label">{% trans "Nom de la plateforme" %}</label>
+            <input type="text" name="site_name" class="form-control"
+                   value="{{ settings.site_name|default:'SOGENTIS' }}">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">{% trans "Email de support" %}</label>
+            <input type="email" name="support_email" class="form-control"
+                   value="{{ settings.support_email|default:'support@example.com' }}">
+          </div>
+
+          <div class="form-check form-switch mb-3">
+            <input class="form-check-input" type="checkbox" name="maintenance_mode" id="maintenanceMode"
+                   {% if settings.maintenance_mode %}checked{% endif %}>
+            <label class="form-check-label" for="maintenanceMode">
+              {% trans "Activer le mode maintenance" %}
+            </label>
+          </div>
+
+          <button class="btn btn-primary">
+            💾 {% trans "Enregistrer" %}
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="card shadow-sm border-0 h-100">
+      <div class="card-header bg-white">
+        <h2 class="h6 mb-0 fw-bold">{% trans "Intégrations & informations système" %}</h2>
+      </div>
+      <div class="card-body">
+        <p class="text-muted small">
+          {% trans "Cette section peut accueillir la configuration des passerelles de paiement, emailing, SMS, etc." %}
+        </p>
+
+        <ul class="list-group list-group-flush small mb-3">
+          <li class="list-group-item d-flex justify-content-between">
+            <span>{% trans "Stripe" %}</span>
+            <span class="badge bg-success">{% trans "Connecté (exemple)" %}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span>{% trans "PayPal" %}</span>
+            <span class="badge bg-secondary">{% trans "Non configuré" %}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span>{% trans "Wave / Mobile Money" %}</span>
+            <span class="badge bg-secondary">{% trans "À configurer" %}</span>
+          </li>
+        </ul>
+
+        <div class="small text-muted">
+          ℹ️ {% trans "Branche ces états à tes vrais paramètres quand ton modèle de settings est prêt." %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+
+
+
+{% comment %} {# templates/dashboard/admin/settings.html #}
+{% extends "dashboard/base.html" %}
 {% load i18n %}
 
 {% block title %}{% trans "Paramètres" %} | SOGENTIS{% endblock %}
@@ -14,7 +103,6 @@
 
   <div class="row g-4">
 
-    {% comment %} Paramètres généraux {% endcomment %}
     <div class="col-lg-6">
       <div class="card shadow-sm h-100">
         <div class="card-header">
@@ -66,7 +154,6 @@
       </div>
     </div>
 
-    {% comment %} Intégrations / Info {% endcomment %}
     <div class="col-lg-6">
       <div class="card shadow-sm h-100">
         <div class="card-header">
@@ -108,7 +195,7 @@
 
 </div>
 {% endblock %}
-
+ {% endcomment %}
 
 
 

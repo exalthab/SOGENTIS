@@ -1,0 +1,98 @@
+/* static/accounts_users/css/signup.css */
+/* Styles signup (scopés) — ne doit PAS toucher au BG global */
+
+/* Card spacing */
+.auth-card .card-body{
+  padding: 2rem;
+}
+@media (max-width: 480px){
+  .auth-card .card-body{
+    padding: 1.25rem !important;
+  }
+}
+
+/* Text */
+.auth-card .text-muted{
+  font-size: .875rem;
+}
+
+/* Labels */
+.auth-card .form-label{
+  font-weight: 700;
+  margin-bottom: .5rem;
+}
+
+/* Inputs */
+.auth-card .form-control,
+.auth-card .form-select{
+  padding: .8rem 1.1rem;
+  font-size: 1rem;
+  border-radius: 12px;
+  border: 1px solid #ced4da;
+  transition: all .2s ease;
+}
+
+.auth-card .form-control:focus,
+.auth-card .form-select:focus{
+  border-color: rgba(25,135,84,.55);
+  box-shadow: 0 0 0 .18rem rgba(25,135,84,.16);
+}
+
+/* Errors */
+.auth-card .invalid-feedback{
+  display: block;
+  color: #dc3545;
+  font-size: .875rem;
+  font-weight: 600;
+}
+
+.auth-card .form-control.is-invalid{
+  border-color: #dc3545;
+}
+
+/* Section headings */
+.auth-card h6.fw-bold{
+  position: relative;
+  padding-bottom: .35rem;
+}
+.auth-card h6.fw-bold::after{
+  content:"";
+  display:block;
+  height:1px;
+  width:100%;
+  background: rgba(0,0,0,.08);
+  margin-top:.5rem;
+}
+
+/* Toggle password */
+.toggle-password{
+  border-radius: 12px;
+}
+
+/* OTP button */
+#send-otp-btn{
+  border-radius: 12px;
+  font-weight: 800;
+}
+
+/* Terms block */
+.auth-card .form-check{
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(0,0,0,.03);
+  border: 1px solid rgba(0,0,0,.06);
+}
+
+.auth-card .form-check .form-check-label a{
+  font-weight: 800;
+  text-decoration: none;
+}
+.auth-card .form-check .form-check-label a:hover{
+  text-decoration: underline;
+}
+
+/* Submit */
+.auth-card .btn.btn-success{
+  border-radius: 14px;
+  padding: 12px 14px;
+}

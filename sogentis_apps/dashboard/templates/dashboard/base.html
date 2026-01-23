@@ -1,5 +1,273 @@
 {# templates/dashboard/base.html #}
-{% load static i18n %}
+{% load static i18n dashboard_tags %}
+{% get_current_language as CUR_LANG %}
+{% get_current_language_bidi as CUR_BIDI %}
+
+<!DOCTYPE html>
+<html lang="{{ CUR_LANG|default:'fr' }}" {% if CUR_BIDI %}dir="rtl"{% endif %}>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>{% block title %}Dashboard | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}</title>
+
+  {# SEO/Indexation (dashboard privé) #}
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+
+  {% block favicon %}
+    <link rel="icon" href="{% static 'core/images/favicon.ico' %}">
+  {% endblock %}
+
+  {# ===================== CSS (vendors + premium) ===================== #}
+  {% block vendor_css %}
+    <link rel="stylesheet" href="{% static 'dashboard/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/css/fontawesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/leaflet/leaflet.css' %}">
+  {% endblock %}
+
+  {% block dashboard_css %}
+    <link rel="stylesheet" href="{% static 'dashboard/css/premium_dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/css/premium_sidebar.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/css/premium_cards.css' %}">
+  {% endblock %}
+
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body class="{% block body_class %}bg-light{% endblock %}">
+
+  {# Accessibilité #}
+  <a class="visually-hidden-focusable position-absolute top-0 start-0 m-2 p-2 bg-white border rounded"
+     href="#dashboard-main">
+    {% trans "Aller au contenu" %}
+  </a>
+
+  <div class="dashboard-layout d-flex min-vh-100" data-db-layout="root">
+
+    {# ===================== SIDEBAR ===================== #}
+    {% block sidebar %}
+      {% block dashboard_sidebar %}
+        {% include "dashboard/partials/_sidebar_premium.html" %}
+      {% endblock %}
+    {% endblock %}
+
+    {# ===================== MAIN ===================== #}
+    <div class="dashboard-main d-flex flex-column flex-grow-1">
+
+      {# ===================== TOPBAR / HEADER ===================== #}
+      {% block topbar %}
+        {% block dashboard_topbar %}
+          {% include "dashboard/partials/_topbar_premium.html" %}
+        {% endblock %}
+      {% endblock %}
+
+      {# ===================== MESSAGES ===================== #}
+      {% block messages %}
+        <div class="px-4 pt-3">
+          {% include "dashboard/partials/_messages.html" %}
+        </div>
+      {% endblock %}
+
+      {# ===================== CONTENT ===================== #}
+      <main id="dashboard-main" class="dashboard-content flex-grow-1 p-4">
+        {% block content %}
+          {% block dashboard_content %}{% endblock %}
+        {% endblock %}
+      </main>
+
+      {% block footer %}
+        {% include "dashboard/partials/_footer.html" %}
+      {% endblock %}
+    </div>
+  </div>
+
+  {# ===================== JS ===================== #}
+  {% block vendor_js %}
+    <script src="{% static 'dashboard/js/bootstrap.bundle.min.js' %}" defer></script>
+    <script src="{% static 'dashboard/js/chart.min.js' %}" defer></script>
+    <script src="{% static 'dashboard/leaflet/leaflet.js' %}" defer></script>
+  {% endblock %}
+
+  {% block dashboard_js %}
+    <script src="{% static 'dashboard/js/premium_dashboard.js' %}" defer></script>
+  {% endblock %}
+
+  {% block extra_js %}{% endblock %}
+  {% block modals %}{% endblock %}
+</body>
+</html>
+
+
+
+
+
+
+{% comment %} {# templates/dashboard/base.html #}
+{% load static i18n dashboard_tags %}
+{% get_current_language as CUR_LANG %}
+{% get_current_language_bidi as CUR_BIDI %}
+
+<!DOCTYPE html>
+<html lang="{{ CUR_LANG|default:'fr' }}" {% if CUR_BIDI %}dir="rtl"{% endif %}>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>{% block title %}Dashboard | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}</title>
+
+  {# SEO/Indexation (dashboard privé) #}
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+
+  {% block favicon %}
+    {# Optionnel: remplace si tu as un favicon dédié #}
+    <link rel="icon" href="{% static 'core/images/favicon.ico' %}">
+          <a class="auth-brand d-inline-flex align-items-center gap-2 text-decoration-none"
+        href="{{ home_url }}"
+        style="--brand-logo: url('{% static 'global/image/Sogentis3.png' %}');">
+        <span class="auth-brand-mark" aria-hidden="true"></span>
+        <span class="auth-brand-name">{{ PROJECT_NAME|default:"SOGENTIS" }}</span>
+      </a>
+  {% endblock %}
+
+  {# ===================== CSS (vendors + premium) ===================== #}
+  {% block vendor_css %}
+    <link rel="stylesheet" href="{% static 'dashboard/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/css/fontawesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/leaflet/leaflet.css' %}">
+  {% endblock %}
+
+  {% block dashboard_css %}
+    <link rel="stylesheet" href="{% static 'dashboard/css/premium_dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/css/premium_sidebar.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/css/premium_cards.css' %}">
+  {% endblock %}
+
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body class="{% block body_class %}bg-light{% endblock %}">
+
+  {# Accessibilité #}
+  <a class="visually-hidden-focusable position-absolute top-0 start-0 m-2 p-2 bg-white border rounded"
+     href="#dashboard-main">
+    {% trans "Aller au contenu" %}
+  </a>
+
+  <div class="dashboard-layout d-flex min-vh-100" data-db-layout="root">
+
+    {# ===================== SIDEBAR ===================== #}
+    {% block sidebar %}
+      {% block dashboard_sidebar %}
+        {# unique premium sidebar #}
+        {% include "dashboard/partials/_sidebar_premium.html" %}
+      {% endblock %}
+    {% endblock %}
+
+    {# ===================== MAIN ===================== #}
+    <div class="dashboard-main d-flex flex-column flex-grow-1">
+
+      {# ===================== TOPBAR / HEADER ===================== #}
+      {% block topbar %}
+        {% block dashboard_topbar %}
+          {# Si tu crées un partial topbar premium, il sera utilisé automatiquement #}
+          {% include "dashboard/partials/_topbar_premium.html" %}
+
+          {# Fallback si le partial n’existe pas #}
+          {% if not template_name %}{% endif %}
+          {% if False %}{% endif %}
+
+          <header class="dashboard-header d-flex align-items-center justify-content-between px-4 py-3 bg-white border-bottom shadow-sm">
+            <div class="d-flex align-items-center gap-3">
+              {# Burger (mobile) + collapse (desktop via JS) #}
+              <button class="btn btn-outline-secondary d-lg-none"
+                      type="button"
+                      data-db-open="sidebar"
+                      aria-label="{% trans 'Menu' %}">
+                <i class="fas fa-bars" aria-hidden="true"></i>
+              </button>
+
+              <div class="d-flex flex-column">
+                <h1 class="dashboard-title fs-4 fw-bold mb-0">
+                  {% block dashboard_header %}{% trans "Tableau de bord" %}{% endblock %}
+                </h1>
+                {% block dashboard_subheader %}{% endblock %}
+              </div>
+            </div>
+
+            <div class="user-actions d-flex align-items-center gap-3">
+              {% block header_actions %}{% endblock %}
+
+              <span class="fw-medium text-truncate" style="max-width: 220px;">
+                {{ user.get_full_name|default:user.username }}
+              </span>
+
+              {% block user_avatar %}
+                <img src="{% static 'dashboard/img/avatar.jpg' %}"
+                     class="rounded-circle shadow avatar-sm"
+                     width="36" height="36"
+                     alt="{% trans 'Avatar' %}">
+              {% endblock %}
+            </div>
+          </header>
+        {% endblock %}
+      {% endblock %}
+
+      {# ===================== MESSAGES ===================== #}
+      {% block messages %}
+        <div class="px-4 pt-3">
+          {% include "dashboard/partials/_messages.html" %}
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show mb-2" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{% trans 'Fermer' %}"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+        </div>
+      {% endblock %}
+
+      {# ===================== CONTENT ===================== #}
+      <main id="dashboard-main" class="dashboard-content flex-grow-1 p-4">
+        {% block content %}
+          {% block dashboard_content %}{% endblock %}
+        {% endblock %}
+      </main>
+
+      {% block footer %}
+        {% include "dashboard/partials/_footer.html" %}
+      {% endblock %}
+    </div>
+  </div>
+
+  {# ===================== JS ===================== #}
+  {% block vendor_js %}
+    {# Si ton bootstrap JS n’existe pas ici, pas d’erreur template (juste 404 côté navigateur) #}
+    <script src="{% static 'dashboard/js/bootstrap.bundle.min.js' %}" defer></script>
+    <script src="{% static 'dashboard/js/chart.min.js' %}" defer></script>
+    <script src="{% static 'dashboard/leaflet/leaflet.js' %}" defer></script>
+  {% endblock %}
+
+  {% block dashboard_js %}
+    <script src="{% static 'dashboard/js/premium_dashboard.js' %}" defer></script>
+  {% endblock %}
+
+  {% block extra_js %}{% endblock %}
+
+  {# ===================== MODALS/OVERLAYS ===================== #}
+  {% block modals %}{% endblock %}
+</body>
+</html>
+
+ {% endcomment %}
+
+
+
+
+{% comment %} {# templates/dashboard/base.html #}
+{% load static i18n dashboard_tags  %}
 {% get_current_language as CUR_LANG %}
 {% get_current_language_bidi as CUR_BIDI %}
 
@@ -29,6 +297,7 @@
   {# ===================== SIDEBAR PREMIUM (unique) ===================== #}
   {% block dashboard_sidebar %}
     {% include "dashboard/partials/_sidebar_premium.html" %}
+    
   {% endblock %}
 
   {# ===================== MAIN ===================== #}
@@ -71,7 +340,7 @@
 
 {% block extra_js %}{% endblock %}
 </body>
-</html>
+</html> {% endcomment %}
 
 
 

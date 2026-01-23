@@ -1,0 +1,43 @@
+{# templates/economic/formations/learner/my_courses.html #}
+{% extends "economic/formations/base_formations.html" %}
+{% load i18n %}
+
+{% block formations_title %}{% trans "Mes cours" %}{% endblock %}
+
+{% block formations_content %}
+<h1 class="h4 mb-3">{% trans "Mes cours" %}</h1>
+
+{% if enrollments %}
+  <div class="row g-3">
+    {% for e in enrollments %}
+      <div class="col-md-6 col-lg-4">
+        <div class="p-3 bg-white border rounded-3 h-100 d-flex flex-column">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <span class="badge bg-light text-dark border small">{{ e.get_status_display }}</span>
+            <span class="small text-muted">{{ e.enrolled_at|date:"d/m/Y" }}</span>
+          </div>
+
+          <div class="fw-semibold mb-1">{{ e.course.title }}</div>
+          <div class="small text-muted mb-3">
+            {% if e.course.category %}{{ e.course.category }}{% endif %}
+          </div>
+
+          {% url 'economic:formations:course_detail' slug=e.course.slug as u_detail %}
+          {% url 'economic:formations:learning' slug=e.course.slug as u_learning %}
+
+          <div class="mt-auto d-flex gap-2">
+            <a class="btn btn-sm btn-outline-primary w-50" href="{{ u_detail|default:'#' }}">
+              {% trans "Détail" %}
+            </a>
+            <a class="btn btn-sm btn-primary w-50" href="{{ u_learning|default:'#' }}">
+              {% trans "Apprendre" %}
+            </a>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="alert alert-light border">{% trans "Aucun cours inscrit." %}</div>
+{% endif %}
+{% endblock %}

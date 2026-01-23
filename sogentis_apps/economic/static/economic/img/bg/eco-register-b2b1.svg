@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1600" y2="900" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#050B16"/>
+      <stop offset="0.52" stop-color="#0D1736"/>
+      <stop offset="1" stop-color="#1A0A2A"/>
+    </linearGradient>
+
+    <radialGradient id="glowA" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse"
+      gradientTransform="translate(1210 210) rotate(135) scale(600 600)">
+      <stop stop-color="#6366F1" stop-opacity="0.38"/>
+      <stop offset="1" stop-color="#6366F1" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="glowB" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse"
+      gradientTransform="translate(420 740) rotate(25) scale(780 780)">
+      <stop stop-color="#22C55E" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#22C55E" stop-opacity="0"/>
+    </radialGradient>
+
+    <filter id="blur" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+
+    <pattern id="grid" width="52" height="52" patternUnits="userSpaceOnUse">
+      <path d="M52 0H0V52" stroke="#FFFFFF" stroke-opacity="0.07" stroke-width="1"/>
+    </pattern>
+
+    <pattern id="dots" width="26" height="26" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.4" fill="#FFFFFF" opacity="0.08"/>
+    </pattern>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <rect width="1600" height="900" fill="url(#grid)" opacity="0.55"/>
+  <rect width="1600" height="900" fill="url(#dots)" opacity="0.42"/>
+
+  <circle cx="1210" cy="210" r="380" fill="url(#glowA)" filter="url(#blur)"/>
+  <circle cx="420" cy="740" r="470" fill="url(#glowB)" filter="url(#blur)"/>
+
+  <path d="M-40 275C190 125 520 120 740 275C970 440 1190 450 1470 320C1545 285 1620 255 1660 246V0H-40V275Z"
+        fill="#FFFFFF" opacity="0.055"/>
+  <path d="M-40 940V700C110 600 270 552 430 572C610 596 710 760 920 760C1130 760 1280 590 1480 552C1560 536 1625 530 1660 532V940H-40Z"
+        fill="#000000" opacity="0.30"/>
+
+  <!-- Subtle building + handshake line (b2b vibe) -->
+  <g opacity="0.16" fill="#FFFFFF">
+    <!-- building -->
+    <path d="M1205 595h190v138h-190V595z" opacity="0.85"/>
+    <path d="M1225 615h26v26h-26v-26zm0 40h26v26h-26v-26zm0 40h26v26h-26v-26z"/>
+    <path d="M1267 615h26v26h-26v-26zm0 40h26v26h-26v-26zm0 40h26v26h-26v-26z"/>
+    <path d="M1309 615h26v26h-26v-26zm0 40h26v26h-26v-26zm0 40h26v26h-26v-26z"/>
+    <path d="M1351 615h26v26h-26v-26zm0 40h26v26h-26v-26zm0 40h26v26h-26v-26z"/>
+    <!-- “handshake” line -->
+    <path d="M245 310h70l22 20 22-20h70v18h-62l-30 28-30-28h-62v-18z" opacity="0.85"/>
+    <path d="M270 352h120v18H270v-18z"/>
+  </g>
+</svg>

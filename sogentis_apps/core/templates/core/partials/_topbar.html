@@ -1,6 +1,774 @@
 {# templates/core/partials/_topbar.html #}
 {% load static i18n %}
 
+{% get_current_language as CUR_LANG %}
+{% with FULL=request.get_full_path %}
+
+<div class="topbar sticky-top bg-dark text-white py-1">
+  <div class="container">
+    <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
+
+      {# ======================= #}
+      {#   Logo                  #}
+      {# ======================= #}
+      <a href="{% url 'core:home' %}"
+         aria-label="{{ PROJECT_NAME|default:'SOGENTIS' }}"
+         class="topbar-brand d-inline-flex align-items-center gap-2 text-decoration-none text-white"
+         style="--brand-logo: url('{% static 'global/image/Sogentis3.png' %}');">
+
+        {# ✅ Marque logo en background via CSS var + fallback inline #}
+        <span class="topbar-brand-mark"
+              aria-hidden="true"
+              style="width:40px;height:40px;display:inline-block;background:center/contain no-repeat var(--brand-logo);"></span>
+
+        <span class="fw-bold">{{ PROJECT_NAME|default:"SOGENTIS" }}</span>
+      </a>
+
+      {# ======================= #}
+      {#   Contact (desktop)     #}
+      {# ======================= #}
+      <div class="d-none d-lg-flex align-items-center gap-2 small">
+        {% if CONTACT_PHONE %}
+          <a href="tel:{{ CONTACT_PHONE|cut:' ' }}" class="text-info text-decoration-none">
+            📞 {{ CONTACT_PHONE }}
+          </a>
+          <span class="opacity-50">|</span>
+        {% endif %}
+        <a href="{% url 'core:contact' %}" class="text-white text-decoration-none">
+          📧 {% trans "Contact" %}
+        </a>
+      </div>
+
+      {# ======================= #}
+      {#   Actions (right)       #}
+      {# ======================= #}
+      <div class="d-flex align-items-center gap-2 ms-auto">
+
+        {# Social (md+) #}
+        <div class="d-none d-md-flex align-items-center gap-3">
+          {% if FACEBOOK_URL %}
+            <a class="social-icon d-inline-flex align-items-center text-white"
+               href="{{ FACEBOOK_URL }}" target="_blank" rel="noopener" aria-label="Facebook">
+              {% include "core/partials/icons/facebook.svg" %}
+            </a>
+          {% endif %}
+          {% if TWITTER_URL %}
+            <a class="social-icon d-inline-flex align-items-center text-white"
+               href="{{ TWITTER_URL }}" target="_blank" rel="noopener" aria-label="Twitter">
+              {% include "core/partials/icons/twitter.svg" %}
+            </a>
+          {% endif %}
+          {% if YOUTUBE_URL %}
+            <a class="social-icon d-inline-flex align-items-center text-white"
+               href="{{ YOUTUBE_URL }}" target="_blank" rel="noopener" aria-label="YouTube">
+              {% include "core/partials/icons/youtube.svg" %}
+            </a>
+          {% endif %}
+        </div>
+
+        {# ======================= #}
+        {# Langue (tous appareils) #}
+        {# ======================= #}
+        <div class="dropdown">
+          <button class="btn btn-sm btn-outline-light dropdown-toggle px-2"
+                  type="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                  aria-label="{% trans 'Changer la langue' %}">
+            {% if CUR_LANG == "fr" %}🇫🇷 FR{% else %}🇬🇧 EN{% endif %}
+          </button>
+
+          <ul class="dropdown-menu dropdown-menu-end">
+
+            <li>
+              <form action="{% url 'core:switch_language' %}" method="post" class="px-2 py-1">
+                {% csrf_token %}
+                <input type="hidden" name="language" value="fr">
+                <input type="hidden" name="next" value="{{ FULL }}">
+                <button type="submit" class="dropdown-item {% if CUR_LANG == 'fr' %}active{% endif %}">
+                  🇫🇷 Français
+                </button>
+              </form>
+            </li>
+
+            <li>
+              <form action="{% url 'core:switch_language' %}" method="post" class="px-2 py-1">
+                {% csrf_token %}
+                <input type="hidden" name="language" value="en">
+                <input type="hidden" name="next" value="{{ FULL }}">
+                <button type="submit" class="dropdown-item {% if CUR_LANG == 'en' %}active{% endif %}">
+                  🇬🇧 English
+                </button>
+              </form>
+            </li>
+
+          </ul>
+        </div>
+
+        {# Theme toggle (md+) #}
+        <button id="themeToggle"
+                class="btn btn-sm btn-outline-light px-2 d-none d-md-inline-flex"
+                type="button"
+                aria-label="{% trans 'Basculer le thème' %}">
+          <span id="themeIcon">🌙</span>
+        </button>
+
+        {# Compte (md+) #}
+        <div class="d-none d-md-flex align-items-center">
+          {% if user.is_authenticated %}
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-light dropdown-toggle px-2"
+                      type="button"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                      aria-label="{% trans 'Menu utilisateur' %}">
+                <i class="fas fa-user-circle fa-lg"></i>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                  <a class="dropdown-item" href="{% url 'dashboard:hub' %}">
+                    📊 {% trans "Tableau de bord" %}
+                  </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                  <form method="post" action="{% url 'logout' %}" class="px-3 py-1">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-danger w-100">
+                      ⏻ {% trans "Se déconnecter" %}
+                    </button>
+                  </form>
+                </li>
+              </ul>
+            </div>
+          {% else %}
+            <a href="{% url 'accounts_users:web:auth:auth_choice' %}?next={{ FULL|urlencode }}"
+               class="btn btn-sm btn-primary px-2">
+              <i class="fas fa-sign-in-alt"></i>
+              <span class="d-none d-lg-inline ms-1">{% trans "Se connecter" %}</span>
+            </a>
+          {% endif %}
+        </div>
+
+        {# Burger (mobile) #}
+        <button class="btn btn-sm btn-outline-light d-md-none"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#mobileMenu"
+                aria-controls="mobileMenu"
+                aria-label="{% trans 'Ouvrir le menu' %}">
+          ☰
+        </button>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+{# ======================= #}
+{#  Offcanvas mobile       #}
+{# ======================= #}
+<div class="offcanvas offcanvas-end bg-dark text-white"
+     tabindex="-1"
+     id="mobileMenu"
+     aria-labelledby="mobileMenuLabel">
+  <div class="offcanvas-header bg-dark text-white">
+    <h5 class="offcanvas-title" id="mobileMenuLabel">
+      {{ PROJECT_NAME|default:"SOGENTIS" }}
+    </h5>
+    <button type="button"
+            class="btn-close btn-close-white"
+            data-bs-dismiss="offcanvas"
+            aria-label="{% trans 'Fermer' %}"></button>
+  </div>
+
+  <div class="offcanvas-body bg-dark text-white">
+    <div class="d-grid gap-2">
+
+      <a class="btn btn-outline-light btn-sm" href="{% url 'core:home' %}">🏠 {% trans "Accueil" %}</a>
+      <a class="btn btn-outline-light btn-sm" href="{% url 'core:contact' %}">📧 {% trans "Contact" %}</a>
+
+      <hr class="border-secondary my-2">
+
+      <a class="btn btn-outline-light btn-sm" href="{% url 'social:index' %}">🌍 {% trans "Pôle Social" %}</a>
+      <a class="btn btn-outline-light btn-sm" href="{% url 'economic:index' %}">💼 {% trans "Pôle Économique" %}</a>
+
+      <hr class="border-secondary my-2">
+
+      <div class="small opacity-75">{% trans "Langue" %}</div>
+      <div class="d-flex gap-2">
+
+        <form action="{% url 'core:switch_language' %}" method="post" class="flex-fill">
+          {% csrf_token %}
+          <input type="hidden" name="language" value="fr">
+          <input type="hidden" name="next" value="{{ FULL }}">
+          <button type="submit"
+                  class="btn btn-sm w-100 {% if CUR_LANG == 'fr' %}btn-light{% else %}btn-outline-light{% endif %}">
+            🇫🇷 Français
+          </button>
+        </form>
+
+        <form action="{% url 'core:switch_language' %}" method="post" class="flex-fill">
+          {% csrf_token %}
+          <input type="hidden" name="language" value="en">
+          <input type="hidden" name="next" value="{{ FULL }}">
+          <button type="submit"
+                  class="btn btn-sm w-100 {% if CUR_LANG == 'en' %}btn-light{% else %}btn-outline-light{% endif %}">
+            🇬🇧 English
+          </button>
+        </form>
+
+      </div>
+
+      <hr class="border-secondary my-2">
+
+      {% if user.is_authenticated %}
+        <a class="btn btn-outline-light btn-sm" href="{% url 'dashboard:hub' %}">📊 {% trans "Tableau de bord" %}</a>
+        <form method="post" action="{% url 'logout' %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-outline-danger btn-sm w-100">
+            ⏻ {% trans "Se déconnecter" %}
+          </button>
+        </form>
+      {% else %}
+        <a class="btn btn-primary btn-sm"
+           href="{% url 'accounts_users:web:auth:auth_choice' %}?next={{ FULL|urlencode }}">
+          🔐 {% trans "Se connecter" %}
+        </a>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+
+{% endwith %}
+
+
+
+
+
+
+{% comment %} {# templates/core/partials/_topbar.html #}
+{% load static i18n %}
+
+{% get_current_language as CUR_LANG %}
+{% with FULL=request.get_full_path %}
+
+<div class="topbar sticky-top bg-dark text-white py-1">
+  <div class="container">
+    <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
+
+      {# ======================= #}
+      {#   Logo                  #}
+      {# ======================= #}
+
+      <a href="{% url 'core:home' %}"
+        aria-label="{{ PROJECT_NAME|default:'SOGENTIS' }}"
+        class="d-inline-flex align-items-center gap-2 text-decoration-none text-white"
+        style="--brand-logo: url('{% static 'global/image/Sogentis3.png' %}');">
+        <span class="auth-brand-mark" aria-hidden="true"></span>
+        <span class="fw-bold">{{ PROJECT_NAME|default:"SOGENTIS" }}</span>
+      </a>
+
+      {# ======================= #}
+      {#   Contact (desktop)     #}
+      {# ======================= #}
+      <div class="d-none d-lg-flex align-items-center gap-2 small">
+        {% if CONTACT_PHONE %}
+          <a href="tel:{{ CONTACT_PHONE|cut:' ' }}" class="text-info text-decoration-none">
+            📞 {{ CONTACT_PHONE }}
+          </a>
+          <span class="opacity-50">|</span>
+        {% endif %}
+        <a href="{% url 'core:contact' %}" class="text-white text-decoration-none">
+          📧 {% trans "Contact" %}
+        </a>
+      </div>
+
+      {# ======================= #}
+      {#   Actions (right)       #}
+      {# ======================= #}
+      <div class="d-flex align-items-center gap-2 ms-auto">
+
+        {# Social (md+) #}
+        <div class="d-none d-md-flex align-items-center gap-3">
+          {% if FACEBOOK_URL %}
+            <a class="social-icon d-inline-flex align-items-center text-white"
+               href="{{ FACEBOOK_URL }}" target="_blank" rel="noopener" aria-label="Facebook">
+              {% include "core/partials/icons/facebook.svg" %}
+            </a>
+          {% endif %}
+          {% if TWITTER_URL %}
+            <a class="social-icon d-inline-flex align-items-center text-white"
+               href="{{ TWITTER_URL }}" target="_blank" rel="noopener" aria-label="Twitter">
+              {% include "core/partials/icons/twitter.svg" %}
+            </a>
+          {% endif %}
+          {% if YOUTUBE_URL %}
+            <a class="social-icon d-inline-flex align-items-center text-white"
+               href="{{ YOUTUBE_URL }}" target="_blank" rel="noopener" aria-label="YouTube">
+              {% include "core/partials/icons/youtube.svg" %}
+            </a>
+          {% endif %}
+        </div>
+
+        {# ======================= #}
+        {# Langue (tous appareils) #}
+        {# ======================= #}
+        <div class="dropdown">
+          <button class="btn btn-sm btn-outline-light dropdown-toggle px-2"
+                  type="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                  aria-label="{% trans 'Changer la langue' %}">
+            {% if CUR_LANG == "fr" %}🇫🇷 FR{% else %}🇬🇧 EN{% endif %}
+          </button>
+
+          <ul class="dropdown-menu dropdown-menu-end">
+
+            <li>
+              <form action="{% url 'core:switch_language' %}" method="post" class="px-2 py-1">
+                {% csrf_token %}
+                <input type="hidden" name="language" value="fr">
+                <input type="hidden" name="next" value="{{ FULL }}">
+                <button type="submit" class="dropdown-item {% if CUR_LANG == 'fr' %}active{% endif %}">
+                  🇫🇷 Français
+                </button>
+              </form>
+            </li>
+
+            <li>
+              <form action="{% url 'core:switch_language' %}" method="post" class="px-2 py-1">
+                {% csrf_token %}
+                <input type="hidden" name="language" value="en">
+                <input type="hidden" name="next" value="{{ FULL }}">
+                <button type="submit" class="dropdown-item {% if CUR_LANG == 'en' %}active{% endif %}">
+                  🇬🇧 English
+                </button>
+              </form>
+            </li>
+
+          </ul>
+        </div>
+
+        {# Theme toggle (md+) #}
+        <button id="themeToggle"
+                class="btn btn-sm btn-outline-light px-2 d-none d-md-inline-flex"
+                type="button"
+                aria-label="{% trans 'Basculer le thème' %}">
+          <span id="themeIcon">🌙</span>
+        </button>
+
+        {# Compte (md+) #}
+        <div class="d-none d-md-flex align-items-center">
+          {% if user.is_authenticated %}
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-light dropdown-toggle px-2"
+                      type="button"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                      aria-label="{% trans 'Menu utilisateur' %}">
+                <i class="fas fa-user-circle fa-lg"></i>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                  <a class="dropdown-item" href="{% url 'dashboard:hub' %}">
+                    📊 {% trans "Tableau de bord" %}
+                  </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                  <form method="post" action="{% url 'logout' %}" class="px-3 py-1">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-danger w-100">
+                      ⏻ {% trans "Se déconnecter" %}
+                    </button>
+                  </form>
+                </li>
+              </ul>
+            </div>
+          {% else %}
+            <a href="{% url 'accounts_users:web:auth:auth_choice' %}?next={{ FULL|urlencode }}"
+               class="btn btn-sm btn-primary px-2">
+              <i class="fas fa-sign-in-alt"></i>
+              <span class="d-none d-lg-inline ms-1">{% trans "Se connecter" %}</span>
+            </a>
+          {% endif %}
+        </div>
+
+        {# Burger (mobile) #}
+        <button class="btn btn-sm btn-outline-light d-md-none"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#mobileMenu"
+                aria-controls="mobileMenu"
+                aria-label="{% trans 'Ouvrir le menu' %}">
+          ☰
+        </button>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+{# ======================= #}
+{#  Offcanvas mobile       #}
+{# ======================= #}
+<div class="offcanvas offcanvas-end bg-dark text-white"
+     tabindex="-1"
+     id="mobileMenu"
+     aria-labelledby="mobileMenuLabel">
+  <div class="offcanvas-header bg-dark text-white">
+    <h5 class="offcanvas-title" id="mobileMenuLabel">
+      {{ PROJECT_NAME|default:"SOGENTIS" }}
+    </h5>
+    <button type="button"
+            class="btn-close btn-close-white"
+            data-bs-dismiss="offcanvas"
+            aria-label="{% trans 'Fermer' %}"></button>
+  </div>
+
+  <div class="offcanvas-body bg-dark text-white">
+    <div class="d-grid gap-2">
+
+      <a class="btn btn-outline-light btn-sm" href="{% url 'core:home' %}">🏠 {% trans "Accueil" %}</a>
+      <a class="btn btn-outline-light btn-sm" href="{% url 'core:contact' %}">📧 {% trans "Contact" %}</a>
+
+      <hr class="border-secondary my-2">
+
+      <a class="btn btn-outline-light btn-sm" href="{% url 'social:index' %}">🌍 {% trans "Pôle Social" %}</a>
+      <a class="btn btn-outline-light btn-sm" href="{% url 'economic:index' %}">💼 {% trans "Pôle Économique" %}</a>
+
+      <hr class="border-secondary my-2">
+
+      <div class="small opacity-75">{% trans "Langue" %}</div>
+      <div class="d-flex gap-2">
+
+        <form action="{% url 'core:switch_language' %}" method="post" class="flex-fill">
+          {% csrf_token %}
+          <input type="hidden" name="language" value="fr">
+          <input type="hidden" name="next" value="{{ FULL }}">
+          <button type="submit"
+                  class="btn btn-sm w-100 {% if CUR_LANG == 'fr' %}btn-light{% else %}btn-outline-light{% endif %}">
+            🇫🇷 Français
+          </button>
+        </form>
+
+        <form action="{% url 'core:switch_language' %}" method="post" class="flex-fill">
+          {% csrf_token %}
+          <input type="hidden" name="language" value="en">
+          <input type="hidden" name="next" value="{{ FULL }}">
+          <button type="submit"
+                  class="btn btn-sm w-100 {% if CUR_LANG == 'en' %}btn-light{% else %}btn-outline-light{% endif %}">
+            🇬🇧 English
+          </button>
+        </form>
+
+      </div>
+
+      <hr class="border-secondary my-2">
+
+      {% if user.is_authenticated %}
+        <a class="btn btn-outline-light btn-sm" href="{% url 'dashboard:hub' %}">📊 {% trans "Tableau de bord" %}</a>
+        <form method="post" action="{% url 'logout' %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-outline-danger btn-sm w-100">
+            ⏻ {% trans "Se déconnecter" %}
+          </button>
+        </form>
+      {% else %}
+        <a class="btn btn-primary btn-sm"
+           href="{% url 'accounts_users:web:auth:auth_choice' %}?next={{ FULL|urlencode }}">
+          🔐 {% trans "Se connecter" %}
+        </a>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+
+{% endwith %}
+
+
+
+
+ {% endcomment %}
+
+
+
+{% comment %} {# templates/core/partials/_topbar.html #}
+{% load static i18n %}
+
+{% get_current_language as CUR_LANG %}
+{% with FULL=request.get_full_path %}
+
+<div class="topbar sticky-top bg-dark text-white py-1">
+  <div class="container">
+    <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
+
+      {# ======================= #}
+      {#   Logo                  #}
+      {# ======================= #}
+      <a href="{% url 'core:home' %}"
+         aria-label="{{ PROJECT_NAME|default:'SOGENTIS' }}"
+         class="d-inline-flex align-items-center">
+        <img src="{% static 'global/image/Sogentis3.png' %}"
+             alt="{{ PROJECT_NAME|default:'SOGENTIS' }}"
+             style="height:40px; width:auto;" />
+      </a>
+
+      {# =======================  #}
+      {#   Contact (desktop)      #}
+      {#  ======================= #}
+      <div class="d-none d-lg-flex align-items-center gap-2 small">
+        {% if CONTACT_PHONE %}
+          <a href="tel:{{ CONTACT_PHONE|cut:' ' }}" class="text-info text-decoration-none">
+            📞 {{ CONTACT_PHONE }}
+          </a>
+          <span class="opacity-50">|</span>
+        {% endif %}
+        <a href="{% url 'core:contact' %}" class="text-white text-decoration-none">
+          📧 {% trans "Contact" %}
+        </a>
+      </div>
+
+      {# ======================= #}
+      {# Actions (right)         #}
+      {# ======================= #}
+      <div class="d-flex align-items-center gap-2 ms-auto">
+
+        {# Social (md+) #}
+        <div class="d-none d-md-flex align-items-center gap-3">
+          {% if FACEBOOK_URL %}
+            <a class="social-icon d-inline-flex align-items-center text-white"
+               href="{{ FACEBOOK_URL }}" target="_blank" rel="noopener" aria-label="Facebook">
+              {% include "core/partials/icons/facebook.svg" %}
+            </a>
+          {% endif %}
+          {% if TWITTER_URL %}
+            <a class="social-icon d-inline-flex align-items-center text-white"
+               href="{{ TWITTER_URL }}" target="_blank" rel="noopener" aria-label="Twitter">
+              {% include "core/partials/icons/twitter.svg" %}
+            </a>
+          {% endif %}
+          {% if YOUTUBE_URL %}
+            <a class="social-icon d-inline-flex align-items-center text-white"
+               href="{{ YOUTUBE_URL }}" target="_blank" rel="noopener" aria-label="YouTube">
+              {% include "core/partials/icons/youtube.svg" %}
+            </a>
+          {% endif %}
+        </div>
+
+        {# ======================= #}
+        {# Langue (tous appareils) #}
+        {# ======================= #}
+        <div class="dropdown">
+          <button class="btn btn-sm btn-outline-light dropdown-toggle px-2"
+                  type="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                  aria-label="{% trans 'Changer la langue' %}">
+            {% if CUR_LANG == "fr" %}🇫🇷 FR{% else %}🇬🇧 EN{% endif %}
+          </button>
+
+          <ul class="dropdown-menu dropdown-menu-end">
+
+            {# --- FR --- #}
+            <li>
+              <form action="{% url 'set_language' %}" method="post" class="px-2 py-1">
+                {% csrf_token %}
+                <input type="hidden" name="language" value="fr">
+                {% if FULL|slice:":4" == "/en/" %}
+                  <input type="hidden" name="next" value="{{ FULL|slice:"3:" }}">
+                {% else %}
+                  <input type="hidden" name="next" value="{{ FULL }}">
+                {% endif %}
+                <button type="submit" class="dropdown-item {% if CUR_LANG == 'fr' %}active{% endif %}">
+                  🇫🇷 Français
+                </button>
+              </form>
+            </li>
+
+            {# --- EN --- #}
+            <li>
+              <form action="{% url 'set_language' %}" method="post" class="px-2 py-1">
+                {% csrf_token %}
+                <input type="hidden" name="language" value="en">
+                {% if FULL|slice:":4" == "/en/" %}
+                  <input type="hidden" name="next" value="{{ FULL }}">
+                {% elif FULL|slice:":4" == "/fr/" %}
+                  <input type="hidden" name="next" value="/en{{ FULL|slice:"3:" }}">
+                {% else %}
+                  <input type="hidden" name="next" value="/en{{ FULL }}">
+                {% endif %}
+                <button type="submit" class="dropdown-item {% if CUR_LANG == 'en' %}active{% endif %}">
+                  🇬🇧 English
+                </button>
+              </form>
+            </li>
+
+          </ul>
+        </div>
+
+        {# Theme toggle (md+) #}
+        <button id="themeToggle"
+                class="btn btn-sm btn-outline-light px-2 d-none d-md-inline-flex"
+                type="button"
+                aria-label="{% trans 'Basculer le thème' %}">
+          <span id="themeIcon">🌙</span>
+        </button>
+
+        {# Compte (md+) #}
+        <div class="d-none d-md-flex align-items-center">
+          {% if user.is_authenticated %}
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-light dropdown-toggle px-2"
+                      type="button"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                      aria-label="{% trans 'Menu utilisateur' %}">
+                <i class="fas fa-user-circle fa-lg"></i>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                  <a class="dropdown-item" href="{% url 'dashboard:hub' %}">
+                    📊 {% trans "Tableau de bord" %}
+                  </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                  <form method="post" action="{% url 'logout' %}" class="px-3 py-1">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-danger w-100">
+                      ⏻ {% trans "Se déconnecter" %}
+                    </button>
+                  </form>
+                </li>
+              </ul>
+            </div>
+          {% else %}
+            <a href="{% url 'accounts_users_web:auth_choice' %}?next={{ FULL|urlencode }}"
+               class="btn btn-sm btn-primary px-2">
+              <i class="fas fa-sign-in-alt"></i>
+              <span class="d-none d-lg-inline ms-1">{% trans "Se connecter" %}</span>
+            </a>
+          {% endif %}
+        </div>
+
+        {# Burger (mobile) #}
+        <button class="btn btn-sm btn-outline-light d-md-none"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#mobileMenu"
+                aria-controls="mobileMenu"
+                aria-label="{% trans 'Ouvrir le menu' %}">
+          ☰
+        </button>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+{# ======================= #}
+{#  Offcanvas mobile       #}
+{# ======================= #}
+<div class="offcanvas offcanvas-end bg-dark text-white"
+     tabindex="-1"
+     id="mobileMenu"
+     aria-labelledby="mobileMenuLabel">
+  <div class="offcanvas-header bg-dark text-white">
+    <h5 class="offcanvas-title" id="mobileMenuLabel">
+      {{ PROJECT_NAME|default:"SOGENTIS" }}
+    </h5>
+    <button type="button"
+            class="btn-close btn-close-white"
+            data-bs-dismiss="offcanvas"
+            aria-label="{% trans 'Fermer' %}"></button>
+  </div>
+
+  <div class="offcanvas-body bg-dark text-white">
+    <div class="d-grid gap-2">
+
+      <a class="btn btn-outline-light btn-sm" href="{% url 'core:home' %}">🏠 {% trans "Accueil" %}</a>
+      <a class="btn btn-outline-light btn-sm" href="{% url 'core:contact' %}">📧 {% trans "Contact" %}</a>
+
+      <hr class="border-secondary my-2">
+
+      <a class="btn btn-outline-light btn-sm" href="{% url 'social:index' %}">🌍 {% trans "Pôle Social" %}</a>
+      <a class="btn btn-outline-light btn-sm" href="{% url 'economic:index' %}">💼 {% trans "Pôle Économique" %}</a>
+
+      <hr class="border-secondary my-2">
+
+      <div class="small opacity-75">{% trans "Langue" %}</div>
+      <div class="d-flex gap-2">
+
+        {# FR mobile #}
+        <form action="{% url 'set_language' %}" method="post" class="flex-fill">
+          {% csrf_token %}
+          <input type="hidden" name="language" value="fr">
+          {% if FULL|slice:":4" == "/en/" %}
+            <input type="hidden" name="next" value="{{ FULL|slice:"3:" }}">
+          {% else %}
+            <input type="hidden" name="next" value="{{ FULL }}">
+          {% endif %}
+          <button type="submit"
+                  class="btn btn-sm w-100 {% if CUR_LANG == 'fr' %}btn-light{% else %}btn-outline-light{% endif %}">
+            🇫🇷 Français
+          </button>
+        </form>
+
+        {# EN mobile #}
+        <form action="{% url 'set_language' %}" method="post" class="flex-fill">
+          {% csrf_token %}
+          <input type="hidden" name="language" value="en">
+          {% if FULL|slice:":4" == "/en/" %}
+            <input type="hidden" name="next" value="{{ FULL }}">
+          {% elif FULL|slice:":4" == "/fr/" %}
+            <input type="hidden" name="next" value="/en{{ FULL|slice:"3:" }}">
+          {% else %}
+            <input type="hidden" name="next" value="/en{{ FULL }}">
+          {% endif %}
+          <button type="submit"
+                  class="btn btn-sm w-100 {% if CUR_LANG == 'en' %}btn-light{% else %}btn-outline-light{% endif %}">
+            🇬🇧 English
+          </button>
+        </form>
+
+      </div>
+
+      <hr class="border-secondary my-2">
+
+      {% if user.is_authenticated %}
+        <a class="btn btn-outline-light btn-sm" href="{% url 'dashboard:hub' %}">📊 {% trans "Tableau de bord" %}</a>
+        <form method="post" action="{% url 'logout' %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-outline-danger btn-sm w-100">
+            ⏻ {% trans "Se déconnecter" %}
+          </button>
+        </form>
+      {% else %}
+        <a class="btn btn-primary btn-sm"
+           href="{% url 'accounts_users_web:auth_choice' %}?next={{ FULL|urlencode }}">
+          🔐 {% trans "Se connecter" %}
+        </a>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+
+{% endwith %} {% endcomment %}
+
+
+
+
+
+
+
+{% comment %} {# templates/core/partials/_topbar.html #}
+{% load static i18n %}
+
 <div class="topbar sticky-top bg-dark text-white py-1">
   <div class="container d-flex justify-content-between align-items-center flex-wrap gap-2 px-3">
 
@@ -48,7 +816,7 @@
           <a class="social-icon" href="{{ LINKEDIN_URL }}" target="_blank" rel="noopener" aria-label="LinkedIn">
             {% include "core/partials/icons/linkedin.svg" %}
           </a>
-        {% endif %} {% endcomment %}
+        {% endif %}
         {% if YOUTUBE_URL %}
           <a class="social-icon" href="{{ YOUTUBE_URL }}" target="_blank" rel="noopener" aria-label="YouTube">
             {% include "core/partials/icons/youtube.svg" %}
@@ -167,7 +935,7 @@
   </div>
 </div>
 
-
+ {% endcomment %}
 
 
 

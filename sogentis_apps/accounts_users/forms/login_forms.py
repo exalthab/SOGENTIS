@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from django.utils.translation import gettext_lazy as _
 
-class LoginForm(AuthenticationForm):
+class CustomLoginForm(AuthenticationForm):
     username = forms.CharField(
         label=_("Nom d'utilisateur"),
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': _("Nom d'utilisateur")})

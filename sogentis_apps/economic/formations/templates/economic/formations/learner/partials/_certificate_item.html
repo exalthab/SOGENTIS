@@ -1,0 +1,21 @@
+{# templates/economic/formations/learner/partials/_certificate_item.html #}
+{% load i18n %}
+
+<div class="list-group-item px-0">
+  <div class="d-flex align-items-start justify-content-between gap-2">
+    <div>
+      <div class="fw-semibold">{{ c.course }}</div>
+      <div class="text-muted small">
+        {% trans "Délivré le" %} : {{ c.issued_at|date:"d/m/Y" }} · {{ c.code }}
+      </div>
+    </div>
+    <div class="text-end">
+      {# À connecter à ton url certificate_download si tu l’as #}
+      {% if c.pdf_file %}
+        <a class="btn btn-sm btn-outline-secondary" href="{{ c.pdf_file.url }}" target="_blank" rel="noopener">
+          {% trans "PDF" %}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</div>

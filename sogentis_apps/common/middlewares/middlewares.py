@@ -1,4 +1,5 @@
 # common/middlewares/middlewares.py
+from __future__ import annotations
 
 from django.contrib import messages
 from django.shortcuts import redirect
@@ -6,26 +7,96 @@ from django.utils.deprecation import MiddlewareMixin
 
 
 class ProfileStatusMiddleware(MiddlewareMixin):
-    EXEMPT_URLS = {
-        "accounts_users_web:login",
-        "accounts_users_web:logout",
-        "accounts_users_web:signup",
-        "accounts_users_web:activate",
-        "accounts_users_web:resend_activation",
-        "accounts_users_web:password_reset",
-        "accounts_users_web:password_reset_done",
-        "accounts_users_web:password_reset_confirm",
-        "accounts_users_web:password_reset_complete",
-        "accounts_users_web:profile_pending_notice",
-        "accounts_users_web:profile_refused_notice",
+    """
+    ✅ Ne bloque jamais le site public
+    ✅ Ne s'applique qu'au dashboard
+    ✅ Gate soft uniquement sur les zones sensibles
+    """
+
+    # --------------------------------------------------
+    # Dashboard configuration
+    # --------------------------------------------------
+
+    # Pages dashboard toujours accessibles (anti-boucle)
+    DASHBOARD_ALLOW_VIEWNAMES = {
+        "dashboard:hub",
+        "dashboard:router",
+        "dashboard:profile",
+        "dashboard:profile_edit",
+        "dashboard:notes_list",
+        "dashboard:note_create",
+        "dashboard:note_edit",
     }
 
-    STATUS_PENDING = "pending"
-    STATUS_REFUSED = "refused"
+    # Zones sensibles du dashboard
+    DASHBOARD_GATED_PREFIXES = (
+        "dashboard:vendor:",
+        "dashboard:b2b:",
+        "dashboard:admin:",
+    )
+
+    # URLs auth / onboarding toujours libres
+    EXEMPT_URLS = {
+        "accounts_users:web:auth:login",
+        "accounts_users:web:auth:logout",
+        "accounts_users:web:auth:signup",
+        "accounts_users:web:registration:activate",
+        "accounts_users:web:resend_activation",
+        "accounts_users:web:password:password_reset",
+        "accounts_users:web:password:password_reset_done",
+        "accounts_users:web:password:password_reset_confirm",
+        "accounts_users:web:password:password_reset_complete",
+        "accounts_users:web:profile:profile_pending_notice",
+        "accounts_users:web:profile:profile_refused_notice",
+    }
+
+    # --------------------------------------------------
+    # Statuts normalisés
+    # --------------------------------------------------
+
+    STATUS_PENDING = {
+        "pending",
+        "awaiting",
+        "to_validate",
+        "waiting",
+        "in_review",
+        "review",
+    }
+
+    STATUS_REFUSED = {
+        "refused",
+        "rejected",
+        "denied",
+        "blocked",
+        "disabled",
+    }
+
+    # --------------------------------------------------
+    # Helpers
+    # --------------------------------------------------
+
+    def _safe_profile_status(self, user) -> str:
+        """
+        Récupère le statut du profil de manière robuste.
+        Priorité aux utils centralisés, fallback silencieux.
+        """
+        try:
+            from dashboard.views.utils import (
+                get_user_profile,
+                detect_profile_status,
+            )  # type: ignore
+
+            profile = get_user_profile(user)
+            return str(detect_profile_status(profile) or "").strip().lower()
+        except Exception:
+            return ""
+
+    # --------------------------------------------------
+    # Middleware core
+    # --------------------------------------------------
 
     def process_view(self, request, view_func, view_args, view_kwargs):
         user = getattr(request, "user", None)
-
         if not user or not user.is_authenticated:
             return None
 
@@ -33,37 +104,250 @@ class ProfileStatusMiddleware(MiddlewareMixin):
         if not resolver:
             return None
 
-        if resolver.view_name in self.EXEMPT_URLS:
+        view_name = str(resolver.view_name or "")
+
+        # URLs explicitement exemptées
+        if view_name in self.EXEMPT_URLS:
             return None
 
-        if not user.is_active:
-            messages.warning(
-                request,
-                "Veuillez activer votre compte via le lien reçu par e-mail."
-            )
-            return redirect("accounts_users_web:login")
-
-        profile = getattr(user, "profile", None) or getattr(user, "userprofile", None)
-        if not profile:
+        # Ne jamais toucher hors dashboard
+        if not view_name.startswith("dashboard:"):
             return None
 
-        status = getattr(profile, "status", "") or ""
+        # Staff / superuser bypass
+        if getattr(user, "is_staff", False) or getattr(user, "is_superuser", False):
+            return None
 
-        if status == self.STATUS_PENDING:
+        # Pages dashboard toujours autorisées
+        if view_name in self.DASHBOARD_ALLOW_VIEWNAMES:
+            return None
+
+        # Gate uniquement sur les zones sensibles
+        if not view_name.startswith(self.DASHBOARD_GATED_PREFIXES):
+            return None
+
+        # Récupération safe du statut profil
+        status = self._safe_profile_status(user)
+
+        if status in self.STATUS_PENDING:
             messages.info(
                 request,
-                "Votre profil est en attente de validation."
+                "Certaines sections sont limitées : profil en attente de validation.",
             )
-            return redirect("accounts_users_web:profile_pending_notice")
+            return redirect("dashboard:hub")
 
-        if status == self.STATUS_REFUSED:
+        if status in self.STATUS_REFUSED:
             messages.error(
                 request,
-                "Votre profil a été refusé."
+                "Certaines sections sont limitées : profil refusé.",
             )
-            return redirect("accounts_users_web:profile_refused_notice")
+            return redirect("dashboard:hub")
 
         return None
+
+
+
+
+
+# # common/middlewares/middlewares.py
+# from __future__ import annotations
+
+# from django.contrib import messages
+# from django.shortcuts import redirect
+# from django.utils.deprecation import MiddlewareMixin
+
+
+# class ProfileStatusMiddleware(MiddlewareMixin):
+#     """
+#     ✅ NE BLOQUE PAS le site public
+#     ✅ NE S'APPLIQUE QUE AU DASHBOARD
+#     ✅ Et même dans le dashboard : seulement aux zones "sensibles" (vendor/b2b/admin)
+#     """
+
+#     # Pages dashboard toujours autorisées (évite les boucles)
+#     DASHBOARD_ALLOW_VIEWNAMES = {
+#         "dashboard:hub",
+#         "dashboard:router",
+#         "dashboard:profile",
+#         "dashboard:profile_edit",
+#     }
+
+#     # Sections dashboard où on peut appliquer un "gate" (soft)
+#     # (tu peux en ajouter/retirer selon tes namespaces)
+#     DASHBOARD_GATED_PREFIXES = (
+#         "dashboard:vendor:",
+#         "dashboard:b2b:",
+#         "dashboard:admin:",
+#     )
+
+#     # Compat (ton projet)
+#     STATUS_PENDING = {"pending", "awaiting", "to_validate", "waiting"}
+#     STATUS_REFUSED = {"refused", "rejected", "denied"}
+
+#     # Ces urls auth restent libres (utile si user inactive / etc.)
+#     EXEMPT_URLS = {
+#         "accounts_users:web:auth:login",
+#         "accounts_users:web:auth:logout",
+#         "accounts_users:web:auth:signup",
+#         "accounts_users:web:registration:activate",
+#         "accounts_users:web:resend_activation",
+#         "accounts_users:web:password:password_reset",
+#         "accounts_users:web:password:password_reset_done",
+#         "accounts_users:web:password:password_reset_confirm",
+#         "accounts_users:web:password:password_reset_complete",
+#         "accounts_users:web:profile:profile_pending_notice",
+#         "accounts_users:web:profile:profile_refused_notice",
+#     }
+
+#     def _safe_profile(self, user):
+#         """
+#         Récupère un profil sans casser si OneToOne absent.
+#         Ajuste la liste selon tes related_name réels.
+#         """
+#         for attr in (
+#             "profile",
+#             "userprofile",
+#             "social_profile",
+#             "socialprofile",
+#             "economic_profile",
+#             "economicprofile",
+#             "usersocialprofile",
+#             "usereconomicprofile",
+#             "user_economic_profile",
+#         ):
+#             try:
+#                 p = getattr(user, attr, None)
+#             except Exception:
+#                 p = None
+#             if p:
+#                 return p
+#         return None
+
+#     def _norm_status(self, raw) -> str:
+#         return str(raw or "").strip().lower()
+
+#     def process_view(self, request, view_func, view_args, view_kwargs):
+#         user = getattr(request, "user", None)
+#         if not user or not user.is_authenticated:
+#             return None
+
+#         resolver = getattr(request, "resolver_match", None)
+#         if not resolver:
+#             return None
+
+#         # Auth pages libres
+#         if resolver.view_name in self.EXEMPT_URLS:
+#             return None
+
+#         # ✅ IMPORTANT: ne touche PAS au site hors dashboard
+#         if not str(resolver.view_name or "").startswith("dashboard:"):
+#             return None
+
+#         # Staff/admin bypass
+#         if getattr(user, "is_staff", False) or getattr(user, "is_superuser", False):
+#             return None
+
+#         # Autoriser hub/profile/router/edit quoi qu'il arrive (évite boucle)
+#         if resolver.view_name in self.DASHBOARD_ALLOW_VIEWNAMES:
+#             return None
+
+#         # (Option) compte inactif: ne bloque que le dashboard
+#         if hasattr(user, "is_active") and not bool(user.is_active):
+#             messages.warning(request, "Veuillez activer votre compte via le lien reçu par e-mail.")
+#             return redirect("accounts_users:web:auth:login")
+
+#         # On applique le gate seulement sur certaines zones
+#         view_name = str(resolver.view_name or "")
+#         if not view_name.startswith(self.DASHBOARD_GATED_PREFIXES):
+#             return None  # ✅ dashboard normal OK
+
+#         profile = self._safe_profile(user)
+#         if not profile:
+#             return None  # pas de profil → pas de blocage global
+
+#         status = self._norm_status(getattr(profile, "status", "") or getattr(profile, "validation_status", "") or "")
+
+#         if status in self.STATUS_PENDING:
+#             messages.info(request, "Certaines sections sont limitées : profil en attente de validation.")
+#             return redirect("dashboard:hub")
+
+#         if status in self.STATUS_REFUSED:
+#             messages.error(request, "Certaines sections sont limitées : profil refusé.")
+#             return redirect("dashboard:hub")
+
+#         return None
+
+
+
+
+
+
+# # common/middlewares/middlewares.py
+
+# from django.contrib import messages
+# from django.shortcuts import redirect
+# from django.utils.deprecation import MiddlewareMixin
+
+
+# class ProfileStatusMiddleware(MiddlewareMixin):
+#     EXEMPT_URLS = {
+#         "accounts_users:web:auth:login",
+#         "accounts_users:web:auth:logout",
+#         "accounts_users:web:auth:signup",
+#         "accounts_users:web:registration:activate",
+#         "accounts_users:web:resend_activation",
+#         "accounts_users:web:password:password_reset",
+#         "accounts_users:web:password:password_reset_done",
+#         "accounts_users:web:password:password_reset_confirm",
+#         "accounts_users:web:password:password_reset_complete",
+#         "accounts_users:web:profile:profile_pending_notice",
+#         "accounts_users:web:profile:profile_refused_notice",
+#     }
+
+#     STATUS_PENDING = "pending"
+#     STATUS_REFUSED = "refused"
+
+#     def process_view(self, request, view_func, view_args, view_kwargs):
+#         user = getattr(request, "user", None)
+
+#         if not user or not user.is_authenticated:
+#             return None
+
+#         resolver = getattr(request, "resolver_match", None)
+#         if not resolver:
+#             return None
+
+#         if resolver.view_name in self.EXEMPT_URLS:
+#             return None
+
+#         if not user.is_active:
+#             messages.warning(
+#                 request,
+#                 "Veuillez activer votre compte via le lien reçu par e-mail."
+#             )
+#             return redirect("accounts_users:web:auth:login")
+
+#         profile = getattr(user, "profile", None) or getattr(user, "userprofile", None)
+#         if not profile:
+#             return None
+
+#         status = getattr(profile, "status", "") or ""
+
+#         if status == self.STATUS_PENDING:
+#             messages.info(
+#                 request,
+#                 "Votre profil est en attente de validation."
+#             )
+#             return redirect("accounts_users:web:profile:profile_pending_notice")
+
+#         if status == self.STATUS_REFUSED:
+#             messages.error(
+#                 request,
+#                 "Votre profil a été refusé."
+#             )
+#             return redirect("accounts_users:web:profile:profile_refused_notice")
+
+#         return None
 
 
 

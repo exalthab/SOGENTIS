@@ -1,5 +1,4 @@
-{# templates/economic/partials/_economic_menu.html #}
-{% load i18n %}
+{% comment %} {% load i18n %}
 
 {% url 'economic:index' as eco_home_url %}
 {% url 'economic:ecommerce:index' as ecommerce_index_url %}
@@ -16,9 +15,9 @@
 <nav class="eco-hub-menu border-bottom bg-white" aria-label="{% trans 'Menu pôle économique' %}">
   <div class="container d-flex flex-wrap align-items-center py-2 gap-2 gap-md-3">
 
-    {# =======================
-       GAUCHE : SECTIONS
-       ======================= #}
+    {# =======================  #}
+    {#    GAUCHE : SECTIONS  #}
+     {#   ======================= #}
     <div class="d-flex flex-wrap align-items-center gap-2 gap-md-3 flex-grow-1">
 
       <a href="{{ eco_home_url|default:'#' }}"
@@ -44,7 +43,7 @@
 
       <a href="{{ formations_index_url|default:'#' }}"
          class="eco-hub-link
-                {% if 'formations' in nss %}active{% endif %}
+]                {% if 'formations' in nss %}active{% endif %}
                 {% if not formations_index_url %}disabled{% endif %}">
         🎓 {% trans "Formations" %}
       </a>
@@ -136,7 +135,7 @@
 
 {% endwith %}
 {% endwith %}
-{% endwith %}
+{% endwith %} {% endcomment %}
 
 
 

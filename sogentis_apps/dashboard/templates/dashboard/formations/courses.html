@@ -1,0 +1,158 @@
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+
+{% block title %}{{ page_title|default:_("Mes cours") }} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block dashboard_header %}
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div>
+      <div class="h4 fw-bold mb-1">📚 {% trans "Mes cours" %}</div>
+      <div class="text-muted">{% trans "Liste et recherche dans vos inscriptions." %}</div>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+      <a class="btn btn-outline-secondary" href="{% url 'dashboard:formations:home' %}">← {% trans "Retour" %}</a>
+      <a class="btn btn-outline-primary" href="{% url 'dashboard:formations:calendar' %}">
+        <i class="fas fa-calendar-alt me-2"></i>{% trans "Calendrier" %}
+      </a>
+      <a class="btn btn-primary" href="{% url 'dashboard:formations:certificates' %}">
+        <i class="fas fa-award me-2"></i>{% trans "Certificats" %}
+      </a>
+    </div>
+  </div>
+{% endblock %}
+
+{% block dashboard_content %}
+  <div class="db-card mb-3">
+    <div class="db-card-body">
+      <form method="get" class="row g-2 align-items-end">
+        <div class="col-md-6">
+          <label class="form-label">{% trans "Recherche" %}</label>
+          <input class="form-control" type="search" name="q" value="{{ q|default:'' }}" placeholder="{% trans 'Titre, slug…' %}">
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">{% trans "Statut" %}</label>
+          <select class="form-select" name="status" {% if not has_status %}disabled{% endif %}>
+            <option value="">{% trans "Tous" %}</option>
+            <option value="PENDING" {% if status == "PENDING" %}selected{% endif %}>{% trans "En attente" %}</option>
+            <option value="ACTIVE" {% if status == "ACTIVE" %}selected{% endif %}>{% trans "Actif" %}</option>
+            <option value="COMPLETED" {% if status == "COMPLETED" %}selected{% endif %}>{% trans "Terminé" %}</option>
+          </select>
+        </div>
+
+        <div class="col-md-3 d-grid">
+          <button class="btn btn-primary" type="submit">
+            <i class="fas fa-filter me-2"></i>{% trans "Filtrer" %}
+          </button>
+        </div>
+      </form>
+
+      {% if not has_status %}
+        <div class="db-muted mt-2">{% trans "Le champ status n’est pas disponible : filtre statut désactivé." %}</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="db-card">
+    <div class="db-card-header">
+      <h3 class="db-card-title">{% trans "Inscriptions" %}</h3>
+      <p class="db-card-subtitle mb-0">{% trans "Cliquez pour continuer l’apprentissage." %}</p>
+    </div>
+    <div class="db-card-body">
+      <div class="table-responsive">
+        <table class="db-table">
+          <thead>
+            <tr>
+              <th>{% trans "Cours" %}</th>
+              <th>{% trans "Inscrit le" %}</th>
+              <th class="text-end">{% trans "Action" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for e in enrollments %}
+              {% url 'economic:formations:learning' slug=e.course.slug as learn_url %}
+              <tr>
+                <td><strong>{{ e.course }}</strong></td>
+                <td class="text-muted">{{ e.enrolled_at|date:"d/m/Y H:i" }}</td>
+                <td class="text-end">
+                  {% if learn_url %}
+                    <a class="btn btn-sm btn-outline-primary" href="{{ learn_url }}">{% trans "Continuer" %} →</a>
+                  {% else %}
+                    <span class="text-muted">—</span>
+                  {% endif %}
+                </td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="3" class="db-muted">{% trans "Aucune inscription trouvée." %}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+
+
+
+
+
+{% comment %} {% extends "dashboard/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Mes cours" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block dashboard_header %}
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div>
+      <div class="h4 fw-bold mb-1">{% trans "Mes cours" %}</div>
+      <div class="text-muted">{% trans "Recherche & filtres." %}</div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block content %}
+<form class="row g-2 mb-3" method="get">
+  <div class="col-md-7">
+    <input class="form-control" name="q" value="{{ q }}" placeholder="{% trans 'Rechercher…' %}">
+  </div>
+  <div class="col-md-3">
+    {% if has_status %}
+      <select class="form-select" name="status">
+        <option value="">{% trans "Tous statuts" %}</option>
+        <option value="ACTIVE" {% if status == "ACTIVE" %}selected{% endif %}>{% trans "Actif" %}</option>
+        <option value="PENDING" {% if status == "PENDING" %}selected{% endif %}>{% trans "En attente" %}</option>
+        <option value="COMPLETED" {% if status == "COMPLETED" %}selected{% endif %}>{% trans "Terminé" %}</option>
+      </select>
+    {% else %}
+      <input class="form-control" disabled value="{% trans 'Statuts non activés (legacy)' %}">
+    {% endif %}
+  </div>
+  <div class="col-md-2 d-grid">
+    <button class="btn btn-primary">{% trans "Filtrer" %}</button>
+  </div>
+</form>
+
+<div class="card shadow-sm">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>{% trans "Cours" %}</th>
+          <th class="text-nowrap">{% trans "Inscrit le" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for e in enrollments %}
+          <tr>
+            <td class="fw-semibold">{{ e.course }}</td>
+            <td class="text-muted text-nowrap">{{ e.enrolled_at|date:"d/m/Y" }}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="2" class="text-muted p-3">{% trans "Aucun résultat." %}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %} {% endcomment %}

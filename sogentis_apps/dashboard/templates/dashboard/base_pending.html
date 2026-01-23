@@ -1,5 +1,442 @@
 {# templates/dashboard/base_pending.html #}
 {% load static i18n %}
+{% get_current_language as CUR_LANG %}
+{% get_current_language_bidi as CUR_BIDI %}
+
+<!DOCTYPE html>
+<html lang="{{ CUR_LANG|default:'fr' }}" {% if CUR_BIDI %}dir="rtl"{% endif %}>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>{% block title %}{{ PROJECT_NAME|default:"SOGENTIS" }} — {% trans "Compte" %}{% endblock %}</title>
+
+  <meta name="robots" content="noindex,nofollow">
+  <meta http-equiv="Cache-Control" content="no-store">
+  <meta http-equiv="Pragma" content="no-cache">
+
+  <link rel="stylesheet" href="{% static 'dashboard/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'dashboard/css/fontawesome.min.css' %}">
+  <link rel="stylesheet" href="{% static 'dashboard/css/premium_dashboard.css' %}">
+
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body class="{% block body_class %}bg-light{% endblock %}">
+
+  <header class="bg-white border-bottom shadow-sm">
+    <div class="container-fluid px-3 px-md-4 py-3 d-flex justify-content-between align-items-center gap-3">
+      <div class="d-flex align-items-center gap-2">
+        {% block brand %}
+          <img
+            src="{% static 'dashboard/img/logo.png' %}"
+            alt="{{ PROJECT_NAME|default:'SOGENTIS' }}"
+            height="40"
+            style="max-width:160px;object-fit:contain"
+            onerror="this.style.display='none';document.getElementById('brandText').style.display='inline-block';"
+          >
+          <strong id="brandText" class="mb-0 text-primary" style="display:none;">
+            {{ PROJECT_NAME|default:"SOGENTIS" }}
+          </strong>
+        {% endblock %}
+      </div>
+
+      <div class="text-end">
+        {% block header_right %}{% endblock %}
+      </div>
+    </div>
+  </header>
+
+  <main class="container py-4 py-md-5">
+    {% block messages %}
+      {% if messages %}
+        <div class="mb-3">
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{% trans 'Fermer' %}"></button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endblock %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  {% block footer %}
+    <footer class="py-4">
+      <div class="container text-center text-muted small">
+        © {{ PROJECT_NAME|default:"SOGENTIS" }} — {% trans "Espace sécurisé" %}
+      </div>
+    </footer>
+  {% endblock %}
+
+  <script src="{% static 'dashboard/js/bootstrap.bundle.min.js' %}" defer></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>
+
+
+
+
+
+
+{% comment %} {# templates/dashboard/base_pending.html #}
+{% load static i18n %}
+{% get_current_language as CUR_LANG %}
+{% get_current_language_bidi as CUR_BIDI %}
+
+<!DOCTYPE html>
+<html lang="{{ CUR_LANG|default:'fr' }}" {% if CUR_BIDI %}dir="rtl"{% endif %}>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>{% block title %}{{ PROJECT_NAME|default:"SOGENTIS" }} — {% trans "Compte" %}{% endblock %}</title>
+
+  <meta name="robots" content="noindex,nofollow">
+  <meta http-equiv="Cache-Control" content="no-store">
+  <meta http-equiv="Pragma" content="no-cache">
+
+  <link rel="stylesheet" href="{% static 'dashboard/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'dashboard/css/fontawesome.min.css' %}">
+  <link rel="stylesheet" href="{% static 'dashboard/css/premium_dashboard.css' %}">
+
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body class="{% block body_class %}bg-light{% endblock %}">
+
+  <header class="bg-white border-bottom shadow-sm">
+    <div class="container-fluid px-3 px-md-4 py-3 d-flex justify-content-between align-items-center gap-3">
+      <div class="d-flex align-items-center gap-2">
+        {% block brand %}
+          <img
+            src="{% static 'dashboard/img/logo.png' %}"
+            alt="{{ PROJECT_NAME|default:'SOGENTIS' }}"
+            height="40"
+            style="max-width:160px;object-fit:contain"
+            onerror="this.style.display='none';document.getElementById('brandText').style.display='inline-block';"
+          >
+          <strong id="brandText" class="mb-0 text-primary" style="display:none;">
+            {{ PROJECT_NAME|default:"SOGENTIS" }}
+          </strong>
+        {% endblock %}
+      </div>
+
+      <div class="text-end">
+        {% block header_right %}{% endblock %}
+      </div>
+    </div>
+  </header>
+
+  <main class="container py-4 py-md-5">
+    {% block messages %}
+      {% if messages %}
+        <div class="mb-3">
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{% trans 'Fermer' %}"></button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endblock %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  {% block footer %}
+    <footer class="py-4">
+      <div class="container text-center text-muted small">
+        © {{ PROJECT_NAME|default:"SOGENTIS" }} — {% trans "Espace sécurisé" %}
+      </div>
+    </footer>
+  {% endblock %}
+
+  <script src="{% static 'dashboard/js/bootstrap.bundle.min.js' %}" defer></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html> {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/dashboard/base_pending.html #}
+{% load static i18n %}
+{% get_current_language as CUR_LANG %}
+{% get_current_language_bidi as CUR_BIDI %}
+
+<!DOCTYPE html>
+<html lang="{{ CUR_LANG|default:'fr' }}" {% if CUR_BIDI %}dir="rtl"{% endif %}>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>{% block title %}{{ PROJECT_NAME|default:"SOGENTIS" }} — {% trans "Compte en attente" %}{% endblock %}</title>
+
+  <meta name="robots" content="noindex,nofollow">
+  <meta http-equiv="Cache-Control" content="no-store">
+  <meta http-equiv="Pragma" content="no-cache">
+
+  {# Vendors (local) — aligné sur le dashboard #}
+  <link rel="stylesheet" href="{% static 'dashboard/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'dashboard/css/fontawesome.min.css' %}">
+
+  {# Style minimal #}
+  <link rel="stylesheet" href="{% static 'dashboard/css/premium_dashboard.css' %}">
+
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body class="{% block body_class %}bg-light{% endblock %}">
+
+  <header class="bg-white border-bottom shadow-sm">
+    <div class="container-fluid px-3 px-md-4 py-3 d-flex justify-content-between align-items-center gap-3">
+      <div class="d-flex align-items-center gap-2">
+
+        {% block brand %}
+          <img
+            src="{% static 'dashboard/img/logo.png' %}"
+            alt="{{ PROJECT_NAME|default:'SOGENTIS' }}"
+            height="40"
+            style="width:auto;"
+            onerror="this.onerror=null;this.src='{% static "global/image/Sogentis3.png" %}';"
+          >
+          <strong class="mb-0 text-primary">{{ PROJECT_NAME|default:"SOGENTIS" }}</strong>
+        {% endblock %}
+
+      </div>
+
+      <div class="text-end">
+        {% block header_right %}
+          <span class="badge text-bg-warning border">
+            <i class="fas fa-hourglass-half me-1" aria-hidden="true"></i>
+            {% trans "Compte en attente de validation" %}
+          </span>
+        {% endblock %}
+      </div>
+    </div>
+  </header>
+
+  <main class="container py-4 py-md-5">
+    {% block messages %}
+      {% if messages %}
+        <div class="mb-3">
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{% trans 'Fermer' %}"></button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endblock %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  {% block footer %}
+    <footer class="py-4">
+      <div class="container text-center text-muted small">
+        {% block footer_text %}
+          © {{ PROJECT_NAME|default:"SOGENTIS" }} — {% trans "Espace sécurisé" %}
+        {% endblock %}
+      </div>
+    </footer>
+  {% endblock %}
+
+  <script src="{% static 'dashboard/js/bootstrap.bundle.min.js' %}" defer></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html> {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/dashboard/base_pending.html #}
+{% load static i18n %}
+{% get_current_language as CUR_LANG %}
+{% get_current_language_bidi as CUR_BIDI %}
+
+<!DOCTYPE html>
+<html lang="{{ CUR_LANG|default:'fr' }}" {% if CUR_BIDI %}dir="rtl"{% endif %}>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>{% block title %}{{ PROJECT_NAME|default:"SOGENTIS" }} — {% trans "Compte en attente" %}{% endblock %}</title>
+
+  <meta name="robots" content="noindex,nofollow">
+  <meta http-equiv="Cache-Control" content="no-store">
+  <meta http-equiv="Pragma" content="no-cache">
+
+  {# Vendors (local) — aligné sur le dashboard #}
+  <link rel="stylesheet" href="{% static 'dashboard/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'dashboard/css/fontawesome.min.css' %}">
+
+  {# Style minimal — tu peux remplacer par premium_dashboard.css si tu veux #}
+  <link rel="stylesheet" href="{% static 'dashboard/css/premium_dashboard.css' %}">
+
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body class="{% block body_class %}bg-light{% endblock %}">
+
+  <header class="bg-white border-bottom shadow-sm">
+    <div class="container-fluid px-3 px-md-4 py-3 d-flex justify-content-between align-items-center gap-3">
+      <div class="d-flex align-items-center gap-2">
+        {% block brand %}
+          <img src="{% static 'global/image/Sogentis3.png' %}" alt="{{ PROJECT_NAME|default:'SOGENTIS' }}" height="40"
+               onerror="this.style.display='none'">
+          <strong class="mb-0 text-primary">{{ PROJECT_NAME|default:"SOGENTIS" }}</strong>
+        {% endblock %}
+      </div>
+
+      <div class="text-end">
+        {% block header_right %}
+          <span class="badge text-bg-warning border">
+            <i class="fas fa-hourglass-half me-1" aria-hidden="true"></i>
+            {% trans "Compte en attente de validation" %}
+          </span>
+        {% endblock %}
+      </div>
+    </div>
+  </header>
+
+  <main class="container py-4 py-md-5">
+    {% block messages %}
+      {% if messages %}
+        <div class="mb-3">
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{% trans 'Fermer' %}"></button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endblock %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  {% block footer %}
+    <footer class="py-4">
+      <div class="container text-center text-muted small">
+        {% block footer_text %}
+          © {{ PROJECT_NAME|default:"SOGENTIS" }} — {% trans "Espace sécurisé" %}
+        {% endblock %}
+      </div>
+    </footer>
+  {% endblock %}
+
+  <script src="{% static 'dashboard/js/bootstrap.bundle.min.js' %}" defer></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html> {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/dashboard/base_pending.html #}
+{% load static i18n %}
+{% get_current_language as CUR_LANG %}
+{% get_current_language_bidi as CUR_BIDI %}
+
+<!DOCTYPE html>
+<html lang="{{ CUR_LANG|default:'fr' }}" {% if CUR_BIDI %}dir="rtl"{% endif %}>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>{% block title %}{{ PROJECT_NAME|default:"SOGENTIS" }} — {% trans "Compte en attente" %}{% endblock %}</title>
+  {% block auth_bg_image %}url('{% static "accounts_users/img/auth_bg.png" %}'){% endblock %}
+
+  <meta name="robots" content="noindex,nofollow">
+  <meta http-equiv="Cache-Control" content="no-store">
+  <meta http-equiv="Pragma" content="no-cache">
+
+  {# Vendors (local) — aligné sur le dashboard #}
+  <link rel="stylesheet" href="{% static 'dashboard/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'dashboard/css/fontawesome.min.css' %}">
+
+  {# Style minimal — tu peux remplacer par premium_dashboard.css si tu veux #}
+  <link rel="stylesheet" href="{% static 'dashboard/css/premium_dashboard.css' %}">
+
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body class="{% block body_class %}bg-light{% endblock %}">
+
+  <header class="bg-white border-bottom shadow-sm">
+    <div class="container-fluid px-3 px-md-4 py-3 d-flex justify-content-between align-items-center gap-3">
+      <div class="d-flex align-items-center gap-2">
+        {% block brand %}
+          <img src="{% static 'dashboard/img/logo.png' %}" alt="{{ PROJECT_NAME|default:'SOGENTIS' }}" height="40"
+               onerror="this.style.display='none'">
+          <strong class="mb-0 text-primary">{{ PROJECT_NAME|default:"SOGENTIS" }}</strong>
+        {% endblock %}
+      </div>
+
+      <div class="text-end">
+        {% block header_right %}
+          <span class="badge text-bg-warning border">
+            <i class="fas fa-hourglass-half me-1" aria-hidden="true"></i>
+            {% trans "Compte en attente de validation" %}
+          </span>
+        {% endblock %}
+      </div>
+    </div>
+  </header>
+
+  <main class="container py-4 py-md-5">
+    {% block messages %}
+      {% if messages %}
+        <div class="mb-3">
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{% trans 'Fermer' %}"></button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endblock %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  {% block footer %}
+    <footer class="py-4">
+      <div class="container text-center text-muted small">
+        {% block footer_text %}
+          © {{ PROJECT_NAME|default:"SOGENTIS" }} — {% trans "Espace sécurisé" %}
+        {% endblock %}
+      </div>
+    </footer>
+  {% endblock %}
+
+  <script src="{% static 'dashboard/js/bootstrap.bundle.min.js' %}" defer></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>
+ {% endcomment %}
+
+
+
+
+{% comment %} {# templates/dashboard/base_pending.html #}
+
+{% load static i18n %}
 <!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE|default:'fr' }}">
 <head>
@@ -40,7 +477,7 @@
   {% block extra_js %}{% endblock %}
 </body>
 </html>
-
+ {% endcomment %}
 
 
 
@@ -56,7 +493,7 @@
     <title>{% block title %}SOGENTIS — Compte en attente{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    {% comment %} <!-- Bootstrap --> {% endcomment %}
+    <!-- Bootstrap -->
     <link rel="stylesheet" href="{% static 'dashboard/css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'dashboard/css/fontawesome.min.css' %}">
     <link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
@@ -66,7 +503,7 @@
 
 <body class="bg-light">
 
-    {% comment %} <!-- HEADER PREMIUM MINIMAL --> {% endcomment %}
+    <!-- HEADER PREMIUM MINIMAL --> 
     <header class="shadow-sm bg-white py-3 px-4 d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center gap-2">
             <img src="{% static 'global/image/Sogentis3.png' %}" alt="Sogentis" height="48">

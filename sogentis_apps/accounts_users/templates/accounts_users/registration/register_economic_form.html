@@ -1,4 +1,2866 @@
-{# ✅ 1) Template final (robuste) — templates/accounts_users/registration/register_economic_form.html #}
+{# templates/accounts_users/registration/register_economic_form.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks %}
+
+{% block title %}
+  {% if economic_type == "client" %}{% trans "Inscription Client | SOGENTIS" %}
+  {% elif economic_type == "vendor" %}{% trans "Inscription Vendeur | SOGENTIS" %}
+  {% elif economic_type == "b2b" %}{% trans "Inscription Entreprise | SOGENTIS" %}
+  {% else %}{{ page_title|default:_("Inscription — Pôle économique") }} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endif %}
+{% endblock %}
+
+{% block auth_title %}
+  {% if economic_type == "client" %}{{ track_badge|default:"" }} {% trans "Créer un compte client" %}
+  {% elif economic_type == "vendor" %}{{ track_badge|default:"" }} {% trans "Créer un compte vendeur" %}
+  {% elif economic_type == "b2b" %}{{ track_badge|default:"" }} {% trans "Créer un compte entreprise" %}
+  {% else %}{{ track_badge|default:"" }} {{ track_title|default:_("Inscription — Pôle économique") }}{% endif %}
+{% endblock %}
+
+{% block auth_subtitle %}
+  {% if economic_type %}{% trans "Accès sécurisé au pôle économique SOGENTIS" %}
+  {% else %}{{ track_subtitle|default:_("Créez votre compte pour accéder aux services économiques.") }}{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block auth_col_class %}col-12 col-lg-10 col-xl-9{% endblock %}
+
+{% block content %}
+{% with next_url=next|default:request.get_full_path track_code=economic_type|default:track|default:"client" %}
+
+{% trans "Entrez le code reçu par email" as otp_placeholder %}
+{% trans "Après avoir rempli le formulaire : 1) Cliquez “Envoyer le code” 2) Saisissez les 6 chiffres reçus 3) Cliquez sur “Vérifier” 4) Créez votre compte." as otp_help %}
+
+<form method="post" enctype="multipart/form-data" novalidate>
+  {% csrf_token %}
+  <input type="hidden" name="track" value="{{ track_code }}">
+  {% if next_url %}<input type="hidden" name="next" value="{{ next_url }}">{% endif %}
+
+  {% if user_form.non_field_errors or profile_form.non_field_errors or economic_form.non_field_errors %}
+    <div class="alert alert-danger">
+      {{ user_form.non_field_errors }}
+      {{ profile_form.non_field_errors }}
+      {{ economic_form.non_field_errors }}
+    </div>
+  {% endif %}
+
+  <div class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+      <h5>👤 {% trans "Compte utilisateur" %}</h5>
+      <div class="row g-3">
+        {% for field in user_form %}
+          {% if field.name != "email_otp_code" %}
+          <div class="col-12 col-md-6">
+            <label class="form-label" for="{{ field.id_for_label }}">
+              {{ field.label }}{% if field.field.required %} *{% endif %}
+            </label>
+
+            {% if field.field.widget.input_type == "password" %}
+              <div class="input-group">
+                {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+                <button type="button" class="btn btn-outline-secondary toggle-password"
+                        data-target="{{ field.id_for_label }}">👁️</button>
+              </div>
+            {% else %}
+              {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+            {% endif %}
+
+            {% if field.help_text %}<div class="form-text">{{ field.help_text|safe }}</div>{% endif %}
+            {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>{% endif %}
+          </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+      <h5>🧾 {% trans "Informations personnelles" %}</h5>
+      <div class="row g-3">
+        {% for field in profile_form %}
+          {% if field.name != "terms" %}
+          <div class="col-12 col-md-6">
+            <label class="form-label" for="{{ field.id_for_label }}">
+              {{ field.label }}{% if field.field.required %} *{% endif %}
+            </label>
+
+            {% if field.field.widget.input_type == "file" %}
+              {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+            {% elif field.field.widget.input_type == "checkbox" %}
+              <div class="form-check">
+                {{ field|add_class:"form-check-input"|add_error_class:"is-invalid" }}
+              </div>
+            {% elif field.field.widget.input_type %}
+              {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+            {% else %}
+              {% if field.field.choices %}
+                {{ field|add_class:"form-select"|add_error_class:"is-invalid" }}
+              {% else %}
+                {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+              {% endif %}
+            {% endif %}
+
+            {% if field.help_text %}<div class="form-text">{{ field.help_text|safe }}</div>{% endif %}
+            {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>{% endif %}
+          </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      <div class="form-check mt-4">
+        {{ profile_form.terms|add_class:"form-check-input"|add_error_class:"is-invalid" }}
+        <label class="form-check-label" for="{{ profile_form.terms.id_for_label }}">
+          {% trans "J’accepte les" %}
+          <a href="{% url 'core:cgu' %}" target="_blank" rel="noopener">{% trans "conditions générales" %}</a>
+        </label>
+        {% if profile_form.terms.errors %}
+          <div class="invalid-feedback d-block">{{ profile_form.terms.errors|striptags }}</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+      <h5>🏷️ {% trans "Informations du parcours" %}</h5>
+      <div class="row g-3">
+        {% for field in economic_form %}
+          <div class="col-12 col-md-6">
+            <label class="form-label" for="{{ field.id_for_label }}">
+              {{ field.label }}{% if field.field.required %} *{% endif %}
+            </label>
+
+            {% if field.field.widget.input_type == "file" %}
+              {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+              <div class="form-text">{% trans "Formats acceptés : PDF (max 2MB)." %}</div>
+            {% elif field.field.widget.input_type %}
+              {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+            {% else %}
+              {% if field.field.choices %}
+                {{ field|add_class:"form-select"|add_error_class:"is-invalid" }}
+              {% else %}
+                {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+              {% endif %}
+            {% endif %}
+
+            {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>{% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <hr class="my-4">
+  <h6 class="fw-bold mt-2">{% trans "Vérification email (OTP)" %}</h6>
+
+  <div id="otp-status" class="mt-2" aria-live="polite">
+    {% if otp_status %}{{ otp_status }}{% endif %}
+  </div>
+
+  <div class="mb-2">
+    <label class="form-label" for="{{ user_form.email_otp_code.id_for_label }}">
+      {{ user_form.email_otp_code.label }} *
+    </label>
+
+    <div class="input-group">
+      <input
+        type="text"
+        name="{{ user_form.email_otp_code.html_name }}"
+        id="{{ user_form.email_otp_code.id_for_label }}"
+        value="{{ user_form.email_otp_code.value|default_if_none:'' }}"
+        class="form-control{% if user_form.email_otp_code.errors %} is-invalid{% endif %}"
+        placeholder="{{ otp_placeholder }}"
+        maxlength="6"
+        autocomplete="one-time-code"
+        inputmode="numeric"
+        pattern="[0-9]{6}"
+        disabled="disabled"
+      />
+
+      <button class="btn btn-outline-secondary"
+              type="button"
+              id="send-otp-btn"
+              data-email-field="id_email"
+              data-url="{% url 'accounts_users:web:ajax:send_email_otp' %}"
+              data-verify-url="{% url 'accounts_users:web:ajax:verify_email_otp' %}">
+        {% trans "Envoyer le code" %}
+      </button>
+
+      <button class="btn btn-outline-primary"
+              type="button"
+              id="verify-otp-btn"
+              data-verify-url="{% url 'accounts_users:web:ajax:verify_email_otp' %}"
+              disabled="disabled">
+        {% trans "Vérifier" %}
+      </button>
+    </div>
+
+    {% if user_form.email_otp_code.errors %}
+      <div class="invalid-feedback d-block">{{ user_form.email_otp_code.errors|striptags }}</div>
+    {% endif %}
+
+    {# IMPORTANT: on force l'affichage du texte voulu #}
+    <div class="form-text" id="otp-help">{{ otp_help }}</div>
+  </div>
+
+  <div class="d-grid mt-4">
+    <button type="submit" class="btn btn-success fw-bold" id="signup-submit-btn" disabled="disabled">
+      {% trans "Créer mon compte" %}
+    </button>
+  </div>
+</form>
+
+<div class="text-center mt-3">
+  <p class="small text-muted mb-0">
+    {% trans "Vous avez déjà un compte ?" %}
+    <a href="{% url 'accounts_users:web:auth:login' %}?context=economic{% if next_url %}&next={{ next_url|urlencode }}{% endif %}">
+      {% trans "Se connecter" %}
+    </a>
+  </p>
+</div>
+
+{% endwith %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+{% comment %} <script>
+document.querySelectorAll(".toggle-password").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const input = document.getElementById(btn.dataset.target);
+    if (input) input.type = (input.type === "password") ? "text" : "password";
+  });
+});
+</script> {% endcomment %}
+{% endblock %}
+
+
+
+
+
+
+{% comment %} {# templates/accounts_users/registration/register_economic_form.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks %}
+
+{% block title %}
+  {% if economic_type == "client" %}{% trans "Inscription Client | SOGENTIS" %}
+  {% elif economic_type == "vendor" %}{% trans "Inscription Vendeur | SOGENTIS" %}
+  {% elif economic_type == "b2b" %}{% trans "Inscription Entreprise | SOGENTIS" %}
+  {% else %}{{ page_title|default:_("Inscription — Pôle économique") }} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endif %}
+{% endblock %}
+
+{% block auth_title %}
+  {% if economic_type == "client" %}{{ track_badge|default:"" }} {% trans "Créer un compte client" %}
+  {% elif economic_type == "vendor" %}{{ track_badge|default:"" }} {% trans "Créer un compte vendeur" %}
+  {% elif economic_type == "b2b" %}{{ track_badge|default:"" }} {% trans "Créer un compte entreprise" %}
+  {% else %}{{ track_badge|default:"" }} {{ track_title|default:_("Inscription — Pôle économique") }}{% endif %}
+{% endblock %}
+
+{% block auth_subtitle %}
+  {% if economic_type %}{% trans "Accès sécurisé au pôle économique SOGENTIS" %}
+  {% else %}{{ track_subtitle|default:_("Créez votre compte pour accéder aux services économiques.") }}{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block auth_col_class %}col-12 col-lg-10 col-xl-9{% endblock %}
+
+{% block content %}
+{% with next_url=next|default:"" track_code=economic_type|default:track|default:"client" %}
+
+{% trans "Entrez le code reçu par email" as otp_placeholder %}
+{% trans "Après avoir rempli le formulaire : 1) Cliquez “Envoyer le code” 2) Saisissez les 6 chiffres reçus 3) Cliquez sur “Vérifier” 4) Créez votre compte." as otp_help %}
+
+<form method="post" enctype="multipart/form-data" novalidate>
+  {% csrf_token %}
+  <input type="hidden" name="track" value="{{ track_code }}">
+  {% if next_url %}<input type="hidden" name="next" value="{{ next_url }}">{% endif %}
+  <input type="hidden" name="email_otp_verified" id="email-otp-verified" value="{{ request.POST.email_otp_verified|default:'0' }}">
+
+  {# ================= ERREURS GLOBALES ================= #}
+  {% if user_form.non_field_errors or profile_form.non_field_errors or economic_form.non_field_errors %}
+    <div class="alert alert-danger">
+      {{ user_form.non_field_errors }}
+      {{ profile_form.non_field_errors }}
+      {{ economic_form.non_field_errors }}
+    </div>
+  {% endif %}
+
+  {# ================= 1) COMPTE UTILISATEUR ================= #}
+  <div class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+      <h5>👤 {% trans "Compte utilisateur" %}</h5>
+      <div class="row g-3">
+        {% for field in user_form %}
+          {% if field.name != "email_otp_code" %}
+          <div class="col-12 col-md-6">
+            <label class="form-label" for="{{ field.id_for_label }}">
+              {{ field.label }}{% if field.field.required %} *{% endif %}
+            </label>
+
+            {% if field.field.widget.input_type == "password" %}
+              <div class="input-group">
+                {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+                <button type="button"
+                        class="btn btn-outline-secondary toggle-password"
+                        data-target="{{ field.id_for_label }}">👁️</button>
+              </div>
+            {% else %}
+              {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+            {% endif %}
+
+            {% if field.help_text %}
+              <div class="form-text">{{ field.help_text|safe }}</div>
+            {% endif %}
+            {% if field.errors %}
+              <div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>
+            {% endif %}
+          </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  {# ================= 2) PROFIL CENTRAL ================= #}
+  <div class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+      <h5>🧾 {% trans "Informations personnelles" %}</h5>
+      <div class="row g-3">
+        {% for field in profile_form %}
+          {% if field.name != "terms" %}
+          <div class="col-12 col-md-6">
+            <label class="form-label" for="{{ field.id_for_label }}">
+              {{ field.label }}{% if field.field.required %} *{% endif %}
+            </label>
+
+            {% if field.field.widget.input_type == "file" %}
+              {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+            {% elif field.field.widget.input_type == "checkbox" %}
+              <div class="form-check">
+                {{ field|add_class:"form-check-input"|add_error_class:"is-invalid" }}
+              </div>
+            {% elif field.field.widget.input_type %}
+              {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+            {% else %}
+              {% if field.field.choices %}
+                {{ field|add_class:"form-select"|add_error_class:"is-invalid" }}
+              {% else %}
+                {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+              {% endif %}
+            {% endif %}
+
+            {% if field.help_text %}
+              <div class="form-text">{{ field.help_text|safe }}</div>
+            {% endif %}
+            {% if field.errors %}
+              <div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>
+            {% endif %}
+          </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      <div class="form-check mt-4">
+        {{ profile_form.terms|add_class:"form-check-input"|add_error_class:"is-invalid" }}
+        <label class="form-check-label" for="{{ profile_form.terms.id_for_label }}">
+          {% trans "J’accepte les" %}
+          <a href="{% url 'core:cgu' %}" target="_blank" rel="noopener">{% trans "conditions générales" %}</a>
+        </label>
+        {% if profile_form.terms.errors %}
+          <div class="invalid-feedback d-block">{{ profile_form.terms.errors|striptags }}</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  {# ================= 3) INFOS ÉCONOMIQUES ================= #}
+  <div class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+      <h5>🏷️ {% trans "Informations du parcours" %}</h5>
+      <div class="row g-3">
+        {% for field in economic_form %}
+          <div class="col-12 col-md-6">
+            <label class="form-label" for="{{ field.id_for_label }}">
+              {{ field.label }}{% if field.field.required %} *{% endif %}
+            </label>
+
+            {% if field.field.widget.input_type == "file" %}
+              {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+              <div class="form-text">{% trans "Formats acceptés : PDF (max 2MB)." %}</div>
+            {% elif field.field.widget.input_type %}
+              {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+            {% else %}
+              {% if field.field.choices %}
+                {{ field|add_class:"form-select"|add_error_class:"is-invalid" }}
+              {% else %}
+                {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+              {% endif %}
+            {% endif %}
+
+            {% if field.errors %}
+              <div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  {# ================= OTP EMAIL ================= #}
+  <hr class="my-4">
+  <h6 class="fw-bold mt-2">{% trans "Vérification email (OTP)" %}</h6>
+
+  <div id="otp-status" class="mt-2" aria-live="polite"></div>
+
+  <div class="mb-2">
+    <label class="form-label" for="{{ user_form.email_otp_code.id_for_label }}">
+      {{ user_form.email_otp_code.label }} *
+    </label>
+
+    <div class="input-group">
+      <input
+        type="text"
+        name="{{ user_form.email_otp_code.html_name }}"
+        id="{{ user_form.email_otp_code.id_for_label }}"
+        value="{{ user_form.email_otp_code.value|default_if_none:'' }}"
+        class="form-control{% if user_form.email_otp_code.errors %} is-invalid{% endif %}"
+        placeholder="{{ otp_placeholder }}"
+        maxlength="6"
+        autocomplete="one-time-code"
+        inputmode="numeric"
+        pattern="[0-9]{6}"
+        disabled="disabled"
+      />
+
+      <button class="btn btn-outline-secondary"
+              type="button"
+              id="send-otp-btn"
+              data-email-field="id_email"
+              data-url="{% url 'accounts_users:web:ajax:send_email_otp' %}"
+              data-verify-url="{% url 'accounts_users:web:ajax:verify_email_otp' %}">
+        {% trans "Envoyer le code" %}
+      </button>
+
+      <button class="btn btn-outline-primary"
+              type="button"
+              id="verify-otp-btn"
+              data-verify-url="{% url 'accounts_users:web:ajax:verify_email_otp' %}"
+              disabled="disabled">
+        {% trans "Vérifier" %}
+      </button>
+    </div>
+
+    <div class="form-text" id="otp-help">
+      {{ otp_help }}
+      {% if user_form.email_otp_code.help_text %}
+        <div class="small text-muted mt-1">{{ user_form.email_otp_code.help_text|safe }}</div>
+      {% endif %}
+    </div>
+
+    {% for error in user_form.email_otp_code.errors %}
+      <div class="invalid-feedback d-block">{{ error }}</div>
+    {% endfor %}
+  </div>
+
+  {# ================= SUBMIT ================= #}
+  <div class="d-grid mt-4">
+    <button type="submit"
+            class="btn btn-success fw-bold"
+            id="signup-submit-btn"
+            disabled="disabled">
+      {% trans "Créer mon compte" %}
+    </button>
+  </div>
+</form>
+
+<div class="text-center mt-3">
+  <p class="small text-muted mb-0">
+    {% trans "Vous avez déjà un compte ?" %}
+    <a href="{% url 'accounts_users:web:auth:login' %}?context=economic{% if next_url %}&next={{ next_url|urlencode }}{% endif %}">{% trans "Se connecter" %}</a>
+  </p>
+</div>
+
+{% endwith %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+<script>
+document.querySelectorAll(".toggle-password").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const input = document.getElementById(btn.dataset.target);
+    if (input) input.type = (input.type === "password") ? "text" : "password";
+  });
+});
+</script>
+{% endblock %}
+ {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/accounts_users/registration/register_economic_form.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks %}
+
+{% block title %}
+  {% if economic_type == "client" %}{% trans "Inscription Client | SOGENTIS" %}
+  {% elif economic_type == "vendor" %}{% trans "Inscription Vendeur | SOGENTIS" %}
+  {% elif economic_type == "b2b" %}{% trans "Inscription Entreprise | SOGENTIS" %}
+  {% else %}{{ page_title|default:_("Inscription — Pôle économique") }} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endif %}
+{% endblock %}
+
+{% block auth_title %}
+  {% if economic_type == "client" %}{{ track_badge|default:"" }} {% trans "Créer un compte client" %}
+  {% elif economic_type == "vendor" %}{{ track_badge|default:"" }} {% trans "Créer un compte vendeur" %}
+  {% elif economic_type == "b2b" %}{{ track_badge|default:"" }} {% trans "Créer un compte entreprise" %}
+  {% else %}{{ track_badge|default:"" }} {{ track_title|default:_("Inscription — Pôle économique") }}{% endif %}
+{% endblock %}
+
+{% block auth_subtitle %}
+  {% if economic_type %}{% trans "Accès sécurisé au pôle économique SOGENTIS" %}
+  {% else %}{{ track_subtitle|default:_("Créez votre compte pour accéder aux services économiques.") }}{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block auth_col_class %}col-12 col-lg-10 col-xl-9{% endblock %}
+
+{% block content %}
+{% with next_url=next|default:"" track_code=economic_type|default:track|default:"client" %}
+
+{% trans "Entrez le code reçu par email" as otp_placeholder %}
+{% trans "Après avoir rempli le formulaire : 1) Cliquez “Envoyer le code” 2) Saisissez les 6 chiffres reçus 3) Cliquez sur “Vérifier” 4) Créez votre compte." as otp_help %}
+
+<form method="post" enctype="multipart/form-data" novalidate>
+  {% csrf_token %}
+  <input type="hidden" name="track" value="{{ track_code }}">
+  {% if next_url %}<input type="hidden" name="next" value="{{ next_url }}">{% endif %}
+
+  {# ================= ERREURS GLOBALES ================= #}
+  {% if user_form.non_field_errors or profile_form.non_field_errors or economic_form.non_field_errors %}
+    <div class="alert alert-danger">
+      {{ user_form.non_field_errors }}
+      {{ profile_form.non_field_errors }}
+      {{ economic_form.non_field_errors }}
+    </div>
+  {% endif %}
+
+  {# ================= 1) COMPTE UTILISATEUR ================= #}
+  <div class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+      <h5>👤 {% trans "Compte utilisateur" %}</h5>
+      <div class="row g-3">
+        {% for field in user_form %}
+          {% if field.name != "email_otp_code" %}
+          <div class="col-12 col-md-6">
+            <label class="form-label" for="{{ field.id_for_label }}">
+              {{ field.label }}{% if field.field.required %} *{% endif %}
+            </label>
+
+            {% if field.field.widget.input_type == "password" %}
+              <div class="input-group">
+                {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+                <button type="button"
+                        class="btn btn-outline-secondary toggle-password"
+                        data-target="{{ field.id_for_label }}">👁️</button>
+              </div>
+            {% else %}
+              {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+            {% endif %}
+
+            {% if field.help_text %}
+              <div class="form-text">{{ field.help_text|safe }}</div>
+            {% endif %}
+            {% if field.errors %}
+              <div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>
+            {% endif %}
+          </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  {# ================= 2) PROFIL CENTRAL ================= #}
+  <div class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+      <h5>🧾 {% trans "Informations personnelles" %}</h5>
+      <div class="row g-3">
+        {% for field in profile_form %}
+          {% if field.name != "terms" %}
+          <div class="col-12 col-md-6">
+            <label class="form-label" for="{{ field.id_for_label }}">
+              {{ field.label }}{% if field.field.required %} *{% endif %}
+            </label>
+
+            {# ---- Détection SAFE : file / checkbox / select / text ---- #}
+            {% if field.field.widget.input_type == "file" %}
+              {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+
+            {% elif field.field.widget.input_type == "checkbox" %}
+              <div class="form-check">
+                {{ field|add_class:"form-check-input"|add_error_class:"is-invalid" }}
+              </div>
+
+            {% elif field.field.widget.input_type %}
+              {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+
+            {% else %}
+              {% if field.field.choices %}
+                {{ field|add_class:"form-select"|add_error_class:"is-invalid" }}
+              {% else %}
+                {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+              {% endif %}
+            {% endif %}
+
+            {% if field.help_text %}
+              <div class="form-text">{{ field.help_text|safe }}</div>
+            {% endif %}
+            {% if field.errors %}
+              <div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>
+            {% endif %}
+          </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      {# CGU #}
+      <div class="form-check mt-4">
+        {{ profile_form.terms|add_class:"form-check-input"|add_error_class:"is-invalid" }}
+        <label class="form-check-label" for="{{ profile_form.terms.id_for_label }}">
+          {% trans "J’accepte les" %}
+          <a href="{% url 'core:cgu' %}" target="_blank" rel="noopener">{% trans "conditions générales" %}</a>
+        </label>
+        {% if profile_form.terms.errors %}
+          <div class="invalid-feedback d-block">{{ profile_form.terms.errors|striptags }}</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  {# ================= 3) INFOS ÉCONOMIQUES ================= #}
+  <div class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+      <h5>🏷️ {% trans "Informations du parcours" %}</h5>
+      <div class="row g-3">
+        {% for field in economic_form %}
+          <div class="col-12 col-md-6">
+            <label class="form-label" for="{{ field.id_for_label }}">
+              {{ field.label }}{% if field.field.required %} *{% endif %}
+            </label>
+
+            {% if field.field.widget.input_type == "file" %}
+              {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+              <div class="form-text">{% trans "Formats acceptés : PDF (max 2MB)." %}</div>
+
+            {% elif field.field.widget.input_type %}
+              {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+
+            {% else %}
+              {% if field.field.choices %}
+                {{ field|add_class:"form-select"|add_error_class:"is-invalid" }}
+              {% else %}
+                {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+              {% endif %}
+            {% endif %}
+
+            {% if field.errors %}
+              <div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  {# ================= OTP EMAIL ================= #}
+  <hr class="my-4">
+  <h6 class="fw-bold mt-2">{% trans "Vérification email (OTP)" %}</h6>
+
+  <div id="otp-status" class="mt-2" aria-live="polite">
+    {% if otp_status %}{{ otp_status }}{% endif %}
+  </div>
+
+  <div class="mb-2">
+    <label class="form-label" for="{{ user_form.email_otp_code.id_for_label }}">
+      {{ user_form.email_otp_code.label }} *
+    </label>
+
+    <div class="input-group">
+      <input
+        type="text"
+        name="{{ user_form.email_otp_code.html_name }}"
+        id="{{ user_form.email_otp_code.id_for_label }}"
+        value="{{ user_form.email_otp_code.value|default_if_none:'' }}"
+        class="form-control{% if user_form.email_otp_code.errors %} is-invalid{% endif %}"
+        placeholder="{{ otp_placeholder }}"
+        maxlength="6"
+        autocomplete="one-time-code"
+        inputmode="numeric"
+        pattern="[0-9]{6}"
+        disabled="disabled"
+      />
+
+      <button class="btn btn-outline-secondary"
+              type="button"
+              id="send-otp-btn"
+              data-email-field="id_email"
+              data-url="{% url 'accounts_users:web:ajax:send_email_otp' %}"
+              data-verify-url="{% url 'accounts_users:web:ajax:verify_email_otp' %}">
+        {% trans "Envoyer le code" %}
+      </button>
+
+      <button class="btn btn-outline-primary"
+              type="button"
+              id="verify-otp-btn"
+              data-verify-url="{% url 'accounts_users:web:ajax:verify_email_otp' %}"
+              disabled="disabled">
+        {% trans "Vérifier" %}
+      </button>
+    </div>
+
+    <div class="form-text" id="otp-help">
+      {% if user_form.email_otp_code.help_text %}
+        {{ user_form.email_otp_code.help_text|safe }}
+      {% else %}
+        {{ otp_help }}
+      {% endif %}
+    </div>
+
+    {% for error in user_form.email_otp_code.errors %}
+      <div class="invalid-feedback d-block">{{ error }}</div>
+    {% endfor %}
+  </div>
+
+  {# ================= SUBMIT ================= #}
+  <div class="d-grid mt-4">
+    <button type="submit"
+            class="btn btn-success fw-bold"
+            id="signup-submit-btn"
+            disabled="disabled">
+      {% trans "Créer mon compte" %}
+    </button>
+  </div>
+</form>
+
+<div class="text-center mt-3">
+  <p class="small text-muted mb-0">
+    {% trans "Vous avez déjà un compte ?" %}
+    <a href="{% url 'accounts_users:web:auth:login' %}?context=economic{% if next_url %}&next={{ next_url|urlencode }}{% endif %}">{% trans "Se connecter" %}</a>
+  </p>
+</div>
+
+{% endwith %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/accounts_users/registration/register_economic_form.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks %}
+
+{% block title %}
+  {% if economic_type == "client" %}{% trans "Inscription Client | SOGENTIS" %}
+  {% elif economic_type == "vendor" %}{% trans "Inscription Vendeur | SOGENTIS" %}
+  {% elif economic_type == "b2b" %}{% trans "Inscription Entreprise | SOGENTIS" %}
+  {% else %}{{ page_title|default:_("Inscription — Pôle économique") }} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endif %}
+{% endblock %}
+
+{% block auth_title %}
+  {% if economic_type == "client" %}{% trans "Créer un compte client" %}
+  {% elif economic_type == "vendor" %}{% trans "Créer un compte vendeur" %}
+  {% elif economic_type == "b2b" %}{% trans "Créer un compte entreprise" %}
+  {% else %}{{ track_title|default:_("Inscription — Pôle économique") }}{% endif %}
+{% endblock %}
+
+{% block auth_subtitle %}
+  {% if economic_type %}{% trans "Accès sécurisé au pôle économique SOGENTIS" %}
+  {% else %}{{ track_subtitle|default:_("Créez votre compte pour accéder aux services économiques.") }}{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block auth_col_class %}col-12 col-lg-10 col-xl-9{% endblock %}
+
+{% block content %}
+{% with next_url=next|default:"" %}
+
+{% trans "Entrez le code reçu par email" as otp_placeholder %}
+{% trans "Après avoir rempli le formulaire : 1) Cliquez “Envoyer le code” 2) Saisissez les 6 chiffres reçus 3) Cliquez sur “Vérifier” 4) Créez votre compte." as otp_help %}
+
+<form method="post" enctype="multipart/form-data" novalidate>
+  {% csrf_token %}
+  <input type="hidden" name="track" value="{{ economic_type|default:track|default:'client' }}">
+  {% if next_url %}<input type="hidden" name="next" value="{{ next_url }}">{% endif %}
+
+  {# ================= ERREURS GLOBALES ================= #}
+  {% if user_form.non_field_errors or profile_form.non_field_errors or economic_form.non_field_errors %}
+    <div class="alert alert-danger">
+      {{ user_form.non_field_errors }}
+      {{ profile_form.non_field_errors }}
+      {{ economic_form.non_field_errors }}
+    </div>
+  {% endif %}
+
+  {# ================= 1) COMPTE UTILISATEUR ================= #}
+  <div class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+      <h5>👤 {% trans "Compte utilisateur" %}</h5>
+      <div class="row g-3">
+        {% for field in user_form %}
+          {% if field.name != "email_otp_code" %}
+          <div class="col-12 col-md-6">
+            <label class="form-label" for="{{ field.id_for_label }}">
+              {{ field.label }}{% if field.field.required %} *{% endif %}
+            </label>
+
+            {% if field.field.widget.input_type == "password" %}
+              <div class="input-group">
+                {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+                <button type="button"
+                        class="btn btn-outline-secondary toggle-password"
+                        data-target="{{ field.id_for_label }}">👁️</button>
+              </div>
+            {% else %}
+              {# Texte/email/tel/... -> form-control #}
+              {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+            {% endif %}
+
+            {% if field.help_text %}
+              <div class="form-text">{{ field.help_text|safe }}</div>
+            {% endif %}
+            {% if field.errors %}
+              <div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>
+            {% endif %}
+          </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  {# ================= 2) PROFIL CENTRAL ================= #}
+  <div class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+      <h5>🧾 {% trans "Informations personnelles" %}</h5>
+      <div class="row g-3">
+        {% for field in profile_form %}
+          {% if field.name != "terms" %}
+          <div class="col-12 col-md-6">
+            <label class="form-label" for="{{ field.id_for_label }}">
+              {{ field.label }}{% if field.field.required %} *{% endif %}
+            </label>
+
+            {# ---- Détection SAFE : file / checkbox / select / text ---- #}
+            {% if field.field.widget.input_type == "file" %}
+              {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+
+            {% elif field.field.widget.input_type == "checkbox" %}
+              <div class="form-check">
+                {{ field|add_class:"form-check-input"|add_error_class:"is-invalid" }}
+              </div>
+
+            {% elif field.field.widget.input_type %}
+              {# input_type présent (text/email/tel/number/password...) #}
+              {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+
+            {% else %}
+              {# input_type vide => souvent Select / Textarea #}
+              {% if field.field.choices %}
+                {{ field|add_class:"form-select"|add_error_class:"is-invalid" }}
+              {% else %}
+                {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+              {% endif %}
+            {% endif %}
+
+            {% if field.help_text %}
+              <div class="form-text">{{ field.help_text|safe }}</div>
+            {% endif %}
+            {% if field.errors %}
+              <div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>
+            {% endif %}
+          </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      {# CGU #}
+      <div class="form-check mt-4">
+        {{ profile_form.terms|add_class:"form-check-input"|add_error_class:"is-invalid" }}
+        <label class="form-check-label" for="{{ profile_form.terms.id_for_label }}">
+          {% trans "J’accepte les" %}
+          <a href="{% url 'core:cgu' %}" target="_blank" rel="noopener">{% trans "conditions générales" %}</a>
+        </label>
+        {% if profile_form.terms.errors %}
+          <div class="invalid-feedback d-block">{{ profile_form.terms.errors|striptags }}</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  {# ================= 3) INFOS ÉCONOMIQUES ================= #}
+  <div class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+      <h5>🏷️ {% trans "Informations du parcours" %}</h5>
+      <div class="row g-3">
+        {% for field in economic_form %}
+          <div class="col-12 col-md-6">
+            <label class="form-label" for="{{ field.id_for_label }}">
+              {{ field.label }}{% if field.field.required %} *{% endif %}
+            </label>
+
+            {% if field.field.widget.input_type == "file" %}
+              {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+              <div class="form-text">{% trans "Formats acceptés : PDF (max 2MB)." %}</div>
+
+            {% elif field.field.widget.input_type %}
+              {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+
+            {% else %}
+              {% if field.field.choices %}
+                {{ field|add_class:"form-select"|add_error_class:"is-invalid" }}
+              {% else %}
+                {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+              {% endif %}
+            {% endif %}
+
+            {% if field.errors %}
+              <div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  {# ================= OTP EMAIL ================= #}
+  <hr class="my-4">
+  <h6 class="fw-bold mt-2">{% trans "Vérification email (OTP)" %}</h6>
+
+  <div id="otp-status" class="mt-2" aria-live="polite">
+    {% if otp_status %}{{ otp_status }}{% endif %}
+  </div>
+
+  <div class="mb-2">
+    <label class="form-label" for="{{ user_form.email_otp_code.id_for_label }}">
+      {{ user_form.email_otp_code.label }} *
+    </label>
+
+    <div class="input-group">
+      <input
+        type="text"
+        name="{{ user_form.email_otp_code.html_name }}"
+        id="{{ user_form.email_otp_code.id_for_label }}"
+        value="{{ user_form.email_otp_code.value|default_if_none:'' }}"
+        class="form-control{% if user_form.email_otp_code.errors %} is-invalid{% endif %}"
+        placeholder="{{ otp_placeholder }}"
+        maxlength="6"
+        autocomplete="one-time-code"
+        inputmode="numeric"
+        pattern="[0-9]{6}"
+        disabled="disabled"
+      />
+
+      <button class="btn btn-outline-secondary"
+              type="button"
+              id="send-otp-btn"
+              data-email-field="id_email"
+              data-url="{% url 'accounts_users:web:ajax:send_email_otp' %}"
+              data-verify-url="{% url 'accounts_users:web:ajax:verify_email_otp' %}">
+        {% trans "Envoyer le code" %}
+      </button>
+
+      <button class="btn btn-outline-primary"
+              type="button"
+              id="verify-otp-btn"
+              data-verify-url="{% url 'accounts_users:web:ajax:verify_email_otp' %}"
+              disabled="disabled">
+        {% trans "Vérifier" %}
+      </button>
+    </div>
+
+    <div class="form-text" id="otp-help">
+      {% if user_form.email_otp_code.help_text %}
+        {{ user_form.email_otp_code.help_text|safe }}
+      {% else %}
+        {{ otp_help }}
+      {% endif %}
+    </div>
+
+    {% for error in user_form.email_otp_code.errors %}
+      <div class="invalid-feedback d-block">{{ error }}</div>
+    {% endfor %}
+  </div>
+
+  {# ================= SUBMIT ================= #}
+  <div class="d-grid mt-4">
+    <button type="submit"
+            class="btn btn-success fw-bold"
+            id="signup-submit-btn"
+            disabled="disabled">
+      {% trans "Créer mon compte" %}
+    </button>
+  </div>
+</form>
+
+<div class="text-center mt-3">
+  <p class="small text-muted mb-0">
+    {% trans "Vous avez déjà un compte ?" %}
+    <a href="{% url 'accounts_users:web:auth:login' %}?context=economic{% if next_url %}&next={{ next_url|urlencode }}{% endif %}">{% trans "Se connecter" %}</a>
+  </p>
+</div>
+
+{% endwith %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+<script>
+document.querySelectorAll(".toggle-password").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const input = document.getElementById(btn.dataset.target);
+    if (input) input.type = (input.type === "password") ? "text" : "password";
+  });
+});
+</script>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/accounts_users/registration/register_economic_form.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks %}
+
+{% block title %}
+  {% if economic_type == "client" %}{% trans "Inscription Client | SOGENTIS" %}
+  {% elif economic_type == "vendor" %}{% trans "Inscription Vendeur | SOGENTIS" %}
+  {% elif economic_type == "b2b" %}{% trans "Inscription Entreprise | SOGENTIS" %}
+  {% else %}{{ page_title|default:_("Inscription — Pôle économique") }} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endif %}
+{% endblock %}
+
+{% block auth_title %}
+  {% if economic_type == "client" %}{% trans "Créer un compte client" %}
+  {% elif economic_type == "vendor" %}{% trans "Créer un compte vendeur" %}
+  {% elif economic_type == "b2b" %}{% trans "Créer un compte entreprise" %}
+  {% else %}{{ track_title|default:_("Inscription — Pôle économique") }}{% endif %}
+{% endblock %}
+
+{% block auth_subtitle %}
+  {% if economic_type %}{% trans "Accès sécurisé au pôle économique SOGENTIS" %}
+  {% else %}{{ track_subtitle|default:_("Créez votre compte pour accéder aux services économiques.") }}{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+{% with next_url=next|default:request.GET.next|default:"" %}
+{% trans "Entrez le code reçu par email" as otp_placeholder %}
+{% trans "Après avoir rempli le formulaire : 1) Cliquez “Envoyer le code” 2) Saisissez les 6 chiffres reçus 3) Cliquez sur “Vérifier” 4) Créez votre compte." as otp_help %}
+
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-{{ message.tags|default:'info' }} text-center" role="alert">
+      {{ message }}
+    </div>
+  {% endfor %}
+{% endif %}
+
+<form method="post" enctype="multipart/form-data" novalidate>
+  {% csrf_token %}
+  <input type="hidden" name="track" value="{{ track|default:'client' }}">
+  {% if next_url %}<input type="hidden" name="next" value="{{ next_url }}">{% endif %}
+
+  {# ================= ERREURS GLOBALES ================= #}
+  {% if user_form.non_field_errors or profile_form.non_field_errors or economic_form.non_field_errors %}
+    <div class="alert alert-danger">
+      {{ user_form.non_field_errors }}
+      {{ profile_form.non_field_errors }}
+      {{ economic_form.non_field_errors }}
+    </div>
+  {% endif %}
+
+  {# ================= 1) COMPTE UTILISATEUR ================= #}
+  <div class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+      <h5>👤 {% trans "Compte utilisateur" %}</h5>
+      <div class="row g-3">
+        {% for field in user_form %}
+          {% if field.name != "email_otp_code" %}
+          <div class="col-12 col-md-6">
+            <label class="form-label">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
+
+            {% if field.field.widget.input_type == "password" %}
+              <div class="input-group">
+                {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+                <button type="button"
+                        class="btn btn-outline-secondary toggle-password"
+                        data-target="{{ field.id_for_label }}">👁️</button>
+              </div>
+            {% else %}
+              {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+            {% endif %}
+
+            {% if field.help_text %}
+              <div class="form-text">{{ field.help_text|safe }}</div>
+            {% endif %}
+            {% if field.errors %}
+              <div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>
+            {% endif %}
+          </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  {# ================= 2) PROFIL CENTRAL ================= #}
+  <div class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+      <h5>🧾 {% trans "Informations personnelles" %}</h5>
+      <div class="row g-3">
+        {% for field in profile_form %}
+          {% if field.name != "terms" %}
+          <div class="col-12 col-md-6">
+            <label class="form-label">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
+
+            {% if field.field.widget.input_type == "select" %}
+              {{ field|add_class:"form-select"|add_error_class:"is-invalid" }}
+            {% elif field.field.widget.input_type == "file" %}
+              {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+            {% elif field.field.widget.input_type == "checkbox" %}
+              <div class="form-check">
+                {{ field|add_class:"form-check-input"|add_error_class:"is-invalid" }}
+              </div>
+            {% else %}
+              {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+            {% endif %}
+
+            {% if field.help_text %}
+              <div class="form-text">{{ field.help_text|safe }}</div>
+            {% endif %}
+            {% if field.errors %}
+              <div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>
+            {% endif %}
+          </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      {# CGU #}
+      <div class="form-check mt-4">
+        {{ profile_form.terms|add_class:"form-check-input"|add_error_class:"is-invalid" }}
+        <label class="form-check-label">
+          {% trans "J’accepte les" %}
+          <a href="{% url 'core:cgu' %}" target="_blank">{% trans "conditions générales" %}</a>
+        </label>
+        {% if profile_form.terms.errors %}
+          <div class="invalid-feedback d-block">{{ profile_form.terms.errors|striptags }}</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  {# ================= 3) INFOS ÉCONOMIQUES ================= #}
+  <div class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+      <h5>🏷️ {% trans "Informations du parcours" %}</h5>
+      <div class="row g-3">
+        {% for field in economic_form %}
+          <div class="col-12 col-md-6">
+            <label class="form-label">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
+
+            {% if field.field.widget.input_type == "file" %}
+              {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+              <div class="form-text">{% trans "Formats acceptés : PDF (max 2MB)." %}</div>
+            {% elif field.field.widget.input_type == "select" %}
+              {{ field|add_class:"form-select"|add_error_class:"is-invalid" }}
+            {% else %}
+              {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+            {% endif %}
+
+            {% if field.errors %}
+              <div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  {# ================= OTP EMAIL ================= #}
+  <hr class="my-4">
+  <h6 class="fw-bold mt-2">{% trans "Vérification email (OTP)" %}</h6>
+
+  <div id="otp-status" class="mt-2" aria-live="polite">
+    {% if otp_status %}{{ otp_status }}{% endif %}
+  </div>
+
+  <div class="mb-2">
+    <label class="form-label" for="{{ user_form.email_otp_code.id_for_label }}">
+      {{ user_form.email_otp_code.label }} *
+    </label>
+
+    <div class="input-group">
+      <input
+        type="text"
+        name="{{ user_form.email_otp_code.html_name }}"
+        id="{{ user_form.email_otp_code.id_for_label }}"
+        value="{{ user_form.email_otp_code.value|default_if_none:'' }}"
+        class="form-control{% if user_form.email_otp_code.errors %} is-invalid{% endif %}"
+        placeholder="{{ otp_placeholder }}"
+        maxlength="6"
+        autocomplete="one-time-code"
+        inputmode="numeric"
+        pattern="[0-9]{6}"
+        disabled="disabled"
+      />
+
+      <button class="btn btn-outline-secondary"
+              type="button"
+              id="send-otp-btn"
+              data-email-field="id_email"
+              data-url="{% url 'accounts_users:web:ajax:send_email_otp' %}"
+              data-verify-url="{% url 'accounts_users:web:ajax:verify_email_otp' %}">
+        {% trans "Envoyer le code" %}
+      </button>
+
+      <button class="btn btn-outline-primary"
+              type="button"
+              id="verify-otp-btn"
+              data-verify-url="{% url 'accounts_users:web:ajax:verify_email_otp' %}"
+              disabled="disabled">
+        {% trans "Vérifier" %}
+      </button>
+    </div>
+
+    <div class="form-text" id="otp-help">
+      {% if user_form.email_otp_code.help_text %}
+        {{ user_form.email_otp_code.help_text|safe }}
+      {% else %}
+        {{ otp_help }}
+      {% endif %}
+    </div>
+
+    {% for error in user_form.email_otp_code.errors %}
+      <div class="invalid-feedback d-block">{{ error }}</div>
+    {% endfor %}
+  </div>
+
+  {# ================= SUBMIT ================= #}
+  <div class="d-grid mt-4">
+    <button type="submit"
+            class="btn btn-success fw-bold"
+            id="signup-submit-btn"
+            disabled="disabled">
+      {% trans "Créer mon compte" %}
+    </button>
+  </div>
+</form>
+
+<div class="text-center mt-3">
+  <p class="small text-muted mb-0">
+    {% trans "Vous avez déjà un compte ?" %}
+    <a href="{% url 'accounts_users:web:auth:login' %}">{% trans "Se connecter" %}</a>
+  </p>
+</div>
+
+{% endwith %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+<script>
+document.querySelectorAll(".toggle-password").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const input = document.getElementById(btn.dataset.target);
+    input.type = input.type === "password" ? "text" : "password";
+  });
+});
+</script>
+{% endblock %} {% endcomment %}
+
+
+
+
+{% comment %} {# templates/accounts_users/registration/register_economic_form.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks %}
+
+{% block title %}
+{{ page_title|default:_("Inscription — Pôle économique") }} | {{ PROJECT_NAME|default:"SOGENTIS" }}
+{% endblock %}
+
+{% block auth_title %}
+{% if track_badge %}{{ track_badge }} {% endif %}
+{{ track_title|default:_("Inscription — Pôle économique") }}
+{% endblock %}
+
+{% block auth_subtitle %}
+{{ track_subtitle|default:_("Créez votre compte pour accéder aux services économiques.") }}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+{% with next_url=next|default:request.GET.next|default:"" %}
+{% trans "Entrez le code reçu par email" as otp_placeholder %}
+{% trans "Après avoir rempli le formulaire : 1) Cliquez “Envoyer le code” 2) Saisissez les 6 chiffres reçus 3) Cliquez sur “Vérifier” 4) Créez votre compte." as otp_help %}
+
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-{{ message.tags|default:'info' }} text-center">
+      {{ message }}
+    </div>
+  {% endfor %}
+{% endif %}
+
+<form method="post" enctype="multipart/form-data" novalidate>
+  {% csrf_token %}
+  <input type="hidden" name="track" value="{{ track|default:'client' }}">
+  {% if next_url %}<input type="hidden" name="next" value="{{ next_url }}">{% endif %}
+
+  {# ================= ERREURS GLOBALES ================= #}
+  {% if user_form.non_field_errors or profile_form.non_field_errors or economic_form.non_field_errors %}
+    <div class="alert alert-danger">
+      {{ user_form.non_field_errors }}
+      {{ profile_form.non_field_errors }}
+      {{ economic_form.non_field_errors }}
+    </div>
+  {% endif %}
+
+  {# ================= 1) COMPTE UTILISATEUR ================= #}
+  <div class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+      <h5>👤 {% trans "Compte utilisateur" %}</h5>
+
+      <div class="row g-3">
+        {% for field in user_form %}
+          {% if field.name != "email_otp_code" %}
+          <div class="col-12 col-md-6">
+            <label class="form-label">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
+
+            {% if field.field.widget.input_type == "password" %}
+              <div class="input-group">
+                {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+                <button type="button"
+                        class="btn btn-outline-secondary toggle-password"
+                        data-target="{{ field.id_for_label }}">👁️</button>
+              </div>
+            {% else %}
+              {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+            {% endif %}
+
+            {% if field.help_text %}
+              <div class="form-text">{{ field.help_text|safe }}</div>
+            {% endif %}
+            {% if field.errors %}
+              <div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>
+            {% endif %}
+          </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  {# ================= 2) PROFIL CENTRAL ================= #}
+  <div class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+      <h5>🧾 {% trans "Informations personnelles" %}</h5>
+
+      <div class="row g-3">
+        {% for field in profile_form %}
+          {% if field.name != "terms" %}
+          <div class="col-12 col-md-6">
+            <label class="form-label">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
+
+            {% if field.field.widget.input_type == "select" %}
+              {{ field|add_class:"form-select"|add_error_class:"is-invalid" }}
+            {% elif field.field.widget.input_type == "file" %}
+              {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+            {% elif field.field.widget.input_type == "checkbox" %}
+              <div class="form-check">
+                {{ field|add_class:"form-check-input"|add_error_class:"is-invalid" }}
+              </div>
+            {% else %}
+              {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+            {% endif %}
+
+            {% if field.help_text %}
+              <div class="form-text">{{ field.help_text|safe }}</div>
+            {% endif %}
+            {% if field.errors %}
+              <div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>
+            {% endif %}
+          </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      {# CGU #}
+      <div class="form-check mt-4">
+        {{ profile_form.terms|add_class:"form-check-input"|add_error_class:"is-invalid" }}
+        <label class="form-check-label">
+          {% trans "J’accepte les" %}
+          <a href="{% url 'core:cgu' %}" target="_blank">{% trans "conditions générales" %}</a>
+        </label>
+        {% if profile_form.terms.errors %}
+          <div class="invalid-feedback d-block">{{ profile_form.terms.errors|striptags }}</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  {# ================= 3) INFOS ÉCONOMIQUES ================= #}
+  <div class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+      <h5>🏷️ {% trans "Informations du parcours" %}</h5>
+
+      <div class="row g-3">
+        {% for field in economic_form %}
+          <div class="col-12 col-md-6">
+            <label class="form-label">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
+
+            {% if field.field.widget.input_type == "file" %}
+              {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+              <div class="form-text">{% trans "Formats acceptés : PDF (max 2MB)." %}</div>
+            {% elif field.field.widget.input_type == "select" %}
+              {{ field|add_class:"form-select"|add_error_class:"is-invalid" }}
+            {% else %}
+              {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+            {% endif %}
+
+            {% if field.errors %}
+              <div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  {# ================= OTP EMAIL ================= #}
+  <hr class="my-4">
+  <h6>{% trans "Vérification email (OTP)" %}</h6>
+
+  <div class="input-group mb-2">
+    <input type="text"
+           name="{{ user_form.email_otp_code.html_name }}"
+           id="{{ user_form.email_otp_code.id_for_label }}"
+           class="form-control"
+           placeholder="{{ otp_placeholder }}"
+           maxlength="6"
+           disabled>
+    <button class="btn btn-outline-secondary"
+            type="button"
+            id="send-otp-btn"
+            data-url="{% url 'accounts_users:web:ajax:send_email_otp' %}">
+      {% trans "Envoyer le code" %}
+    </button>
+    <button class="btn btn-outline-primary"
+            type="button"
+            id="verify-otp-btn"
+            data-url="{% url 'accounts_users:web:ajax:verify_email_otp' %}"
+            disabled>
+      {% trans "Vérifier" %}
+    </button>
+  </div>
+
+  <div class="form-text">{{ otp_help }}</div>
+
+  {# ================= SUBMIT ================= #}
+  <button type="submit"
+          class="btn btn-primary btn-lg mt-4"
+          id="signup-submit-btn"
+          disabled>
+    ✍️ {% trans "Créer mon compte" %}
+  </button>
+
+</form>
+{% endwith %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+<script>
+document.querySelectorAll(".toggle-password").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const input = document.getElementById(btn.dataset.target);
+    input.type = input.type === "password" ? "text" : "password";
+  });
+});
+</script>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/accounts_users/registration/register_economic_form.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load i18n widget_tweaks %}
+
+{% block title %}{{ page_title|default:_("Inscription — Pôle économique") }} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+{% block auth_title %}
+  {% if track_badge %}{{ track_badge }} {% endif %}
+  {{ track_title|default:_("Inscription — Pôle économique") }}
+{% endblock %}
+{% block auth_subtitle %}
+  {{ track_subtitle|default:_("Créez votre compte pour accéder aux services économiques.") }}
+{% endblock %}
+
+{% block content %}
+{% with next_url=next|default:request.GET.next|default:"" %}
+
+{% url "accounts_users:web:registration:choice" as registration_choice_url %}
+{% url "accounts_users:web:auth:choice" as auth_choice_url %}
+{% url "accounts_users:web:auth:login_economic" as login_economic_url %}
+
+<div class="d-flex flex-wrap gap-2 justify-content-between align-items-center mb-3">
+  <div class="small text-muted">
+    <i class="bi bi-arrow-left"></i>
+    <a href="{{ registration_choice_url }}?focus=economic{% if next_url %}&next={{ next_url|urlencode }}{% endif %}#economic"
+       class="text-decoration-none">
+      {% trans "Retour au hub d’inscription" %}
+    </a>
+    <span class="mx-2">•</span>
+    <a href="{{ auth_choice_url }}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}"
+       class="text-decoration-none">
+      {% trans "Choix connexion/inscription" %}
+    </a>
+  </div>
+
+  <a class="btn btn-sm btn-outline-dark"
+     href="{{ login_economic_url }}?context=economic{% if next_url %}&next={{ next_url|urlencode }}{% endif %}">
+    🔐 {% trans "Déjà un compte ? Connexion" %}
+  </a>
+</div>
+
+<div class="alert alert-light border d-flex align-items-start gap-3">
+  <div class="fs-3 lh-1">{% if track_badge %}{{ track_badge }}{% else %}💼{% endif %}</div>
+  <div>
+    <div class="fw-semibold">{{ track_title|default:_("Pôle économique") }}</div>
+    <div class="text-muted small">{{ track_subtitle|default:_("Veuillez compléter le formulaire ci-dessous.") }}</div>
+
+    <div class="mt-2 small">
+      <span class="badge text-bg-secondary">{% trans "Parcours" %} :</span>
+      <span class="ms-1">
+        {% if track == "client" %}{% trans "Client (B2C)" %}
+        {% elif track == "vendor" %}{% trans "Vendeur" %}
+        {% elif track == "b2b" %}{% trans "Entreprise (B2B)" %}
+        {% else %}{{ track|default:"client" }}
+        {% endif %}
+      </span>
+    </div>
+  </div>
+</div>
+
+{# ======================
+   ERREURS GLOBALES
+   ====================== #}
+{% if user_form.non_field_errors or profile_form.non_field_errors or economic_form.non_field_errors %}
+  <div class="alert alert-danger">
+    <div class="fw-semibold mb-1">{% trans "Erreur" %}</div>
+    {% if user_form.non_field_errors %}{{ user_form.non_field_errors }}{% endif %}
+    {% if profile_form.non_field_errors %}{{ profile_form.non_field_errors }}{% endif %}
+    {% if economic_form.non_field_errors %}{{ economic_form.non_field_errors }}{% endif %}
+  </div>
+{% endif %}
+
+<form method="post" enctype="multipart/form-data" novalidate>
+  {% csrf_token %}
+  <input type="hidden" name="track" value="{{ track|default:'client' }}">
+  {% if next_url %}<input type="hidden" name="next" value="{{ next_url }}">{% endif %}
+
+  {# ======================
+     1) COMPTE UTILISATEUR
+     ====================== #}
+  <div class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+      <h5 class="mb-1">👤 {% trans "Compte utilisateur" %}</h5>
+      <p class="text-muted small mb-3">{% trans "Identifiants de connexion (email, mot de passe)." %}</p>
+
+      <div class="row g-3">
+        {% for field in user_form %}
+          <div class="col-12 {% if field.name in 'email username' %}col-md-6{% endif %}">
+            {% if field.field.widget.input_type == "checkbox" %}
+              <div class="form-check">
+                {{ field|add_class:"form-check-input"|add_error_class:"is-invalid" }}
+                <label class="form-check-label" for="{{ field.id_for_label }}">
+                  {{ field.label }}{% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+                </label>
+                {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+                {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>{% endif %}
+              </div>
+            {% else %}
+              <label class="form-label" for="{{ field.id_for_label }}">
+                {{ field.label }}{% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+              </label>
+              {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+              {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+              {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>{% endif %}
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  {# ======================
+     2) PROFIL ÉCONOMIQUE CENTRAL
+     ====================== #}
+  <div class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+      <h5 class="mb-1">🧾 {% trans "Informations personnelles" %}</h5>
+      <p class="text-muted small mb-3">{% trans "Identité, contact, résidence, profession." %}</p>
+
+      <div class="row g-3">
+        {% for field in profile_form %}
+          <div class="col-12 {% if field.name in 'first_name last_name' %}col-md-6{% endif %}">
+            {% if field.field.widget.input_type == "checkbox" %}
+              <div class="form-check">
+                {{ field|add_class:"form-check-input"|add_error_class:"is-invalid" }}
+                <label class="form-check-label" for="{{ field.id_for_label }}">
+                  {{ field.label }}{% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+                </label>
+                {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+                {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>{% endif %}
+              </div>
+            {% else %}
+              <label class="form-label" for="{{ field.id_for_label }}">
+                {{ field.label }}{% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+              </label>
+              {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+              {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+              {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>{% endif %}
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  {# ======================
+     3) PROFIL PAR PARCOURS (client / vendeur / entreprise)
+     ====================== #}
+  <div class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+      <h5 class="mb-1">🏷️ {% trans "Informations du parcours" %}</h5>
+      <p class="text-muted small mb-3">
+        {% if track == "vendor" %}{% trans "Informations légales/commerce (vendeur)." %}
+        {% elif track == "b2b" %}{% trans "Informations société + documents (entreprise)." %}
+        {% else %}{% trans "Adresse de livraison/facturation (client)." %}
+        {% endif %}
+      </p>
+
+      <div class="row g-3">
+        {% for field in economic_form %}
+          <div class="col-12 {% if field.name in 'address city postal_code company_name owner_name business_name ninea' %}col-md-6{% endif %}">
+            <label class="form-label" for="{{ field.id_for_label }}">
+              {{ field.label }}{% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+            </label>
+            {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+            {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+            {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>{% endif %}
+          </div>
+        {% endfor %}
+      </div>
+
+      {% if track == "vendor" %}
+        <div class="alert alert-warning mt-3 mb-0">
+          <i class="bi bi-shield-lock me-1"></i>
+          {% trans "L’accès vendeur peut nécessiter une validation avant d’être activé." %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="d-flex flex-wrap gap-2 mt-4">
+    <button type="submit" class="btn btn-primary btn-lg">
+      ✍️
+      {% if track == "client" %}{% trans "Créer mon compte client" %}
+      {% elif track == "vendor" %}{% trans "Demander un compte vendeur" %}
+      {% elif track == "b2b" %}{% trans "Créer un compte entreprise" %}
+      {% else %}{% trans "Créer mon compte" %}
+      {% endif %}
+    </button>
+
+    <a class="btn btn-outline-secondary btn-lg"
+       href="{{ registration_choice_url }}?focus=economic{% if next_url %}&next={{ next_url|urlencode }}{% endif %}#economic">
+      {% trans "Changer de parcours" %}
+    </a>
+  </div>
+
+  <div class="small text-muted mt-3">
+    <i class="bi bi-info-circle me-1"></i>
+    {% trans "Après inscription, vous recevrez un email d’activation pour valider votre compte." %}
+  </div>
+
+</form>
+
+{% endwith %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  (function () {
+    document.querySelectorAll(".toggle-password").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const id = btn.getAttribute("data-target");
+        const input = document.getElementById(id);
+        if (!input) return;
+        input.type = (input.type === "password") ? "text" : "password";
+      });
+    });
+  })();
+</script>
+{% endblock %} {% endcomment %}
+
+
+
+{% comment %} {# templates/accounts_users/registration/register_economic_form.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load i18n widget_tweaks %}
+
+{% block title %}{{ page_title|default:_("Inscription — Pôle économique") }} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block auth_title %}
+  {% if track_badge %}{{ track_badge }} {% endif %}
+  {{ track_title|default:_("Inscription — Pôle économique") }}
+{% endblock %}
+
+{% block auth_subtitle %}
+  {{ track_subtitle|default:_("Créez votre compte pour accéder aux services économiques.") }}
+{% endblock %}
+
+{% block content %}
+{% with next_url=next|default:request.GET.next|default:"" %}
+
+{% url "accounts_users:web:registration:choice" as registration_choice_url %}
+{% url "accounts_users:web:auth:choice" as auth_choice_url %}
+{% url "accounts_users:web:auth:login_economic" as login_economic_url %}
+{% url "accounts_users:web:registration:register_economic" as register_economic_url %}
+
+<div class="d-flex flex-wrap gap-2 justify-content-between align-items-center mb-3">
+  <div class="small text-muted">
+    <a href="{{ registration_choice_url }}?focus=economic{% if next_url %}&next={{ next_url|urlencode }}{% endif %}#economic" class="text-decoration-none">
+      ← {% trans "Retour au hub d’inscription" %}
+    </a>
+    <span class="mx-2">•</span>
+    <a href="{{ auth_choice_url }}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}" class="text-decoration-none">
+      {% trans "Choix connexion/inscription" %}
+    </a>
+  </div>
+
+  <a class="btn btn-sm btn-outline-dark"
+     href="{{ login_economic_url }}?context=economic{% if next_url %}&next={{ next_url|urlencode }}{% endif %}">
+    🔐 {% trans "Déjà un compte ? Connexion" %}
+  </a>
+</div>
+
+<div class="alert alert-light border d-flex align-items-start gap-3">
+  <div class="fs-3 lh-1">{% if track_badge %}{{ track_badge }}{% else %}💼{% endif %}</div>
+  <div class="w-100">
+    <div class="fw-semibold">{{ track_title|default:_("Pôle économique") }}</div>
+    <div class="text-muted small">{{ track_subtitle|default:_("Veuillez compléter le formulaire ci-dessous.") }}</div>
+
+    <div class="mt-2 d-flex flex-wrap gap-2 align-items-center">
+      <span class="badge text-bg-secondary">{% trans "Parcours" %} :</span>
+
+      <a class="btn btn-sm {% if track == 'client' %}btn-primary{% else %}btn-outline-primary{% endif %}"
+         href="{{ register_economic_url }}?track=client{% if next_url %}&next={{ next_url|urlencode }}{% endif %}">
+        {% trans "Client (B2C)" %}
+      </a>
+
+      <a class="btn btn-sm {% if track == 'vendor' %}btn-primary{% else %}btn-outline-primary{% endif %}"
+         href="{{ register_economic_url }}?track=vendor{% if next_url %}&next={{ next_url|urlencode }}{% endif %}">
+        {% trans "Vendeur" %}
+      </a>
+
+      <a class="btn btn-sm {% if track == 'b2b' %}btn-primary{% else %}btn-outline-primary{% endif %}"
+         href="{{ register_economic_url }}?track=b2b{% if next_url %}&next={{ next_url|urlencode }}{% endif %}">
+        {% trans "Entreprise (B2B)" %}
+      </a>
+    </div>
+  </div>
+</div>
+
+<form method="post" enctype="multipart/form-data" novalidate>
+  {% csrf_token %}
+  <input type="hidden" name="track" value="{{ track|default:'client' }}">
+  <input type="hidden" name="next" value="{{ next_url }}">
+
+  {# ============================ #}
+  {#   1) Compte (UserSignupForm) #}
+  {# ============================ #}
+  <div class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+      <h5 class="fw-bold mb-3">🔐 {% trans "Informations de connexion" %}</h5>
+
+      {% if user_form.non_field_errors %}
+        <div class="alert alert-danger">{{ user_form.non_field_errors }}</div>
+      {% endif %}
+
+      <div class="row g-3">
+        {% for field in user_form %}
+          <div class="col-12 {% if field.name in 'email username' %}col-md-6{% endif %}">
+            <label class="form-label" for="{{ field.id_for_label }}">
+              {{ field.label }}{% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+            </label>
+            {{ field|add_error_class:"is-invalid" }}
+            {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+            {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>{% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  {# ===================================== #}
+  {#   2) Profil éco central (UserEconomicProfile) #}
+  {#  ===================================== #}
+  <div class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+      <h5 class="fw-bold mb-3">👤 {% trans "Informations personnelles" %}</h5>
+
+      {% if profile_form.non_field_errors %}
+        <div class="alert alert-danger">{{ profile_form.non_field_errors }}</div>
+      {% endif %}
+
+      <div class="row g-3">
+        {% for field in profile_form %}
+          <div class="col-12 {% if field.name in 'first_name last_name' %}col-md-6{% endif %}">
+            {% if field.field.widget.input_type == "checkbox" %}
+              <div class="form-check">
+                {{ field|add_class:"form-check-input"|add_error_class:"is-invalid" }}
+                <label class="form-check-label" for="{{ field.id_for_label }}">
+                  {{ field.label }}{% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+                </label>
+                {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+                {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>{% endif %}
+              </div>
+            {% else %}
+              <label class="form-label" for="{{ field.id_for_label }}">
+                {{ field.label }}{% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+              </label>
+              {{ field|add_error_class:"is-invalid" }}
+              {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+              {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>{% endif %}
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  {# ===================================== #}
+  {#   3) Form spécifique (Client/Vendor/Company) #}
+  {#    ===================================== #}
+  <div class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+      <h5 class="fw-bold mb-3">🏷️ {% trans "Informations spécifiques" %}</h5>
+
+      {% if economic_form.non_field_errors %}
+        <div class="alert alert-danger">{{ economic_form.non_field_errors }}</div>
+      {% endif %}
+
+      <div class="row g-3">
+        {% for field in economic_form %}
+          <div class="col-12 {% if field.name in 'postal_code ninea' %}col-md-6{% endif %}">
+            <label class="form-label" for="{{ field.id_for_label }}">
+              {{ field.label }}{% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+            </label>
+            {{ field|add_error_class:"is-invalid" }}
+            {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+            {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>{% endif %}
+          </div>
+        {% endfor %}
+      </div>
+
+      {% if track == "vendor" %}
+        <div class="alert alert-warning mt-3 mb-0">
+          🛡️ {% trans "L’accès vendeur peut nécessiter une validation avant d’être activé." %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="d-flex flex-wrap gap-2 mt-3">
+    <button type="submit" class="btn btn-primary btn-lg">
+      ✍️
+      {% if track == "client" %}{% trans "Créer mon compte client" %}
+      {% elif track == "vendor" %}{% trans "Demander un compte vendeur" %}
+      {% elif track == "b2b" %}{% trans "Créer un compte entreprise" %}
+      {% else %}{% trans "Créer mon compte" %}
+      {% endif %}
+    </button>
+
+    <a class="btn btn-outline-secondary btn-lg"
+       href="{{ registration_choice_url }}?focus=economic{% if next_url %}&next={{ next_url|urlencode }}{% endif %}#economic">
+      {% trans "Retour au hub" %}
+    </a>
+  </div>
+
+  <div class="small text-muted mt-3">
+    ℹ️ {% trans "Après inscription, vous recevrez un email d’activation pour valider votre compte." %}
+  </div>
+</form>
+
+{% endwith %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  (function () {
+    document.querySelectorAll(".toggle-password").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const id = btn.getAttribute("data-target");
+        const input = document.getElementById(id);
+        if (!input) return;
+        input.type = (input.type === "password") ? "text" : "password";
+      });
+    });
+  })();
+</script>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} 
+{# templates/accounts_users/registration/register_economic_form.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load i18n widget_tweaks %}
+
+{% block title %}{{ page_title|default:_("Inscription — Pôle économique") }} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block auth_title %}
+  {% if track_badge %}{{ track_badge }} {% endif %}
+  {{ track_title|default:_("Inscription — Pôle économique") }}
+{% endblock %}
+
+{% block auth_subtitle %}
+  {{ track_subtitle|default:_("Créez votre compte pour accéder aux services économiques.") }}
+{% endblock %}
+
+{% block content %}
+{% with next_url=next|default:request.GET.next|default:"" %}
+
+{# HUBS / NAV #}
+{% url "accounts_users:web:registration:choice" as registration_choice_url %}
+{% url "accounts_users:web:auth:auth_choice" as auth_choice_url %}
+{% url "accounts_users:web:auth:login_economic" as login_economic_url %}
+
+<div class="d-flex flex-wrap gap-2 justify-content-between align-items-center mb-3">
+  <div class="small text-muted">
+    <i class="bi bi-arrow-left"></i>
+    <a href="{{ registration_choice_url }}?focus=economic{% if next_url %}&next={{ next_url|urlencode }}{% endif %}#economic"
+       class="text-decoration-none">
+      {% trans "Retour au hub d’inscription" %}
+    </a>
+    <span class="mx-2">•</span>
+    <a href="{{ auth_choice_url }}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}"
+       class="text-decoration-none">
+      {% trans "Choix connexion/inscription" %}
+    </a>
+  </div>
+
+  <a class="btn btn-sm btn-outline-dark"
+     href="{{ login_economic_url }}?context=economic{% if next_url %}&next={{ next_url|urlencode }}{% endif %}">
+    🔐 {% trans "Déjà un compte ? Connexion" %}
+  </a>
+</div>
+
+{# Bandeau parcours #}
+<div class="alert alert-light border d-flex align-items-start gap-3">
+  <div class="fs-3 lh-1">{% if track_badge %}{{ track_badge }}{% else %}💼{% endif %}</div>
+  <div>
+    <div class="fw-semibold">{{ track_title|default:_("Pôle économique") }}</div>
+    <div class="text-muted small">{{ track_subtitle|default:_("Veuillez compléter le formulaire ci-dessous.") }}</div>
+
+    <div class="mt-2 small">
+      <span class="badge text-bg-secondary">{% trans "Parcours" %} :</span>
+      <span class="ms-1">
+        {% if track == "client" %}{% trans "Client (B2C)" %}
+        {% elif track == "vendor" %}{% trans "Vendeur" %}
+        {% elif track == "b2b" %}{% trans "Entreprise (B2B)" %}
+        {% else %}{{ track|default:"client" }}
+        {% endif %}
+      </span>
+    </div>
+  </div>
+</div>
+
+{# Erreurs globales (3 forms) #}
+{% if user_form.non_field_errors or profile_form.non_field_errors or economic_form.non_field_errors %}
+  <div class="alert alert-danger">
+    <div class="fw-semibold mb-1">{% trans "Erreurs" %}</div>
+
+    {% if user_form.non_field_errors %}
+      <div class="mb-2">
+        <div class="fw-semibold">{% trans "Compte" %}</div>
+        {% for e in user_form.non_field_errors %}<div>{{ e }}</div>{% endfor %}
+      </div>
+    {% endif %}
+
+    {% if profile_form.non_field_errors %}
+      <div class="mb-2">
+        <div class="fw-semibold">{% trans "Profil économique" %}</div>
+        {% for e in profile_form.non_field_errors %}<div>{{ e }}</div>{% endfor %}
+      </div>
+    {% endif %}
+
+    {% if economic_form.non_field_errors %}
+      <div class="mb-0">
+        <div class="fw-semibold">
+          {% if track == "vendor" %}{% trans "Vendeur" %}
+          {% elif track == "b2b" %}{% trans "Entreprise" %}
+          {% else %}{% trans "Client" %}
+          {% endif %}
+        </div>
+        {% for e in economic_form.non_field_errors %}<div>{{ e }}</div>{% endfor %}
+      </div>
+    {% endif %}
+  </div>
+{% endif %}
+
+<form method="post" enctype="multipart/form-data" novalidate>
+  {% csrf_token %}
+  <input type="hidden" name="track" value="{{ track|default:'client' }}">
+  {% if next_url %}<input type="hidden" name="next" value="{{ next_url }}">{% endif %}
+
+  {# ========================= #}
+  {#  1) COMPTE UTILISATEUR    #}
+  {# ========================= #}
+  <div class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+      <h5 class="fw-bold mb-1">👤 {% trans "Identifiants du compte" %}</h5>
+      <p class="text-muted small mb-3">{% trans "Créez votre accès (email, nom d’utilisateur, mot de passe)." %}</p>
+
+      <div class="row g-3">
+        {% for field in user_form %}
+          <div class="col-12 {% if field.name in 'email username password password_confirm' %}col-md-6{% endif %}">
+
+            {% if field.field.widget.input_type == "checkbox" %}
+              <div class="form-check">
+                {{ field|add_class:"form-check-input"|add_error_class:"is-invalid" }}
+                <label class="form-check-label" for="{{ field.id_for_label }}">
+                  {{ field.label }}{% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+                </label>
+                {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+                {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>{% endif %}
+              </div>
+
+            {% elif field.field.widget.input_type == "password" %}
+              <label class="form-label" for="{{ field.id_for_label }}">
+                {{ field.label }}{% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+              </label>
+
+              <div class="input-group">
+                {{ field|add_error_class:"is-invalid" }}
+                <button type="button"
+                        class="btn btn-outline-secondary toggle-password"
+                        data-target="{{ field.id_for_label }}"
+                        aria-label="{% trans 'Afficher/Masquer le mot de passe' %}">
+                  👁️
+                </button>
+              </div>
+
+              {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+              {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>{% endif %}
+
+            {% else %}
+              <label class="form-label" for="{{ field.id_for_label }}">
+                {{ field.label }}{% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+              </label>
+              {{ field|add_error_class:"is-invalid" }}
+              {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+              {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>{% endif %}
+            {% endif %}
+
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  {# ========================= #}
+  {#    2) PROFIL ECONOMIQUE (CENTRAL)#}
+  {#   ========================= #}
+  <div class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+      <h5 class="fw-bold mb-1">📇 {% trans "Informations principales" %}</h5>
+      <p class="text-muted small mb-3">{% trans "Identité, résidence, activité, photo." %}</p>
+
+      <div class="row g-3">
+        {% for field in profile_form %}
+          <div class="col-12 {% if field.name in 'first_name last_name' %}col-md-6{% endif %}">
+            {% if field.field.widget.input_type == "checkbox" %}
+              <div class="form-check">
+                {{ field|add_class:"form-check-input"|add_error_class:"is-invalid" }}
+                <label class="form-check-label" for="{{ field.id_for_label }}">
+                  {{ field.label }}{% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+                </label>
+                {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+                {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>{% endif %}
+              </div>
+            {% else %}
+              <label class="form-label" for="{{ field.id_for_label }}">
+                {{ field.label }}{% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+              </label>
+              {{ field|add_error_class:"is-invalid" }}
+              {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+              {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>{% endif %}
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  {# ========================= #}
+  {#   3) FORMULAIRE SPECIFIQUE (CLIENT / VENDOR / B2B) #}
+  {#   ========================= #}
+  <div class="card border-0 shadow-sm">
+    <div class="card-body">
+      <h5 class="fw-bold mb-1">
+        {% if track == "vendor" %}🏪 {% trans "Informations vendeur" %}
+        {% elif track == "b2b" %}🏢 {% trans "Informations entreprise" %}
+        {% else %}🛒 {% trans "Informations client" %}
+        {% endif %}
+      </h5>
+      <p class="text-muted small mb-3">
+        {% if track == "vendor" %}
+          {% trans "Renseignez les détails de votre activité et joignez les documents requis." %}
+        {% elif track == "b2b" %}
+          {% trans "Renseignez les informations légales et joignez les documents requis." %}
+        {% else %}
+          {% trans "Renseignez votre adresse de livraison / facturation." %}
+        {% endif %}
+      </p>
+
+      <div class="row g-3">
+        {% for field in economic_form %}
+          <div class="col-12 {% if field.name in 'postal_code' %}col-md-4{% endif %}">
+            {% if field.field.widget.input_type == "checkbox" %}
+              <div class="form-check">
+                {{ field|add_class:"form-check-input"|add_error_class:"is-invalid" }}
+                <label class="form-check-label" for="{{ field.id_for_label }}">
+                  {{ field.label }}{% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+                </label>
+                {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+                {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>{% endif %}
+              </div>
+            {% else %}
+              <label class="form-label" for="{{ field.id_for_label }}">
+                {{ field.label }}{% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+              </label>
+              {{ field|add_error_class:"is-invalid" }}
+              {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+              {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>{% endif %}
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+
+      {% if track == "vendor" %}
+        <div class="alert alert-warning mt-3 mb-0">
+          <i class="bi bi-shield-lock me-1"></i>
+          {% trans "L’accès vendeur peut nécessiter une validation avant d’être activé." %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="d-flex flex-wrap gap-2 mt-4">
+    <button type="submit" class="btn btn-primary btn-lg">
+      ✍️
+      {% if track == "client" %}{% trans "Créer mon compte client" %}
+      {% elif track == "vendor" %}{% trans "Demander un compte vendeur" %}
+      {% elif track == "b2b" %}{% trans "Créer un compte entreprise" %}
+      {% else %}{% trans "Créer mon compte" %}
+      {% endif %}
+    </button>
+
+    <a class="btn btn-outline-secondary btn-lg"
+       href="{{ registration_choice_url }}?focus=economic{% if next_url %}&next={{ next_url|urlencode }}{% endif %}#economic">
+      {% trans "Changer de parcours" %}
+    </a>
+  </div>
+
+  <div class="small text-muted mt-3">
+    <i class="bi bi-info-circle me-1"></i>
+    {% trans "Après inscription, vous recevrez un email d’activation pour valider votre compte." %}
+  </div>
+</form>
+
+{% endwith %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  (function () {
+    document.querySelectorAll(".toggle-password").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const id = btn.getAttribute("data-target");
+        const input = document.getElementById(id);
+        if (!input) return;
+        input.type = (input.type === "password") ? "text" : "password";
+      });
+    });
+  })();
+</script>
+{% endblock %}
+ {% endcomment %}
+
+
+
+
+
+
+
+
+{% comment %} {# templates/accounts_users/registration/register_economic_form.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load i18n widget_tweaks %}
+
+{% block title %}{{ page_title|default:_("Inscription — Pôle économique") }} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+{% block auth_title %}
+  {% if track_badge %}{{ track_badge }} {% endif %}
+  {{ track_title|default:_("Inscription — Pôle économique") }}
+{% endblock %}
+{% block auth_subtitle %}
+  {{ track_subtitle|default:_("Créez votre compte pour accéder aux services économiques.") }}
+{% endblock %}
+
+{% block content %}
+{% with next_url=request.GET.next|default:request.get_full_path %}
+
+{# HUBS / NAV #}
+{% url "accounts_users:web:registration:choice" as registration_choice_url %}
+{% url "accounts_users:web:auth:choice" as auth_choice_url %}
+{% url "accounts_users:web:auth:login_economic" as login_economic_url %}
+
+<div class="d-flex flex-wrap gap-2 justify-content-between align-items-center mb-3">
+  <div class="small text-muted">
+    <i class="bi bi-arrow-left"></i>
+    <a href="{{ registration_choice_url }}?focus=economic&next={{ next_url|urlencode }}#economic" class="text-decoration-none">
+      {% trans "Retour au hub d’inscription" %}
+    </a>
+    <span class="mx-2">•</span>
+    <a href="{{ auth_choice_url }}?next={{ next_url|urlencode }}" class="text-decoration-none">
+      {% trans "Choix connexion/inscription" %}
+    </a>
+  </div>
+
+  <a class="btn btn-sm btn-outline-dark"
+     href="{{ login_economic_url }}?context=economic&next={{ next_url|urlencode }}">
+    🔐 {% trans "Déjà un compte ? Connexion" %}
+  </a>
+</div>
+
+<div class="alert alert-light border d-flex align-items-start gap-3">
+  <div class="fs-3 lh-1">{% if track_badge %}{{ track_badge }}{% else %}💼{% endif %}</div>
+  <div>
+    <div class="fw-semibold">{{ track_title|default:_("Pôle économique") }}</div>
+    <div class="text-muted small">{{ track_subtitle|default:_("Veuillez compléter le formulaire ci-dessous.") }}</div>
+
+    <div class="mt-2 small">
+      <span class="badge text-bg-secondary">{% trans "Parcours" %} :</span>
+      <span class="ms-1">
+        {% if track == "client" %}{% trans "Client (B2C)" %}
+        {% elif track == "vendor" %}{% trans "Vendeur" %}
+        {% elif track == "b2b" %}{% trans "Entreprise (B2B)" %}
+        {% else %}{{ track|default:"client" }}
+        {% endif %}
+      </span>
+    </div>
+  </div>
+</div>
+
+{% if form.non_field_errors %}
+  <div class="alert alert-danger">
+    <div class="fw-semibold mb-1">{% trans "Erreur" %}</div>
+    {{ form.non_field_errors }}
+  </div>
+{% endif %}
+
+<form method="post" enctype="multipart/form-data" novalidate>
+  {% csrf_token %}
+
+  <input type="hidden" name="track" value="{{ track|default:'client' }}">
+  <input type="hidden" name="next" value="{{ next_url }}">
+
+  <div class="row g-3">
+    {% for field in form %}
+      <div class="col-12 {% if field.name in 'first_name last_name' %}col-md-6{% endif %}">
+
+        {% if field.field.widget.input_type == "checkbox" %}
+          <div class="form-check">
+            {{ field|add_class:"form-check-input"|add_error_class:"is-invalid" }}
+            <label class="form-check-label" for="{{ field.id_for_label }}">
+              {{ field.label }}{% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+            </label>
+            {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+            {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>{% endif %}
+          </div>
+        {% else %}
+          <label class="form-label" for="{{ field.id_for_label }}">
+            {{ field.label }}{% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+          </label>
+          {{ field|add_error_class:"is-invalid" }}
+          {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+          {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>{% endif %}
+        {% endif %}
+
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="d-flex flex-wrap gap-2 mt-4">
+    <button type="submit" class="btn btn-primary btn-lg">
+      ✍️
+      {% if track == "client" %}{% trans "Créer mon compte client" %}
+      {% elif track == "vendor" %}{% trans "Demander un compte vendeur" %}
+      {% elif track == "b2b" %}{% trans "Créer un compte entreprise" %}
+      {% else %}{% trans "Créer mon compte" %}
+      {% endif %}
+    </button>
+
+    <a class="btn btn-outline-secondary btn-lg"
+       href="{{ registration_choice_url }}?focus=economic&next={{ next_url|urlencode }}#economic">
+      {% trans "Changer de parcours" %}
+    </a>
+  </div>
+
+  <div class="small text-muted mt-3">
+    <i class="bi bi-info-circle me-1"></i>
+    {% trans "Après inscription, vous recevrez un email d’activation pour valider votre compte." %}
+  </div>
+
+  {% if track == "vendor" %}
+    <div class="alert alert-warning mt-3 mb-0">
+      <i class="bi bi-shield-lock me-1"></i>
+      {% trans "L’accès vendeur peut nécessiter une validation avant d’être activé." %}
+    </div>
+  {% endif %}
+
+</form>
+
+{% endwith %}
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+{% comment %} {# templates/accounts_users/registration/register_economic_form.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks %}
+
+{% block title %}{{ page_title|default:_("Inscription — Pôle économique") }} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block auth_title %}
+  {% if track_badge %}{{ track_badge }} {% endif %}
+  {{ track_title|default:_("Inscription — Pôle économique") }}
+{% endblock %}
+
+{% block auth_subtitle %}
+  {{ track_subtitle|default:_("Créez votre compte pour accéder aux services économiques.") }}
+{% endblock %}
+
+{% block auth_bg_image %}
+  {% if track == "vendor" %}
+    url('{% static "economic/img/bg/eco-register-vendor.svg" %}')
+  {% elif track == "b2b" %}
+    url('{% static "economic/img/bg/eco-register-b2b.svg" %}')
+  {% else %}
+    url('{% static "economic/img/bg/eco-register-client.svg" %}')
+  {% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+{% with next_url=request.POST.next|default:request.GET.next|default:request.get_full_path %}
+
+{% url "accounts_users:web:registration:choice" as registration_choice_url %}
+{% url "accounts_users:web:auth:auth_choice" as auth_choice_url %}
+{% url "accounts_users:web:auth:login" as login_url %}
+
+<div class="d-flex flex-wrap gap-2 justify-content-between align-items-center mb-3">
+  <div class="small text-muted">
+    <i class="bi bi-arrow-left"></i>
+    <a href="{{ registration_choice_url }}?next={{ next_url|urlencode }}#economic" class="text-decoration-none">
+      {% trans "Retour au hub d’inscription" %}
+    </a>
+    <span class="mx-2">•</span>
+    <a href="{{ auth_choice_url }}?next={{ next_url|urlencode }}" class="text-decoration-none">
+      {% trans "Choix connexion/inscription" %}
+    </a>
+  </div>
+
+  <a class="btn btn-sm btn-outline-dark"
+     href="{{ login_url }}?context=economic&next={{ next_url|urlencode }}">
+    🔐 {% trans "Déjà un compte ? Connexion" %}
+  </a>
+</div>
+
+{% if track == "vendor" %}
+  <div class="alert alert-warning">
+    <i class="bi bi-shield-lock me-1"></i>
+    {% trans "L’accès vendeur peut nécessiter une validation avant d’être activé." %}
+  </div>
+{% endif %}
+
+{# ===========================================
+   MODE 1 : 3 forms (future) -> user_form/profile_form/economic_form
+   MODE 2 : 1 form (actuel) -> form
+   =========================================== #}
+
+{% if user_form and profile_form and economic_form %}
+  {# (Tu pourras remettre ton gros template OTP ici plus tard) #}
+  <div class="alert alert-info">
+    {% trans "Mode multi-form détecté." %}
+  </div>
+{% else %}
+
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger">
+      <div class="fw-semibold mb-1">{% trans "Erreur" %}</div>
+      {{ form.non_field_errors }}
+    </div>
+  {% endif %}
+
+  <form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    <input type="hidden" name="track" value="{{ track|default:'client' }}">
+    <input type="hidden" name="next" value="{{ next_url }}">
+
+    <div class="row g-3">
+      {% for field in form %}
+        {# si un jour tu ajoutes email_otp_code au form, on le mettra en bas #}
+        {% if field.name != "email_otp_code" %}
+          <div class="col-12 {% if field.name in 'first_name last_name' %}col-md-6{% endif %}">
+            <label class="form-label" for="{{ field.id_for_label }}">
+              {{ field.label }}{% if field.field.required %} <span class="text-danger">*</span>{% endif %}
+            </label>
+
+            {% if field.field.widget.input_type == "checkbox" %}
+              <div class="form-check">
+                {% if field.errors %}
+                  {{ field|add_class:"form-check-input is-invalid" }}
+                {% else %}
+                  {{ field|add_class:"form-check-input" }}
+                {% endif %}
+                <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+              </div>
+            {% elif field.field.widget.input_type == "select" %}
+              {% if field.errors %}
+                {{ field|add_class:"form-select is-invalid" }}
+              {% else %}
+                {{ field|add_class:"form-select" }}
+              {% endif %}
+            {% else %}
+              {% if field.errors %}
+                {{ field|add_class:"form-control is-invalid" }}
+              {% else %}
+                {{ field|add_class:"form-control" }}
+              {% endif %}
+            {% endif %}
+
+            {% if field.help_text %}<div class="form-text">{{ field.help_text|safe }}</div>{% endif %}
+            {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>{% endif %}
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <div class="d-grid mt-4">
+      <button type="submit" class="btn btn-success fw-bold">
+        {% if track == "client" %}{% trans "Créer mon compte client" %}
+        {% elif track == "vendor" %}{% trans "Demander un compte vendeur" %}
+        {% elif track == "b2b" %}{% trans "Créer un compte entreprise" %}
+        {% else %}{% trans "Créer mon compte" %}
+        {% endif %}
+      </button>
+    </div>
+  </form>
+
+{% endif %}
+
+{% endwith %}
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+
+{% comment %} {# templates/accounts_users/registration/register_economic_form.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks %}
+
+{# ✅ track robuste : POST > GET > context > fallback #}
+{% with track_param=request.POST.track|default:request.GET.track|default:track|default:economic_type|default:"client" %}
+{% with next_url=request.POST.next|default:request.GET.next|default:request.get_full_path %}
+
+{% block title %}
+  {% if track_param == "client" %}{% trans "Inscription Client" %}
+  {% elif track_param == "vendor" %}{% trans "Inscription Vendeur" %}
+  {% elif track_param == "b2b" %}{% trans "Inscription Entreprise" %}
+  {% else %}{% trans "Inscription — Pôle économique" %}
+  {% endif %}
+  | {{ PROJECT_NAME|default:"SOGENTIS" }}
+{% endblock %}
+
+{% block auth_title %}
+  {% if track_param == "client" %}🛒 {% trans "Créer un compte client" %}
+  {% elif track_param == "vendor" %}🏪 {% trans "Créer un compte vendeur" %}
+  {% elif track_param == "b2b" %}🏢 {% trans "Créer un compte entreprise" %}
+  {% else %}💼 {% trans "Créer un compte (Économique)" %}
+  {% endif %}
+{% endblock %}
+
+{% block auth_subtitle %}
+  {% trans "Accès sécurisé au pôle économique SOGENTIS" %}
+{% endblock %}
+
+{% block auth_bg_image %}
+  {% if track_param == "vendor" %}
+    url('{% static "economic/img/bg/eco-register-vendor.svg" %}')
+  {% elif track_param == "b2b" %}
+    url('{% static "economic/img/bg/eco-register-b2b.svg" %}')
+  {% else %}
+    url('{% static "economic/img/bg/eco-register-client.svg" %}')
+  {% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+{% trans "Entrez le code reçu par email" as otp_placeholder %}
+{% trans "Après avoir rempli le formulaire : 1) Cliquez “Envoyer le code” 2) Saisissez les 6 chiffres reçus 3) Cliquez sur “Vérifier” 4) Créez votre compte." as otp_help %}
+
+{% url "accounts_users:web:registration:choice" as registration_choice_url %}
+{% url "accounts_users:web:auth:auth_choice" as auth_choice_url %}
+{% url "accounts_users:web:auth:login" as login_url %}
+
+<div class="d-flex flex-wrap gap-2 justify-content-between align-items-center mb-3">
+  <div class="small text-muted">
+    <i class="bi bi-arrow-left"></i>
+    <a href="{{ registration_choice_url }}?next={{ next_url|urlencode }}#economic" class="text-decoration-none">
+      {% trans "Retour au hub d’inscription" %}
+    </a>
+    <span class="mx-2">•</span>
+    <a href="{{ auth_choice_url }}?next={{ next_url|urlencode }}" class="text-decoration-none">
+      {% trans "Choix connexion/inscription" %}
+    </a>
+  </div>
+
+  <a class="btn btn-sm btn-outline-dark"
+     href="{{ login_url }}?context=economic&next={{ next_url|urlencode }}">
+    🔐 {% trans "Déjà un compte ? Connexion" %}
+  </a>
+</div>
+
+{% if track_param == "vendor" %}
+  <div class="alert alert-warning">
+    <i class="bi bi-shield-lock me-1"></i>
+    {% trans "L’accès vendeur peut nécessiter une validation avant activation." %}
+  </div>
+{% endif %}
+
+<form method="post" enctype="multipart/form-data" novalidate>
+  {% csrf_token %}
+
+  {# ✅ persister track + next #}
+  <input type="hidden" name="track" value="{{ track_param }}">
+  <input type="hidden" name="next" value="{{ next_url }}">
+
+  {% if user_form.non_field_errors %}
+    <div class="alert alert-danger" role="alert">{{ user_form.non_field_errors }}</div>
+  {% endif %}
+  {% if profile_form.non_field_errors %}
+    <div class="alert alert-danger" role="alert">{{ profile_form.non_field_errors }}</div>
+  {% endif %}
+  {% if economic_form.non_field_errors %}
+    <div class="alert alert-danger" role="alert">{{ economic_form.non_field_errors }}</div>
+  {% endif %}
+
+  <!-- INFOS COMPTE -->
+  <h6 class="fw-bold mb-3">{% trans "Informations du compte" %}</h6>
+
+  {% for field in user_form %}
+    {% if field.name != "email_otp_code" %}
+      <div class="mb-3">
+        <label class="form-label" for="{{ field.id_for_label }}">
+          {{ field.label }}{% if field.field.required %} *{% endif %}
+        </label>
+
+        {% if field.field.widget.input_type == "password" %}
+          <div class="input-group">
+            {% if field.errors %}
+              {% render_field field class="form-control is-invalid" %}
+            {% else %}
+              {% render_field field class="form-control" %}
+            {% endif %}
+            <button type="button"
+                    class="btn btn-outline-secondary toggle-password"
+                    data-target="{{ field.id_for_label }}"
+                    aria-label="{% trans 'Afficher/Masquer le mot de passe' %}">
+              👁️
+            </button>
+          </div>
+        {% else %}
+          {% if field.errors %}
+            {% render_field field class="form-control is-invalid" %}
+          {% else %}
+            {% render_field field class="form-control" %}
+          {% endif %}
+        {% endif %}
+
+        {% if field.help_text %}<div class="form-text">{{ field.help_text|safe }}</div>{% endif %}
+        {% for error in field.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+      </div>
+    {% endif %}
+  {% endfor %}
+
+  <!-- PROFIL CENTRAL -->
+  <h6 class="fw-bold mt-4 mb-3">{% trans "Profil personnel" %}</h6>
+
+  {% for field in profile_form %}
+    {% if field.name != "terms" %}
+      <div class="mb-3">
+        <label class="form-label" for="{{ field.id_for_label }}">
+          {{ field.label }}{% if field.field.required %} *{% endif %}
+        </label>
+
+        {% if field.field.widget.input_type == "checkbox" %}
+          <div class="form-check">
+            {% if field.errors %}
+              {% render_field field class="form-check-input is-invalid" %}
+            {% else %}
+              {% render_field field class="form-check-input" %}
+            {% endif %}
+          </div>
+
+        {% elif field.field.widget.input_type == "select" %}
+          {% if field.errors %}
+            {% render_field field class="form-select is-invalid" %}
+          {% else %}
+            {% render_field field class="form-select" %}
+          {% endif %}
+
+        {% elif field.field.widget.input_type == "file" %}
+          {% if field.errors %}
+            {% render_field field class="form-control is-invalid" %}
+          {% else %}
+            {% render_field field class="form-control" %}
+          {% endif %}
+
+        {% else %}
+          {% if field.errors %}
+            {% render_field field class="form-control is-invalid" %}
+          {% else %}
+            {% render_field field class="form-control" %}
+          {% endif %}
+        {% endif %}
+
+        {% if field.help_text %}<div class="form-text">{{ field.help_text|safe }}</div>{% endif %}
+        {% for error in field.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+      </div>
+    {% endif %}
+  {% endfor %}
+
+  <!-- INFOS ECONOMIQUES -->
+  <h6 class="fw-bold mt-4 mb-3">{% trans "Informations économiques" %}</h6>
+
+  {% for field in economic_form %}
+    <div class="mb-3">
+      <label class="form-label" for="{{ field.id_for_label }}">
+        {{ field.label }}{% if field.field.required %} *{% endif %}
+      </label>
+
+      {% if field.field.widget.input_type == "file" %}
+        {% if field.errors %}
+          {% render_field field class="form-control is-invalid" %}
+        {% else %}
+          {% render_field field class="form-control" %}
+        {% endif %}
+        <div class="form-text">{% trans "Formats acceptés : PDF (max 2MB selon validation)." %}</div>
+
+      {% elif field.field.widget.input_type == "select" %}
+        {% if field.errors %}
+          {% render_field field class="form-select is-invalid" %}
+        {% else %}
+          {% render_field field class="form-select" %}
+        {% endif %}
+
+      {% else %}
+        {% if field.errors %}
+          {% render_field field class="form-control is-invalid" %}
+        {% else %}
+          {% render_field field class="form-control" %}
+        {% endif %}
+      {% endif %}
+
+      {% if field.help_text %}<div class="form-text">{{ field.help_text|safe }}</div>{% endif %}
+      {% for error in field.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+    </div>
+  {% endfor %}
+
+  <!-- TERMS -->
+  <div class="form-check mt-4">
+    {% if profile_form.terms.errors %}
+      {% render_field profile_form.terms class="form-check-input is-invalid" required="required" %}
+    {% else %}
+      {% render_field profile_form.terms class="form-check-input" required="required" %}
+    {% endif %}
+    <label class="form-check-label" for="{{ profile_form.terms.id_for_label }}">
+      {% trans "J’accepte les" %}
+      <a href="{% url 'core:cgu' %}" target="_blank" rel="noopener">{% trans "conditions générales" %}</a>
+    </label>
+    {% for error in profile_form.terms.errors %}
+      <div class="invalid-feedback d-block">{{ error }}</div>
+    {% endfor %}
+  </div>
+
+  <!-- OTP EMAIL -->
+  <hr class="my-4">
+  <h6 class="fw-bold mt-2">{% trans "Vérification email (OTP)" %}</h6>
+
+  <div id="otp-status" class="mt-2" aria-live="polite"></div>
+
+  <div class="mb-2">
+    <label class="form-label" for="{{ user_form.email_otp_code.id_for_label }}">
+      {{ user_form.email_otp_code.label }} *
+    </label>
+
+    <div class="input-group">
+      <input
+        type="text"
+        name="{{ user_form.email_otp_code.html_name }}"
+        id="{{ user_form.email_otp_code.id_for_label }}"
+        value="{{ user_form.email_otp_code.value|default_if_none:'' }}"
+        class="form-control{% if user_form.email_otp_code.errors %} is-invalid{% endif %}"
+        placeholder="{{ otp_placeholder }}"
+        maxlength="6"
+        autocomplete="one-time-code"
+        inputmode="numeric"
+        pattern="[0-9]{6}"
+        disabled="disabled"
+      />
+
+      <button class="btn btn-outline-secondary"
+              type="button"
+              id="send-otp-btn"
+              data-email-field="id_email"
+              data-url="{% url 'accounts_users:web:ajax:send_email_otp' %}"
+              data-verify-url="{% url 'accounts_users:web:ajax:verify_email_otp' %}">
+        {% trans "Envoyer le code" %}
+      </button>
+
+      <button class="btn btn-outline-primary"
+              type="button"
+              id="verify-otp-btn"
+              data-verify-url="{% url 'accounts_users:web:ajax:verify_email_otp' %}"
+              disabled="disabled">
+        {% trans "Vérifier" %}
+      </button>
+    </div>
+
+    <div class="form-text" id="otp-help">
+      {% if user_form.email_otp_code.help_text %}
+        {{ user_form.email_otp_code.help_text|safe }}
+      {% else %}
+        {{ otp_help }}
+      {% endif %}
+    </div>
+
+    {% for error in user_form.email_otp_code.errors %}
+      <div class="invalid-feedback d-block">{{ error }}</div>
+    {% endfor %}
+  </div>
+
+  <!-- SUBMIT -->
+  <div class="d-grid mt-4">
+    <button type="submit"
+            class="btn btn-success fw-bold"
+            id="signup-submit-btn"
+            disabled="disabled">
+      {% if track_param == "client" %}{% trans "Créer mon compte client" %}
+      {% elif track_param == "vendor" %}{% trans "Demander un compte vendeur" %}
+      {% elif track_param == "b2b" %}{% trans "Créer un compte entreprise" %}
+      {% else %}{% trans "Créer mon compte" %}
+      {% endif %}
+    </button>
+  </div>
+</form>
+
+<div class="text-center mt-3">
+  <p class="small text-muted mb-0">
+    {% trans "Vous avez déjà un compte ?" %}
+    <a href="{{ login_url }}?context=economic&next={{ next_url|urlencode }}">{% trans "Se connecter" %}</a>
+  </p>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+{% endblock %}
+
+{% endwith %}
+{% endwith %} {% endcomment %}
+
+
+
+
+
+
+
+
+
+{% comment %} {# templates/accounts_users/registration/register_economic_form.html #}
 {% extends "accounts_users/registration/base_auth.html" %}
 {% load static i18n widget_tweaks %}
 
@@ -19,13 +2881,33 @@
 {% endblock %}
 
 {% block auth_subtitle %}{% trans "Accès sécurisé au pôle économique SOGENTIS" %}{% endblock %}
-{% block auth_bg_image %}{% static "economic/img/business.jpg" %}{% endblock %}
+
+{% block auth_bg_image %}
+{% if economic_type == "vendor" %}
+url('{% static "economic/img/bg/eco-register-vendor.svg" %}')
+{% elif economic_type == "b2b" %}
+url('{% static "economic/img/bg/eco-register-b2b.svg" %}')
+{% else %}
+url('{% static "economic/img/bg/eco-register-client.svg" %}')
+{% endif %}
+{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
 {% endblock %}
 
 {% block content %}
+{% trans "Entrez le code reçu par email" as otp_placeholder %}
+{% trans "Après avoir rempli le formulaire : 1) Cliquez “Envoyer le code” 2) Saisissez les 6 chiffres reçus 3) Cliquez sur “Vérifier” 4) Créez votre compte." as otp_help %}
+
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-{{ message.tags|default:'info' }} text-center" role="alert">
+      {{ message }}
+    </div>
+  {% endfor %}
+{% endif %}
+
 <form method="post" enctype="multipart/form-data" novalidate>
   {% csrf_token %}
 
@@ -39,1592 +2921,244 @@
     <div class="alert alert-danger" role="alert">{{ economic_form.non_field_errors }}</div>
   {% endif %}
 
+  <!-- ===================================================== -->
+  <!-- INFOS COMPTE -->
+  <!-- ===================================================== -->
   <h6 class="fw-bold mb-3">{% trans "Informations du compte" %}</h6>
 
   {% for field in user_form %}
-    <div class="mb-3">
-      <label class="form-label" for="{{ field.id_for_label }}">
-        {{ field.label }}{% if field.field.required %}*{% endif %}
-      </label>
-
-      {% if field.field.widget.input_type == "password" %}
-        {% render_field field class="form-control" %}
-        {% if field.errors %}
-          <div class="text-danger small" aria-live="polite">{{ field.errors.0 }}</div>
-        {% endif %}
-
-        <div class="d-flex align-items-center mt-1">
-          <button type="button"
-                  class="btn btn-sm btn-outline-secondary toggle-password"
-                  data-target="{{ field.id_for_label }}"
-                  aria-label="{% trans 'Afficher le mot de passe' %}">
-            👁️
-          </button>
-        </div>
-
-        <div class="caps-lock-hint text-danger small mt-1 d-none" aria-live="polite">
-          {% trans "Attention : la touche Verr. Maj (Caps Lock) est activée." %}
-        </div>
-      {% else %}
-        {% render_field field class="form-control" %}
-        {% if field.errors %}
-          <div class="text-danger small" aria-live="polite">{{ field.errors.0 }}</div>
-        {% endif %}
-      {% endif %}
-    </div>
-  {% endfor %}
-
-  <h6 class="fw-bold mt-4 mb-3">{% trans "Profil personnel" %}</h6>
-  {% for field in profile_form %}
-    {% if field.name != "terms" %}
+    {% if field.name != "email_otp_code" %}
       <div class="mb-3">
         <label class="form-label" for="{{ field.id_for_label }}">
-          {{ field.label }}{% if field.field.required %}*{% endif %}
+          {{ field.label }}{% if field.field.required %} *{% endif %}
         </label>
 
-        {% if field.field.widget.input_type == "file" %}
-          {% render_field field class="form-control" %}
-        {% elif field.field.widget.input_type == "checkbox" %}
-          <div class="form-check">
-            {% render_field field class="form-check-input" %}
+        {% if field.field.widget.input_type == "password" %}
+          <div class="input-group">
+            {% if field.errors %}
+              {% render_field field class="form-control is-invalid" %}
+            {% else %}
+              {% render_field field class="form-control" %}
+            {% endif %}
+            <button type="button"
+                    class="btn btn-outline-secondary toggle-password"
+                    data-target="{{ field.id_for_label }}"
+                    aria-label="{% trans 'Afficher/Masquer le mot de passe' %}">
+              👁️
+            </button>
           </div>
         {% else %}
-          {% render_field field class="form-control" %}
+          {% if field.errors %}
+            {% render_field field class="form-control is-invalid" %}
+          {% else %}
+            {% render_field field class="form-control" %}
+          {% endif %}
         {% endif %}
 
         {% if field.help_text %}
           <div class="form-text">{{ field.help_text|safe }}</div>
         {% endif %}
-        {% if field.errors %}
-          <div class="text-danger small" aria-live="polite">{{ field.errors.0 }}</div>
-        {% endif %}
+        {% for error in field.errors %}
+          <div class="invalid-feedback d-block">{{ error }}</div>
+        {% endfor %}
       </div>
     {% endif %}
   {% endfor %}
 
-  <h6 class="fw-bold mt-4 mb-3">{% trans "Informations économiques" %}</h6>
-  {% for field in economic_form %}
-    <div class="mb-3">
-      <label class="form-label" for="{{ field.id_for_label }}">
-        {{ field.label }}{% if field.field.required %}*{% endif %}
-      </label>
-
-      {% if field.field.widget.input_type == "file" %}
-        {% render_field field class="form-control" %}
-        <div class="form-text">{% trans "Formats acceptés : PDF (max 2MB selon validation)." %}</div>
-      {% else %}
-        {% render_field field class="form-control" %}
-      {% endif %}
-
-      {% if field.errors %}
-        <div class="text-danger small" aria-live="polite">{{ field.errors.0 }}</div>
-      {% endif %}
-    </div>
-  {% endfor %}
-
-  <div class="form-check mt-4">
-    {% render_field profile_form.terms class="form-check-input" %}
-    <label class="form-check-label" for="{{ profile_form.terms.id_for_label }}">
-      {% trans "J’accepte les" %}
-      <a href="{% url 'core:cgu' %}" target="_blank" rel="noopener">
-        {% trans "conditions générales" %}
-      </a>
-    </label>
-    {% if profile_form.terms.errors %}
-      <div class="text-danger small" aria-live="polite">{{ profile_form.terms.errors.0 }}</div>
-    {% endif %}
-  </div>
-
-  <div class="d-grid mt-4">
-    <button type="submit" class="btn btn-success fw-bold">
-      {% trans "Créer mon compte" %}
-    </button>
-  </div>
-</form>
-{% endblock %}
-
-{% block extra_js %}
-<script src="{% static 'accounts_users/js/signup.js' %}"></script>
-{% endblock %}
-
-
-
-
-
-{% comment %} {# templates/accounts_users/registration/register_economic_form.html 30/12/2025 #}
-{% extends "accounts_users/registration/base_auth.html" %}
-{% load static i18n widget_tweaks user_form_tags %}
-
-{% block title %}
-  {% if economic_type == "client" %}{% trans "Inscription Client | SOGENTIS" %}
-  {% elif economic_type == "vendor" %}{% trans "Inscription Vendeur | SOGENTIS" %}
-  {% elif economic_type == "b2b" %}{% trans "Inscription Entreprise | SOGENTIS" %}
-  {% endif %}
-{% endblock %}
-
-{% block auth_title %}
-  {% if economic_type == "client" %}{% trans "Créer un compte client" %}
-  {% elif economic_type == "vendor" %}{% trans "Créer un compte vendeur" %}
-  {% elif economic_type == "b2b" %}{% trans "Créer un compte entreprise" %}
-  {% endif %}
-{% endblock %}
-
-{% block auth_subtitle %}
-  {% trans "Accès sécurisé au pôle économique SOGENTIS" %}
-{% endblock %}
-
-{% block auth_bg_image %}
-  {% static "economic/img/business.jpg" %}
-{% endblock %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
-{% endblock %}
-
-{% block content %}
-<form method="post" enctype="multipart/form-data" novalidate>
-  {% csrf_token %}
-
-  <!-- =========================
-       ERREURS GLOBALES
-  ========================== -->
-  {{ user_form.non_field_errors }}
-  {{ profile_form.non_field_errors }}
-  {{ economic_form.non_field_errors }}
-
-  <!-- =========================
-       COMPTE UTILISATEUR
-  ========================== -->
-  <h6 class="fw-bold mb-3">{% trans "Informations du compte" %}</h6>
-  {% for field in user_form %}
-    <div class="mb-3">
-      <label class="form-label">
-        {{ field.label }}{% if field.field.required %}*{% endif %}
-      </label>
-
-      {{ field }}
-
-      {% if field.field.widget.input_type == "password" %}
-        <div class="d-flex align-items-center mt-1">
-          <button type="button"
-                  class="btn btn-sm btn-outline-secondary toggle-password"
-                  data-target="{{ field.id_for_label }}"
-                  aria-label="{% trans 'Afficher le mot de passe' %}">
-            👁️
-          </button>
-        </div>
-
-        <div class="caps-lock-hint text-danger small mt-1 d-none" aria-live="polite">
-          {% trans "Attention : la touche Verr. Maj (Caps Lock) est activée." %}
-        </div>
-      {% endif %}
-
-      {% if field.errors %}
-        <div class="text-danger small" aria-live="polite">
-          {{ field.errors.0 }}
-        </div>
-      {% endif %}
-    </div>
-  {% endfor %}
-
-  <!-- =========================
-       CONFIRMATION DU MOT DE PASSE
-  ========================== -->
-  <h6 class="fw-bold mt-4 mb-3">{% trans "Confirmation du mot de passe" %}</h6>
-  <div class="mb-3">
-    <label for="id_confirm_password" class="form-label">{% trans "Confirmer le mot de passe" %}*</label>
-    <input type="password" name="confirm_password" id="id_confirm_password" class="form-control" required>
-    {% if user_form.confirm_password.errors %}
-      <div class="text-danger small" aria-live="polite">
-        {{ user_form.confirm_password.errors.0 }}
-      </div>
-    {% endif %}
-  </div>
-
-  <!-- =========================
-       PROFIL PERSONNEL
-  ========================== -->
+  <!-- ===================================================== -->
+  <!-- PROFIL CENTRAL -->
+  <!-- ===================================================== -->
   <h6 class="fw-bold mt-4 mb-3">{% trans "Profil personnel" %}</h6>
+
   {% for field in profile_form %}
     {% if field.name != "terms" %}
       <div class="mb-3">
-        <label class="form-label">
-          {{ field.label }}{% if field.field.required %}*{% endif %}
+        <label class="form-label" for="{{ field.id_for_label }}">
+          {{ field.label }}{% if field.field.required %} *{% endif %}
         </label>
-        {{ field }}
-        {% if field.errors %}
-          <div class="text-danger small">{{ field.errors.0 }}</div>
+
+        {% if field.field.widget.input_type == "checkbox" %}
+          <div class="form-check">
+            {% if field.errors %}
+              {% render_field field class="form-check-input is-invalid" %}
+            {% else %}
+              {% render_field field class="form-check-input" %}
+            {% endif %}
+          </div>
+
+        {% elif field.field.widget.input_type == "select" %}
+          {% if field.errors %}
+            {% render_field field class="form-select is-invalid" %}
+          {% else %}
+            {% render_field field class="form-select" %}
+          {% endif %}
+
+        {% elif field.field.widget.input_type == "file" %}
+          {% if field.errors %}
+            {% render_field field class="form-control is-invalid" %}
+          {% else %}
+            {% render_field field class="form-control" %}
+          {% endif %}
+
+        {% else %}
+          {% if field.errors %}
+            {% render_field field class="form-control is-invalid" %}
+          {% else %}
+            {% render_field field class="form-control" %}
+          {% endif %}
         {% endif %}
+
+        {% if field.help_text %}
+          <div class="form-text">{{ field.help_text|safe }}</div>
+        {% endif %}
+        {% for error in field.errors %}
+          <div class="invalid-feedback d-block">{{ error }}</div>
+        {% endfor %}
       </div>
     {% endif %}
   {% endfor %}
 
-  <!-- =========================
-       INFORMATIONS ÉCONOMIQUES
-  ========================== -->
+  <!-- ===================================================== -->
+  <!-- INFOS ECONOMIQUES -->
+  <!-- ===================================================== -->
   <h6 class="fw-bold mt-4 mb-3">{% trans "Informations économiques" %}</h6>
+
   {% for field in economic_form %}
     <div class="mb-3">
-      <label class="form-label">
-        {{ field.label }}{% if field.field.required %}*{% endif %}
+      <label class="form-label" for="{{ field.id_for_label }}">
+        {{ field.label }}{% if field.field.required %} *{% endif %}
       </label>
-      {{ field }}
-      {% if field.errors %}
-        <div class="text-danger small">{{ field.errors.0 }}</div>
+
+      {% if field.field.widget.input_type == "file" %}
+        {% if field.errors %}
+          {% render_field field class="form-control is-invalid" %}
+        {% else %}
+          {% render_field field class="form-control" %}
+        {% endif %}
+        <div class="form-text">{% trans "Formats acceptés : PDF (max 2MB selon validation)." %}</div>
+
+      {% elif field.field.widget.input_type == "select" %}
+        {% if field.errors %}
+          {% render_field field class="form-select is-invalid" %}
+        {% else %}
+          {% render_field field class="form-select" %}
+        {% endif %}
+
+      {% else %}
+        {% if field.errors %}
+          {% render_field field class="form-control is-invalid" %}
+        {% else %}
+          {% render_field field class="form-control" %}
+        {% endif %}
       {% endif %}
+
+      {% if field.help_text %}
+        <div class="form-text">{{ field.help_text|safe }}</div>
+      {% endif %}
+      {% for error in field.errors %}
+        <div class="invalid-feedback d-block">{{ error }}</div>
+      {% endfor %}
     </div>
   {% endfor %}
 
-  <!-- =========================
-       CONDITIONS GÉNÉRALES
-  ========================== -->
+  <!-- ===================================================== -->
+  <!-- TERMS -->
+  <!-- ===================================================== -->
   <div class="form-check mt-4">
-    {{ profile_form.terms }}
+    {% if profile_form.terms.errors %}
+      {% render_field profile_form.terms class="form-check-input is-invalid" required="required" %}
+    {% else %}
+      {% render_field profile_form.terms class="form-check-input" required="required" %}
+    {% endif %}
     <label class="form-check-label" for="{{ profile_form.terms.id_for_label }}">
       {% trans "J’accepte les" %}
-      <a href="{% url 'core:cgu' %}" target="_blank">
-        {% trans "conditions générales" %}
-      </a>
+      <a href="{% url 'core:cgu' %}" target="_blank" rel="noopener">{% trans "conditions générales" %}</a>
     </label>
-    {% if profile_form.terms.errors %}
-      <div class="text-danger small">{{ profile_form.terms.errors.0 }}</div>
-    {% endif %}
+    {% for error in profile_form.terms.errors %}
+      <div class="invalid-feedback d-block">{{ error }}</div>
+    {% endfor %}
   </div>
 
-  <!-- =========================
-       SUBMIT
-  ========================== -->
+  <!-- ================= OTP EMAIL (TOUT EN BAS) ================= -->
+  <hr class="my-4">
+  <h6 class="fw-bold mt-2">{% trans "Vérification email (OTP)" %}</h6>
+
+  <div id="otp-status" class="mt-2" aria-live="polite"></div>
+
+  <div class="mb-2">
+    <label class="form-label" for="{{ user_form.email_otp_code.id_for_label }}">
+      {{ user_form.email_otp_code.label }} *
+    </label>
+
+    <div class="input-group">
+      {# ✅ rendu MANUEL (évite l'affichage du tag render_field en texte) #}
+      <input
+        type="text"
+        name="{{ user_form.email_otp_code.html_name }}"
+        id="{{ user_form.email_otp_code.id_for_label }}"
+        value="{{ user_form.email_otp_code.value|default_if_none:'' }}"
+        class="form-control{% if user_form.email_otp_code.errors %} is-invalid{% endif %}"
+        placeholder="{{ otp_placeholder }}"
+        maxlength="6"
+        autocomplete="one-time-code"
+        inputmode="numeric"
+        pattern="[0-9]{6}"
+        disabled="disabled"
+      />
+
+      <button class="btn btn-outline-secondary"
+              type="button"
+              id="send-otp-btn"
+              data-email-field="id_email"
+              data-url="{% url 'accounts_users:web:ajax:send_email_otp' %}"
+              data-verify-url="{% url 'accounts_users:web:ajax:verify_email_otp' %}">
+        {% trans "Envoyer le code" %}
+      </button>
+
+      <button class="btn btn-outline-primary"
+              type="button"
+              id="verify-otp-btn"
+              data-verify-url="{% url 'accounts_users:web:ajax:verify_email_otp' %}"
+              disabled="disabled">
+        {% trans "Vérifier" %}
+      </button>
+    </div>
+
+    <div class="form-text" id="otp-help">
+      {% if user_form.email_otp_code.help_text %}
+        {{ user_form.email_otp_code.help_text|safe }}
+      {% else %}
+        {{ otp_help }}
+      {% endif %}
+    </div>
+
+    {% for error in user_form.email_otp_code.errors %}
+      <div class="invalid-feedback d-block">{{ error }}</div>
+    {% endfor %}
+  </div>
+
+  <!-- ===================================================== -->
+  <!-- SUBMIT -->
+  <!-- ===================================================== -->
   <div class="d-grid mt-4">
-    <button type="submit" class="btn btn-success fw-bold">
+    <button type="submit"
+            class="btn btn-success fw-bold"
+            id="signup-submit-btn"
+            disabled="disabled">
       {% trans "Créer mon compte" %}
     </button>
   </div>
 </form>
+
+<div class="text-center mt-3">
+  <p class="small text-muted mb-0">
+    {% trans "Vous avez déjà un compte ?" %}
+    <a href="{% url 'accounts_users:web:auth:login' %}">{% trans "Se connecter" %}</a>
+  </p>
+</div>
 {% endblock %}
 
 {% block extra_js %}
 <script src="{% static 'accounts_users/js/signup.js' %}"></script>
 {% endblock %}
  {% endcomment %}
-
-
-
-
-
-{% comment %} {% extends "accounts_users/registration/base_auth.html" %}
-{% load static i18n user_form_tags widget_tweaks %}
-
-{% block title %}
-  {% if economic_type == "client" %} {% trans "Inscription Client | SOGENTIS" %}
-  {% elif economic_type == "vendor" %} {% trans "Inscription Vendeur | SOGENTIS" %}
-  {% elif economic_type == "b2b" %} {% trans "Inscription Entreprise | SOGENTIS" %}
-  {% endif %}
-{% endblock %}
-
-{% block auth_title %}
-  {% if economic_type == "client" %} {% trans "Créer un compte client" %}
-  {% elif economic_type == "vendor" %} {% trans "Créer un compte vendeur" %}
-  {% elif economic_type == "b2b" %} {% trans "Créer un compte entreprise" %}
-  {% endif %}
-{% endblock %}
-
-{% block auth_subtitle %} {% trans "Accès sécurisé au pôle économique SOGENTIS" %} {% endblock %}
-{% block auth_bg_image %} {% static "economic/img/business.jpg" %} {% endblock %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
-<style>
-  body { font-family: Arial, sans-serif; }
-  h6 { font-weight: bold; margin-top: 1.5rem; }
-  .mb-3 { margin-bottom: 1rem; }
-  .form-control.is-invalid { border-color: #dc3545; }
-  .form-control.is-valid { border-color: #28a745; }
-  .form-check-label a { text-decoration: underline; }
-  #profile_picture { display: none; max-width: 150px; margin-top: 0.5rem; border-radius: 5px; }
-  #trade_register_document { display: block; margin-top: 0.5rem; font-style: italic; }
-</style>
-{% endblock %}
-
-{% block content %}
-{% with excluded_fields="terms judicial_record profile_picture"|split:" " %}
-<form method="post" enctype="multipart/form-data" novalidate id="economic-form">
-  {% csrf_token %}
-
-  <!-- Erreurs globales -->
-  {{ user_form.non_field_errors }}
-  {{ profile_form.non_field_errors }}
-  {{ economic_form.non_field_errors }}
-
-  <!-- Informations du compte -->
-  <h6>{% trans "Informations du compte" %}</h6>
-  {% for field in user_form %}
-    <div class="mb-3">
-      <label class="form-label">{{ field.label }}{% if field.field.required %}*{% endif %}</label>
-      {% render_field field class="form-control" %}
-      {% if field.errors %}
-        <div class="text-danger small mt-1">{{ field.errors.0 }}</div>
-      {% endif %}
-    </div>
-  {% endfor %}
-
-  <!-- Profil personnel -->
-  <h6>{% trans "Profil personnel" %}</h6>
-  {% for field in profile_form %}
-    {% if field.name not in excluded_fields %}
-      <div class="mb-3">
-        <label class="form-label">{{ field.label }}{% if field.field.required %}*{% endif %}</label>
-        {% render_field field class="form-control" %}
-        {% if field.errors %}
-          <div class="text-danger small mt-1">{{ field.errors.0 }}</div>
-        {% endif %}
-      </div>
-    {% endif %}
-  {% endfor %}
-
-  <!-- Informations économiques -->
-  <h6>{% trans "Informations économiques" %}</h6>
-  {% for field in economic_form %}
-    <div class="mb-3">
-      <label class="form-label">{{ field.label }}{% if field.field.required %}*{% endif %}</label>
-
-      {% if field.name == "profile_picture" %}
-        {% render_field field class="form-control" data-preview="profile_picture" %}
-        <img id="profile_picture" src="#" alt="Aperçu">
-      {% elif field.name == "trade_register_document" %}
-        {% render_field field class="form-control" data-preview="trade_register_document" %}
-        <span id="trade_register_document" class="small text-muted">{% trans "Aucun fichier sélectionné" %}</span>
-      {% else %}
-        {% render_field field class="form-control" %}
-      {% endif %}
-
-      {% if field.errors %}
-        <div class="text-danger small mt-1">{{ field.errors.0 }}</div>
-      {% endif %}
-    </div>
-  {% endfor %}
-
-  <!-- CGU -->
-  <div class="mb-3 form-check mt-4">
-    {% render_field profile_form.terms class="form-check-input" id="id_terms" %}
-    <label class="form-check-label" for="id_terms">
-      {% trans "J’accepte les" %}
-      <a href="{% url 'core:cgu' %}" target="_blank">{% trans "conditions générales" %}</a>
-    </label>
-    {% if profile_form.terms.errors %}
-      <div class="text-danger small mt-1">{{ profile_form.terms.errors.0 }}</div>
-    {% endif %}
-  </div>
-
-  <!-- Bouton soumission -->
-  <div class="d-grid mt-4">
-    <button type="submit" id="submit-btn" class="btn btn-success fw-bold">
-      {% trans "Créer mon compte" %}
-    </button>
-  </div>
-
-  <!-- Lien vers connexion -->
-  <div class="text-center mt-3 small">
-    <p>
-      {% trans "Déjà inscrit ?" %}
-      <a href="{% url 'accounts_users_web:login' %}?context=economic">{% trans "Se connecter" %}</a>
-    </p>
-  </div>
-</form>
-{% endwith %}
-{% endblock %}
-
-{% block extra_js %}
-<script src="{% static 'accounts_users/js/signup.js' %}"></script>
-{% endblock %} {% endcomment %}
-
-
-
-
-
-{% comment %} {# templates/accounts_users/registration/register_economic_form.html #}
-{% extends "accounts_users/registration/base_auth.html" %}
-{% load static i18n widget_tweaks user_form_tags %}
-
-{% block title %}
-  {% if economic_type == "client" %}
-    {% trans "Inscription Client | SOGENTIS" %}
-  {% elif economic_type == "vendor" %}
-    {% trans "Inscription Vendeur | SOGENTIS" %}
-  {% elif economic_type == "b2b" %}
-    {% trans "Inscription Entreprise | SOGENTIS" %}
-  {% endif %}
-{% endblock %}
-
-{% block auth_title %}
-  {% if economic_type == "client" %}
-    {% trans "Créer un compte client" %}
-  {% elif economic_type == "vendor" %}
-    {% trans "Créer un compte vendeur" %}
-  {% elif economic_type == "b2b" %}
-    {% trans "Créer un compte entreprise" %}
-  {% endif %}
-{% endblock %}
-
-{% block auth_subtitle %}
-  {% trans "Accès sécurisé au pôle économique SOGENTIS" %}
-{% endblock %}
-
-{% block auth_bg_image %}
-  {% static "economic/img/business.jpg" %}
-{% endblock %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
-{% endblock %}
-
-{% block content %}
-{% with excluded_fields="terms judicial_record profile_picture"|split:" " %}
-
-<form method="post" enctype="multipart/form-data" novalidate>
-  {% csrf_token %}
-
-  {{ user_form.non_field_errors }}
-  {{ profile_form.non_field_errors }}
-  {{ economic_form.non_field_errors }}
-
-  <h6 class="fw-bold mb-3">{% trans "Informations du compte" %}</h6>
-  {% for field in user_form %}
-    <div class="mb-3">
-      <label class="form-label">{{ field.label }} *</label>
-      {% render_field field class="form-control" %}
-      {{ field.errors }}
-    </div>
-  {% endfor %}
-
-  <h6 class="fw-bold mt-4 mb-3">{% trans "Profil personnel" %}</h6>
-  {% for field in profile_form %}
-    {% if field.name not in excluded_fields %}
-      <div class="mb-3">
-        <label class="form-label">{{ field.label }} *</label>
-        {% render_field field class="form-control" %}
-        {{ field.errors }}
-      </div>
-    {% endif %}
-  {% endfor %}
-
-  <h6 class="fw-bold mt-4 mb-3">{% trans "Informations économiques" %}</h6>
-  {% for field in economic_form %}
-    <div class="mb-3">
-      <label class="form-label">{{ field.label }} *</label>
-      {% if field.name in "profile_picture trade_register_document" %}
-        {% render_field field class="form-control" data-preview=field.name %}
-        {% if field.name == "profile_picture" %}
-          <img id="profile_picture" src="#" alt="Aperçu" style="display:none; max-width:150px; margin-top:10px;">
-        {% else %}
-          <span id="trade_register_document" class="small text-muted"></span>
-        {% endif %}
-      {% else %}
-        {% render_field field class="form-control" %}
-      {% endif %}
-      {{ field.errors }}
-    </div>
-  {% endfor %}
-
-  <div class="mb-3 form-check mt-4">
-    {% render_field profile_form.terms class="form-check-input" id="id_terms" %}
-    <label class="form-check-label" for="id_terms">
-      {% trans "J’accepte les" %}
-      <a href="{% url 'core:cgu' %}" target="_blank">{% trans "conditions générales" %}</a>
-    </label>
-    <div id="terms-error" class="text-danger small mt-1 d-none">
-      {% trans "Vous devez accepter les conditions générales." %}
-    </div>
-    {% if profile_form.terms.errors %}
-      <div class="text-danger small mt-1">{{ profile_form.terms.errors.0 }}</div>
-    {% endif %}
-  </div>
-
-  <div class="d-grid mt-4">
-    <button type="submit" id="submit-btn" class="btn btn-success fw-bold">
-      {% trans "Créer mon compte" %}
-    </button>
-  </div>
-</form>
-
-<div class="text-center mt-3 small">
-  <p>
-    {% trans "Déjà inscrit ?" %}
-    <a href="{% url 'accounts_users_web:login' %}?context=economic">
-      {% trans "Se connecter" %}
-    </a>
-  </p>
-</div>
-
-{% endwith %}
-{% endblock %}
-
-{% block extra_js %}
-<script src="{% static 'accounts_users/js/signup.js' %}"></script>
-{% endblock %} {% endcomment %}
-
-
-
-
-
-{% comment %} 
-{# templates/accounts_users/registration/register_economic_form.html #}
-{% extends "accounts_users/registration/base_auth.html" %}
-{% load static i18n widget_tweaks user_form_tags %} 
-
-{% block title %}
-  {% if economic_type == "client" %}
-    {% trans "Inscription Client | SOGENTIS" %}
-  {% elif economic_type == "vendor" %}
-    {% trans "Inscription Vendeur | SOGENTIS" %}
-  {% elif economic_type == "b2b" %}
-    {% trans "Inscription Entreprise | SOGENTIS" %}
-  {% endif %}
-{% endblock %}
-
-{% block auth_title %}
-  {% if economic_type == "client" %}
-    {% trans "Créer un compte client" %}
-  {% elif economic_type == "vendor" %}
-    {% trans "Créer un compte vendeur" %}
-  {% elif economic_type == "b2b" %}
-    {% trans "Créer un compte entreprise" %}
-  {% endif %}
-{% endblock %}
-
-{% block auth_subtitle %}
-  {% trans "Accès sécurisé au pôle économique SOGENTIS" %}
-{% endblock %}
-
-{% block auth_bg_image %}
-  {% static "economic/img/business.jpg" %}
-{% endblock %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
-{% endblock %}
-
-{% block content %}
-{% with excluded_fields="terms judicial_record profile_picture"|split:" " %}
-
-<form method="post" enctype="multipart/form-data" novalidate>
-  {% csrf_token %}
-
-  {{ user_form.non_field_errors }}
-  {{ profile_form.non_field_errors }}
-  {{ economic_form.non_field_errors }}
-
-  {# ================= COMPTE UTILISATEUR ================= #}
-  <h6 class="fw-bold mb-3">{% trans "Informations du compte" %}</h6>
-
-  {% for field in user_form %}
-    <div class="mb-3">
-      <label class="form-label">{{ field.label }} *</label>
-      {% render_field field class="form-control" %}
-      {{ field.errors }}
-    </div>
-  {% endfor %}
-
-  {# ================= PROFIL COMMUN ================= #}
-  <h6 class="fw-bold mt-4 mb-3">{% trans "Profil personnel" %}</h6>
-
-  {% for field in profile_form %}
-    {% if field.name not in excluded_fields %}
-      <div class="mb-3">
-        <label class="form-label">{{ field.label }} *</label>
-        {% render_field field class="form-control" %}
-        {{ field.errors }}
-      </div>
-    {% endif %}
-  {% endfor %}
-
-  {# ================= PROFIL ÉCONOMIQUE ================= #}
-  <h6 class="fw-bold mt-4 mb-3">{% trans "Informations économiques" %}</h6>
-
-  {% for field in economic_form %}
-    <div class="mb-3">
-      <label class="form-label">{{ field.label }} *</label>
-
-      {# Champ fichiers avec preview #}
-      {% if field.name in "profile_picture trade_register_document" %}
-        {% render_field field class="form-control" data-preview=field.name %}
-        {% if field.name == "profile_picture" %}
-          <img id="profile_picture" src="#" alt="Aperçu" style="display:none; max-width:150px; margin-top:10px;">
-        {% else %}
-          <span id="trade_register_document" class="small text-muted"></span>
-        {% endif %}
-      {% else %}
-        {% render_field field class="form-control" %}
-      {% endif %}
-      {{ field.errors }}
-    </div>
-  {% endfor %}
-
-  {# ================= CONDITIONS GÉNÉRALES ================= #}
-  <div class="mb-3 form-check mt-4">
-    {% render_field profile_form.terms class="form-check-input" id="id_terms" %}
-    <label class="form-check-label" for="id_terms">
-      {% trans "J’accepte les" %}
-      <a href="{% url 'core:cgu' %}" target="_blank">{% trans "conditions générales" %}</a>
-    </label>
-
-    <div id="terms-error" class="text-danger small mt-1 d-none">
-      {% trans "Vous devez accepter les conditions générales." %}
-    </div>
-
-    {% if profile_form.terms.errors %}
-      <div class="text-danger small mt-1">
-        {{ profile_form.terms.errors.0 }}
-      </div>
-    {% endif %}
-  </div>
-
-  <div class="d-grid mt-4">
-    <button type="submit" id="submit-btn" class="btn btn-success fw-bold">
-      {% trans "Créer mon compte" %}
-    </button>
-  </div>
-</form>
-
-<div class="text-center mt-3 small">
-  <p>
-    {% trans "Déjà inscrit ?" %}
-    <a href="{% url 'accounts_users_web:login' %}?context=economic">
-      {% trans "Se connecter" %}
-    </a>
-  </p>
-</div>
-
-{% endwith %}
-{% endblock %}
-
-{% block extra_js %}
-<script src="{% static 'accounts_users/js/signup.js' %}"></script>
-{% endblock %}
-{% endcomment %}
-
-
-
-
-
-{% comment %} {# templates/accounts_users/registration/register_economic_form.html alerte rouge ok#}
-{% extends "accounts_users/registration/base_auth.html" %}
-{% load static i18n widget_tweaks user_form_tags %} 
-
-{% block title %}
-  {% if economic_type == "client" %}
-    {% trans "Inscription Client | SOGENTIS" %}
-  {% elif economic_type == "vendor" %}
-    {% trans "Inscription Vendeur | SOGENTIS" %}
-  {% elif economic_type == "b2b" %}
-    {% trans "Inscription Entreprise | SOGENTIS" %}
-  {% endif %}
-{% endblock %}
-
-{% block auth_title %}
-  {% if economic_type == "client" %}
-    {% trans "Créer un compte client" %}
-  {% elif economic_type == "vendor" %}
-    {% trans "Créer un compte vendeur" %}
-  {% elif economic_type == "b2b" %}
-    {% trans "Créer un compte entreprise" %}
-  {% endif %}
-{% endblock %}
-
-{% block auth_subtitle %}
-  {% trans "Accès sécurisé au pôle économique SOGENTIS" %}
-{% endblock %}
-
-{% block auth_bg_image %}
-  {% static "economic/img/business.jpg" %}
-{% endblock %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
-{% endblock %}
-
-{% block content %}
-{% with excluded_fields="terms judicial_record profile_picture"|split:" " %}
-
-<form method="post" enctype="multipart/form-data" novalidate>
-  {% csrf_token %}
-
-  {{ user_form.non_field_errors }}
-  {{ profile_form.non_field_errors }}
-  {{ economic_form.non_field_errors }}
-
-  {# ================= COMPTE UTILISATEUR ================= #}
-  <h6 class="fw-bold mb-3">{% trans "Informations du compte" %}</h6>
-  {% for field in user_form %}
-    <div class="mb-3">
-      <label class="form-label">{{ field.label }} {% if field.field.required %}*{% endif %}</label>
-      {% render_field field class="form-control" %}
-      {% if field.errors %}
-        <div class="text-danger small mt-1">
-          {{ field.errors.0 }}
-        </div>
-      {% endif %}
-    </div>
-  {% endfor %}
-
-  {# ================= PROFIL COMMUN ================= #}
-  <h6 class="fw-bold mt-4 mb-3">{% trans "Profil personnel" %}</h6>
-  {% for field in profile_form %}
-    {% if field.name not in excluded_fields %}
-      <div class="mb-3">
-        <label class="form-label">{{ field.label }} {% if field.field.required %}*{% endif %}</label>
-        {% render_field field class="form-control" %}
-        {% if field.errors %}
-          <div class="text-danger small mt-1">
-            {{ field.errors.0 }}
-          </div>
-        {% endif %}
-      </div>
-    {% endif %}
-  {% endfor %}
-
-  {# ================= PROFIL ÉCONOMIQUE ================= #}
-  <h6 class="fw-bold mt-4 mb-3">{% trans "Informations économiques" %}</h6>
-  {% for field in economic_form %}
-    <div class="mb-3">
-      <label class="form-label">{{ field.label }} {% if field.field.required %}*{% endif %}</label>
-      {% render_field field class="form-control" %}
-      {% if field.errors %}
-        <div class="text-danger small mt-1">
-          {{ field.errors.0 }}
-        </div>
-      {% endif %}
-    </div>
-  {% endfor %}
-
-  {# ================= CONDITIONS GÉNÉRALES ================= #}
-  <div class="mb-3 form-check mt-4">
-    {% render_field profile_form.terms class="form-check-input" id="id_terms" %}
-    <label class="form-check-label" for="id_terms">
-      {% trans "J’accepte les" %}
-      <a href="{% url 'core:cgu' %}" target="_blank">{% trans "conditions générales" %}</a>
-    </label>
-    <div id="terms-error" class="text-danger small mt-1 d-none">
-      {% trans "Vous devez accepter les conditions générales." %}
-    </div>
-    {% if profile_form.terms.errors %}
-      <div class="text-danger small mt-1">
-        {{ profile_form.terms.errors.0 }}
-      </div>
-    {% endif %}
-  </div>
-
-  <div class="d-grid mt-4">
-    <button type="submit" id="submit-btn" class="btn btn-success fw-bold" disabled>
-      {% trans "Créer mon compte" %}
-    </button>
-  </div>
-</form>
-
-<div class="text-center mt-3 small">
-  <p>
-    {% trans "Déjà inscrit ?" %}
-    <a href="{% url 'accounts_users_web:login' %}?context=economic">
-      {% trans "Se connecter" %}
-    </a>
-  </p>
-</div>
-
-{% endwith %}
-{% endblock %}
-
-{% block extra_js %}
-<script src="{% static 'accounts_users/js/signup.js' %}"></script>
-{% endblock %} {% endcomment %}
-
-
-
-
-
-
-
-{% comment %} {# templates/accounts_users/registration/register_economic_form.html #}
-
-{% extends "accounts_users/registration/base_auth.html" %}
-{% load static i18n widget_tweaks user_form_tags %}
-
-{% block title %}
-  {% if economic_type == "client" %}
-    {% trans "Inscription Client | SOGENTIS" %}
-  {% elif economic_type == "vendor" %}
-    {% trans "Inscription Vendeur | SOGENTIS" %}
-  {% elif economic_type == "b2b" %}
-    {% trans "Inscription Entreprise | SOGENTIS" %}
-  {% endif %}
-{% endblock %}
-
-{% block auth_title %}
-  {% if economic_type == "client" %}
-    {% trans "Créer un compte client" %}
-  {% elif economic_type == "vendor" %}
-    {% trans "Créer un compte vendeur" %}
-  {% elif economic_type == "b2b" %}
-    {% trans "Créer un compte entreprise" %}
-  {% endif %}
-{% endblock %}
-
-{% block auth_subtitle %}
-  {% trans "Accès sécurisé au pôle économique SOGENTIS" %}
-{% endblock %}
-
-{% block auth_bg_image %}
-  {% static "economic/img/business.jpg" %}
-{% endblock %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
-{% endblock %}
-
-{% block content %}
-{% with excluded_fields="terms judicial_record profile_picture"|split:" " %}
-
-<form method="post" enctype="multipart/form-data" novalidate>
-  {% csrf_token %}
-
-  {{ user_form.non_field_errors }}
-  {{ profile_form.non_field_errors }}
-  {{ economic_form.non_field_errors }}
-
-  {# ================= COMPTE UTILISATEUR ================= #}
-  <h6 class="fw-bold mb-3">{% trans "Informations du compte" %}</h6>
-
-  {% for field in user_form %}
-    <div class="mb-3">
-      <label class="form-label">{{ field.label }} *</label>
-      {% render_field field class="form-control" %}
-      {{ field.errors }}
-    </div>
-  {% endfor %}
-
-  {# ================= PROFIL COMMUN ================= #}
-  <h6 class="fw-bold mt-4 mb-3">{% trans "Profil personnel" %}</h6>
-
-  {% for field in profile_form %}
-    {% if field.name not in excluded_fields %}
-      <div class="mb-3">
-        <label class="form-label">{{ field.label }} *</label>
-        {% render_field field class="form-control" %}
-        {{ field.errors }}
-      </div>
-    {% endif %}
-  {% endfor %}
-
-  {# ================= PROFIL ÉCONOMIQUE ================= #}
-  <h6 class="fw-bold mt-4 mb-3">{% trans "Informations économiques" %}</h6>
-
-  {% for field in economic_form %}
-    <div class="mb-3">
-      <label class="form-label">{{ field.label }} *</label>
-      {% render_field field class="form-control" %}
-      {{ field.errors }}
-    </div>
-  {% endfor %}
-
-  {# ================= CONDITIONS ================= #}
-{# ================= CONDITIONS GÉNÉRALES ================= #}
-<div class="mb-3 form-check mt-4">
-
-  {% render_field profile_form.terms class="form-check-input" id="id_terms" %}
-  
-  <label class="form-check-label" for="id_terms">
-    {% trans "J’accepte les" %}
-    <a href="{% url 'core:cgu' %}" target="_blank">
-      {% trans "conditions générales" %}
-    </a>
-  </label>
-
-  {# JS error (temps réel) #}
-  <div id="terms-error" class="text-danger small mt-1 d-none">
-    {% trans "Vous devez accepter les conditions générales." %}
-  </div>
-
-  {# Django server-side error #}
-  {% if profile_form.terms.errors %}
-    <div class="text-danger small mt-1">
-      {{ profile_form.terms.errors.0 }}
-    </div>
-  {% endif %}
-</div>
-
-<div class="d-grid mt-4">
-  <button
-    type="submit"
-    id="submit-btn"
-    class="btn btn-success fw-bold"
-    disabled
-  >
-    {% trans "Créer mon compte" %}
-  </button>
-</div>
-</form>
-
-<div class="text-center mt-3 small">
-  <p>
-    {% trans "Déjà inscrit ?" %}
-    <a href="{% url 'accounts_users_web:login' %}?context=economic">
-      {% trans "Se connecter" %}
-    </a>
-  </p>
-</div>
-
-{% endwith %}
-{% endblock %}
-
-{% block extra_js %}
-<script src="{% static 'accounts_users/js/signup.js' %}"></script>
-{% endblock %} {% endcomment %}
-
-
-
-
-
-
-{% comment %} {# templates/accounts_users/registration/register_economic_form.html #}
-{% extends "accounts_users/registration/base_auth.html" %}
-{% load static i18n widget_tweaks %}
-
-{# ========================================================== #}
-{#                          SEO                               #}
-{# ========================================================== #}
-{% block title %}
-    {% if economic_type == "client" %}
-        {% trans "Inscription Client | SOGENTIS" %}
-    {% elif economic_type == "vendor" %}
-        {% trans "Inscription Vendeur | SOGENTIS" %}
-    {% elif economic_type == "b2b" %}
-        {% trans "Inscription Entreprise | SOGENTIS" %}
-    {% endif %}
-{% endblock %}
-
-{# ========================================================== #}
-{#                    TITRES CONTEXTUELS                      #}
-{# ========================================================== #}
-{% block auth_title %}
-    {% if economic_type == "client" %}
-        {% trans "Créer un compte client" %}
-    {% elif economic_type == "vendor" %}
-        {% trans "Créer un compte vendeur" %}
-    {% elif economic_type == "b2b" %}
-        {% trans "Créer un compte entreprise" %}
-    {% endif %}
-{% endblock %}
-
-{% block auth_subtitle %}
-    {% if economic_type == "client" %}
-        {% trans "Accédez au e-commerce et aux services en ligne." %}
-    {% elif economic_type == "vendor" %}
-        {% trans "Vendez vos produits et gérez vos commandes." %}
-    {% elif economic_type == "b2b" %}
-        {% trans "Accédez aux solutions professionnelles et partenariats." %}
-    {% endif %}
-{% endblock %}
-
-{# ========================================================== #}
-{#                  IMAGE CONTEXTUELLE                        #}
-{# ========================================================== #}
-{% block auth_bg_image %}
-    {% static "economic/img/business.jpg" %}
-{% endblock %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
-{% endblock %}
-
-{# ========================================================== #}
-{#                         CONTENU                            #}
-{# ========================================================== #}
-{% block content %}
-
-<form method="post" enctype="multipart/form-data" novalidate>
-    {% csrf_token %}
-
-    {# ====================================================== #}
-    {#                MESSAGES / ERREURS                      #}
-    {# ====================================================== #}
-    {{ user_form.non_field_errors }}
-    {{ profile_form.non_field_errors }}
-    {{ economic_form.non_field_errors }}
-
-    {# ====================================================== #}
-    {#                INFORMATIONS UTILISATEUR                #}
-    {# ====================================================== #}
-    <h6 class="fw-bold mb-3">{% trans "Informations du compte" %}</h6>
-
-    {% for field in user_form %}
-        <div class="mb-3">
-            <label class="form-label" for="{{ field.id_for_label }}">
-                {{ field.label }}{% if field.field.required %} *{% endif %}
-            </label>
-            {% render_field field class="form-control" %}
-            {% if field.errors %}
-                <div class="text-danger small">{{ field.errors|join:", " }}</div>
-            {% endif %}
-        </div>
-    {% endfor %}
-
-    {# ====================================================== #}
-    {#                PROFIL COMMUN                           #}
-    {# ====================================================== #}
-    <h6 class="fw-bold mt-4 mb-3">{% trans "Profil personnel" %}</h6>
-
-    {% for field in profile_form %}
-        {% if field.name not in "terms judicial_record profile_picture" %}
-            <div class="mb-3">
-                <label class="form-label" for="{{ field.id_for_label }}">
-                    {{ field.label }}{% if field.field.required %} *{% endif %}
-                </label>
-                {% render_field field class="form-control" %}
-                {% if field.errors %}
-                    <div class="text-danger small">{{ field.errors|join:", " }}</div>
-                {% endif %}
-            </div>
-        {% endif %}
-    {% endfor %}
-
-    {# ====================================================== #}
-    {#           PROFIL ÉCONOMIQUE SPÉCIALISÉ                 #}
-    {# ====================================================== #}
-    <h6 class="fw-bold mt-4 mb-3">
-        {% trans "Informations économiques" %}
-    </h6>
-
-    {% for field in economic_form %}
-        <div class="mb-3">
-            <label class="form-label" for="{{ field.id_for_label }}">
-                {{ field.label }}{% if field.field.required %} *{% endif %}
-            </label>
-            {% render_field field class="form-control" %}
-            {% if field.errors %}
-                <div class="text-danger small">{{ field.errors|join:", " }}</div>
-            {% endif %}
-        </div>
-    {% endfor %}
-
-    {# ====================================================== #}
-    {#                     CONDITIONS                         #}
-    {# ====================================================== #}
-    <div class="mb-3 form-check mt-4">
-        {{ profile_form.terms }}
-        <label class="form-check-label" for="{{ profile_form.terms.id_for_label }}">
-            {% trans "J’accepte les conditions générales" %}
-        </label>
-        {% for error in profile_form.terms.errors %}
-            <div class="text-danger small">{{ error }}</div>
-        {% endfor %}
-    </div>
-
-    {# ====================================================== #}
-    {#                      SUBMIT                            #}
-    {# ====================================================== #}
-    <div class="d-grid mt-4">
-        <button type="submit" class="btn btn-success py-2 fw-bold">
-            {% trans "Créer mon compte" %}
-        </button>
-    </div>
-</form>
-
-<div class="text-center mt-3 small">
-    <p>
-        {% trans "Déjà inscrit ?" %}
-        <a href="{% url 'accounts_users_web:login' %}?context=economic">
-            {% trans "Se connecter" %}
-        </a>
-    </p>
-</div>
-
-{% endblock %}
-
-{% block extra_js %}
-<script src="{% static 'accounts_users/js/signup.js' %}"></script>
-{% endblock %}
- {% endcomment %}
-
-
-
-
-
-
-{% comment %} {% extends "accounts_users/registration/base_auth.html" %}
-{% load static i18n widget_tweaks %}
-
-{% block title %}
-    {% if economic_type == "client" %}
-        {% trans "Inscription Client | SOGENTIS" %}
-    {% elif economic_type == "vendor" %}
-        {% trans "Inscription Vendeur | SOGENTIS" %}
-    {% elif economic_type == "b2b" %}
-        {% trans "Inscription Entreprise | SOGENTIS" %}
-    {% endif %}
-{% endblock %}
-
-{% block auth_title %}
-    {% if economic_type == "client" %}
-        {% trans "Créer un compte client" %}
-    {% elif economic_type == "vendor" %}
-        {% trans "Créer un compte vendeur" %}
-    {% elif economic_type == "b2b" %}
-        {% trans "Créer un compte entreprise" %}
-    {% endif %}
-{% endblock %}
-
-{% block auth_subtitle %}
-    {% if economic_type == "client" %}
-        {% trans "Accédez au e-commerce et aux services en ligne." %}
-    {% elif economic_type == "vendor" %}
-        {% trans "Vendez vos produits et gérez vos commandes." %}
-    {% elif economic_type == "b2b" %}
-        {% trans "Accédez aux solutions professionnelles et partenariats." %}
-    {% endif %}
-{% endblock %}
-
-{% block auth_bg_image %}
-    {% static "economic/img/business.jpg" %}
-{% endblock %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
-{% endblock %}
-
-{% block content %}
-
-<form method="post" enctype="multipart/form-data" novalidate>
-    {% csrf_token %}
-
-    {{ form.non_field_errors }}
-    {{ profile_form.non_field_errors }}
-
-    <!-- UTILISATEUR -->
-    {% for field in form %}
-        <div class="mb-3">
-            <label class="form-label">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
-            {{ field }}
-            {% if field.errors %}
-                <div class="text-danger small">{{ field.errors|join:", " }}</div>
-            {% endif %}
-        </div>
-    {% endfor %}
-
-    <!-- PROFIL -->
-    {% for field in profile_form %}
-        {% if field.name not in "membership_role role" %}
-            <div class="mb-3">
-                <label class="form-label">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
-                {{ field }}
-                {% if field.errors %}
-                    <div class="text-danger small">{{ field.errors|join:", " }}</div>
-                {% endif %}
-            </div>
-        {% endif %}
-    {% endfor %}
-
-    {% if economic_type != "client" %}
-        <div class="alert alert-warning small">
-            {% trans "Les comptes vendeurs et entreprises nécessitent une validation manuelle." %}
-        </div>
-    {% endif %}
-
-    <div class="d-grid mt-3">
-        <button type="submit" class="btn btn-success py-2 fw-bold">
-            {% trans "Créer mon compte" %}
-        </button>
-    </div>
-</form>
-
-<div class="text-center mt-3 small">
-    <p>
-        {% trans "Déjà inscrit ?" %}
-        <a href="{% url 'accounts_users_web:login' %}?context=economic">
-            {% trans "Se connecter" %}
-        </a>
-    </p>
-</div>
-
-{% endblock %} {% endcomment %}
-
-
-
-
-
-
-{% comment %} {# templates/accounts_users/registration/register_economic_form.html #}
-{% extends "accounts_users/registration/base_auth.html" %}
-{% load static i18n widget_tweaks %}
-
-{# ========================================================== #}
-{#                          SEO                               #}
-{# ========================================================== #}
-{% block title %}
-    {% if economic_type == "client" %}
-        {% trans "Inscription Client | SOGENTIS" %}
-    {% elif economic_type == "vendor" %}
-        {% trans "Inscription Vendeur | SOGENTIS" %}
-    {% elif economic_type == "b2b" %}
-        {% trans "Inscription Entreprise | SOGENTIS" %}
-    {% endif %}
-{% endblock %}
-
-{% block auth_title %}
-    {% if economic_type == "client" %}
-        {% trans "Créer un compte client" %}
-    {% elif economic_type == "vendor" %}
-        {% trans "Créer un compte vendeur" %}
-    {% elif economic_type == "b2b" %}
-        {% trans "Créer un compte entreprise" %}
-    {% endif %}
-{% endblock %}
-
-{% block auth_subtitle %}
-    {% if economic_type == "client" %}
-        {% trans "Accédez au e-commerce et aux services en ligne." %}
-    {% elif economic_type == "vendor" %}
-        {% trans "Vendez vos produits et gérez vos commandes." %}
-    {% elif economic_type == "b2b" %}
-        {% trans "Accédez aux solutions professionnelles et partenariats." %}
-    {% endif %}
-{% endblock %}
-
-{# ========================================================== #}
-{#                  IMAGE CONTEXTUELLE                        #}
-{# ========================================================== #}
-{% block auth_bg_image %}
-    {% static "economic/img/business.jpg" %}
-{% endblock %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
-{% endblock %}
-
-{# ========================================================== #}
-{#                         CONTENU                            #}
-{# ========================================================== #}
-{% block content %}
-
-<form method="post" enctype="multipart/form-data" novalidate>
-    {% csrf_token %}
-
-    {{ form.non_field_errors }}
-    {{ profile_form.non_field_errors }}
-
-    {# ====================================================== #}
-    {#                INFOS UTILISATEUR                       #}
-    {# ====================================================== #}
-    {% for field in form %}
-        <div class="mb-3">
-            <label class="form-label" for="{{ field.id_for_label }}">
-                {{ field.label }}{% if field.field.required %} *{% endif %}
-            </label>
-            {{ field }}
-            {% if field.errors %}
-                <div class="text-danger small">{{ field.errors|join:", " }}</div>
-            {% endif %}
-        </div>
-    {% endfor %}
-
-    {# ====================================================== #}
-    {#                PROFIL ÉCONOMIQUE                       #}
-    {# ====================================================== #}
-    {% for field in profile_form %}
-        {% if field.name not in "terms judicial_record profile_picture" %}
-            <div class="mb-3">
-                <label class="form-label" for="{{ field.id_for_label }}">
-                    {{ field.label }}{% if field.field.required %} *{% endif %}
-                </label>
-                {{ field }}
-                {% if field.errors %}
-                    <div class="text-danger small">{{ field.errors|join:", " }}</div>
-                {% endif %}
-            </div>
-        {% endif %}
-    {% endfor %}
-
-    {# ====================================================== #}
-    {#          CHAMPS SPÉCIFIQUES VENDEUR / B2B              #}
-    {# ====================================================== #}
-    {% if economic_type == "vendor" or economic_type == "b2b" %}
-        <div class="alert alert-warning small">
-            {% trans "Les comptes vendeurs et entreprises nécessitent une validation manuelle avant activation." %}
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label" for="{{ profile_form.company_name.id_for_label }}">
-                {{ profile_form.company_name.label }} *
-            </label>
-            {{ profile_form.company_name }}
-            {% for error in profile_form.company_name.errors %}
-                <div class="text-danger small">{{ error }}</div>
-            {% endfor %}
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label" for="{{ profile_form.company_document.id_for_label }}">
-                {{ profile_form.company_document.label }} *
-            </label>
-            {{ profile_form.company_document }}
-            {% for error in profile_form.company_document.errors %}
-                <div class="text-danger small">{{ error }}</div>
-            {% endfor %}
-        </div>
-    {% endif %}
-
-    {# ====================================================== #}
-    {#                       TERMS                            #}
-    {# ====================================================== #}
-    <div class="mb-3 form-check">
-        {{ profile_form.terms }}
-        <label class="form-check-label" for="{{ profile_form.terms.id_for_label }}">
-            {% trans "J’accepte les conditions générales" %}
-        </label>
-        {% for error in profile_form.terms.errors %}
-            <div class="text-danger small">{{ error }}</div>
-        {% endfor %}
-    </div>
-
-    {# ====================================================== #}
-    {#                     SUBMIT                             #}
-    {# ====================================================== #}
-    <div class="d-grid mt-3">
-        <button type="submit" class="btn btn-success py-2 fw-bold">
-            {% trans "Créer mon compte" %}
-        </button>
-    </div>
-</form>
-
-<div class="text-center mt-3 small">
-    <p>
-        {% trans "Déjà inscrit ?" %}
-        <a href="{% url 'accounts_users_web:login' %}?context=economic">
-            {% trans "Se connecter" %}
-        </a>
-    </p>
-</div>
-
-{% endblock %}
-
-{% block extra_js %}
-<script src="{% static 'accounts_users/js/signup.js' %}"></script>
-{% endblock %}
- {% endcomment %}
-
-
-
-
-
-
-{% comment %} {# /accounts_users/registration/register_economic_form.html #}
-{% extends "accounts_users/registration/base_auth.html" %}
-{% load static i18n %}
-
-{% block title %}
-  {% if economic_type == "client" %}
-    {% trans "Créer un compte client | SOGENTIS" %}
-  {% elif economic_type == "vendor" %}
-    {% trans "Créer un compte vendeur | SOGENTIS" %}
-  {% elif economic_type == "b2b" %}
-    {% trans "Créer un compte entreprise | SOGENTIS" %}
-  {% else %}
-    {% trans "S'inscrire | SOGENTIS" %}
-  {% endif %}
-{% endblock %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
-{% endblock %}
-
-{% block content %}
-
-<div class="auth-shell py-4">
-  <div class="auth-card mx-auto">
-    <div class="card-body">
-
-      <!-- ===== TITRE DYNAMIQUE ===== -->
-      <h3 class="text-center mb-2 fw-bold">
-        {% if economic_type == "client" %}
-          {% trans "Créer un compte client" %}
-        {% elif economic_type == "vendor" %}
-          {% trans "Créer un compte vendeur" %}
-        {% elif economic_type == "b2b" %}
-          {% trans "Créer un compte entreprise" %}
-        {% else %}
-          {% trans "Créer un compte" %}
-        {% endif %}
-      </h3>
-
-      <!-- ===== SOUS-TITRE ===== -->
-      {% if economic_type %}
-        <p class="text-center text-muted mb-4">
-          {% if economic_type == "client" %}
-            {% trans "Accédez aux services et effectuez vos achats en toute simplicité." %}
-          {% elif economic_type == "vendor" %}
-            {% trans "Vendez vos produits et gérez votre activité sur la plateforme." %}
-          {% elif economic_type == "b2b" %}
-            {% trans "Créez un compte entreprise et collaborez avec notre réseau économique." %}
-          {% endif %}
-        </p>
-      {% endif %}
-
-      <!-- ===== MESSAGES DJANGO ===== -->
-      {% if messages %}
-        {% for message in messages %}
-          <div class="alert alert-{{ message.tags }} text-center" role="alert">
-            {{ message }}
-          </div>
-        {% endfor %}
-      {% endif %}
-
-      <!-- ===== MESSAGE SUCCÈS ===== -->
-      {% if account_created %}
-        <div class="alert alert-success text-center" role="alert">
-          {% trans "Votre compte a été créé avec succès. Vous allez être redirigé vers la page d’accueil…" %}
-        </div>
-        <script>
-          setTimeout(() => {
-            window.location.href = "{% url 'home' %}";
-          }, 5000);
-        </script>
-      {% endif %}
-
-      <!-- ===== FORMULAIRE ===== -->
-      <form method="post" enctype="multipart/form-data" novalidate>
-        {% csrf_token %}
-
-        {% if economic_type %}
-          <input type="hidden" name="economic_type" value="{{ economic_type }}">
-        {% endif %}
-
-        {{ form.non_field_errors }}
-        {{ profile_form.non_field_errors }}
-
-        <!-- ===== USER FORM ===== -->
-        {% for field in form %}
-          <div class="mb-3">
-            <label class="form-label" for="{{ field.id_for_label }}">
-              {{ field.label }}{% if field.field.required %} *{% endif %}
-            </label>
-            {{ field }}
-            {% if field.errors %}
-              <div class="text-danger small">
-                {{ field.errors|join:", " }}
-              </div>
-            {% endif %}
-          </div>
-        {% endfor %}
-
-        <!-- ===== PROFILE FORM (SAUF SPÉCIAUX) ===== -->
-        {% for field in profile_form %}
-          {% if field.name not in "terms judicial_record profile_picture" %}
-            <div class="mb-3">
-              <label class="form-label" for="{{ field.id_for_label }}">
-                {{ field.label }}{% if field.field.required %} *{% endif %}
-              </label>
-              {{ field }}
-              {% if field.errors %}
-                <div class="text-danger small">
-                  {{ field.errors|join:", " }}
-                </div>
-              {% endif %}
-            </div>
-          {% endif %}
-        {% endfor %}
-
-        <!-- ===== PHOTO DE PROFIL ===== -->
-        <div class="mb-3">
-          <label class="form-label" for="{{ profile_form.profile_picture.id_for_label }}">
-            {{ profile_form.profile_picture.label }}
-          </label>
-          {{ profile_form.profile_picture }}
-          {% for error in profile_form.profile_picture.errors %}
-            <div class="text-danger small">{{ error }}</div>
-          {% endfor %}
-        </div>
-
-        <!-- ===== CASIER JUDICIAIRE (PDF) ===== -->
-        <div class="mb-3">
-          <label class="form-label" for="{{ profile_form.judicial_record.id_for_label }}">
-            {{ profile_form.judicial_record.label }} *
-          </label>
-          {{ profile_form.judicial_record }}
-          {% for error in profile_form.judicial_record.errors %}
-            <div class="text-danger small">{{ error }}</div>
-          {% endfor %}
-          <div id="pdf-preview" class="mt-2"></div>
-        </div>
-
-        <!-- ===== CONDITIONS ===== -->
-        <div class="mb-3 form-check">
-          {{ profile_form.terms }}
-          <label class="form-check-label" for="{{ profile_form.terms.id_for_label }}">
-            {% trans "J'accepte les conditions générales et confirme sur mon honneur que mon identification est authentique" %}
-          </label>
-          {% for error in profile_form.terms.errors %}
-            <div class="text-danger small">{{ error }}</div>
-          {% endfor %}
-        </div>
-
-        {% if next %}
-          <input type="hidden" name="next" value="{{ next }}">
-        {% endif %}
-
-        <div class="d-grid">
-          <button type="submit" class="btn btn-success py-2 fw-bold">
-            {% trans "S'inscrire" %}
-          </button>
-        </div>
-      </form>
-
-      <!-- ===== LIEN LOGIN ===== -->
-      <div class="text-center mt-3">
-        <small>
-          {% trans "Déjà inscrit ?" %}
-          <a href="{% url 'accounts_users_web:login_economic' %}">
-            {% trans "Se connecter" %}
-          </a>
-        </small>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-{% endblock %}
-
-{% block extra_js %}
-<script src="{% static 'accounts_users/js/signup.js' %}"></script>
-
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const input = document.getElementById("id_judicial_record");
-    const preview = document.getElementById("pdf-preview");
-
-    if (input) {
-      input.addEventListener("change", () => {
-        const file = input.files[0];
-        if (!file) return;
-
-        if (file.type === "application/pdf") {
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            preview.innerHTML = `
-              <embed src="${e.target.result}"
-                     type="application/pdf"
-                     width="100%"
-                     height="300px"
-                     class="rounded border" />
-            `;
-          };
-          reader.readAsDataURL(file);
-        } else {
-          preview.innerHTML = `
-            <p class="text-danger fw-semibold">
-              {% trans "Format non pris en charge. Le fichier doit être en PDF." %}
-            </p>
-          `;
-        }
-      });
-    }
-  });
-</script>
-{% endblock %} {% endcomment %}

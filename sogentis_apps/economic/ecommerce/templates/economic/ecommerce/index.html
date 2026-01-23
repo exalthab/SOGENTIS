@@ -1,5 +1,281 @@
 {# templates/economic/ecommerce/index.html #}
 {% extends "economic/ecommerce/base_ecommerce.html" %}
+{% load static i18n ecom_money dashboard_tags %}
+
+{% block ecommerce_title %}
+  {% trans "Boutique" %} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block ecommerce_extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'economic/ecommerce/css/ecommerce_market2place.css' %}">
+{% endblock %}
+
+{% block ecommerce_extra_js %}
+  {{ block.super }}
+  <script src="{% static 'economic/ecommerce/js/ecommerce_marketplace.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+
+<section class="mk-market">
+  {# ===== Top strip (deals) ===== #}
+  <div class="mk-strip">
+    <div class="container-fluid px-3 px-lg-4">
+      <div class="mk-strip-inner">
+        <div class="mk-strip-left">
+          <span class="mk-strip-badge">🔥</span>
+          <strong class="mk-strip-title">{% trans "Super Deals" %}</strong>
+          <span class="mk-strip-muted">{% trans "Coupons • Promotions • Nouveautés" %}</span>
+        </div>
+
+        <div class="mk-strip-right d-none d-md-flex">
+          <span class="mk-pill">{% trans "Livraison rapide" %}</span>
+          <span class="mk-pill">{% trans "Paiement sécurisé" %}</span>
+          <span class="mk-pill">{% trans "Support 24/7" %}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid px-3 px-lg-4 py-3">
+
+    {# ===== Toolbar (sticky) ===== #}
+    <div class="mk-toolbar sticky-top">
+      <div class="mk-toolbar-inner">
+
+        <div class="mk-results">
+          <div class="mk-results-count">
+            <strong>
+              {% if page_obj %}{{ page_obj.paginator.count }}{% else %}{{ products|length }}{% endif %}
+            </strong>
+            <span>{% trans "produits" %}</span>
+            {% if current_category %}
+              <span class="mk-dot">·</span>
+              <span class="mk-muted">{{ current_category }}</span>
+            {% endif %}
+          </div>
+
+          {# chips actifs #}
+          <div class="mk-chips">
+            {% if request.GET.q %}
+              <a class="mk-chip" href="?{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}{% if sort %}sort={{ sort }}&{% endif %}{% if badge %}badge={{ badge }}&{% endif %}{% if request.GET.price_max %}price_max={{ request.GET.price_max }}{% endif %}">
+                “{{ request.GET.q|truncatechars:28 }}” <span class="mk-x">×</span>
+              </a>
+            {% endif %}
+
+            {% if request.GET.category %}
+              <a class="mk-chip" href="?{% if request.GET.q %}q={{ request.GET.q|urlencode }}&{% endif %}{% if sort %}sort={{ sort }}&{% endif %}{% if badge %}badge={{ badge }}&{% endif %}{% if request.GET.price_max %}price_max={{ request.GET.price_max }}{% endif %}">
+                {% trans "Catégorie" %} <span class="mk-x">×</span>
+              </a>
+            {% endif %}
+
+            {% if badge %}
+              <a class="mk-chip" href="?{% if request.GET.q %}q={{ request.GET.q|urlencode }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}{% if sort %}sort={{ sort }}&{% endif %}{% if request.GET.price_max %}price_max={{ request.GET.price_max }}{% endif %}">
+                {{ badge }} <span class="mk-x">×</span>
+              </a>
+            {% endif %}
+
+            {% if request.GET.price_max %}
+              <a class="mk-chip" href="?{% if request.GET.q %}q={{ request.GET.q|urlencode }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}{% if sort %}sort={{ sort }}&{% endif %}{% if badge %}badge={{ badge }}{% endif %}">
+                {% trans "Prix max" %} {{ request.GET.price_max }} <span class="mk-x">×</span>
+              </a>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="mk-actions">
+
+          {# bouton filtre mobile #}
+          <button class="btn btn-sm btn-outline-secondary d-lg-none"
+                  type="button"
+                  data-bs-toggle="offcanvas"
+                  data-bs-target="#mkFilters"
+                  aria-controls="mkFilters">
+            <i class="bi bi-sliders"></i> {% trans "Filtres" %}
+          </button>
+
+          {# tri #}
+          <form method="get" class="mk-sort">
+            {% if request.GET.q %}<input type="hidden" name="q" value="{{ request.GET.q }}">{% endif %}
+            {% if request.GET.category %}<input type="hidden" name="category" value="{{ request.GET.category }}">{% endif %}
+            {% if request.GET.badge %}<input type="hidden" name="badge" value="{{ request.GET.badge }}">{% endif %}
+            {% if request.GET.price_max %}<input type="hidden" name="price_max" value="{{ request.GET.price_max }}">{% endif %}
+
+            <select name="sort" class="form-select form-select-sm" onchange="this.form.submit()">
+              <option value="">{% trans "Trier par" %}</option>
+              <option value="deals" {% if sort == "deals" %}selected{% endif %}>🔥 {% trans "Super Deals" %}</option>
+              <option value="new" {% if sort == "new" %}selected{% endif %}>✨ {% trans "Nouveautés" %}</option>
+              <option value="best" {% if sort == "best" %}selected{% endif %}>⭐ {% trans "Meilleures ventes" %}</option>
+              <option value="price_asc" {% if sort == "price_asc" %}selected{% endif %}>{% trans "Prix croissant" %}</option>
+              <option value="price_desc" {% if sort == "price_desc" %}selected{% endif %}>{% trans "Prix décroissant" %}</option>
+            </select>
+          </form>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="row g-3">
+      {# ===== Desktop sidebar ===== #}
+      <aside class="col-lg-3 col-xl-2 d-none d-lg-block">
+        <div class="mk-side sticky-top">
+          {% include "economic/ecommerce/partials/_marketplace_filters.html" %}
+        </div>
+      </aside>
+
+      {# ===== Products ===== #}
+      <div class="col-lg-9 col-xl-10">
+
+        {% if products %}
+          <div class="row g-3 mk-grid">
+
+            {% for product in products %}
+              {% safe_url "economic:ecommerce:product_detail" product.slug as detail_url %}
+              {% safe_url "economic:ecommerce:add_to_cart" product.pk as add_url %}
+
+              <div class="col-6 col-md-4 col-lg-4 col-xl-3 col-xxl-2">
+                <article class="mk-card h-100">
+
+                  <div class="mk-media">
+                    <a class="mk-media-link {% if not detail_url %}disabled{% endif %}" href="{{ detail_url|default:'#' }}">
+                      {% with img=product.images.all.0 %}
+                        {% if img %}
+                          <img src="{{ img.image.url }}" alt="{{ img.alt_text|default:product.name }}" loading="lazy">
+                        {% else %}
+                          <img src="{% static 'global/image/product-placeholder.png' %}" alt="{% trans 'Produit' %}" loading="lazy">
+                        {% endif %}
+                      {% endwith %}
+                    </a>
+
+                    <div class="mk-badges">
+                      {% if product.old_price and product.old_price > product.price and product.discount_percent %}
+                        <span class="mk-badge mk-badge-off">-{{ product.discount_percent }}%</span>
+                      {% endif %}
+                      {% if product.is_featured %}
+                        <span class="mk-badge mk-badge-choice">{% trans "Choix" %}</span>
+                      {% endif %}
+                      {% if product.stock|default:0 <= 0 %}
+                        <span class="mk-badge mk-badge-out">{% trans "Rupture" %}</span>
+                      {% endif %}
+                    </div>
+
+                    <a class="mk-cart-fab {% if not add_url or product.stock|default:0 <= 0 %}disabled{% endif %}"
+                       href="{{ add_url|default:'#' }}"
+                       aria-label="{% trans 'Ajouter au panier' %}">
+                      <i class="bi bi-cart3"></i>
+                    </a>
+                  </div>
+
+                  <div class="mk-body">
+                    <h3 class="mk-title">
+                      <a href="{{ detail_url|default:'#' }}" class="{% if not detail_url %}disabled{% endif %}">
+                        {{ product.name|truncatechars:60 }}
+                      </a>
+                    </h3>
+
+                    <div class="mk-sub">
+                      <span class="mk-stars" aria-hidden="true">★★★★★</span>
+                      {% if product.average_rating %}
+                        <span class="mk-rate">{{ product.average_rating }}</span>
+                      {% endif %}
+                      {% if product.sold_count %}
+                        <span class="mk-dot">·</span>
+                        <span class="mk-sold">{{ product.sold_count }}+ {% trans "vendus" %}</span>
+                      {% endif %}
+                    </div>
+
+                    <div class="mk-price-row">
+                      <div class="mk-price">{% money product.price %}</div>
+
+                      {% if product.old_price and product.old_price > product.price %}
+                        <div class="mk-old">{% money product.old_price %}</div>
+                      {% endif %}
+                    </div>
+
+                    <div class="mk-meta">
+                      {% if product.is_featured %}
+                        <span class="mk-chip mk-chip-hot">🔥 {% trans "Deal" %}</span>
+                      {% endif %}
+                      <span class="mk-chip mk-chip-ship">🚚 {% trans "Livraison" %}</span>
+                      <span class="mk-chip mk-chip-sec">🔒 {% trans "Pay" %}</span>
+                    </div>
+
+                    {% if product.vendor %}
+                      <div class="mk-store">
+                        <i class="bi bi-shop"></i>
+                        <span class="mk-store-name">{{ product.vendor }}</span>
+                      </div>
+                    {% endif %}
+                  </div>
+
+                </article>
+              </div>
+            {% endfor %}
+
+          </div>
+
+          {% if is_paginated %}
+            <nav class="mt-4">
+              <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                  <li class="page-item">
+                    <a class="page-link"
+                       href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q|urlencode }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}{% if badge %}&badge={{ badge }}{% endif %}{% if request.GET.price_max %}&price_max={{ request.GET.price_max }}{% endif %}">
+                      &laquo;
+                    </a>
+                  </li>
+                {% endif %}
+
+                <li class="page-item disabled">
+                  <span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+                </li>
+
+                {% if page_obj.has_next %}
+                  <li class="page-item">
+                    <a class="page-link"
+                       href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q|urlencode }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}{% if badge %}&badge={{ badge }}{% endif %}{% if request.GET.price_max %}&price_max={{ request.GET.price_max }}{% endif %}">
+                      &raquo;
+                    </a>
+                  </li>
+                {% endif %}
+              </ul>
+            </nav>
+          {% endif %}
+
+        {% else %}
+          <div class="text-center py-5">
+            <h4>{% trans "Aucun produit disponible" %}</h4>
+            <p class="text-muted">{% trans "Les produits seront bientôt disponibles." %}</p>
+          </div>
+        {% endif %}
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+{# ===== Offcanvas filters (mobile) ===== #}
+<div class="offcanvas offcanvas-start mk-offcanvas" tabindex="-1" id="mkFilters" aria-labelledby="mkFiltersLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="mkFiltersLabel">{% trans "Filtres" %}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="{% trans 'Fermer' %}"></button>
+  </div>
+  <div class="offcanvas-body">
+    {% include "economic/ecommerce/partials/_marketplace_filters.html" %}
+  </div>
+</div>
+
+{% endblock %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/ecommerce/index.html #}
+{% extends "economic/ecommerce/base_ecommerce.html" %}
 {% load static i18n ecom_money %}
 
 {% block ecommerce_title %}
@@ -224,7 +500,7 @@
 
   </div>
 </section>
-{% endblock %}
+{% endblock %} {% endcomment %}
 
 
 

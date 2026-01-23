@@ -1,4 +1,67 @@
 {# templates/economic/formations/base_formations.html #}
+{% extends "economic/base_economic.html" %}
+{% load static i18n %}
+
+{% block title %}
+  {% block formations_page_title %}{% trans "Formations" %}{% endblock %} | {{ PROJECT_NAME|default:"SOGENTIS" }}
+{% endblock %}
+
+{% block extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'formations/css/formations.css' %}">
+  <link rel="stylesheet" href="{% static 'formations/css/formations_topbar.css' %}">
+{% endblock %}
+
+{# ================================ #}
+{#   ✅ MENU UNIQUE (FORMATIONS)     #}
+{# ================================ #}
+{% block section_menu %}
+  {% include "economic/formations/partials/_topbar_formations.html" %}
+{% endblock %}
+
+{% block content %}
+  <main class="formations-main">
+    {% block formations_content %}{% endblock %}
+  </main>
+{% endblock %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/formations/base_formations.html #}
+{% extends "economic/base_economic.html" %}
+{% load static i18n %}
+
+{% block title %}{% block formations_title %}{% trans "Formations" %}{% endblock %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'formations/css/formations_topbar.css' %}">
+  <link rel="stylesheet" href="{% static 'formations/css/formations.css' %}">
+  {% block formations_extra_css %}{% endblock %}
+{% endblock %}
+
+{% block section_menu %}
+  {% include "economic/formations/partials/_formations_topbar.html" %}
+{% endblock %}
+
+{% block content %}
+  <div class="container py-4">
+    {% block formations_content %}{% endblock %}
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'economic/formations/js/formations.js' %}"></script>
+  {% block formations_extra_js %}{% endblock %}
+{% endblock %} {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/economic/formations/base_formations.html #}
 {% extends "main.html" %}
 {% load static i18n %}
 
@@ -26,7 +89,7 @@
   {% block formations_extra_js %}{% endblock %}
 {% endblock %}
 
-
+  {% endcomment %}
 
 
 

@@ -1,3 +1,111 @@
+{# templates/search/search_results.html #}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Résultats de recherche" %}{% endblock %}
+
+{% block section_menu %}
+  {% include "core/partials/_menu_soci.html" %}
+{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'social/css/_search.css' %}">
+
+<div class="container my-5">
+
+  <!-- Bouton retour -->
+  <a href="{% url 'social:index' %}" class="btn btn-outline-primary mb-4">
+    ⬅️ {% trans "Retour à l'accueil social" %}
+  </a>
+
+  <h2 class="mb-4">
+    {% trans "Résultats pour" %}
+    <span class="text-primary fw-bold">"{{ query }}"</span>
+  </h2>
+
+  {% if message %}
+    <div class="alert alert-info">{{ message }}</div>
+  {% endif %}
+
+  {% if results %}
+    <div class="list-group shadow-sm">
+
+      {% for item in results %}
+        <a href="{{ item.url }}"
+           class="list-group-item list-group-item-action py-3">
+
+          <div class="d-flex justify-content-between align-items-center">
+
+            <div class="d-flex align-items-center flex-wrap gap-2">
+
+              {# Badge Type #}
+              <span class="badge
+                {% if item.type == 'projects' %}bg-success
+                {% elif item.type == 'publications' %}bg-info
+                {% elif item.type == 'engagements' %}bg-warning text-dark
+                {% elif item.type == 'documents' %}bg-secondary
+                {% else %}bg-dark{% endif %}
+              ">
+                {% if item.type == 'projects' %}
+                  📌 {% trans "Projet" %}
+                {% elif item.type == 'publications' %}
+                  📄 {% trans "Publication" %}
+                {% elif item.type == 'engagements' %}
+                  💪 {% trans "Engagement" %}
+                {% elif item.type == 'documents' %}
+                  📁 {% trans "Document" %}
+                {% else %}
+                  🔎 {% trans "Résultat" %}
+                {% endif %}
+              </span>
+
+              {# Badge Accès (Gratuit / Payant) #}
+              {% if item.access == "free" %}
+                <span class="badge bg-success">
+                  ✅ {% trans "Gratuit" %}
+                </span>
+              {% elif item.access == "paid" %}
+                <span class="badge bg-danger">
+                  🔒 {% trans "Payant" %}
+                </span>
+              {% endif %}
+
+              <h5 class="mb-0 ms-1">{{ item.title }}</h5>
+            </div>
+
+            <i class="fas fa-chevron-right text-muted"></i>
+          </div>
+
+          {% if item.snippet %}
+            <p class="mb-0 mt-2 text-muted" style="font-size: 0.9rem;">
+              {{ item.snippet }}{% if item.snippet and item.snippet|length > 30 %}...{% endif %}
+            </p>
+          {% endif %}
+
+        </a>
+      {% endfor %}
+
+    </div>
+  {% else %}
+    {% if query %}
+      <div class="alert alert-light border text-muted">
+        {% trans "Aucun résultat trouvé." %}
+      </div>
+    {% endif %}
+  {% endif %}
+
+</div>
+
+{% endblock %}
+
+
+
+
+
+
+
+{% comment %} {# 8) Template minimal templates/search/search_results.html #}
 {% extends "main.html" %}
 {% load static i18n %}
 
@@ -76,4 +184,4 @@
 
 </div>
 
-{% endblock %}
+{% endblock %} {% endcomment %}

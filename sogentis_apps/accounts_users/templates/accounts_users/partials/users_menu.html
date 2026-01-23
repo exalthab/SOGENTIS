@@ -1,3 +1,4 @@
+{# accounts_users/partials/users_menu.html #}
 {% load static i18n %}
 <div class="dropdown">
   <button class="btn btn-light dropdown-toggle" type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
@@ -14,7 +15,7 @@
 
     <!-- ✅ Lien vers changement de mot de passe -->
     <li>
-      <a class="dropdown-item" href="{% url 'accounts_users:password_change' %}">
+      <a class="dropdown-item" href="{% url 'accounts_users:password:password_change' %}">
         <i class="fas fa-key me-2"></i> {% trans "Changer mot de passe" %}
       </a>
     </li>
@@ -23,7 +24,7 @@
 
     <!-- ✅ Formulaire de déconnexion -->
     <li>
-      <form method="post" action="{% url 'accounts_users_web:logout' %}" style="margin: 0;">
+      <form method="post" action="{% url 'accounts_users:web:auth:logout' %}" style="margin: 0;">
         {% csrf_token %}
         <button type="submit" class="dropdown-item text-danger">
           <i class="fas fa-sign-out-alt me-2"></i> {% trans "Déconnexion" %}

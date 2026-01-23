@@ -19,7 +19,7 @@ class CustomPasswordResetView(PasswordResetView):
     template_name = "accounts_users/registration/password_reset_form.html"
     email_template_name = "accounts_users/registration/password_reset_email.html"
     subject_template_name = "accounts_users/registration/password_reset_subject.txt"
-    success_url = reverse_lazy('accounts_users_web:password_reset_done')
+    success_url = reverse_lazy('accounts_users:web:password:password_reset_done')
     form_class = CustomPasswordResetForm
 
     def form_valid(self, form):
@@ -41,7 +41,7 @@ class CustomPasswordResetDoneView(PasswordResetDoneView):
 class CustomPasswordResetConfirmView(PasswordResetConfirmView):
     template_name = "accounts_users/registration/password_reset_confirm.html"
     form_class = CustomSetPasswordForm
-    success_url = reverse_lazy('accounts_users_web:password_reset_complete')
+    success_url = reverse_lazy('accounts_users:web::password:password_reset_complete')
 
     def form_valid(self, form):
         messages.success(self.request, _("Votre mot de passe a bien été modifié !"))

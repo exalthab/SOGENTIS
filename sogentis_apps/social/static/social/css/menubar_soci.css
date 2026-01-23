@@ -1,0 +1,84 @@
+/* static/social/css/menubar_soci.css */
+
+.soci-navbar{
+  background: rgba(10, 12, 18, .72);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.soci-navbar .brand-text{
+  letter-spacing: .6px;
+  font-weight: 800;
+  font-size: .95rem;
+  opacity: .95;
+}
+
+.logo-sogentis{
+  max-height: 48px;
+  height: 42px;
+  width: auto;
+  border-radius: 10px;
+}
+
+.soci-navbar .nav-link{
+  border-radius: 999px;
+  padding: .45rem .75rem;
+  opacity: .92;
+}
+
+.soci-navbar .nav-link:hover{
+  background: rgba(255,255,255,.08);
+  opacity: 1;
+}
+
+.soci-navbar .nav-link.active{
+  background: rgba(255,193,7,.18);
+  border: 1px solid rgba(255,193,7,.35);
+  opacity: 1;
+}
+
+.border-white-10{
+  border-color: rgba(255,255,255,.14) !important;
+}
+
+.social-search{
+  min-width: 260px;
+  max-width: 360px;
+}
+
+@media (max-width: 991px){
+  .social-search{ width: 100%; min-width: 100%; }
+  .soci-donate-btn{ width: 100%; justify-content: center; }
+}
+
+.live-results{
+  position: absolute;
+  top: calc(100% + .5rem);
+  left: 0;
+  right: 0;
+  z-index: 1050;
+  background: #0b1220;
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 14px;
+  overflow: hidden;
+  display: none; /* ton JS live-search l’affichera */
+  max-height: 340px;
+  overflow-y: auto;
+}
+
+.skip-link{
+  position: absolute;
+  left: 12px;
+  top: -60px;
+  z-index: 2000;
+  padding: .5rem .75rem;
+  border-radius: 999px;
+  background: #ffc107;
+  color: #0b1220;
+  font-weight: 700;
+  text-decoration: none;
+}
+.skip-link:focus{
+  top: 12px;
+}

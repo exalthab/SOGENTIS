@@ -6,7 +6,8 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
-from accounts_users.forms.login_forms import CustomLoginForm
+from accounts_users.forms.login_forms import CustomLoginForm 
+
 
 
 def _i18n_reverse(name, request, **kwargs):
@@ -61,7 +62,7 @@ class WebLogoutCBV(LogoutView):
     """
 
     def get_next_page(self):
-        return _i18n_reverse("accounts_users_web:login", self.request)
+        return _i18n_reverse("accounts_users:web:login", self.request)
 
 
 

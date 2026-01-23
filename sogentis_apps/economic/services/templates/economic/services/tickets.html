@@ -1,4 +1,215 @@
-{# templates/services/tickets.html #}
+{# templates/economic/services/tickets.html #}
+{% extends "economic/base_economic.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Tickets" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'economic/css/services.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+
+  <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
+    <div>
+      <div class="text-muted small mb-1">{% trans "Support" %}</div>
+      <h1 class="h4 fw-bold mb-1">{% trans "Tickets & demandes" %}</h1>
+      <div class="text-muted">{% trans "Ouvrez une demande et suivez vos échanges." %}</div>
+    </div>
+    <div>
+      <a class="btn btn-outline-secondary" href="{% url 'economic:services:index' %}">
+        {% trans "Retour aux services" %}
+      </a>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-5">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+          <h2 class="h6 fw-bold mb-3">{% trans "Nouvelle demande" %}</h2>
+
+          <form method="post" novalidate>
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+            {% endif %}
+
+            {% for field in form %}
+              <div class="mb-3">
+                <label class="form-label fw-semibold" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+                {% for e in field.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+              </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-primary w-100">
+              {% trans "Envoyer" %}
+            </button>
+          </form>
+
+          <div class="small text-muted mt-3">
+            {% trans "Un membre de l’équipe vous répondra dès que possible." %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-7">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+          <h2 class="h6 fw-bold mb-3">{% trans "Mes tickets" %}</h2>
+
+          {% if tickets %}
+            <div class="list-group list-group-flush">
+              {% for t in tickets %}
+                <div class="list-group-item px-0">
+                  <div class="d-flex justify-content-between align-items-start gap-3">
+                    <div>
+                      <div class="fw-semibold">
+                        {{ t.subject|default:_("Demande") }}
+                        {% if t.service %}
+                          <span class="text-muted">·</span>
+                          <a href="{% url 'economic:services:detail' slug=t.service.slug %}" class="text-decoration-none">
+                            {{ t.service.title|default:t.service.slug }}
+                          </a>
+                        {% endif %}
+                      </div>
+
+                      <div class="text-muted small mt-1">
+                        <i class="fa-regular fa-calendar me-1"></i>{{ t.created_at }}
+                      </div>
+
+                      {% if t.message %}
+                        <div class="small mt-2">
+                          {{ t.message|truncatechars:180 }}
+                        </div>
+                      {% endif %}
+                    </div>
+
+                    <div class="text-end">
+                      <span class="badge text-bg-light border">
+                        {{ t.get_status_display|default:t.status }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="text-muted">{% trans "Aucun ticket pour le moment." %}</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+
+
+
+{% comment %} {% extends "economic/base_economic.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Tickets" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'economic/services/services.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-4 services-shell">
+
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <div>
+      <h1 class="h4 fw-bold mb-1">{% trans "Support & demandes" %}</h1>
+      <p class="text-muted mb-0">{% trans "Ouvrez une demande (ticket) et suivez vos échanges." %}</p>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-lg-5">
+      <div class="card border rounded-4">
+        <div class="card-body">
+          <div class="fw-bold mb-2">{% trans "Nouvelle demande" %}</div>
+          <form method="post" novalidate>
+            {% csrf_token %}
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">{{ form.service.label }}</label>
+              {{ form.service }}
+              {% if form.service.errors %}<div class="text-danger small mt-1">{{ form.service.errors }}</div>{% endif %}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">{{ form.subject.label }}</label>
+              {{ form.subject }}
+              {% if form.subject.errors %}<div class="text-danger small mt-1">{{ form.subject.errors }}</div>{% endif %}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">{{ form.message.label }}</label>
+              {{ form.message }}
+              {% if form.message.errors %}<div class="text-danger small mt-1">{{ form.message.errors }}</div>{% endif %}
+            </div>
+
+            <button class="btn btn-primary w-100" type="submit">
+              <i class="fas fa-paper-plane me-2"></i>{% trans "Envoyer" %}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-7">
+      <div class="card border rounded-4">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <div class="fw-bold">{% trans "Mes demandes" %}</div>
+            <div class="text-muted small">{{ tickets|length }}</div>
+          </div>
+
+          <div class="services-tickets">
+            {% for t in tickets %}
+              <div class="border rounded-4 p-3 mb-2">
+                <div class="d-flex justify-content-between align-items-start gap-2">
+                  <div>
+                    <div class="fw-semibold">{{ t.subject }}</div>
+                    <div class="text-muted small">
+                      {% if t.service %}{{ t.service }}{% else %}{% trans "Demande générale" %}{% endif %}
+                    </div>
+                  </div>
+                  <span class="badge text-bg-light border">{{ t.get_status_display }}</span>
+                </div>
+                <div class="text-muted small mt-2">
+                  {{ t.created_at|date:"d/m/Y H:i" }}
+                </div>
+              </div>
+            {% empty %}
+              <div class="alert alert-secondary border rounded-4 mb-0">
+                {% trans "Aucune demande pour l’instant." %}
+              </div>
+            {% endfor %}
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/services/tickets.html #}
 {% extends "economic/services/base_services.html" %}
 {% load static i18n widget_tweaks %}
 
@@ -121,4 +332,4 @@
   </div>
 
 </div>
-{% endblock %}
+{% endblock %} {% endcomment %}

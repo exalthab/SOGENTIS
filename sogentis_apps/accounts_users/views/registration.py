@@ -11,6 +11,7 @@ from accounts_users.forms.social.social_registration_form import SocialRegistrat
 from accounts_users.models.users_economic_profile import UserProfile
 
 
+
 # ======================================================
 # CHOIX DU TYPE DE COMPTE
 # ======================================================
@@ -20,10 +21,11 @@ def registration_choice_view(request):
         "accounts_users/registration/choice.html",
         {
             "page_title": _("Créer un compte"),
-            "registration_social_url": reverse("accounts_users_web:social_register"),
-            "registration_economic_url": reverse("accounts_users_web:register_economic"),
+            "registration_social_url": reverse("accounts_users:web:registration:social_register"),
+            "registration_economic_url": reverse("accounts_users:web:registration:register_economic"),
         },
     )
+    
 
 
 # ======================================================

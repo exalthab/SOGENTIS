@@ -12,7 +12,6 @@ def _clean_host(raw_host: str) -> str:
         host = host[4:]
     return host
 
-
 class DomainSiteMiddleware:
     """
     - définit request.site_type selon le host
@@ -31,7 +30,7 @@ class DomainSiteMiddleware:
             getattr(
                 settings,
                 "DOMAIN_BYPASS_PREFIXES",
-                ("/admin/", "/accounts/", "/dashboard/", "/i18n/", "/static/", "/media/"),
+                ("/admin/", "/accounts_users/", "accounts", "/dashboard/", "/i18n/", "/static/", "/media/"),
             )
         )
 

@@ -1,0 +1,701 @@
+{# templates/accounts_users/auth/register1_choice.html #}
+{% extends "accounts_users/registration/base1_auth.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Se connecter ou s’inscrire | SOGENTIS" %}{% endblock %}
+
+{% block auth_wrapper_class %}auth-wrapper-wide{% endblock %}
+
+{% block auth_title %}{% trans "Se connecter ou s’inscrire" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Choisissez l’espace auquel vous souhaitez accéder." %}{% endblock %}
+
+{% block auth_bg_image %}url('{% static "accounts_users/img/auth_bg.png" %}'){% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/auth_choice.css' %}">
+{% endblock %}
+
+{% block content %}
+
+
+{% if login_context == "social" %}
+  <div class="choice-context">✅ {% trans "Connexion – Engagement social" %}</div>
+{% elif login_context == "economic" %}
+  <div class="choice-context">✅ {% trans "Connexion – Pôle économique" %}</div>
+{% endif %}
+
+<div class="choice-grid">
+
+  <div class="choice-card choice-card--social">
+    <div class="choice-card-body">
+      <div class="choice-top">
+        <div class="choice-icon" aria-hidden="true">🤝</div>
+        <div class="choice-head">
+          <h5 class="choice-title">{% trans "Engagement social" %}</h5>
+          <p class="choice-desc">{% trans "Donateurs, membres, volontaires." %}</p>
+        </div>
+      </div>
+
+
+      <div class="choice-actions">
+        <a href="{% url 'accounts_users:web:auth:social_login' %}" class="btn btn-primary w-100 fw-bold">
+          {% trans "Se connecter" %}
+        </a>
+        <a href="{% url 'accounts_users:web:registration:social_register' %}" class="btn btn-outline-primary w-100 fw-bold">
+          {% trans "S’inscrire" %}
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="choice-card choice-card--economic">
+    <div class="choice-card-body">
+      <div class="choice-top">
+        <div class="choice-icon" aria-hidden="true">🛒</div>
+        <div class="choice-head">
+          <h5 class="choice-title">{% trans "Pôle économique" %}</h5>
+          <p class="choice-desc">{% trans "Clients, vendeurs, entreprises." %}</p>
+        </div>
+      </div>
+
+      <div class="choice-actions">
+        <a href="{% url 'accounts_users:web:auth:login_economic' %}" class="btn btn-success w-100 fw-bold">
+          {% trans "Se connecter" %}
+        </a>
+        <a href="{% url 'accounts_users:web:registration:register_economic_choice' %}" class="btn btn-outline-success w-100 fw-bold">
+          {% trans "S’inscrire" %}
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+{% comment %} {# templates/accounts_users/auth/choice.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Se connecter ou s’inscrire | SOGENTIS" %}{% endblock %}
+{% block auth_wrapper_class %}auth-wrapper-wide{% endblock %}
+
+{% block auth_title %}{% trans "Se connecter ou s’inscrire" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Choisissez l’espace auquel vous souhaitez accéder." %}{% endblock %}
+
+{% block auth_bg_image %}url('{% static "accounts_users/img/auth_bg.png" %}'){% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/auth_choice.css' %}">
+{% endblock %}
+
+{% block content %}
+
+{% if login_context == "social" %}
+  <div class="choice-context">✅ {% trans "Connexion – Engagement social" %}</div>
+{% elif login_context == "economic" %}
+  <div class="choice-context">✅ {% trans "Connexion – Pôle économique" %}</div>
+{% endif %}
+
+<div class="choice-grid">
+
+  <div class="choice-card choice-card--social">
+    <div class="choice-card-body">
+      <div class="choice-top">
+        <div class="choice-icon" aria-hidden="true">🤝</div>
+        <div class="choice-head">
+          <h5 class="choice-title">{% trans "Engagement social" %}</h5>
+          <p class="choice-desc">{% trans "Donateurs, membres, volontaires." %}</p>
+        </div>
+      </div>
+
+      <div class="choice-actions">
+        <a href="{% url 'accounts_users_web:social_login' %}" class="btn btn-primary w-100 fw-bold">
+          {% trans "Se connecter" %}
+        </a>
+        <a href="{% url 'accounts_users_web:social_register' %}" class="btn btn-outline-primary w-100 fw-bold">
+          {% trans "S’inscrire" %}
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="choice-card choice-card--economic">
+    <div class="choice-card-body">
+      <div class="choice-top">
+        <div class="choice-icon" aria-hidden="true">🛒</div>
+        <div class="choice-head">
+          <h5 class="choice-title">{% trans "Pôle économique" %}</h5>
+          <p class="choice-desc">{% trans "Clients, vendeurs, entreprises." %}</p>
+        </div>
+      </div>
+
+      <div class="choice-actions">
+        <a href="{% url 'accounts_users_web:login_economic' %}" class="btn btn-success w-100 fw-bold">
+          {% trans "Se connecter" %}
+        </a>
+        <a href="{% url 'accounts_users_web:register_economic_choice' %}" class="btn btn-outline-success w-100 fw-bold">
+          {% trans "S’inscrire" %}
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/accounts_users/auth/choice.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Se connecter ou s’inscrire | SOGENTIS" %}{% endblock %}
+
+{# ✅ wrapper large (choice page) #}
+{% block auth_wrapper_class %}auth-wrapper-wide{% endblock %}
+
+{% block auth_title %}{% trans "Se connecter ou s’inscrire" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Choisissez l’espace auquel vous souhaitez accéder." %}{% endblock %}
+
+{# ✅ BG générique (une seule ligne, propre) #}
+{% block auth_bg_image %}{% static "accounts_users/img/auth_bg.png" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/auth_choice.css' %}">
+{% endblock %}
+
+{% block content %}
+
+{# Badge contexte (optionnel) #}
+{% if login_context == "social" %}
+  <div class="choice-context">✅ {% trans "Connexion – Engagement social" %}</div>
+{% elif login_context == "economic" %}
+  <div class="choice-context">✅ {% trans "Connexion – Pôle économique" %}</div>
+{% endif %}
+
+<div class="choice-grid">
+
+  <!-- ENGAGEMENT SOCIAL -->
+  <div class="choice-card choice-card--social">
+    <div class="choice-card-body">
+      <div class="choice-top">
+        <div class="choice-icon" aria-hidden="true">🤝</div>
+        <div class="choice-head">
+          <h5 class="choice-title">{% trans "Engagement social" %}</h5>
+          <p class="choice-desc">{% trans "Donateurs, membres, volontaires." %}</p>
+        </div>
+      </div>
+
+      <div class="choice-actions">
+        <a href="{% url 'accounts_users_web:social_login' %}" class="btn btn-primary w-100 fw-bold">
+          {% trans "Se connecter" %}
+        </a>
+        <a href="{% url 'accounts_users_web:social_register' %}" class="btn btn-outline-primary w-100 fw-bold">
+          {% trans "S’inscrire" %}
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- PÔLE ÉCONOMIQUE -->
+  <div class="choice-card choice-card--economic">
+    <div class="choice-card-body">
+      <div class="choice-top">
+        <div class="choice-icon" aria-hidden="true">🛒</div>
+        <div class="choice-head">
+          <h5 class="choice-title">{% trans "Pôle économique" %}</h5>
+          <p class="choice-desc">{% trans "Clients, vendeurs, entreprises." %}</p>
+        </div>
+      </div>
+
+      <div class="choice-actions">
+        <a href="{% url 'accounts_users_web:login_economic' %}" class="btn btn-success w-100 fw-bold">
+          {% trans "Se connecter" %}
+        </a>
+        <a href="{% url 'accounts_users_web:register_economic_choice' %}" class="btn btn-outline-success w-100 fw-bold">
+          {% trans "S’inscrire" %}
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<hr class="my-4">
+
+<div class="choice-footer d-flex justify-content-between align-items-center flex-wrap gap-2">
+  <a class="btn btn-link px-0" href="{% url 'core:home' %}">← {% trans "Retour au site" %}</a>
+  <small class="text-muted">{% trans "Besoin d’aide ? Contactez le support SOGENTIS." %}</small>
+</div>
+
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/accounts_users/auth/choice.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Se connecter ou s’inscrire | SOGENTIS" %}{% endblock %}
+
+{# ✅ wrapper large comme tes pages de choix #}
+{% block auth_wrapper_class %}auth-wrapper-wide{% endblock %}
+
+{% block auth_title %}{% trans "Se connecter ou s’inscrire" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Choisissez l’espace auquel vous souhaitez accéder." %}{% endblock %}
+
+{# ✅ BG (générique) #}
+{% block auth_bg_image %}{% static "accounts_users/img/auth_bg.png" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/auth_choice.css' %}">
+{% endblock %}
+
+{% block content %}
+
+{# Badge contexte (optionnel) #}
+{% if login_context == "social" %}
+  <div class="choice-context">✅ {% trans "Connexion – Engagement social" %}</div>
+{% elif login_context == "economic" %}
+  <div class="choice-context">✅ {% trans "Connexion – Pôle économique" %}</div>
+{% endif %}
+
+<div class="choice-grid">
+
+  <!-- ENGAGEMENT SOCIAL -->
+  <div class="choice-card choice-card--social">
+    <div class="choice-card-body">
+      <div class="choice-top">
+        <div class="choice-icon" aria-hidden="true">🤝</div>
+        <div class="choice-head">
+          <h5 class="choice-title">{% trans "Engagement social" %}</h5>
+          <p class="choice-desc">{% trans "Donateurs, membres, volontaires." %}</p>
+        </div>
+      </div>
+
+      <div class="choice-actions">
+        <a href="{% url 'accounts_users_web:social_login' %}" class="btn btn-primary w-100">
+          {% trans "Se connecter" %}
+        </a>
+        <a href="{% url 'accounts_users_web:social_register' %}" class="btn btn-outline-primary w-100">
+          {% trans "S’inscrire" %}
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- PÔLE ÉCONOMIQUE -->
+  <div class="choice-card choice-card--economic">
+    <div class="choice-card-body">
+      <div class="choice-top">
+        <div class="choice-icon" aria-hidden="true">🛒</div>
+        <div class="choice-head">
+          <h5 class="choice-title">{% trans "Pôle économique" %}</h5>
+          <p class="choice-desc">{% trans "Clients, vendeurs, entreprises." %}</p>
+        </div>
+      </div>
+
+      <div class="choice-actions">
+        <a href="{% url 'accounts_users_web:login_economic' %}" class="btn btn-success w-100">
+          {% trans "Se connecter" %}
+        </a>
+        <a href="{% url 'accounts_users_web:register_economic_choice' %}" class="btn btn-outline-success w-100">
+          {% trans "S’inscrire" %}
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<hr class="my-4">
+
+<div class="choice-footer">
+  <a class="btn btn-link px-0" href="{% url 'core:home' %}">← {% trans "Retour au site" %}</a>
+  <small class="text-muted">{% trans "Besoin d’aide ? Contactez le support SOGENTIS." %}</small>
+</div>
+
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+{% comment %} {# templates/accounts_users/auth/choice.html #}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Se connecter ou s’inscrire | SOGENTIS" %}{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* ========= CHOICE (scopé) ========= */
+  .auth-choice{
+    padding: clamp(2rem, 1.5rem + 2vw, 4rem) 0;
+  }
+
+  .auth-choice-hero{
+    text-align:center;
+    margin-bottom: 1.25rem;
+  }
+
+  .auth-choice-hero h1{
+    font-weight: 900;
+    letter-spacing: -.02em;
+    margin-bottom: .35rem;
+  }
+
+  .auth-choice-hero p{
+    color: rgba(0,0,0,.62);
+    margin: 0;
+  }
+
+  /* cards */
+  .choice-grid{
+    margin-top: 1.5rem;
+  }
+
+  .choice-card{
+    border: 0;
+    border-radius: 18px;
+    background: rgba(255,255,255,.92);
+    box-shadow: 0 18px 55px rgba(0,0,0,.10);
+    overflow: hidden;
+    height: 100%;
+  }
+
+  .choice-card::before{
+    content:"";
+    display:block;
+    height: 6px;
+    background: linear-gradient(90deg, rgba(13,110,253,.9), rgba(25,135,84,.9));
+    opacity: .9;
+  }
+
+  .choice-card-body{
+    padding: 1.25rem 1.25rem 1.15rem;
+    display:flex;
+    flex-direction:column;
+    gap: .75rem;
+  }
+
+  .choice-top{
+    display:flex;
+    align-items:flex-start;
+    gap: 12px;
+  }
+
+  .choice-icon{
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size: 22px;
+    flex: 0 0 auto;
+  }
+
+  .choice-title{
+    margin: 0;
+    font-weight: 900;
+    font-size: 1.1rem;
+    line-height: 1.15;
+  }
+
+  .choice-desc{
+    color: rgba(0,0,0,.62);
+    margin: 0;
+  }
+
+  .choice-actions{
+    margin-top: .25rem;
+    display:grid;
+    gap: .6rem;
+  }
+
+  .choice-actions .btn{
+    border-radius: 14px;
+    padding: 12px 14px;
+    font-weight: 900;
+  }
+
+  /* Social theme */
+  .choice-card--social .choice-icon{
+    background: rgba(13,110,253,.12);
+  }
+  .choice-card--social::before{
+    background: linear-gradient(90deg, rgba(13,110,253,.95), rgba(13,110,253,.45));
+  }
+
+  /* Economic theme */
+  .choice-card--economic .choice-icon{
+    background: rgba(25,135,84,.12);
+  }
+  .choice-card--economic::before{
+    background: linear-gradient(90deg, rgba(25,135,84,.95), rgba(25,135,84,.45));
+  }
+
+  /* Context badge */
+  .choice-context{
+    margin-top: .65rem;
+    display:inline-flex;
+    align-items:center;
+    gap: .5rem;
+    padding: .35rem .65rem;
+    border-radius: 999px;
+    border: 1px solid rgba(0,0,0,.08);
+    background: rgba(255,255,255,.8);
+    color: rgba(0,0,0,.65);
+    font-weight: 700;
+    font-size: .9rem;
+  }
+
+  @media (max-width: 576px){
+    .choice-card-body{ padding: 1.1rem; }
+    .choice-icon{ width: 48px; height: 48px; border-radius: 14px; }
+  }
+
+  /* RTL */
+  html[dir="rtl"] .choice-top{ flex-direction: row-reverse; }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="auth-choice">
+  <div class="container">
+    <div class="auth-choice-hero">
+      <h1>{% trans "Se connecter ou s’inscrire" %}</h1>
+
+      {% if login_context == "social" %}
+        <span class="choice-context">✅ {% trans "Connexion – Engagement social" %}</span>
+      {% elif login_context == "economic" %}
+        <span class="choice-context">✅ {% trans "Connexion – Pôle économique" %}</span>
+      {% else %}
+        <p>{% trans "Choisissez l’espace auquel vous souhaitez accéder." %}</p>
+      {% endif %}
+    </div>
+
+    <div class="row justify-content-center g-4 choice-grid">
+
+      <!-- ENGAGEMENT SOCIAL -->
+      <div class="col-12 col-md-5 col-lg-4">
+        <div class="choice-card choice-card--social">
+          <div class="choice-card-body">
+            <div class="choice-top">
+              <div class="choice-icon" aria-hidden="true">🤝</div>
+              <div>
+                <h5 class="choice-title">{% trans "Engagement social" %}</h5>
+                <p class="choice-desc">{% trans "Donateurs, membres, volontaires." %}</p>
+              </div>
+            </div>
+
+            <div class="choice-actions">
+              <a href="{% url 'accounts_users_web:social_login' %}" class="btn btn-primary w-100">
+                {% trans "Se connecter" %}
+              </a>
+              <a href="{% url 'accounts_users_web:social_register' %}" class="btn btn-outline-primary w-100">
+                {% trans "S’inscrire" %}
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PÔLE ÉCONOMIQUE -->
+      <div class="col-12 col-md-5 col-lg-4">
+        <div class="choice-card choice-card--economic">
+          <div class="choice-card-body">
+            <div class="choice-top">
+              <div class="choice-icon" aria-hidden="true">🛒</div>
+              <div>
+                <h5 class="choice-title">{% trans "Pôle économique" %}</h5>
+                <p class="choice-desc">{% trans "Clients, vendeurs, entreprises." %}</p>
+              </div>
+            </div>
+
+            <div class="choice-actions">
+              <a href="{% url 'accounts_users_web:login_economic' %}" class="btn btn-success w-100">
+                {% trans "Se connecter" %}
+              </a>
+              <a href="{% url 'accounts_users_web:register_economic_choice' %}" class="btn btn-outline-success w-100">
+                {% trans "S’inscrire" %}
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+
+
+
+
+{% comment %} {# templates/accounts_users/auth/choice.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Se connecter ou s’inscrire | SOGENTIS" %}{% endblock %}
+
+{# ✅ wrapper large (comme une page de choix) #}
+{% block auth_wrapper_class %}auth-wrapper-wide{% endblock %}
+
+{% block auth_title %}{% trans "Se connecter ou s’inscrire" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Choisissez l’espace auquel vous souhaitez accéder." %}{% endblock %}
+
+{# ✅ BG générique (une seule ligne, propre) #}
+{% block auth_bg_image %}{% static "accounts_users/img/auth_bg.png" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/auth_choice.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-4 text-center">
+
+  <div class="row justify-content-center mt-3 g-4">
+
+    <!-- SOCIAL -->
+    <div class="col-md-5 col-lg-4">
+      <div class="card h-100 choice-card choice-card--social">
+        <div class="card-body d-flex flex-column p-4">
+          <div class="d-flex align-items-start gap-3 mb-3 text-start">
+            <div class="choice-icon" aria-hidden="true">🤝</div>
+            <div>
+              <h5 class="mb-1 fw-bold">{% trans "Engagement social" %}</h5>
+              <p class="mb-0 text-muted">{% trans "Donateurs, membres, volontaires." %}</p>
+            </div>
+          </div>
+
+          <div class="mt-auto d-grid gap-2">
+            <a href="{% url 'accounts_users_web:social_login' %}" class="btn btn-primary w-100 fw-bold">
+              {% trans "Se connecter" %}
+            </a>
+            <a href="{% url 'accounts_users_web:social_register' %}" class="btn btn-outline-primary w-100 fw-bold">
+              {% trans "S’inscrire" %}
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ECONOMIQUE -->
+    <div class="col-md-5 col-lg-4">
+      <div class="card h-100 choice-card choice-card--economic">
+        <div class="card-body d-flex flex-column p-4">
+          <div class="d-flex align-items-start gap-3 mb-3 text-start">
+            <div class="choice-icon" aria-hidden="true">🛒</div>
+            <div>
+              <h5 class="mb-1 fw-bold">{% trans "Pôle économique" %}</h5>
+              <p class="mb-0 text-muted">{% trans "Clients, vendeurs, entreprises." %}</p>
+            </div>
+          </div>
+
+          <div class="mt-auto d-grid gap-2">
+            <a href="{% url 'accounts_users_web:login_economic' %}" class="btn btn-success w-100 fw-bold">
+              {% trans "Se connecter" %}
+            </a>
+            <a href="{% url 'accounts_users_web:register_economic_choice' %}" class="btn btn-outline-success w-100 fw-bold">
+              {% trans "S’inscrire" %}
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <hr class="my-4">
+
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <a href="{% url 'core:home' %}" class="btn btn-link px-0">← {% trans "Retour au site" %}</a>
+    <small class="text-muted">{% trans "Besoin d’aide ? Contactez le support SOGENTIS." %}</small>
+  </div>
+</div>
+{% endblock %}
+ {% endcomment %}
+
+
+
+
+
+
+
+
+{% comment %} {# templates/accounts_users/auth/choice.html #}
+{% extends "main.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="container py-5 text-center">
+    <h1>{% trans "Se connecter ou s’inscrire" %}</h1>
+
+    <div class="row justify-content-center mt-4 g-4">
+
+        <!-- SOCIAL -->
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5>{% trans "Engagement social" %}</h5>
+                    <p>{% trans "Donateurs, membres, volontaires." %}</p>
+                    <a href="{% url 'accounts_users_web:social_login' %}"
+                       class="btn btn-primary w-100 mb-2">
+                        {% trans "Se connecter" %}
+                    </a>
+                    <a href="{% url 'accounts_users_web:social_register' %}"
+                       class="btn btn-outline-primary w-100">
+                        {% trans "S’inscrire" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ECONOMIQUE -->
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5>{% trans "Pôle économique" %}</h5>
+                    <p>{% trans "Clients, vendeurs, entreprises." %}</p>
+                    <a href="{% url 'accounts_users_web:login_economic' %}"
+                       class="btn btn-success w-100 mb-2">
+                        {% trans "Se connecter" %}
+                    </a>
+                    <a href="{% url 'accounts_users_web:register_choice' %}"
+                       class="btn btn-outline-success w-100">
+                        {% trans "S’inscrire" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %} {% endcomment %}

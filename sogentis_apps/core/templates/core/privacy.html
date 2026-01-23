@@ -1,6 +1,98 @@
 {% extends "core/base.html" %}
 {% load static i18n domain_urls language_tags %}
 
+{% block title %}{% trans "Mentions légales" %}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+  <!-- Retour -->
+  <div class="mb-4">
+    <button type="button" onclick="window.history.back()" class="btn btn-outline-secondary" aria-label="{% trans 'Retour' %}">
+      ← {% trans "Retour" %}
+    </button>
+  </div>
+
+  <header class="mb-4">
+    <h1 class="mb-2">{% trans "Mentions légales" %}</h1>
+    <p class="text-muted mb-0">
+      {% blocktrans with project=PROJECT_NAME|default:"Nom du projet" %}
+      Informations légales relatives au site {{ project }}.
+      {% endblocktrans %}
+    </p>
+  </header>
+
+  <section class="mb-4">
+    <h3 class="h5">1. {% trans "Propriétaire du site" %}</h3>
+    <p class="mb-1">
+      {% blocktrans with project=PROJECT_NAME|default:"Nom du projet" %}
+      Le site {{ project }} est édité par :
+      {% endblocktrans %}
+    </p>
+    <ul class="mb-0">
+      <li>{% trans "Nom de l'entreprise" %} : <strong>SOGENTIS</strong></li>
+      <li>{% trans "Adresse" %} : Dakar – Sénégal</li>
+    </ul>
+  </section>
+
+  <section class="mb-4">
+    <h3 class="h5">2. {% trans "Hébergement" %}</h3>
+    <ul class="mb-0">
+      <li>{% trans "Hébergeur" %} : <strong>SOGENTIS</strong></li>
+      <li>{% trans "Adresse" %} : Dakar – Sénégal</li>
+    </ul>
+  </section>
+
+  <section class="mb-4">
+    <h3 class="h5">3. {% trans "Propriété intellectuelle" %}</h3>
+    <p class="mb-0">
+      {% blocktrans with project=PROJECT_NAME|default:"Nom du projet" %}
+      Tous les contenus présents sur le site {{ project }} sont protégés par la législation sur la propriété intellectuelle.
+      {% endblocktrans %}
+    </p>
+  </section>
+
+  <section class="mb-4">
+    <h3 class="h5">4. {% trans "Données personnelles" %}</h3>
+    <p class="mb-0">
+      {% trans "Les données personnelles recueillies sur ce site sont traitées conformément à notre politique de confidentialité." %}
+      <a href="{% url 'core:privacy_policy' %}">{% trans "Consulter la politique de confidentialité" %}</a>.
+    </p>
+  </section>
+
+  <section class="mb-4">
+    <h3 class="h5">5. {% trans "Responsabilité" %}</h3>
+    <p class="mb-0">
+      {% blocktrans with project=PROJECT_NAME|default:"Nom du projet" %}
+      Le site {{ project }} ne peut être tenu responsable des erreurs ou omissions pouvant apparaître sur les pages du site.
+      {% endblocktrans %}
+    </p>
+  </section>
+
+  <section class="mt-5">
+    <div class="p-4 border rounded-3 bg-light">
+      <h3 class="h5 mb-2">6. {% trans "Contact" %}</h3>
+      <p class="text-muted mb-3">
+        {% trans "Pour toute demande, merci d’utiliser le formulaire de contact (l’adresse email n’est pas affichée publiquement)." %}
+      </p>
+      <a class="btn btn-primary" href="{% url 'core:contact' %}">
+        {% trans "Nous contacter" %}
+      </a>
+    </div>
+  </section>
+
+</div>
+{% endblock %}
+
+
+
+
+
+
+{% comment %} {# core/privacy.html #}
+{% extends "core/base.html" %}
+{% load static i18n domain_urls language_tags %}
+
 {% block title %}
     Mentions légales
 {% endblock %}
@@ -47,4 +139,4 @@
     </a>
   </p>
 </div>
-{% endblock %}
+{% endblock %} {% endcomment %}

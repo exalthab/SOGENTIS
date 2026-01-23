@@ -1,0 +1,138 @@
+{# templates/economic/formations/learner/calendar.html #}
+{% extends "economic/formations/base_formations.html" %}
+{% load i18n %}
+
+{% block formations_title %}{% trans "Mon calendrier" %}{% endblock %}
+
+{% block formations_content %}
+<h1 class="h4 mb-3">{% trans "Sessions (90 jours)" %}</h1>
+
+<div class="p-3 bg-white border rounded-3">
+  {% if sessions %}
+    <div class="table-responsive">
+      <table class="table table-sm align-middle mb-0">
+        <thead>
+          <tr>
+            <th>{% trans "Cours" %}</th>
+            <th>{% trans "Début" %}</th>
+            <th>{% trans "Fin" %}</th>
+            <th>{% trans "Lieu / lien" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in sessions %}
+            <tr>
+              <td>{{ s.course }}</td>
+              <td>{{ s.start_at|date:"d/m/Y H:i" }}</td>
+              <td>{% if s.end_at %}{{ s.end_at|date:"d/m/Y H:i" }}{% endif %}</td>
+              <td>
+                {% if s.location %}{{ s.location }}{% endif %}
+                {% if s.meeting_url %}
+                  <div><a href="{{ s.meeting_url }}" target="_blank" rel="noopener">{% trans "Rejoindre" %}</a></div>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="small text-muted mb-0">{% trans "Aucune session à venir." %}</p>
+  {% endif %}
+</div>
+{% endblock %}
+
+
+
+
+{% comment %} {# templates/economic/formations/learner/calendar.html #}
+{% extends "economic/formations/base_formations.html" %}
+{% load i18n %}
+
+{% block formations_title %}{% trans "Mon calendrier" %}{% endblock %}
+
+{% block formations_content %}
+
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <div>
+      <h1 class="h4 fw-bold mb-1">{% trans "Mon calendrier" %}</h1>
+      <div class="text-muted">
+        {% trans "Fenêtre" %} : {{ now|date:"d/m/Y" }} → {{ horizon|date:"d/m/Y" }} ({{ days }} {% trans "jours" %})
+      </div>
+    </div>
+    <div class="d-flex gap-2">
+      <a class="btn btn-outline-secondary" href="{% url 'economic:formations:learner:dashboard' %}">{% trans "Retour" %}</a>
+      <div class="btn-group">
+        <a class="btn btn-outline-dark btn-sm" href="?days=30">30</a>
+        <a class="btn btn-outline-dark btn-sm" href="?days=90">90</a>
+        <a class="btn btn-outline-dark btn-sm" href="?days=180">180</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="card border-0 shadow-sm">
+    <div class="card-body">
+      {% if sessions %}
+        <div class="list-group list-group-flush">
+          {% for s in sessions %}
+            {% include "economic/formations/learner/partials/_session_item.html" with s=s %}
+          {% endfor %}
+        </div>
+      {% else %}
+        {% include "economic/formations/partials/_empty_state.html" with
+          title=_("Aucune session")
+          text=_("Aucune session planifiée sur cette période.")
+        %}
+      {% endif %}
+    </div>
+  </div>
+
+{% endblock %}
+ {% endcomment %}
+
+
+
+
+{% comment %} {# templates/economic/formations/learner/calendar.html #}
+{% extends "economic/formations/base_formations.html" %}
+{% load i18n %}
+
+{% block formations_title %}{% trans "Mon calendrier" %}{% endblock %}
+
+{% block formations_content %}
+<h1 class="h4 mb-3">{% trans "Sessions (90 jours)" %}</h1>
+
+<div class="p-3 bg-white border rounded-3">
+  {% if sessions %}
+    <div class="table-responsive">
+      <table class="table table-sm align-middle mb-0">
+        <thead>
+          <tr>
+            <th>{% trans "Cours" %}</th>
+            <th>{% trans "Début" %}</th>
+            <th>{% trans "Fin" %}</th>
+            <th>{% trans "Lieu / lien" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in sessions %}
+            <tr>
+              <td>{{ s.course.title }}</td>
+              <td>{{ s.starts_at|date:"d/m/Y H:i" }}</td>
+              <td>{{ s.ends_at|date:"d/m/Y H:i" }}</td>
+              <td>
+                {% if s.location %}{{ s.location }}{% endif %}
+                {% if s.meeting_url %}
+                  <div><a href="{{ s.meeting_url }}" target="_blank" rel="noopener">{% trans "Rejoindre" %}</a></div>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="small text-muted mb-0">{% trans "Aucune session à venir." %}</p>
+  {% endif %}
+</div>
+{% endblock %} {% endcomment %}

@@ -1,0 +1,73 @@
+/* static/economic/css/eco_navbar.css */
+
+.eco-navbar .eco-brand{
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+}
+
+/* Les 2 groupes en ligne, sans écraser les textes */
+.eco-navbar .eco-navbar-inner{
+  min-width: 0;
+}
+
+/* ✅ Le groupe gauche peut scroller (au lieu de tronquer "Formations") */
+.eco-navbar .eco-nav-primary{
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.eco-navbar .eco-nav-primary::-webkit-scrollbar{ display:none; }
+
+/* Empêche les items de rétrécir en largeur */
+.eco-navbar .eco-nav-primary .nav-item,
+.eco-navbar .eco-nav-tools .nav-item{
+  flex: 0 0 auto;
+}
+
+/* Style clean */
+.eco-navbar .eco-nav-link{
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .65rem .8rem;
+  border-radius: 999px;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+/* Badge compact sans élargir le lien */
+.eco-dot-badge{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 6px;
+  margin-left: .35rem;
+  border-radius: 999px;
+  font-size: 12px;
+  background: #dc3545;
+  color: #fff;
+}
+
+/* Nom user non envahissant */
+.eco-user-name{
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Mobile : le collapse devient vertical (normal) */
+@media (max-width: 991.98px){
+  .eco-navbar .eco-nav-primary,
+  .eco-navbar .eco-nav-tools{
+    overflow: visible;
+    flex-wrap: wrap;
+    gap: .25rem;
+  }
+}

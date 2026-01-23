@@ -1,5 +1,205 @@
 {# core/partials/_menubar_soci.html #}
 {% load static i18n %}
+{% get_current_language as CUR_LANG %}
+{% get_available_languages as LANGUAGES %}
+
+<nav class="navbar soci-navbar navbar-expand-lg navbar-dark bg-dark shadow-sm sticky-top"
+     aria-label="{% trans 'Menu de navigation social' %}"
+     role="navigation">
+
+  <div class="container align-items-center">
+
+    <!-- Logo -->
+    <a class="navbar-brand fw-bold d-flex align-items-center py-0"
+       href="{% url 'core:home' %}"
+       aria-label="{% trans 'Aller à l’accueil' %}">
+      <img src="{% static 'global/image/Sogentis3.png' %}"
+           alt="SOGENTIS"
+           class="logo-sogentis"
+           style="max-height: 48px;">
+    </a>
+
+    <!-- Toggle -->
+    <button class="navbar-toggler" type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#socialNavbar"
+            aria-controls="socialNavbar"
+            aria-expanded="false"
+            aria-label="{% trans 'Basculer la navigation' %}">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Menu -->
+    <div class="collapse navbar-collapse" id="socialNavbar">
+
+      <!-- Navigation principale -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-lg-2 align-items-lg-center">
+
+        <!-- Accueil -->
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match and request.resolver_match.app_name == 'social' and request.resolver_match.url_name == 'index' %}active text-warning{% endif %}"
+             href="{% url 'social:index' %}">
+            {% trans "Accueil Social" %}
+          </a>
+        </li>
+
+        <!-- À propos -->
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match and request.resolver_match.app_name == 'about' %}active text-warning{% endif %}"
+             href="{% url 'about:about_index' %}">
+            {% trans "À propos" %}
+          </a>
+        </li>
+
+        <!-- Projets -->
+        <li class="nav-item">
+          <a class="nav-link"
+             href="{% if request.resolver_match and request.resolver_match.app_name == 'social' and request.resolver_match.url_name == 'index' %}#projects{% else %}{% url 'social:index' %}#projects{% endif %}">
+            {% trans "Projets" %}
+          </a>
+        </li>
+
+        <!-- Participer -->
+        <li class="nav-item">
+          <a class="nav-link"
+             href="{% if request.resolver_match and request.resolver_match.app_name == 'social' and request.resolver_match.url_name == 'index' %}#participate{% else %}{% url 'social:index' %}#participate{% endif %}">
+            {% trans "Participer" %}
+          </a>
+        </li>
+
+        <!-- Vidéo -->
+        <li class="nav-item">
+          <a class="nav-link"
+             href="{% if request.resolver_match and request.resolver_match.app_name == 'social' and request.resolver_match.url_name == 'index' %}#video{% else %}{% url 'social:index' %}#video{% endif %}">
+            {% trans "Vidéo" %}
+          </a>
+        </li>
+
+        <!-- Contact -->
+        <li class="nav-item">
+          <a class="nav-link text-white" href="{% url 'core:contact' %}">
+            📧 {% trans "Contact" %}
+          </a>
+        </li>
+
+      </ul>
+
+      <!-- Actions droite -->
+      <div class="d-flex align-items-center ms-lg-auto gap-2 flex-wrap">
+
+        {% if request.resolver_match and request.resolver_match.app_name == 'social' and request.resolver_match.url_name == 'index' %}
+        <!-- Recherche -->
+        <form class="d-flex align-items-center position-relative mb-0"
+              role="search"
+              method="get"
+              action="{% url 'search:search' %}"
+              id="live-search-form">
+
+          <input type="search"
+                 name="q"
+                 id="live-search-input"
+                 class="form-control form-control-sm rounded-pill me-2"
+                 placeholder="{% trans 'Rechercher...' %}"
+                 aria-label="{% trans 'Rechercher' %}"
+                 autocomplete="off"
+                 style="max-width: 180px;">
+
+          <button class="btn btn-sm btn-primary rounded-pill px-3" type="submit">
+            {% trans "OK" %}
+          </button>
+
+          <div id="live-search-results" class="live-results shadow-sm"></div>
+        </form>
+        {% endif %}
+
+        <!-- ✅ Langue : FR = langue par défaut (pas de /fr/), EN = /en/... -->
+        {% with default_lang='fr' %}
+        {% with full_path=request.get_full_path %}
+        {% with prefix4=full_path|slice:':4' %}
+        {% with tail=full_path|slice:'3:' %}
+
+        <div class="dropdown">
+          <button class="btn btn-sm btn-outline-light dropdown-toggle rounded-pill"
+                  type="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                  aria-label="{% trans 'Changer de langue' %}">
+            🌐 <span class="text-uppercase">{{ CUR_LANG }}</span>
+          </button>
+
+          <ul class="dropdown-menu dropdown-menu-end">
+            {% for code, name in LANGUAGES %}
+              <li>
+                {# 1) Si URL déjà préfixée (/en/... ou /fr/...) #}
+                {% if prefix4 == '/en/' or prefix4 == '/fr/' %}
+                  {# FR (default) => enlever le préfixe #}
+                  {% if code == default_lang %}
+                    <a class="dropdown-item {% if code == CUR_LANG %}active{% endif %}"
+                       href="{{ tail }}">
+                      {{ name }}
+                    </a>
+                  {% else %}
+                    <a class="dropdown-item {% if code == CUR_LANG %}active{% endif %}"
+                       href="/{{ code }}{{ tail }}">
+                      {{ name }}
+                    </a>
+                  {% endif %}
+                {% else %}
+                  {# 2) URL sans préfixe (langue par défaut) #}
+                  {% if code == default_lang %}
+                    <a class="dropdown-item {% if code == CUR_LANG %}active{% endif %}"
+                       href="{{ full_path }}">
+                      {{ name }}
+                    </a>
+                  {% else %}
+                    <a class="dropdown-item {% if code == CUR_LANG %}active{% endif %}"
+                       href="/{{ code }}{{ full_path }}">
+                      {{ name }}
+                    </a>
+                  {% endif %}
+                {% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        {% endwith %}
+        {% endwith %}
+        {% endwith %}
+        {% endwith %}
+
+        <!-- Don -->
+        <a href="{% url 'social:donation' %}"
+           class="btn btn-warning fw-bold rounded-pill px-4 py-2 d-inline-flex align-items-center"
+           target="_blank"
+           rel="noopener noreferrer"
+           style="font-size: 1.05rem;">
+          {% trans "Faire un don" %}
+        </a>
+
+        <!-- Admin -->
+        {% if request.user.is_authenticated and request.user.is_staff %}
+          <a href="{% url 'admin:index' %}"
+             class="btn btn-outline-light rounded-pill d-flex align-items-center ms-1">
+            <i class="fas fa-tools me-1"></i> Admin
+          </a>
+        {% endif %}
+
+      </div>
+
+    </div>
+  </div>
+</nav>
+
+
+
+
+
+
+
+
+{% comment %} {# core/partials/_menubar_soci.html #}
+{% load static i18n %}
 
 <nav class="navbar soci-navbar navbar-expand-lg navbar-dark bg-dark shadow-sm"
      aria-label="{% trans 'Menu de navigation social' %}"
@@ -129,7 +329,7 @@
 
     </div>
   </div>
-</nav>
+</nav> {% endcomment %}
 
 
 

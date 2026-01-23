@@ -1,0 +1,43 @@
+{# templates/economic/formations/learner/certificate_list.html #}
+{% extends "economic/formations/base_formations.html" %}
+{% load i18n %}
+
+{% block formations_title %}{% trans "Certificats" %}{% endblock %}
+
+{% block formations_content %}
+<h1 class="h4 mb-3">{% trans "Mes certificats" %}</h1>
+
+<div class="p-3 bg-white border rounded-3">
+  {% if certificates %}
+    <div class="table-responsive">
+      <table class="table table-sm align-middle mb-0">
+        <thead>
+          <tr>
+            <th>{% trans "Cours" %}</th>
+            <th>{% trans "Code" %}</th>
+            <th>{% trans "Date" %}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for c in certificates %}
+            <tr>
+              <td>{{ c.enrollment.course.title }}</td>
+              <td class="text-muted">{{ c.code }}</td>
+              <td class="text-muted">{{ c.issued_at|date:"d/m/Y" }}</td>
+              <td class="text-end">
+                {% url 'economic:formations:certificate_detail' pk=c.pk as u %}
+                <a class="btn btn-sm btn-outline-primary" href="{{ u|default:'#' }}">
+                  {% trans "Voir" %}
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="small text-muted mb-0">{% trans "Aucun certificat pour le moment." %}</p>
+  {% endif %}
+</div>
+{% endblock %}

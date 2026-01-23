@@ -1,0 +1,885 @@
+{# templates/accounts_users/auth/login.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks %}
+
+{% block title %}{% trans "Connexion | SOGENTIS" %}{% endblock %}
+{% block body_class %}auth-login{% endblock %}
+
+{% block auth_title %}{% trans "Connexion" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Accédez à votre compte SOGENTIS" %}{% endblock %}
+
+{% block auth_bg_image %}
+  {% with p=pole|default:"" path=request_path|default:request.path|default:"" %}
+    {% if p == "economic" or "economic" in path %}
+      url('{% static "economic/img/bg/eco_login_bg.svg" %}')
+    {% elif p == "social" or "social" in path %}
+      url('{% static "social/img/kids1.jpg" %}')
+    {% else %}
+      url('{% static "accounts_users/img/auth_bg.png" %}')
+    {% endif %}
+  {% endwith %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/login.css' %}">
+{% endblock %}
+
+{% block content %}
+{% with p=pole|default:"" path=request_path|default:request.path|default:"" n=next_url|default:"" %}
+
+  {% if p == "social" or "social" in path %}
+    <p class="login-intro">{% trans "Connexion au pôle engagement social" %}</p>
+  {% elif p == "economic" or "economic" in path %}
+    <p class="login-intro">{% trans "Connexion au pôle économique" %}</p>
+  {% else %}
+    <p class="login-intro">{% trans "Connexion à votre espace personnel" %}</p>
+  {% endif %}
+
+  <form method="post" action="" novalidate>
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger" role="alert">
+        {{ form.non_field_errors|striptags }}
+      </div>
+    {% endif %}
+
+    <div class="mb-3">
+      <label class="form-label" for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+      {% if form.username.errors %}
+        {% render_field form.username class="form-control is-invalid" autocomplete="username" %}
+        <div class="invalid-feedback d-block">{{ form.username.errors|striptags }}</div>
+      {% else %}
+        {% render_field form.username class="form-control" autocomplete="username" %}
+      {% endif %}
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label" for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+
+      <div class="input-group">
+        {% if form.password.errors %}
+          {% render_field form.password class="form-control is-invalid" autocomplete="current-password" %}
+        {% else %}
+          {% render_field form.password class="form-control" autocomplete="current-password" %}
+        {% endif %}
+
+        <button type="button"
+                class="btn btn-outline-secondary toggle-password"
+                data-target="{{ form.password.id_for_label }}"
+                aria-label="{% trans 'Afficher/Masquer le mot de passe' %}">
+          👁️
+        </button>
+      </div>
+
+      {% if form.password.errors %}
+        <div class="invalid-feedback d-block">{{ form.password.errors|striptags }}</div>
+      {% endif %}
+    </div>
+
+    {% if n %}<input type="hidden" name="next" value="{{ n }}">{% endif %}
+    {% if p %}<input type="hidden" name="context" value="{{ p }}">{% endif %}
+
+    <div class="d-grid mt-3">
+      <button class="btn btn-success fw-bold" type="submit">{% trans "Se connecter" %}</button>
+    </div>
+
+    <div class="login-links">
+      <a href="{% url 'accounts_users:web:password:password_reset' %}{% if n %}?next={{ n|urlencode }}{% endif %}">
+        {% trans "Mot de passe oublié ?" %}
+      </a>
+
+      <a href="{% url 'accounts_users:web:registration:choice' %}{% if p %}?focus={{ p }}&context={{ p }}{% if n %}&next={{ n|urlencode }}{% endif %}{% elif n %}?next={{ n|urlencode }}{% endif %}">
+        {% trans "Créer un compte" %}
+      </a>
+    </div>
+  </form>
+
+{% endwith %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+{% comment %} <script>
+(function () {
+  document.querySelectorAll(".toggle-password").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const input = document.getElementById(btn.dataset.target);
+      if (input) input.type = (input.type === "password") ? "text" : "password";
+    });
+  });
+})();
+</script> {% endcomment %}
+{% endblock %}
+
+
+
+
+
+{% comment %} {# templates/accounts_users/auth/login.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks %}
+
+{% block title %}{% trans "Connexion | SOGENTIS" %}{% endblock %}
+{% block body_class %}auth-login{% endblock %}
+
+{% block auth_title %}{% trans "Connexion" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Accédez à votre compte SOGENTIS" %}{% endblock %}
+
+{# ========================= #}
+{#    Context + Next robustes #}
+{# ========================= #}
+
+{% block auth_bg_image %}
+  {% with p=pole|default:"" path=request_path|default:"" %}
+    {% if p == "economic" or "economic" in path %}
+      url('{% static "economic/img/bg/eco_login_bg.svg" %}')
+    {% elif p == "social" or "social" in path %}
+      url('{% static "social/img/kids1.jpg" %}')
+    {% else %}
+      url('{% static "accounts_users/img/auth_bg.png" %}')
+    {% endif %}
+  {% endwith %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/login.css' %}">
+{% endblock %}
+
+{% block content %}
+{% with p=pole|default:"" path=request_path|default:"" n=next_url|default:"" %}
+
+  {% if p == "social" or "social" in path %}
+    <p class="login-intro">{% trans "Connexion au pôle engagement social" %}</p>
+  {% elif p == "economic" or "economic" in path %}
+    <p class="login-intro">{% trans "Connexion au pôle économique" %}</p>
+  {% else %}
+    <p class="login-intro">{% trans "Connexion à votre espace personnel" %}</p>
+  {% endif %}
+
+  <form method="post" action="." novalidate>
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger" role="alert">
+        {{ form.non_field_errors|striptags }}
+      </div>
+    {% endif %}
+
+    <div class="mb-3">
+      <label class="form-label" for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+      {% if form.username.errors %}
+        {% render_field form.username class="form-control is-invalid" %}
+        <div class="invalid-feedback d-block">{{ form.username.errors|striptags }}</div>
+      {% else %}
+        {% render_field form.username class="form-control" %}
+      {% endif %}
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label" for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+
+      <div class="input-group">
+        {% if form.password.errors %}
+          {% render_field form.password class="form-control is-invalid" %}
+        {% else %}
+          {% render_field form.password class="form-control" %}
+        {% endif %}
+
+        <button type="button"
+                class="btn btn-outline-secondary toggle-password"
+                data-target="{{ form.password.id_for_label }}"
+                aria-label="{% trans 'Afficher/Masquer le mot de passe' %}">
+          👁️
+        </button>
+      </div>
+
+      {% if form.password.errors %}
+        <div class="invalid-feedback d-block">{{ form.password.errors|striptags }}</div>
+      {% endif %}
+    </div>
+
+    {% if n %}<input type="hidden" name="next" value="{{ n }}">{% endif %}
+    {% if p %}<input type="hidden" name="context" value="{{ p }}">{% endif %}
+
+    <div class="d-grid mt-3">
+      <button class="btn btn-success fw-bold" type="submit">{% trans "Se connecter" %}</button>
+    </div>
+
+    <div class="login-links">
+      <a href="{% url 'accounts_users:web:password:password_reset' %}{% if n %}?next={{ n|urlencode }}{% endif %}">
+        {% trans "Mot de passe oublié ?" %}
+      </a>
+
+      {# Hub inscription (respecte pole si connu) #}
+      <a href="{% url 'accounts_users:web:registration:choice' %}{% if p %}?focus={{ p }}&context={{ p }}{% if n %}&next={{ n|urlencode }}{% endif %}{% elif n %}?next={{ n|urlencode }}{% endif %}">
+        {% trans "Créer un compte" %}
+      </a>
+    </div>
+  </form>
+
+{% endwith %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+<script>
+(function () {
+  document.querySelectorAll(".toggle-password").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const input = document.getElementById(btn.dataset.target);
+      if (input) input.type = input.type === "password" ? "text" : "password";
+    });
+  });
+})();
+</script>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+{% comment %} {# templates/accounts_users/auth/login.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks %}
+
+{% block title %}{% trans "Connexion | SOGENTIS" %}{% endblock %}
+{% block body_class %}auth-login{% endblock %}
+
+{% block auth_title %}{% trans "Connexion" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Accédez à votre compte SOGENTIS" %}{% endblock %}
+
+{# =========================
+   Context + Next robustes
+   ========================= #}
+{% block auth_bg_image %}
+{% with pole=auth_pole|default:login_context|default:request.GET.context|default:"" %}
+  {% if pole == "economic" or "economic" in request.path %}
+    url('{% static "economic/img/bg/eco_login_bg.svg" %}')
+  {% elif pole == "social" or "social" in request.path %}
+    url('{% static "social/img/kids1.jpg" %}')
+  {% else %}
+    url('{% static "accounts_users/img/auth_bg.png" %}')
+  {% endif %}
+{% endwith %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/login.css' %}">
+{% endblock %}
+
+{% block content %}
+{% with pole=auth_pole|default:login_context|default:request.GET.context|default:"" next_url=next|default:request.GET.next|default:"" %}
+
+  {% if pole == "social" or "social" in request.path %}
+    <p class="login-intro">{% trans "Connexion au pôle engagement social" %}</p>
+  {% elif pole == "economic" or "economic" in request.path %}
+    <p class="login-intro">{% trans "Connexion au pôle économique" %}</p>
+  {% else %}
+    <p class="login-intro">{% trans "Connexion à votre espace personnel" %}</p>
+  {% endif %}
+
+  <form method="post" action="." novalidate>
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger" role="alert">
+        {{ form.non_field_errors|striptags }}
+      </div>
+    {% endif %}
+
+    <div class="mb-3">
+      <label class="form-label" for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+      {% if form.username.errors %}
+        {% render_field form.username class="form-control is-invalid" %}
+        <div class="invalid-feedback d-block">{{ form.username.errors|striptags }}</div>
+      {% else %}
+        {% render_field form.username class="form-control" %}
+      {% endif %}
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label" for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+
+      <div class="input-group">
+        {% if form.password.errors %}
+          {% render_field form.password class="form-control is-invalid" %}
+        {% else %}
+          {% render_field form.password class="form-control" %}
+        {% endif %}
+
+        <button type="button"
+                class="btn btn-outline-secondary toggle-password"
+                data-target="{{ form.password.id_for_label }}"
+                aria-label="{% trans 'Afficher/Masquer le mot de passe' %}">
+          👁️
+        </button>
+      </div>
+
+      {% if form.password.errors %}
+        <div class="invalid-feedback d-block">{{ form.password.errors|striptags }}</div>
+      {% endif %}
+    </div>
+
+    {# next + context (utile même si la vue lit surtout GET) #}
+    {% if next_url %}<input type="hidden" name="next" value="{{ next_url }}">{% endif %}
+    {% if pole %}<input type="hidden" name="context" value="{{ pole }}">{% endif %}
+
+    <div class="d-grid mt-3">
+      <button class="btn btn-success fw-bold" type="submit">{% trans "Se connecter" %}</button>
+    </div>
+
+    <div class="login-links">
+      <a href="{% url 'accounts_users:web:password:password_reset' %}{% if next_url %}?next={{ next_url|urlencode }}{% endif %}">
+        {% trans "Mot de passe oublié ?" %}
+      </a>
+
+      {# IMPORTANT : renvoyer vers le hub en respectant le contexte #}
+      <a href="{% url 'accounts_users:web:registration:choice' %}?{% if pole %}context={{ pole }}&focus={{ pole }}{% else %}focus=economic{% endif %}{% if next_url %}&next={{ next_url|urlencode }}{% endif %}">
+        {% trans "Créer un compte" %}
+      </a>
+    </div>
+  </form>
+
+{% endwith %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  document.querySelectorAll(".toggle-password").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const input = document.getElementById(btn.dataset.target);
+      if (input) input.type = input.type === "password" ? "text" : "password";
+    });
+  });
+})();
+</script>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+{% comment %} {# templates/accounts_users/auth/login.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks %}
+
+{% block title %}{% trans "Connexion | SOGENTIS" %}{% endblock %}
+{% block body_class %}auth-login{% endblock %}
+
+{% block auth_title %}{% trans "Connexion" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Accédez à votre compte SOGENTIS" %}{% endblock %}
+
+{% block auth_bg_image %}
+{% if auth_pole == "economic" or login_context == "economic" or "economic" in request.path %}
+url('{% static "economic/img/bg/eco_login_bg.svg" %}')
+{% elif auth_pole == "social" or login_context == "social" or "social" in request.path %}
+url('{% static "social/img/kids1.jpg" %}')
+{% else %}
+url('{% static "accounts_users/img/auth_bg.png" %}')
+{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/login.css' %}">
+{% endblock %}
+
+{% block content %}
+
+{% if auth_pole == "social" or login_context == "social" or "social" in request.path %}
+  <p class="login-intro">{% trans "Connexion au pôle engagement social" %}</p>
+{% elif auth_pole == "economic" or login_context == "economic" or "economic" in request.path %}
+  <p class="login-intro">{% trans "Connexion au pôle économique" %}</p>
+{% else %}
+  <p class="login-intro">{% trans "Connexion à votre espace personnel" %}</p>
+{% endif %}
+
+<form method="post" action="" novalidate>
+  {% csrf_token %}
+
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger" role="alert">
+      {{ form.non_field_errors }}
+    </div>
+  {% endif %}
+
+  <div class="mb-3">
+    <label class="form-label" for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+    {% if form.username.errors %}
+      {% render_field form.username class="form-control is-invalid" %}
+      <div class="invalid-feedback d-block">{{ form.username.errors|striptags }}</div>
+    {% else %}
+      {% render_field form.username class="form-control" %}
+    {% endif %}
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label" for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+
+    <div class="input-group">
+      {% if form.password.errors %}
+        {% render_field form.password class="form-control is-invalid" %}
+      {% else %}
+        {% render_field form.password class="form-control" %}
+      {% endif %}
+
+      <button type="button"
+              class="btn btn-outline-secondary toggle-password"
+              data-target="{{ form.password.id_for_label }}"
+              aria-label="{% trans 'Afficher/Masquer le mot de passe' %}">
+        👁️
+      </button>
+    </div>
+
+    {% if form.password.errors %}
+      <div class="invalid-feedback d-block">{{ form.password.errors|striptags }}</div>
+    {% endif %}
+  </div>
+
+  {% if next %}
+    <input type="hidden" name="next" value="{{ next }}">
+  {% endif %}
+
+  <div class="d-grid mt-3">
+    <button class="btn btn-success fw-bold" type="submit">{% trans "Se connecter" %}</button>
+  </div>
+
+  <div class="login-links">
+    <a href="{% url 'accounts_users:web:password:password_reset' %}">{% trans "Mot de passe oublié ?" %}</a>
+    <a href="{% url 'accounts_users:web:registration:choice' %}">{% trans "Créer un compte" %}</a>
+  </div>
+</form>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  document.querySelectorAll(".toggle-password").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const input = document.getElementById(btn.dataset.target);
+      if (input) input.type = input.type === "password" ? "text" : "password";
+    });
+  });
+})();
+</script>
+{% endblock %} {% endcomment %}
+
+
+
+{% comment %} {# templates/accounts_users/registration/login.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks %}
+
+{% block title %}{% trans "Connexion" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+{% block body_class %}auth-login{% endblock %}
+
+{% block auth_title %}{% trans "Connexion" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Accédez à votre compte SOGENTIS" %}{% endblock %}
+
+{# ================= BG ROBUSTE ================= #}
+{% block auth_bg_image %}
+{% with ctx=login_context|default:auth_pole %}
+  {% if ctx == "economic" %}
+    url('{% static "economic/img/bg/eco_login_bg.svg" %}')
+  {% elif ctx == "social" %}
+    url('{% static "social/img/kids1.jpg" %}')
+  {% else %}
+    url('{% static "accounts_users/img/auth_bg.png" %}')
+  {% endif %}
+{% endwith %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/login.css' %}">
+{% endblock %}
+
+{% block content %}
+{% with ctx=login_context|default:auth_pole %}
+{% with next_url=request.GET.next %}
+
+{# ================= INTRO ================= #}
+{% if ctx == "social" %}
+  <p class="login-intro">{% trans "Connexion au pôle engagement social" %}</p>
+{% elif ctx == "economic" %}
+  <p class="login-intro">{% trans "Connexion au pôle économique" %}</p>
+{% else %}
+  <p class="login-intro">{% trans "Connexion à votre espace personnel" %}</p>
+{% endif %}
+
+{# ================= FORM ================= #}
+{% url 'accounts_users:web:auth:login' as login_post_url %}
+<form method="post"
+      action="{{ login_post_url }}{% if ctx %}?context={{ ctx }}{% if next_url %}&next={{ next_url|urlencode }}{% endif %}{% elif next_url %}?next={{ next_url|urlencode }}{% endif %}"
+      novalidate>
+  {% csrf_token %}
+
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger" role="alert">
+      {% for err in form.non_field_errors %}
+        <div>{{ err }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% for field in form %}
+    {% if field.field.widget.input_type == "password" %}
+      <div class="mb-3">
+        <label class="form-label" for="{{ field.id_for_label }}">
+          {{ field.label }}{% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+        </label>
+
+        <div class="input-group">
+          {% render_field field class+="form-control"|add:field.errors|yesno:" is-invalid," %}
+          <button type="button"
+                  class="btn btn-outline-secondary toggle-password"
+                  data-target="{{ field.id_for_label }}"
+                  aria-label="{% trans 'Afficher/Masquer le mot de passe' %}">
+            👁️
+          </button>
+        </div>
+
+        {% if field.errors %}
+          <div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>
+        {% endif %}
+      </div>
+
+    {% elif field.field.widget.input_type == "checkbox" %}
+      <div class="form-check mb-2">
+        {% render_field field class+="form-check-input"|add:field.errors|yesno:" is-invalid," %}
+        <label class="form-check-label" for="{{ field.id_for_label }}">
+          {{ field.label }}
+        </label>
+        {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+        {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>{% endif %}
+      </div>
+
+    {% else %}
+      <div class="mb-3">
+        <label class="form-label" for="{{ field.id_for_label }}">
+          {{ field.label }}{% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+        </label>
+        {% render_field field class+="form-control"|add:field.errors|yesno:" is-invalid," %}
+        {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>{% endif %}
+        {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+      </div>
+    {% endif %}
+  {% endfor %}
+
+  {% if next_url %}<input type="hidden" name="next" value="{{ next_url }}">{% endif %}
+  {% if ctx %}<input type="hidden" name="context" value="{{ ctx }}">{% endif %}
+
+  <div class="d-grid mt-3">
+    <button class="btn btn-success fw-bold" type="submit">
+      {% trans "Se connecter" %}
+    </button>
+  </div>
+
+  <div class="login-links">
+    <a href="{% url 'accounts_users:web:password:password_reset' %}">
+      {% trans "Mot de passe oublié ?" %}
+    </a>
+    <a href="{% url 'accounts_users:web:registration:choice' %}?{% if ctx %}focus={{ ctx }}&{% endif %}{% if next_url %}next={{ next_url|urlencode }}{% endif %}">
+      {% trans "Créer un compte" %}
+    </a>
+  </div>
+</form>
+
+{% endwith %}
+{% endwith %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  document.querySelectorAll(".toggle-password").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const input = document.getElementById(btn.dataset.target);
+      if (input) input.type = input.type === "password" ? "text" : "password";
+    });
+  });
+})();
+</script>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/accounts_users/auth/login.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks %}
+
+{% block title %}{% trans "Connexion" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+{% block body_class %}auth-login{% endblock %}
+
+{% block auth_title %}{% trans "Connexion" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Accédez à votre compte SOGENTIS" %}{% endblock %}
+
+{% block auth_bg_image %}
+{% if auth_pole == "economic" or login_context == "economic" or "economic" in request.path %}
+url('{% static "economic/img/bg/eco_login_bg.svg" %}')
+{% elif auth_pole == "social" or login_context == "social" or "social" in request.path %}
+url('{% static "social/img/kids1.jpg" %}')
+{% else %}
+url('{% static "accounts_users/img/auth_bg.png" %}')
+{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/login.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<form method="post" novalidate>
+  {% csrf_token %}
+
+  {% if next %}
+    <input type="hidden" name="next" value="{{ next }}">
+  {% endif %}
+  {% if auth_pole %}
+    <input type="hidden" name="context" value="{{ auth_pole }}">
+  {% endif %}
+
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger" role="alert">{{ form.non_field_errors.0 }}</div>
+  {% endif %}
+
+  <div class="mb-3">
+    <label class="form-label" for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+    {% if form.username.errors %}
+      {% render_field form.username class="form-control is-invalid" %}
+      <div class="invalid-feedback d-block">{{ form.username.errors.0 }}</div>
+    {% else %}
+      {% render_field form.username class="form-control" %}
+    {% endif %}
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label" for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+    <div class="input-group">
+      {% if form.password.errors %}
+        {% render_field form.password class="form-control is-invalid" %}
+      {% else %}
+        {% render_field form.password class="form-control" %}
+      {% endif %}
+      <button type="button" class="btn btn-outline-secondary toggle-password"
+              data-target="{{ form.password.id_for_label }}"
+              aria-label="{% trans 'Afficher/Masquer le mot de passe' %}">👁️</button>
+    </div>
+    {% if form.password.errors %}
+      <div class="invalid-feedback d-block">{{ form.password.errors.0 }}</div>
+    {% endif %}
+  </div>
+
+  <div class="d-grid mt-3">
+    <button class="btn btn-success fw-bold" type="submit">{% trans "Se connecter" %}</button>
+  </div>
+
+  <div class="login-links">
+    <a href="{% url 'accounts_users:web:password:password_reset' %}">{% trans "Mot de passe oublié ?" %}</a>
+    <a href="{% url 'accounts_users:web:registration:choice' %}">{% trans "Créer un compte" %}</a>
+  </div>
+</form>
+
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+
+{% comment %} {# templates/accounts_users/auth/login.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks %}
+
+{% block title %}{% trans "Connexion" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+{% block body_class %}auth-login{% endblock %}
+
+{% block auth_title %}{% trans "Connexion" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Accédez à votre compte SOGENTIS" %}{% endblock %}
+
+{% block auth_bg_image %}
+{% if auth_pole == "economic" or login_context == "economic" or "economic" in request.path %}
+url('{% static "economic/img/bg/eco_login_bg.svg" %}')
+{% elif auth_pole == "social" or login_context == "social" or "social" in request.path %}
+url('{% static "social/img/kids1.jpg" %}')
+{% else %}
+url('{% static "accounts_users/img/auth_bg.png" %}')
+{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/login.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<form method="post" novalidate>
+  {% csrf_token %}
+
+  {% if next %}
+    <input type="hidden" name="next" value="{{ next }}">
+  {% endif %}
+
+  {% if auth_pole %}
+    <input type="hidden" name="context" value="{{ auth_pole }}">
+  {% endif %}
+
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger" role="alert">
+      {{ form.non_field_errors.0 }}
+    </div>
+  {% endif %}
+
+  <div class="mb-3">
+    <label class="form-label" for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+    {% if form.username.errors %}
+      {% render_field form.username class="form-control is-invalid" %}
+      <div class="invalid-feedback d-block">{{ form.username.errors.0 }}</div>
+    {% else %}
+      {% render_field form.username class="form-control" %}
+    {% endif %}
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label" for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+    <div class="input-group">
+      {% if form.password.errors %}
+        {% render_field form.password class="form-control is-invalid" %}
+      {% else %}
+        {% render_field form.password class="form-control" %}
+      {% endif %}
+      <button type="button" class="btn btn-outline-secondary toggle-password"
+              data-target="{{ form.password.id_for_label }}"
+              aria-label="{% trans 'Afficher/Masquer le mot de passe' %}">👁️</button>
+    </div>
+    {% if form.password.errors %}
+      <div class="invalid-feedback d-block">{{ form.password.errors.0 }}</div>
+    {% endif %}
+  </div>
+
+  <div class="d-grid mt-3">
+    <button class="btn btn-success fw-bold" type="submit">{% trans "Se connecter" %}</button>
+  </div>
+
+  <div class="login-links">
+    <a href="{% url 'accounts_users:web:password:password_reset' %}">{% trans "Mot de passe oublié ?" %}</a>
+    <a href="{% url 'accounts_users:web:registration:choice' %}">{% trans "Créer un compte" %}</a>
+  </div>
+</form>
+
+{% endblock %}
+
+ {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/accounts_users/auth/login.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n widget_tweaks %}
+
+{% block title %}{% trans "Connexion" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+{% block body_class %}auth-login{% endblock %}
+
+{% block auth_title %}{% trans "Connexion" %}{% endblock %}
+{% block auth_subtitle %}{% trans "Accédez à votre compte SOGENTIS" %}{% endblock %}
+
+{% block auth_bg_image %}
+{% if auth_pole == "economic" or login_context == "economic" or "economic" in request.path %}
+url('{% static "economic/img/bg/eco_login_bg.svg" %}')
+{% elif auth_pole == "social" or login_context == "social" or "social" in request.path %}
+url('{% static "social/img/kids1.jpg" %}')
+{% else %}
+url('{% static "accounts_users/img/auth_bg.png" %}')
+{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/login.css' %}">
+{% endblock %}
+
+{% block content %}
+
+{% if auth_pole == "social" or login_context == "social" or "social" in request.path %}
+  <p class="login-intro">{% trans "Connexion au pôle engagement social" %}</p>
+{% elif auth_pole == "economic" or login_context == "economic" or "economic" in request.path %}
+  <p class="login-intro">{% trans "Connexion au pôle économique" %}</p>
+{% else %}
+  <p class="login-intro">{% trans "Connexion à votre espace personnel" %}</p>
+{% endif %}
+
+<form method="post" action="{% url 'accounts_users:web:auth:login' %}{% if next %}?next={{ next|urlencode }}{% endif %}" novalidate>
+  {% csrf_token %}
+
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger" role="alert">
+      {{ form.non_field_errors.0 }}
+    </div>
+  {% endif %}
+
+  <div class="mb-3">
+    <label class="form-label" for="{{ form.username.id_for_label }}">
+      {{ form.username.label }}
+    </label>
+    {% if form.username.errors %}
+      {% render_field form.username class="form-control is-invalid" %}
+      <div class="invalid-feedback d-block">{{ form.username.errors.0 }}</div>
+    {% else %}
+      {% render_field form.username class="form-control" %}
+    {% endif %}
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label" for="{{ form.password.id_for_label }}">
+      {{ form.password.label }}
+    </label>
+
+    <div class="input-group">
+      {% if form.password.errors %}
+        {% render_field form.password class="form-control is-invalid" %}
+      {% else %}
+        {% render_field form.password class="form-control" %}
+      {% endif %}
+
+      <button type="button"
+              class="btn btn-outline-secondary toggle-password"
+              data-target="{{ form.password.id_for_label }}"
+              aria-label="{% trans 'Afficher/Masquer le mot de passe' %}">
+        👁️
+      </button>
+    </div>
+
+    {% if form.password.errors %}
+      <div class="invalid-feedback d-block">{{ form.password.errors.0 }}</div>
+    {% endif %}
+  </div>
+
+  {% if next %}
+    <input type="hidden" name="next" value="{{ next }}">
+  {% endif %}
+
+  <div class="d-grid mt-3">
+    <button class="btn btn-success fw-bold" type="submit">
+      {% trans "Se connecter" %}
+    </button>
+  </div>
+
+  <div class="login-links">
+    <a href="{% url 'accounts_users:web:password:password_reset' %}">{% trans "Mot de passe oublié ?" %}</a>
+    <a href="{% url 'accounts_users:web:registration:choice' %}">{% trans "Créer un compte" %}</a>
+  </div>
+</form>
+
+{% endblock %} {% endcomment %}

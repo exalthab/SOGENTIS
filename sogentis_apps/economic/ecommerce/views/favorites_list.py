@@ -17,6 +17,6 @@ def favorites_list_view(request):
 
     return render(
         request,
-        "economic/ecommerce/favorites_list.html",
+        "economic/ecommerce/favorites/favorites_list.html",
         {"favorites": favorites},
     )

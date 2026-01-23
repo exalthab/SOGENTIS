@@ -1,0 +1,40 @@
+{# templates/economic/formations/partials/_formations_mini_topbar.html #}
+{% load i18n dashboard_tags %}
+
+{% safe_url "economic:index" as u_economic_home %}
+{% safe_url "core:contact" as u_contact %}
+
+<div class="formations-mini-topbar" role="navigation" aria-label="{% trans 'Raccourcis formations' %}">
+  <div class="container-fluid formations-mini-inner">
+
+    <a href="{{ u_economic_home|default:'#' }}" class="mini-link">
+      <i class="fa-solid fa-arrow-left-long"></i>
+      <span class="mini-text">{% trans "Accueil économique" %}</span>
+    </a>
+
+    <span class="mini-sep" aria-hidden="true">|</span>
+
+    <div class="mini-badges">
+      <span class="mini-pill">
+        <i class="fa-solid fa-graduation-cap"></i>
+        <span class="mini-text">{% trans "Certifications reconnues" %}</span>
+      </span>
+
+      <span class="mini-pill">
+        <i class="fa-solid fa-desktop"></i>
+        <span class="mini-text">{% trans "Cours en présentiel & en ligne" %}</span>
+      </span>
+
+      <span class="mini-pill">
+        <i class="fa-solid fa-sack-dollar"></i>
+        <span class="mini-text">{% trans "Financements possibles" %}</span>
+      </span>
+    </div>
+
+    <a href="{{ u_contact|default:'#' }}" class="mini-link ms-auto">
+      <span class="mini-text">{% trans "Contact pédagogique" %}</span>
+      <i class="fa-solid fa-arrow-right-long"></i>
+    </a>
+
+  </div>
+</div>

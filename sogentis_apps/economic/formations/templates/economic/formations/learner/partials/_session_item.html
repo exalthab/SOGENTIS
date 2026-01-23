@@ -1,0 +1,19 @@
+{# templates/economic/formations/learner/partials/_session_item.html #}
+{% load i18n %}
+
+<div class="list-group-item px-0">
+  <div class="fw-semibold">{{ s.course }}</div>
+  <div class="text-muted small">
+    🗓 {{ s.start_at|date:"d/m/Y H:i" }}
+    {% if s.end_at %} → {{ s.end_at|date:"H:i" }}{% endif %}
+    {% if s.location %} · 📍 {{ s.location }}{% endif %}
+  </div>
+
+  <div class="d-flex gap-2 mt-2">
+    {% if s.meeting_url %}
+      <a class="btn btn-sm btn-outline-primary" href="{{ s.meeting_url }}" target="_blank" rel="noopener">
+        {% trans "Rejoindre" %}
+      </a>
+    {% endif %}
+  </div>
+</div>

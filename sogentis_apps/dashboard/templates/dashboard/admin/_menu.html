@@ -1,4 +1,202 @@
 {# templates/dashboard/admin/_menu.html #}
+{% load i18n %}
+
+{% with rm=request.resolver_match %}
+  {% if rm %}
+    {# ✅ nss safe : si namespaces vide/None => [] #}
+    {% with uname=rm.url_name|default_if_none:"" nss=rm.namespaces|default_if_none:""|make_list %}
+      <ul class="nav flex-column dashboard-menu">
+
+        {# HOME ADMIN #}
+        {% url 'dashboard:admin:index' as admin_index %}
+        <li class="nav-item">
+          <a class="nav-link {% if 'admin' in nss and uname == 'index' %}active{% endif %}"
+             href="{{ admin_index|default:'#' }}">
+            🛠 {% trans "Administration" %}
+          </a>
+        </li>
+
+        {# UTILISATEURS #}
+        {% url 'dashboard:admin:users' as admin_users %}
+        <li class="nav-item">
+          <a class="nav-link {% if 'admin' in nss and uname == 'users' %}active{% endif %}"
+             href="{{ admin_users|default:'#' }}">
+            👥 {% trans "Utilisateurs" %}
+          </a>
+        </li>
+
+        {# MODÉRATION #}
+        {% url 'dashboard:admin:moderation' as admin_moderation %}
+        <li class="nav-item">
+          <a class="nav-link {% if 'admin' in nss and uname == 'moderation' %}active{% endif %}"
+             href="{{ admin_moderation|default:'#' }}">
+            🛡 {% trans "Modération" %}
+          </a>
+        </li>
+
+        {# RAPPORTS #}
+        {% url 'dashboard:admin:reports' as admin_reports %}
+        <li class="nav-item">
+          <a class="nav-link {% if 'admin' in nss and uname == 'reports' %}active{% endif %}"
+             href="{{ admin_reports|default:'#' }}">
+            📊 {% trans "Rapports & statistiques" %}
+          </a>
+        </li>
+
+        {# PARAMÈTRES #}
+        {% url 'dashboard:admin:settings' as admin_settings %}
+        <li class="nav-item">
+          <a class="nav-link {% if 'admin' in nss and uname == 'settings' %}active{% endif %}"
+             href="{{ admin_settings|default:'#' }}">
+            ⚙️ {% trans "Paramètres" %}
+          </a>
+        </li>
+
+        <li class="nav-item mt-3"><hr class="my-2"></li>
+
+        {# RETOUR DASHBOARD USER #}
+        {% url 'dashboard:hub' as hub %}
+        <li class="nav-item">
+          <a class="nav-link" href="{{ hub|default:'#' }}">
+            🔙 {% trans "Retour au hub" %}
+          </a>
+        </li>
+
+        {# RETOUR AU SITE #}
+        {% url 'core:home' as core_home %}
+        <li class="nav-item">
+          <a class="nav-link" href="{{ core_home|default:'#' }}">
+            🌐 {% trans "Retour au site" %}
+          </a>
+        </li>
+
+      </ul>
+    {% endwith %}
+  {% else %}
+    {# Fallback safe si resolver_match est None #}
+    <ul class="nav flex-column dashboard-menu">
+      {% url 'dashboard:admin:index' as admin_index %}
+      <li class="nav-item">
+        <a class="nav-link" href="{{ admin_index|default:'#' }}">🛠 {% trans "Administration" %}</a>
+      </li>
+
+      {% url 'dashboard:hub' as hub %}
+      <li class="nav-item">
+        <a class="nav-link" href="{{ hub|default:'#' }}">🔙 {% trans "Retour au hub" %}</a>
+      </li>
+
+      {% url 'core:home' as core_home %}
+      <li class="nav-item">
+        <a class="nav-link" href="{{ core_home|default:'#' }}">🌐 {% trans "Retour au site" %}</a>
+      </li>
+    </ul>
+  {% endif %}
+{% endwith %}
+
+
+
+
+
+
+{% comment %} {# templates/dashboard/admin/_menu.html #}
+{% load i18n %}
+
+{% with rm=request.resolver_match %}
+  {% if rm %}
+    {% with uname=rm.url_name|default:"" nss=rm.namespaces|default:list %}
+      <ul class="nav flex-column dashboard-menu">
+
+        {# HOME ADMIN #}
+        {% url 'dashboard:admin:index' as admin_index %}
+        <li class="nav-item">
+          <a class="nav-link {% if 'admin' in nss and uname == 'index' %}active{% endif %}"
+             href="{{ admin_index|default:'#' }}">
+            🛠 {% trans "Administration" %}
+          </a>
+        </li>
+
+        {# UTILISATEURS #}
+        {% url 'dashboard:admin:users' as admin_users %}
+        <li class="nav-item">
+          <a class="nav-link {% if 'admin' in nss and uname == 'users' %}active{% endif %}"
+             href="{{ admin_users|default:'#' }}">
+            👥 {% trans "Utilisateurs" %}
+          </a>
+        </li>
+
+        {# MODÉRATION #}
+        {% url 'dashboard:admin:moderation' as admin_moderation %}
+        <li class="nav-item">
+          <a class="nav-link {% if 'admin' in nss and uname == 'moderation' %}active{% endif %}"
+             href="{{ admin_moderation|default:'#' }}">
+            🛡 {% trans "Modération" %}
+          </a>
+        </li>
+
+        {# RAPPORTS #}
+        {% url 'dashboard:admin:reports' as admin_reports %}
+        <li class="nav-item">
+          <a class="nav-link {% if 'admin' in nss and uname == 'reports' %}active{% endif %}"
+             href="{{ admin_reports|default:'#' }}">
+            📊 {% trans "Rapports & statistiques" %}
+          </a>
+        </li>
+
+        {# PARAMÈTRES #}
+        {% url 'dashboard:admin:settings' as admin_settings %}
+        <li class="nav-item">
+          <a class="nav-link {% if 'admin' in nss and uname == 'settings' %}active{% endif %}"
+             href="{{ admin_settings|default:'#' }}">
+            ⚙️ {% trans "Paramètres" %}
+          </a>
+        </li>
+
+        <li class="nav-item mt-3"><hr class="my-2"></li>
+
+        {# RETOUR DASHBOARD USER #}
+        {% url 'dashboard:hub' as hub %}
+        <li class="nav-item">
+          <a class="nav-link" href="{{ hub|default:'#' }}">
+            🔙 {% trans "Retour au hub" %}
+          </a>
+        </li>
+
+        {# RETOUR AU SITE #}
+        {% url 'core:home' as core_home %}
+        <li class="nav-item">
+          <a class="nav-link" href="{{ core_home|default:'#' }}">
+            🌐 {% trans "Retour au site" %}
+          </a>
+        </li>
+
+      </ul>
+    {% endwith %}
+  {% else %}
+    {# Fallback safe si resolver_match est None (rare mais possible) #}
+    <ul class="nav flex-column dashboard-menu">
+      {% url 'dashboard:admin:index' as admin_index %}
+      <li class="nav-item">
+        <a class="nav-link" href="{{ admin_index|default:'#' }}">🛠 {% trans "Administration" %}</a>
+      </li>
+
+      {% url 'dashboard:hub' as hub %}
+      <li class="nav-item">
+        <a class="nav-link" href="{{ hub|default:'#' }}">🔙 {% trans "Retour au hub" %}</a>
+      </li>
+
+      {% url 'core:home' as core_home %}
+      <li class="nav-item">
+        <a class="nav-link" href="{{ core_home|default:'#' }}">🌐 {% trans "Retour au site" %}</a>
+      </li>
+    </ul>
+  {% endif %}
+{% endwith %} {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/dashboard/admin/_menu.html #}
 {% load static i18n %}
 
 <ul class="nav flex-column dashboard-menu">
@@ -61,7 +259,7 @@
     </a>
   </li>
 
-</ul>
+</ul> {% endcomment %}
 
 
 

@@ -1,5 +1,87 @@
 {# templates/economic/b2b/partials/_b2b_navbar.html #}
 {% load i18n %}
+
+{% with rm=request.resolver_match ns=rm.namespace|default:'' name=rm.url_name|default:'' %}
+<nav class="border-bottom bg-white" aria-label="{% trans 'Menu B2B' %}">
+  <div class="container py-2 d-flex gap-3 align-items-center flex-wrap">
+
+    {% url 'economic:b2b:index' as b2b_index_url %}
+    <a class="eco-hub-link
+              {% if 'b2b' in ns and name == 'index' %}active{% endif %}
+              {% if not b2b_index_url %}disabled{% endif %}"
+       href="{{ b2b_index_url|default:'#' }}"
+       {% if not b2b_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      🏢 {% trans "B2B" %}
+    </a>
+
+    {% url 'economic:b2b:company_list' as company_list_url %}
+    <a class="eco-hub-link
+              {% if 'b2b' in ns and name in 'company_list company_create company_detail' %}active{% endif %}
+              {% if not company_list_url %}disabled{% endif %}"
+       href="{{ company_list_url|default:'#' }}"
+       {% if not company_list_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      🏢 {% trans "Entreprises" %}
+    </a>
+
+    {# Commandes (Bulk Orders) #}
+    {% if company_id %}
+      {% url 'economic:b2b:bulk_order_list' company_id=company_id as orders_url %}
+    {% else %}
+      {% url 'economic:b2b:company_list' as orders_url %}
+    {% endif %}
+
+    <a class="eco-hub-link
+              {% if 'b2b' in ns and name in 'bulk_order_list bulk_order_create bulk_order_detail bulk_order_add_item bulk_order_submit' %}active{% endif %}
+              {% if not orders_url %}disabled{% endif %}"
+       href="{{ orders_url|default:'#' }}"
+       {% if not orders_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      🧾 {% trans "Commandes" %}
+    </a>
+
+    {# Factures #}
+    {% if company_id %}
+      {# On n'a pas de "invoice_list" dans tes urls, donc on renvoie vers les commandes de la company #}
+      {% url 'economic:b2b:bulk_order_list' company_id=company_id as invoices_url %}
+    {% else %}
+      {% url 'economic:b2b:company_list' as invoices_url %}
+    {% endif %}
+
+    <a class="eco-hub-link
+              {% if 'b2b' in ns and name in 'invoice_create_for_order invoice_detail' %}active{% endif %}
+              {% if not invoices_url %}disabled{% endif %}"
+       href="{{ invoices_url|default:'#' }}"
+       {% if not invoices_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      🧾 {% trans "Factures" %}
+    </a>
+
+    {# RFQ / Offres #}
+    {% if company_id %}
+      {% url 'economic:b2b:rfq_list' company_id=company_id as rfq_url %}
+    {% else %}
+      {% url 'economic:b2b:company_list' as rfq_url %}
+    {% endif %}
+
+    <a class="eco-hub-link
+              {% if 'b2b' in ns and name in 'rfq_list rfq_create offer_create' %}active{% endif %}
+              {% if not rfq_url %}disabled{% endif %}"
+       href="{{ rfq_url|default:'#' }}"
+       {% if not rfq_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      📄 {% trans "RFQ" %}
+    </a>
+
+  </div>
+</nav>
+{% endwith %}
+
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/b2b/partials/_b2b_navbar.html #}
+{% load i18n %}
 {% with rm=request.resolver_match %}
 <nav class="border-bottom bg-white" aria-label="{% trans 'Menu B2B' %}">
   <div class="container py-2 d-flex gap-3 align-items-center flex-wrap">
@@ -16,4 +98,4 @@
 
   </div>
 </nav>
-{% endwith %}
+{% endwith %} {% endcomment %}

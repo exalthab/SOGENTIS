@@ -1,0 +1,242 @@
+{# templates/dashboard/formations/calendar.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+
+{% block title %}
+  {{ page_title|default:_("Calendrier") }} | {{ PROJECT_NAME|default:"SOGENTIS" }}
+{% endblock %}
+
+{% block dashboard_header %}
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+  <div>
+    <div class="h4 fw-bold mb-1">🗓️ {% trans "Calendrier" %}</div>
+    <div class="text-muted">
+      {% trans "Sessions des cours où vous êtes inscrit." %}
+    </div>
+  </div>
+
+  <div class="d-flex flex-wrap gap-2">
+    <a class="btn btn-outline-secondary btn-sm" href="{% url 'dashboard:formations:home' %}">
+      ← {% trans "Retour" %}
+    </a>
+    {% if not calendar_unavailable %}
+      {% url "dashboard:formations_calendar_ics" as u_ics %}
+      <a class="btn btn-outline-primary btn-sm" href="{{ u_ics|default:'#' }}">
+        <i class="fas fa-download me-1"></i>{% trans "Exporter iCal (.ics)" %}
+      </a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+
+{% if calendar_unavailable %}
+  <div class="alert alert-warning d-flex align-items-start gap-2">
+    <span class="fw-bold">⚠</span>
+    <div>
+      <div class="fw-semibold">{% trans "Calendrier non activé" %}</div>
+      <div class="small">
+        {% trans "Le module Sessions (CourseSession) n'est pas encore disponible." %}
+      </div>
+    </div>
+  </div>
+
+{% else %}
+  <div class="db-card shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>{% trans "Cours" %}</th>
+            <th class="text-nowrap">{% trans "Début" %}</th>
+            <th class="text-nowrap">{% trans "Fin" %}</th>
+            <th>{% trans "Lieu / lien" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in sessions %}
+            <tr>
+              <td class="fw-semibold">{{ s.course }}</td>
+              <td class="text-nowrap">{{ s.starts_at|date:"d/m/Y H:i" }}</td>
+              <td class="text-nowrap">{{ s.ends_at|date:"d/m/Y H:i" }}</td>
+              <td>
+                {% if s.location %}<div>{{ s.location }}</div>{% endif %}
+                {% if s.meeting_url %}
+                  <a href="{{ s.meeting_url }}" target="_blank" rel="noopener">
+                    {% trans "Rejoindre" %}
+                  </a>
+                {% endif %}
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="4" class="text-muted p-3">
+                {% trans "Aucune session à venir." %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endif %}
+
+{% endblock %}
+
+
+
+
+
+
+
+{% comment %} {# C) templates/dashboard/formations/calendar.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+
+{% block title %}
+  {% trans "Calendrier" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}
+{% endblock %}
+
+{% block dashboard_header %}
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+  <div>
+    <div class="h4 fw-bold mb-1">{% trans "Calendrier" %}</div>
+    <div class="text-muted">
+      {% trans "Sessions des cours où vous êtes inscrit." %}
+    </div>
+  </div>
+
+  {% if not calendar_unavailable %}
+    {% url "dashboard:formations_calendar_ics" as u_ics %}
+    <a class="btn btn-sm btn-outline-secondary" href="{{ u_ics|default:'#' }}">
+      {% trans "Exporter iCal (.ics)" %}
+    </a>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block content %}
+
+{% if calendar_unavailable %}
+  <div class="alert alert-warning d-flex align-items-start gap-2">
+    <span class="fw-bold">⚠</span>
+    <div>
+      <div class="fw-semibold">{% trans "Calendrier non activé" %}</div>
+      <div class="small">
+        {% trans "Le module Sessions (CourseSession) n'est pas encore disponible." %}
+      </div>
+    </div>
+  </div>
+
+{% else %}
+  <div class="card shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>{% trans "Cours" %}</th>
+            <th class="text-nowrap">{% trans "Début" %}</th>
+            <th class="text-nowrap">{% trans "Fin" %}</th>
+            <th>{% trans "Lieu / lien" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in sessions %}
+            <tr>
+              <td class="fw-semibold">{{ s.course }}</td>
+              <td class="text-nowrap">
+                {{ s.starts_at|date:"d/m/Y H:i" }}
+              </td>
+              <td class="text-nowrap">
+                {{ s.ends_at|date:"d/m/Y H:i" }}
+              </td>
+              <td>
+                {% if s.location %}
+                  <div>{{ s.location }}</div>
+                {% endif %}
+                {% if s.meeting_url %}
+                  <a href="{{ s.meeting_url }}" target="_blank" rel="noopener">
+                    {% trans "Rejoindre" %}
+                  </a>
+                {% endif %}
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="4" class="text-muted p-3">
+                {% trans "Aucune session à venir." %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endif %}
+
+{% endblock %}
+ {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/dashboard/formations/calendar.html #}
+
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Calendrier" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block dashboard_header %}
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div>
+      <div class="h4 fw-bold mb-1">{% trans "Calendrier" %}</div>
+      <div class="text-muted">{% trans "Sessions des cours où vous êtes inscrit." %}</div>
+    </div>
+    <div class="d-flex gap-2">
+      {% url "dashboard:formations_calendar_ics" as u_ics %}
+      <a class="btn btn-sm btn-outline-secondary" href="{{ u_ics|default:'#' }}">
+        {% trans "Exporter iCal (.ics)" %}
+      </a>
+    </div>
+  </div>
+{% endblock %}
+
+{% block content %}
+{% if calendar_unavailable %}
+  <div class="alert alert-warning">{% trans "Le module Sessions n'est pas encore activé." %}</div>
+{% else %}
+  <div class="card shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>{% trans "Cours" %}</th>
+            <th>{% trans "Début" %}</th>
+            <th>{% trans "Fin" %}</th>
+            <th>{% trans "Lieu / lien" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in sessions %}
+            <tr>
+              <td class="fw-semibold">{{ s.course }}</td>
+              <td class="text-nowrap">{{ s.starts_at|date:"d/m/Y H:i" }}</td>
+              <td class="text-nowrap">{{ s.ends_at|date:"d/m/Y H:i" }}</td>
+              <td>
+                {% if s.location %}<div>{{ s.location }}</div>{% endif %}
+                {% if s.meeting_url %}<a href="{{ s.meeting_url }}" target="_blank" rel="noopener">{% trans "Rejoindre" %}</a>{% endif %}
+              </td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="4" class="text-muted p-3">{% trans "Aucune session à venir." %}</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endif %}
+{% endblock %} {% endcomment %}

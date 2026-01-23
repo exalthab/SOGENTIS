@@ -1,5 +1,1678 @@
 {# templates/dashboard/home.html #}
 {% extends "dashboard/base.html" %}
+{% load i18n humanize dashboard_tags %}
+
+{% block title %}{% trans "Dashboard" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block dashboard_header %}
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div>
+      <div class="h4 fw-bold mb-1">{% trans "Tableau de bord" %}</div>
+      <div class="text-muted">{% trans "Aperçu de votre activité et accès rapides." %}</div>
+    </div>
+
+    {# ========================= #}
+    {#    Range (7/30/90 jours)  #}
+    {# ========================= #}
+    {% with rk=range_key|default:"30" %}
+      <div class="btn-group" role="group" aria-label="{% trans 'Plage de temps' %}">
+        <a class="btn btn-sm {% if rk == '7' %}btn-primary{% else %}btn-outline-primary{% endif %}" href="?range=7">
+          {% trans "7 jours" %}
+        </a>
+        <a class="btn btn-sm {% if rk == '30' %}btn-primary{% else %}btn-outline-primary{% endif %}" href="?range=30">
+          {% trans "30 jours" %}
+        </a>
+        <a class="btn btn-sm {% if rk == '90' %}btn-primary{% else %}btn-outline-primary{% endif %}" href="?range=90">
+          {% trans "90 jours" %}
+        </a>
+      </div>
+    {% endwith %}
+  </div>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="container-fluid px-0">
+
+  {# ===================== #}
+  {#     HERO / INTRO      #}
+  {# ===================== #}
+  <div class="db-card mb-4">
+    <div class="db-card-header">
+      <h2 class="db-card-title mb-1">
+        {% trans "Bienvenue" %}, {{ request.user.get_full_name|default:request.user.username }}
+      </h2>
+      <p class="db-card-subtitle mb-0">
+        {% trans "Voici un aperçu rapide de votre activité et des raccourcis utiles." %}
+      </p>
+
+      {% if profile_status %}
+        <div class="mt-2">
+          {% if profile_status == "approved" %}
+            <span class="db-badge success"><i class="fas fa-check"></i> {% trans "Profil validé" %}</span>
+          {% elif profile_status == "pending" %}
+            <span class="db-badge warning"><i class="fas fa-hourglass-half"></i> {% trans "Profil en attente" %}</span>
+          {% elif profile_status == "rejected" %}
+            <span class="db-badge danger"><i class="fas fa-times"></i> {% trans "Profil refusé" %}</span>
+          {% else %}
+            <span class="db-badge"><i class="fas fa-info-circle"></i> {{ profile_status }}</span>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="db-card-body">
+      <div class="d-flex flex-wrap gap-2">
+        <a class="btn btn-primary" href="{% url 'dashboard:profile' %}">
+          <i class="fas fa-user me-2"></i>{% trans "Mon profil" %}
+        </a>
+        <a class="btn btn-outline-secondary" href="{% url 'dashboard:notes_list' %}">
+          <i class="fas fa-sticky-note me-2"></i>{% trans "Mes notes" %}
+        </a>
+        <a class="btn btn-outline-secondary" href="{% url 'dashboard:donations' %}">
+          <i class="fas fa-donate me-2"></i>{% trans "Donations" %}
+        </a>
+        <a class="btn btn-outline-secondary" href="{% url 'dashboard:orders' %}">
+          <i class="fas fa-shopping-bag me-2"></i>{% trans "Commandes" %}
+        </a>
+        <a class="btn btn-outline-danger ms-auto" href="{% url 'accounts_users:web:auth:logout' %}">
+          <i class="fas fa-sign-out-alt me-2"></i>{% trans "Déconnexion" %}
+        </a>
+      </div>
+    </div>
+  </div>
+
+  {# ===================== #}
+  {#      KPI CARDS        #}
+  {# ===================== #}
+  <div class="row g-3 g-md-4 mb-4">
+
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="db-card h-100">
+        <div class="db-card-body">
+          <div class="db-stat">
+            <div class="db-stat-left">
+              <div class="db-stat-label">{% trans "Dons" %}</div>
+              <div class="db-stat-value">{{ kpi_donations_count|default:0|intcomma }}</div>
+              <div class="db-muted mt-1" style="font-weight:700;">{% trans "Total transactions" %}</div>
+              {% if kpi_donations_total is not None %}
+                <div class="db-muted mt-1">
+                  <i class="fas fa-coins me-1"></i>{{ kpi_donations_total|default:0|intcomma }} FCFA
+                </div>
+              {% endif %}
+            </div>
+            <div class="db-stat-icon"><i class="fas fa-donate"></i></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="db-card h-100">
+        <div class="db-card-body">
+          <div class="db-stat">
+            <div class="db-stat-left">
+              <div class="db-stat-label">{% trans "Engagements" %}</div>
+              <div class="db-stat-value">{{ kpi_engagements_count|default:0|intcomma }}</div>
+              <div class="db-muted mt-1" style="font-weight:700;">{% trans "Social" %}</div>
+            </div>
+            <div class="db-stat-icon" style="background: rgba(13,110,253,.10); border-color: rgba(13,110,253,.18);">
+              <i class="fas fa-hands-helping"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="db-card h-100">
+        <div class="db-card-body">
+          <div class="db-stat">
+            <div class="db-stat-left">
+              <div class="db-stat-label">{% trans "Commandes" %}</div>
+              <div class="db-stat-value">{{ kpi_orders_count|default:0|intcomma }}</div>
+              <div class="db-muted mt-1" style="font-weight:700;">{% trans "E-commerce" %}</div>
+            </div>
+            <div class="db-stat-icon" style="background: rgba(25,135,84,.10); border-color: rgba(25,135,84,.18);">
+              <i class="fas fa-receipt"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="db-card h-100">
+        <div class="db-card-body">
+          <div class="db-stat">
+            <div class="db-stat-left">
+              <div class="db-stat-label">{% trans "Notes" %}</div>
+              <div class="db-stat-value">{{ kpi_notes_count|default:0|intcomma }}</div>
+              <div class="db-muted mt-1" style="font-weight:700;">{% trans "Personnelles" %}</div>
+            </div>
+            <div class="db-stat-icon" style="background: rgba(255,193,7,.14); border-color: rgba(255,193,7,.25);">
+              <i class="fas fa-sticky-note"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  {# ===================== #}
+  {#   CHART + QUICK ACT   #}
+  {# ===================== #}
+  <div class="row g-3 g-md-4 mb-4">
+
+    <div class="col-12 col-xl-8">
+      <div class="db-card h-100">
+        <div class="db-card-header">
+          <h3 class="db-card-title">{% trans "Activité" %}</h3>
+          <p class="db-card-subtitle mb-0">{% trans "Synthèse sur la période sélectionnée." %}</p>
+        </div>
+        <div class="db-card-body">
+          <div style="min-height: 280px;">
+            <canvas id="dbActivityChart" height="120" aria-label="{% trans 'Graphique activité' %}"></canvas>
+          </div>
+          <div class="db-muted mt-3">{% trans "Si aucune donnée n’est disponible, le graphique affiche une série vide." %}</div>
+
+          {# JSON safe (prod) : PAS de default:list #}
+          {{ chart_labels|default:"[]"|json_script:"dbChartLabels" }}
+          {{ chart_values|default:"[]"|json_script:"dbChartValues" }}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-xl-4">
+      <div class="db-card h-100">
+        <div class="db-card-header">
+          <h3 class="db-card-title">{% trans "Actions rapides" %}</h3>
+          <p class="db-card-subtitle mb-0">{% trans "Raccourcis" %}</p>
+        </div>
+        <div class="db-card-body">
+          <div class="d-grid gap-2">
+            <a class="btn btn-outline-primary" href="{% url 'dashboard:notes_list' %}">
+              <i class="fas fa-plus me-2"></i>{% trans "Créer / Voir mes notes" %}
+            </a>
+            <a class="btn btn-outline-primary" href="{% url 'dashboard:donations' %}">
+              <i class="fas fa-credit-card me-2"></i>{% trans "Voir mes donations" %}
+            </a>
+            <a class="btn btn-outline-primary" href="{% url 'dashboard:orders' %}">
+              <i class="fas fa-shopping-bag me-2"></i>{% trans "Voir mes commandes" %}
+            </a>
+            {% if request.user.is_staff %}
+              <a class="btn btn-outline-dark" href="{% url 'dashboard:pending_profiles' %}">
+                <i class="fas fa-hourglass-half me-2"></i>{% trans "Profils en attente" %}
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  {# ===================== #}
+  {#    RECENT ACTIVITY    #}
+  {# ===================== #}
+  <div class="db-card">
+    <div class="db-card-header">
+      <h3 class="db-card-title">{% trans "Dernières activités" %}</h3>
+      <p class="db-card-subtitle mb-0">{% trans "Journal récent" %}</p>
+    </div>
+
+    <div class="db-card-body">
+      <div class="table-responsive">
+        <table class="db-table">
+          <thead>
+            <tr>
+              <th>{% trans "Date" %}</th>
+              <th>{% trans "Type" %}</th>
+              <th>{% trans "Détail" %}</th>
+              <th class="text-end">{% trans "Statut" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in recent_activity %}
+              <tr>
+                <td>{{ row.date|date:"d/m/Y H:i" }}</td>
+                <td><span class="db-badge"><i class="fas fa-bolt"></i> {{ row.kind }}</span></td>
+                <td>{{ row.label }}</td>
+                <td class="text-end">
+                  {% if row.status == "success" %}
+                    <span class="db-badge success"><i class="fas fa-check"></i> {% trans "OK" %}</span>
+                  {% elif row.status == "warning" %}
+                    <span class="db-badge warning"><i class="fas fa-exclamation-triangle"></i> {% trans "Attention" %}</span>
+                  {% elif row.status == "danger" %}
+                    <span class="db-badge danger"><i class="fas fa-times"></i> {% trans "Erreur" %}</span>
+                  {% else %}
+                    <span class="db-badge"><i class="fas fa-info-circle"></i> {% trans "Info" %}</span>
+                  {% endif %}
+                </td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="4" class="db-muted">{% trans "Aucune activité récente." %}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+  {{ block.super }}
+  <script>
+    (function () {
+      if (!window.Chart) return;
+
+      const el = document.getElementById('dbActivityChart');
+      if (!el) return;
+
+      const labelsEl = document.getElementById("dbChartLabels");
+      const valuesEl = document.getElementById("dbChartValues");
+
+      const labels = labelsEl ? JSON.parse(labelsEl.textContent || "[]") : [];
+      const values = valuesEl ? JSON.parse(valuesEl.textContent || "[]") : [];
+
+      new Chart(el.getContext('2d'), {
+        type: 'line',
+        data: {
+          labels: Array.isArray(labels) ? labels : [],
+          datasets: [{
+            label: "{{ _('Activité')|escapejs }}",
+            data: Array.isArray(values) ? values : [],
+            tension: 0.35,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: true } },
+          scales: {
+            x: { grid: { display: false } },
+            y: { beginAtZero: true }
+          }
+        }
+      });
+    })();
+  </script>
+{% endblock %}
+
+
+
+
+
+
+
+
+{% comment %} {# templates/dashboard/home.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n humanize %}
+
+{% block title %}{% trans "Dashboard" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block dashboard_header %}
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div>
+      <div class="h4 fw-bold mb-1">{% trans "Tableau de bord" %}</div>
+      <div class="text-muted">{% trans "Aperçu de votre activité et accès rapides." %}</div>
+    </div>
+
+    {# ========================= #}
+    {#    Range (7/30/90 jours)  #}
+    {# ========================= #}
+    {% with rk=range_key|default:"30" %}
+      <div class="btn-group" role="group" aria-label="{% trans 'Plage de temps' %}">
+        <a class="btn btn-sm {% if rk == '7' %}btn-primary{% else %}btn-outline-primary{% endif %}" href="?range=7">
+          {% trans "7 jours" %}
+        </a>
+        <a class="btn btn-sm {% if rk == '30' %}btn-primary{% else %}btn-outline-primary{% endif %}" href="?range=30">
+          {% trans "30 jours" %}
+        </a>
+        <a class="btn btn-sm {% if rk == '90' %}btn-primary{% else %}btn-outline-primary{% endif %}" href="?range=90">
+          {% trans "90 jours" %}
+        </a>
+      </div>
+    {% endwith %}
+  </div>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="container-fluid px-0">
+
+  {# ===================== #}
+  {#     HERO / INTRO      #}
+  {# ===================== #}
+  <div class="db-card mb-4">
+    <div class="db-card-header">
+      <h2 class="db-card-title mb-1">
+        {% trans "Bienvenue" %}, {{ request.user.get_full_name|default:request.user.username }}
+      </h2>
+      <p class="db-card-subtitle mb-0">
+        {% trans "Voici un aperçu rapide de votre activité et des raccourcis utiles." %}
+      </p>
+
+      {% if profile_status %}
+        <div class="mt-2">
+          {% if profile_status == "approved" %}
+            <span class="db-badge success"><i class="fas fa-check"></i> {% trans "Profil validé" %}</span>
+          {% elif profile_status == "pending" %}
+            <span class="db-badge warning"><i class="fas fa-hourglass-half"></i> {% trans "Profil en attente" %}</span>
+          {% elif profile_status == "rejected" %}
+            <span class="db-badge danger"><i class="fas fa-times"></i> {% trans "Profil refusé" %}</span>
+          {% else %}
+            <span class="db-badge"><i class="fas fa-info-circle"></i> {{ profile_status }}</span>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="db-card-body">
+      <div class="d-flex flex-wrap gap-2">
+        <a class="btn btn-primary" href="{% url 'dashboard:profile' %}">
+          <i class="fas fa-user me-2"></i>{% trans "Mon profil" %}
+        </a>
+        <a class="btn btn-outline-secondary" href="{% url 'dashboard:notes_list' %}">
+          <i class="fas fa-sticky-note me-2"></i>{% trans "Mes notes" %}
+        </a>
+        <a class="btn btn-outline-secondary" href="{% url 'dashboard:donations' %}">
+          <i class="fas fa-donate me-2"></i>{% trans "Donations" %}
+        </a>
+        <a class="btn btn-outline-secondary" href="{% url 'dashboard:orders' %}">
+          <i class="fas fa-shopping-bag me-2"></i>{% trans "Commandes" %}
+        </a>
+        <a class="btn btn-outline-danger ms-auto" href="{% url 'accounts_users:web:auth:logout' %}">
+          <i class="fas fa-sign-out-alt me-2"></i>{% trans "Déconnexion" %}
+        </a>
+      </div>
+    </div>
+  </div>
+
+  {# ===================== #}
+  {#      KPI CARDS        #}
+  {# ===================== #}
+  <div class="row g-3 g-md-4 mb-4">
+
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="db-card h-100">
+        <div class="db-card-body">
+          <div class="db-stat">
+            <div class="db-stat-left">
+              <div class="db-stat-label">{% trans "Dons" %}</div>
+              <div class="db-stat-value">{{ kpi_donations_count|default:0|intcomma }}</div>
+              <div class="db-muted mt-1" style="font-weight:700;">{% trans "Total transactions" %}</div>
+              {% if kpi_donations_total is not None %}
+                <div class="db-muted mt-1">
+                  <i class="fas fa-coins me-1"></i>{{ kpi_donations_total|default:0|intcomma }} FCFA
+                </div>
+              {% endif %}
+            </div>
+            <div class="db-stat-icon"><i class="fas fa-donate"></i></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="db-card h-100">
+        <div class="db-card-body">
+          <div class="db-stat">
+            <div class="db-stat-left">
+              <div class="db-stat-label">{% trans "Engagements" %}</div>
+              <div class="db-stat-value">{{ kpi_engagements_count|default:0|intcomma }}</div>
+              <div class="db-muted mt-1" style="font-weight:700;">{% trans "Social" %}</div>
+            </div>
+            <div class="db-stat-icon" style="background: rgba(13,110,253,.10); border-color: rgba(13,110,253,.18);">
+              <i class="fas fa-hands-helping"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="db-card h-100">
+        <div class="db-card-body">
+          <div class="db-stat">
+            <div class="db-stat-left">
+              <div class="db-stat-label">{% trans "Commandes" %}</div>
+              <div class="db-stat-value">{{ kpi_orders_count|default:0|intcomma }}</div>
+              <div class="db-muted mt-1" style="font-weight:700;">{% trans "E-commerce" %}</div>
+            </div>
+            <div class="db-stat-icon" style="background: rgba(25,135,84,.10); border-color: rgba(25,135,84,.18);">
+              <i class="fas fa-receipt"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="db-card h-100">
+        <div class="db-card-body">
+          <div class="db-stat">
+            <div class="db-stat-left">
+              <div class="db-stat-label">{% trans "Notes" %}</div>
+              <div class="db-stat-value">{{ kpi_notes_count|default:0|intcomma }}</div>
+              <div class="db-muted mt-1" style="font-weight:700;">{% trans "Personnelles" %}</div>
+            </div>
+            <div class="db-stat-icon" style="background: rgba(255,193,7,.14); border-color: rgba(255,193,7,.25);">
+              <i class="fas fa-sticky-note"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  {# ===================== #}
+  {#   CHART + QUICK ACT   #}
+  {# ===================== #}
+  <div class="row g-3 g-md-4 mb-4">
+
+    <div class="col-12 col-xl-8">
+      <div class="db-card h-100">
+        <div class="db-card-header">
+          <h3 class="db-card-title">{% trans "Activité" %}</h3>
+          <p class="db-card-subtitle mb-0">{% trans "Synthèse sur la période sélectionnée." %}</p>
+        </div>
+        <div class="db-card-body">
+          <div style="min-height: 280px;">
+            <canvas id="dbActivityChart" height="120" aria-label="{% trans 'Graphique activité' %}"></canvas>
+          </div>
+          <div class="db-muted mt-3">{% trans "Si aucune donnée n’est disponible, le graphique affiche une série vide." %}</div>
+
+          {# JSON safe (prod) #}
+          {{ chart_labels|default:list|json_script:"dbChartLabels" }}
+          {{ chart_values|default:list|json_script:"dbChartValues" }}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-xl-4">
+      <div class="db-card h-100">
+        <div class="db-card-header">
+          <h3 class="db-card-title">{% trans "Actions rapides" %}</h3>
+          <p class="db-card-subtitle mb-0">{% trans "Raccourcis" %}</p>
+        </div>
+        <div class="db-card-body">
+          <div class="d-grid gap-2">
+            <a class="btn btn-outline-primary" href="{% url 'dashboard:notes_list' %}">
+              <i class="fas fa-plus me-2"></i>{% trans "Créer / Voir mes notes" %}
+            </a>
+            <a class="btn btn-outline-primary" href="{% url 'dashboard:donations' %}">
+              <i class="fas fa-credit-card me-2"></i>{% trans "Voir mes donations" %}
+            </a>
+            <a class="btn btn-outline-primary" href="{% url 'dashboard:orders' %}">
+              <i class="fas fa-shopping-bag me-2"></i>{% trans "Voir mes commandes" %}
+            </a>
+            {% if request.user.is_staff %}
+              <a class="btn btn-outline-dark" href="{% url 'dashboard:pending_profiles' %}">
+                <i class="fas fa-hourglass-half me-2"></i>{% trans "Profils en attente" %}
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  {# ===================== #}
+  {#    RECENT ACTIVITY    #}
+  {# ===================== #}
+  <div class="db-card">
+    <div class="db-card-header">
+      <h3 class="db-card-title">{% trans "Dernières activités" %}</h3>
+      <p class="db-card-subtitle mb-0">{% trans "Journal récent" %}</p>
+    </div>
+
+    <div class="db-card-body">
+      <div class="table-responsive">
+        <table class="db-table">
+          <thead>
+            <tr>
+              <th>{% trans "Date" %}</th>
+              <th>{% trans "Type" %}</th>
+              <th>{% trans "Détail" %}</th>
+              <th class="text-end">{% trans "Statut" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in recent_activity %}
+              <tr>
+                <td>{{ row.date|date:"d/m/Y H:i" }}</td>
+                <td><span class="db-badge"><i class="fas fa-bolt"></i> {{ row.kind }}</span></td>
+                <td>{{ row.label }}</td>
+                <td class="text-end">
+                  {% if row.status == "success" %}
+                    <span class="db-badge success"><i class="fas fa-check"></i> {% trans "OK" %}</span>
+                  {% elif row.status == "warning" %}
+                    <span class="db-badge warning"><i class="fas fa-exclamation-triangle"></i> {% trans "Attention" %}</span>
+                  {% elif row.status == "danger" %}
+                    <span class="db-badge danger"><i class="fas fa-times"></i> {% trans "Erreur" %}</span>
+                  {% else %}
+                    <span class="db-badge"><i class="fas fa-info-circle"></i> {% trans "Info" %}</span>
+                  {% endif %}
+                </td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="4" class="db-muted">{% trans "Aucune activité récente." %}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+  {{ block.super }}
+  <script>
+    (function () {
+      if (!window.Chart) return;
+
+      const el = document.getElementById('dbActivityChart');
+      if (!el) return;
+
+      const labelsEl = document.getElementById("dbChartLabels");
+      const valuesEl = document.getElementById("dbChartValues");
+
+      const labels = labelsEl ? JSON.parse(labelsEl.textContent) : [];
+      const values = valuesEl ? JSON.parse(valuesEl.textContent) : [];
+
+      new Chart(el.getContext('2d'), {
+        type: 'line',
+        data: {
+          labels: Array.isArray(labels) ? labels : [],
+          datasets: [{
+            label: "{{ _('Activité')|escapejs }}",
+            data: Array.isArray(values) ? values : [],
+            tension: 0.35,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: true } },
+          scales: {
+            x: { grid: { display: false } },
+            y: { beginAtZero: true }
+          }
+        }
+      });
+    })();
+  </script>
+{% endblock %}
+ {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/dashboard/home.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n humanize %}
+
+{% block title %}{% trans "Dashboard" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block dashboard_header %}
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div>
+      <div class="h4 fw-bold mb-1">{% trans "Tableau de bord" %}</div>
+      <div class="text-muted">{% trans "Aperçu de votre activité et accès rapides." %}</div>
+    </div>
+
+    {# ========================= #}
+    {#    Range (7/30/90 jours)  #}
+    {# ========================= #}
+    {% with rk=range_key|default:"30" %}
+      <div class="btn-group" role="group" aria-label="{% trans 'Plage de temps' %}">
+        <a class="btn btn-sm {% if rk == '7' %}btn-primary{% else %}btn-outline-primary{% endif %}" href="?range=7">
+          {% trans "7 jours" %}
+        </a>
+        <a class="btn btn-sm {% if rk == '30' %}btn-primary{% else %}btn-outline-primary{% endif %}" href="?range=30">
+          {% trans "30 jours" %}
+        </a>
+        <a class="btn btn-sm {% if rk == '90' %}btn-primary{% else %}btn-outline-primary{% endif %}" href="?range=90">
+          {% trans "90 jours" %}
+        </a>
+      </div>
+    {% endwith %}
+  </div>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="container-fluid px-0">
+
+  {# ===================== HERO / INTRO ===================== #}
+  <div class="db-card mb-4">
+    <div class="db-card-header">
+      <h2 class="db-card-title mb-1">
+        {% trans "Bienvenue" %}, {{ request.user.get_full_name|default:request.user.username }}
+      </h2>
+      <p class="db-card-subtitle mb-0">
+        {% trans "Voici un aperçu rapide de votre activité et des raccourcis utiles." %}
+      </p>
+
+      {% if profile_status %}
+        <div class="mt-2">
+          {% if profile_status == "approved" %}
+            <span class="db-badge success"><i class="fas fa-check"></i> {% trans "Profil validé" %}</span>
+          {% elif profile_status == "pending" %}
+            <span class="db-badge warning"><i class="fas fa-hourglass-half"></i> {% trans "Profil en attente" %}</span>
+          {% elif profile_status == "rejected" %}
+            <span class="db-badge danger"><i class="fas fa-times"></i> {% trans "Profil refusé" %}</span>
+          {% else %}
+            <span class="db-badge"><i class="fas fa-info-circle"></i> {{ profile_status }}</span>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="db-card-body">
+      <div class="d-flex flex-wrap gap-2">
+        <a class="btn btn-primary" href="{% url 'dashboard:profile' %}">
+          <i class="fas fa-user me-2"></i>{% trans "Mon profil" %}
+        </a>
+
+        <a class="btn btn-outline-secondary" href="{% url 'dashboard:notes_list' %}">
+          <i class="fas fa-sticky-note me-2"></i>{% trans "Mes notes" %}
+        </a>
+
+        <a class="btn btn-outline-secondary" href="{% url 'dashboard:donations' %}">
+          <i class="fas fa-donate me-2"></i>{% trans "Donations" %}
+        </a>
+
+        <a class="btn btn-outline-secondary" href="{% url 'dashboard:orders' %}">
+          <i class="fas fa-shopping-bag me-2"></i>{% trans "Commandes" %}
+        </a>
+
+        <a class="btn btn-outline-danger ms-auto" href="{% url 'accounts_users:web:auth:logout' %}">
+          <i class="fas fa-sign-out-alt me-2"></i>{% trans "Déconnexion" %}
+        </a>
+      </div>
+    </div>
+  </div>
+
+  {# ===================== KPI CARDS ===================== #}
+  <div class="row g-3 g-md-4 mb-4">
+
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="db-card h-100">
+        <div class="db-card-body">
+          <div class="db-stat">
+            <div class="db-stat-left">
+              <div class="db-stat-label">{% trans "Dons" %}</div>
+              <div class="db-stat-value">{{ kpi_donations_count|default:0|intcomma }}</div>
+              <div class="db-muted mt-1" style="font-weight:700;">{% trans "Total transactions" %}</div>
+              {% if kpi_donations_total is not None %}
+                <div class="db-muted mt-1">
+                  <i class="fas fa-coins me-1"></i>{{ kpi_donations_total|default:0|intcomma }} FCFA
+                </div>
+              {% endif %}
+            </div>
+            <div class="db-stat-icon"><i class="fas fa-donate"></i></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="db-card h-100">
+        <div class="db-card-body">
+          <div class="db-stat">
+            <div class="db-stat-left">
+              <div class="db-stat-label">{% trans "Engagements" %}</div>
+              <div class="db-stat-value">{{ kpi_engagements_count|default:0|intcomma }}</div>
+              <div class="db-muted mt-1" style="font-weight:700;">{% trans "Social" %}</div>
+            </div>
+            <div class="db-stat-icon" style="background: rgba(13,110,253,.10); border-color: rgba(13,110,253,.18);">
+              <i class="fas fa-hands-helping"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="db-card h-100">
+        <div class="db-card-body">
+          <div class="db-stat">
+            <div class="db-stat-left">
+              <div class="db-stat-label">{% trans "Commandes" %}</div>
+              <div class="db-stat-value">{{ kpi_orders_count|default:0|intcomma }}</div>
+              <div class="db-muted mt-1" style="font-weight:700;">{% trans "E-commerce" %}</div>
+            </div>
+            <div class="db-stat-icon" style="background: rgba(25,135,84,.10); border-color: rgba(25,135,84,.18);">
+              <i class="fas fa-receipt"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="db-card h-100">
+        <div class="db-card-body">
+          <div class="db-stat">
+            <div class="db-stat-left">
+              <div class="db-stat-label">{% trans "Notes" %}</div>
+              <div class="db-stat-value">{{ kpi_notes_count|default:0|intcomma }}</div>
+              <div class="db-muted mt-1" style="font-weight:700;">{% trans "Personnelles" %}</div>
+            </div>
+            <div class="db-stat-icon" style="background: rgba(255,193,7,.14); border-color: rgba(255,193,7,.25);">
+              <i class="fas fa-sticky-note"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  {# ===================== CHART + QUICK ACTIONS ===================== #}
+  <div class="row g-3 g-md-4 mb-4">
+
+    <div class="col-12 col-xl-8">
+      <div class="db-card h-100">
+        <div class="db-card-header">
+          <h3 class="db-card-title">{% trans "Activité" %}</h3>
+          <p class="db-card-subtitle mb-0">{% trans "Synthèse sur la période sélectionnée." %}</p>
+        </div>
+        <div class="db-card-body">
+          <div style="min-height: 280px;">
+            <canvas id="dbActivityChart" height="120" aria-label="{% trans 'Graphique activité' %}"></canvas>
+          </div>
+          <div class="db-muted mt-3">{% trans "Si aucune donnée n’est disponible, le graphique affiche une série vide." %}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-xl-4">
+      <div class="db-card h-100">
+        <div class="db-card-header">
+          <h3 class="db-card-title">{% trans "Actions rapides" %}</h3>
+          <p class="db-card-subtitle mb-0">{% trans "Raccourcis" %}</p>
+        </div>
+        <div class="db-card-body">
+          <div class="d-grid gap-2">
+            <a class="btn btn-outline-primary" href="{% url 'dashboard:notes_list' %}">
+              <i class="fas fa-plus me-2"></i>{% trans "Créer / Voir mes notes" %}
+            </a>
+            <a class="btn btn-outline-primary" href="{% url 'dashboard:donations' %}">
+              <i class="fas fa-credit-card me-2"></i>{% trans "Voir mes donations" %}
+            </a>
+            <a class="btn btn-outline-primary" href="{% url 'dashboard:orders' %}">
+              <i class="fas fa-shopping-bag me-2"></i>{% trans "Voir mes commandes" %}
+            </a>
+            {% if request.user.is_staff %}
+              <a class="btn btn-outline-dark" href="{% url 'dashboard:pending_profiles' %}">
+                <i class="fas fa-hourglass-half me-2"></i>{% trans "Profils en attente" %}
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  {# ===================== RECENT LIST ===================== #}
+  <div class="db-card">
+    <div class="db-card-header">
+      <h3 class="db-card-title">{% trans "Dernières activités" %}</h3>
+      <p class="db-card-subtitle mb-0">{% trans "Journal récent" %}</p>
+    </div>
+
+    <div class="db-card-body">
+      <div class="table-responsive">
+        <table class="db-table">
+          <thead>
+            <tr>
+              <th>{% trans "Date" %}</th>
+              <th>{% trans "Type" %}</th>
+              <th>{% trans "Détail" %}</th>
+              <th class="text-end">{% trans "Statut" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in recent_activity %}
+              <tr>
+                <td>{{ row.date|date:"d/m/Y H:i" }}</td>
+                <td><span class="db-badge"><i class="fas fa-bolt"></i> {{ row.kind }}</span></td>
+                <td>{{ row.label }}</td>
+                <td class="text-end">
+                  {% if row.status == "success" %}
+                    <span class="db-badge success"><i class="fas fa-check"></i> {% trans "OK" %}</span>
+                  {% elif row.status == "warning" %}
+                    <span class="db-badge warning"><i class="fas fa-exclamation-triangle"></i> {% trans "Attention" %}</span>
+                  {% elif row.status == "danger" %}
+                    <span class="db-badge danger"><i class="fas fa-times"></i> {% trans "Erreur" %}</span>
+                  {% else %}
+                    <span class="db-badge"><i class="fas fa-info-circle"></i> {% trans "Info" %}</span>
+                  {% endif %}
+                </td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="4" class="db-muted">{% trans "Aucune activité récente." %}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+  {{ block.super }}
+  <script>
+    (function () {
+      if (!window.Chart) return;
+
+      const el = document.getElementById('dbActivityChart');
+      if (!el) return;
+
+      // JSON fournis par la vue (prod-safe)
+      let labels = [];
+      let dataPoints = [];
+
+      try { labels = JSON.parse('{{ chart_labels_json|default:"[]"|escapejs }}'); } catch (e) { labels = []; }
+      try { dataPoints = JSON.parse('{{ chart_values_json|default:"[]"|escapejs }}'); } catch (e) { dataPoints = []; }
+
+      new Chart(el.getContext('2d'), {
+        type: 'line',
+        data: {
+          labels: Array.isArray(labels) ? labels : [],
+          datasets: [{
+            label: "{{ _('Activité')|escapejs }}",
+            data: Array.isArray(dataPoints) ? dataPoints : [],
+            tension: 0.35,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: true } },
+          scales: {
+            x: { grid: { display: false } },
+            y: { beginAtZero: true }
+          }
+        }
+      });
+    })();
+  </script>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+
+
+
+
+{% comment %} {# templates/dashboard/home.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n humanize %}
+
+{% block title %}{% trans "Dashboard" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block dashboard_header %}
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div>
+      <div class="h4 fw-bold mb-1">{% trans "Tableau de bord" %}</div>
+      <div class="text-muted">{% trans "Aperçu de votre activité et accès rapides." %}</div>
+    </div>
+
+    {# ========================= #}
+    {#    Range (7/30/90 jours)  #}
+    {# ========================= #}
+    {% with rk=range_key|default:"30" %}
+      <div class="btn-group" role="group" aria-label="{% trans 'Plage de temps' %}">
+        <a class="btn btn-sm {% if rk == '7' %}btn-primary{% else %}btn-outline-primary{% endif %}"
+           href="?range=7">{% trans "7 jours" %}</a>
+        <a class="btn btn-sm {% if rk == '30' %}btn-primary{% else %}btn-outline-primary{% endif %}"
+           href="?range=30">{% trans "30 jours" %}</a>
+        <a class="btn btn-sm {% if rk == '90' %}btn-primary{% else %}btn-outline-primary{% endif %}"
+           href="?range=90">{% trans "90 jours" %}</a>
+      </div>
+    {% endwith %}
+  </div>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="container-fluid px-0">
+
+  {# ===================== HERO / INTRO ===================== #}
+  <div class="db-card mb-4">
+    <div class="db-card-header">
+      <h2 class="db-card-title mb-1">
+        {% trans "Bienvenue" %}, {{ request.user.get_full_name|default:request.user.username }}
+      </h2>
+      <p class="db-card-subtitle mb-0">
+        {% trans "Voici un aperçu rapide de votre activité et des raccourcis utiles." %}
+      </p>
+
+      {# Statut profil (optionnel) #}
+      {% if profile_status %}
+        <div class="mt-2">
+          {% if profile_status == "approved" %}
+            <span class="db-badge success">
+              <i class="fas fa-check"></i> {% trans "Profil validé" %}
+            </span>
+          {% elif profile_status == "pending" %}
+            <span class="db-badge warning">
+              <i class="fas fa-hourglass-half"></i> {% trans "Profil en attente" %}
+            </span>
+          {% elif profile_status == "rejected" %}
+            <span class="db-badge danger">
+              <i class="fas fa-times"></i> {% trans "Profil refusé" %}
+            </span>
+          {% else %}
+            <span class="db-badge">
+              <i class="fas fa-info-circle"></i> {{ profile_status }}
+            </span>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="db-card-body">
+      <div class="d-flex flex-wrap gap-2">
+        <a class="btn btn-primary" href="{% url 'dashboard:profile' %}">
+          <i class="fas fa-user me-2"></i>{% trans "Mon profil" %}
+        </a>
+
+        <a class="btn btn-outline-secondary" href="{% url 'dashboard:notes_list' %}">
+          <i class="fas fa-sticky-note me-2"></i>{% trans "Mes notes" %}
+        </a>
+
+        <a class="btn btn-outline-secondary" href="{% url 'dashboard:donations' %}">
+          <i class="fas fa-donate me-2"></i>{% trans "Donations" %}
+        </a>
+
+        <a class="btn btn-outline-secondary" href="{% url 'dashboard:orders' %}">
+          <i class="fas fa-shopping-bag me-2"></i>{% trans "Commandes" %}
+        </a>
+
+        <a class="btn btn-outline-danger ms-auto" href="{% url 'accounts_users:web:auth:logout' %}">
+          <i class="fas fa-sign-out-alt me-2"></i>{% trans "Déconnexion" %}
+        </a>
+      </div>
+    </div>
+  </div>
+
+  {# ===================== KPI CARDS ===================== #}
+  <div class="row g-3 g-md-4 mb-4">
+
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="db-card h-100">
+        <div class="db-card-body">
+          <div class="db-stat">
+            <div class="db-stat-left">
+              <div class="db-stat-label">{% trans "Dons" %}</div>
+              <div class="db-stat-value">{{ kpi_donations_count|default:0|intcomma }}</div>
+              <div class="db-muted mt-1" style="font-weight:700;">{% trans "Total transactions" %}</div>
+              {% if kpi_donations_total is not None %}
+                <div class="db-muted mt-1">
+                  <i class="fas fa-coins me-1"></i>{{ kpi_donations_total|default:0|intcomma }} FCFA
+                </div>
+              {% endif %}
+            </div>
+            <div class="db-stat-icon"><i class="fas fa-donate"></i></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="db-card h-100">
+        <div class="db-card-body">
+          <div class="db-stat">
+            <div class="db-stat-left">
+              <div class="db-stat-label">{% trans "Engagements" %}</div>
+              <div class="db-stat-value">{{ kpi_engagements_count|default:0|intcomma }}</div>
+              <div class="db-muted mt-1" style="font-weight:700;">{% trans "Social" %}</div>
+            </div>
+            <div class="db-stat-icon" style="background: rgba(13,110,253,.10); border-color: rgba(13,110,253,.18);">
+              <i class="fas fa-hands-helping"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="db-card h-100">
+        <div class="db-card-body">
+          <div class="db-stat">
+            <div class="db-stat-left">
+              <div class="db-stat-label">{% trans "Commandes" %}</div>
+              <div class="db-stat-value">{{ kpi_orders_count|default:0|intcomma }}</div>
+              <div class="db-muted mt-1" style="font-weight:700;">{% trans "E-commerce" %}</div>
+            </div>
+            <div class="db-stat-icon" style="background: rgba(25,135,84,.10); border-color: rgba(25,135,84,.18);">
+              <i class="fas fa-receipt"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="db-card h-100">
+        <div class="db-card-body">
+          <div class="db-stat">
+            <div class="db-stat-left">
+              <div class="db-stat-label">{% trans "Notes" %}</div>
+              <div class="db-stat-value">{{ kpi_notes_count|default:0|intcomma }}</div>
+              <div class="db-muted mt-1" style="font-weight:700;">{% trans "Personnelles" %}</div>
+            </div>
+            <div class="db-stat-icon" style="background: rgba(255,193,7,.14); border-color: rgba(255,193,7,.25);">
+              <i class="fas fa-sticky-note"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  {# ===================== CHART + QUICK ACTIONS ===================== #}
+  <div class="row g-3 g-md-4 mb-4">
+
+    <div class="col-12 col-xl-8">
+      <div class="db-card h-100">
+        <div class="db-card-header">
+          <h3 class="db-card-title">{% trans "Activité" %}</h3>
+          <p class="db-card-subtitle mb-0">{% trans "Synthèse sur la période sélectionnée." %}</p>
+        </div>
+        <div class="db-card-body">
+          <div style="min-height: 280px;">
+            <canvas id="dbActivityChart" height="120" aria-label="{% trans 'Graphique activité' %}"></canvas>
+          </div>
+          <div class="db-muted mt-3">{% trans "Si aucune donnée n’est disponible, le graphique affiche une série vide." %}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-xl-4">
+      <div class="db-card h-100">
+        <div class="db-card-header">
+          <h3 class="db-card-title">{% trans "Actions rapides" %}</h3>
+          <p class="db-card-subtitle mb-0">{% trans "Raccourcis" %}</p>
+        </div>
+        <div class="db-card-body">
+          <div class="d-grid gap-2">
+            <a class="btn btn-outline-primary" href="{% url 'dashboard:notes_list' %}">
+              <i class="fas fa-plus me-2"></i>{% trans "Créer / Voir mes notes" %}
+            </a>
+            <a class="btn btn-outline-primary" href="{% url 'dashboard:donations' %}">
+              <i class="fas fa-credit-card me-2"></i>{% trans "Voir mes donations" %}
+            </a>
+            <a class="btn btn-outline-primary" href="{% url 'dashboard:orders' %}">
+              <i class="fas fa-shopping-bag me-2"></i>{% trans "Voir mes commandes" %}
+            </a>
+            {% if request.user.is_staff %}
+              <a class="btn btn-outline-dark" href="{% url 'dashboard:pending_profiles' %}">
+                <i class="fas fa-hourglass-half me-2"></i>{% trans "Profils en attente" %}
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  {# ===================== RECENT LIST ===================== #}
+  <div class="db-card">
+    <div class="db-card-header">
+      <h3 class="db-card-title">{% trans "Dernières activités" %}</h3>
+      <p class="db-card-subtitle mb-0">{% trans "Journal récent" %}</p>
+    </div>
+
+    <div class="db-card-body">
+      <div class="table-responsive">
+        <table class="db-table">
+          <thead>
+            <tr>
+              <th>{% trans "Date" %}</th>
+              <th>{% trans "Type" %}</th>
+              <th>{% trans "Détail" %}</th>
+              <th class="text-end">{% trans "Statut" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in recent_activity %}
+              <tr>
+                <td>{{ row.date|date:"d/m/Y H:i" }}</td>
+                <td>
+                  <span class="db-badge">
+                    <i class="fas fa-bolt"></i> {{ row.kind }}
+                  </span>
+                </td>
+                <td>{{ row.label }}</td>
+                <td class="text-end">
+                  {% if row.status == "success" %}
+                    <span class="db-badge success"><i class="fas fa-check"></i> {% trans "OK" %}</span>
+                  {% elif row.status == "warning" %}
+                    <span class="db-badge warning"><i class="fas fa-exclamation-triangle"></i> {% trans "Attention" %}</span>
+                  {% elif row.status == "danger" %}
+                    <span class="db-badge danger"><i class="fas fa-times"></i> {% trans "Erreur" %}</span>
+                  {% else %}
+                    <span class="db-badge"><i class="fas fa-info-circle"></i> {% trans "Info" %}</span>
+                  {% endif %}
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="4" class="db-muted">{% trans "Aucune activité récente." %}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+  {{ block.super }}
+  <script>
+    (function () {
+      // Chart.js local must be loaded in base.html
+      if (!window.Chart) return;
+
+      const el = document.getElementById('dbActivityChart');
+      if (!el) return;
+
+      // IMPORTANT: on ne lit PAS request.GET ici.
+      // Le backend doit fournir chart_labels et chart_values (listes sérialisées),
+      // sinon fallback à [].
+      const labels = {{ chart_labels|default:"[]"|safe }};
+      const dataPoints = {{ chart_values|default:"[]"|safe }};
+
+      const safeLabels = Array.isArray(labels) ? labels : [];
+      const safeData = Array.isArray(dataPoints) ? dataPoints : [];
+
+      new Chart(el.getContext('2d'), {
+        type: 'line',
+        data: {
+          labels: safeLabels,
+          datasets: [{
+            label: "{{ _('Activité')|escapejs }}",
+            data: safeData,
+            tension: 0.35,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: true }
+          },
+          scales: {
+            x: { grid: { display: false } },
+            y: { beginAtZero: true }
+          }
+        }
+      });
+    })();
+  </script>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/dashboard/home.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n humanize %}
+
+{% block title %}{% trans "Dashboard" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block dashboard_header %}
+  <div class="d-flex flex-wrap justify-content-between align-items-end gap-2">
+    <div>
+      <div class="db-page-title">{% trans "Tableau de bord" %}</div>
+      <div class="db-page-subtitle">
+        {% trans "Aperçu de votre activité, raccourcis et dernières actions." %}
+      </div>
+    </div>
+
+    {# ========================= #}
+    {#   Filtre période (option)  #}
+    {# ========================= #}
+    {% with range_key=range_key|default:request.GET.range|default:"30" %}
+      <div class="db-range">
+        <form method="get" class="d-flex gap-2 align-items-center" action="">
+          <label class="db-muted small" for="rangeSelect">{% trans "Période" %}</label>
+          <select id="rangeSelect" name="range" class="form-select form-select-sm" aria-label="{% trans 'Choisir la période' %}">
+            <option value="7"  {% if range_key == "7" %}selected{% endif %}>{% trans "7 jours" %}</option>
+            <option value="30" {% if range_key == "30" %}selected{% endif %}>{% trans "30 jours" %}</option>
+            <option value="90" {% if range_key == "90" %}selected{% endif %}>{% trans "90 jours" %}</option>
+          </select>
+
+          {# Preserve other query params if needed (optionnel)
+             ex: ?range=30&tab=... ; si tu passes d’autres paramètres #}
+          {% if request.GET.tab %}<input type="hidden" name="tab" value="{{ request.GET.tab|escape }}">{% endif %}
+
+          <button class="btn btn-sm btn-outline-primary" type="submit">
+            <i class="fas fa-filter me-1" aria-hidden="true"></i>{% trans "Appliquer" %}
+          </button>
+        </form>
+      </div>
+    {% endwith %}
+  </div>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="container-fluid px-0">
+
+  {# ========================= #}
+  {#       HERO / INTRO        #}
+  {# ========================= #}
+  <div class="db-card mb-4">
+    <div class="db-card-header">
+      <h2 class="db-card-title mb-1">
+        {% trans "Bienvenue" %}, {{ request.user.get_full_name|default:request.user.username }}
+      </h2>
+
+      <p class="db-card-subtitle mb-0">
+        {% trans "Voici un aperçu rapide de votre activité et des raccourcis utiles." %}
+        {% if range_label %}
+          <span class="db-muted">— {{ range_label }}</span>
+        {% endif %}
+      </p>
+    </div>
+
+    <div class="db-card-body">
+      <div class="d-flex flex-wrap gap-2 align-items-center">
+        <a class="btn btn-primary" href="{% url 'dashboard:profile' %}">
+          <i class="fas fa-user me-2" aria-hidden="true"></i>{% trans "Mon profil" %}
+        </a>
+
+        <a class="btn btn-outline-secondary" href="{% url 'dashboard:notes_list' %}">
+          <i class="fas fa-sticky-note me-2" aria-hidden="true"></i>{% trans "Mes notes" %}
+        </a>
+
+        <a class="btn btn-outline-secondary" href="{% url 'dashboard:donations' %}">
+          <i class="fas fa-donate me-2" aria-hidden="true"></i>{% trans "Donations" %}
+        </a>
+
+        {# Option: raccourci commandes si dispo #}
+        <a class="btn btn-outline-secondary" href="{% url 'dashboard:orders' %}">
+          <i class="fas fa-shopping-bag me-2" aria-hidden="true"></i>{% trans "Commandes" %}
+        </a>
+
+        <span class="ms-auto d-flex gap-2 align-items-center">
+          {# Statut / rôle #}
+          {% if request.user.is_staff %}
+            <span class="db-badge success">
+              <i class="fas fa-shield-alt" aria-hidden="true"></i> {% trans "Staff" %}
+            </span>
+          {% else %}
+            <span class="db-badge">
+              <i class="fas fa-user" aria-hidden="true"></i> {% trans "Utilisateur" %}
+            </span>
+          {% endif %}
+
+          {# Option: statut profil économique/social si tu passes un flag #}
+          {% if profile_status %}
+            {% if profile_status == "PENDING" %}
+              <span class="db-badge warning">
+                <i class="fas fa-hourglass-half" aria-hidden="true"></i> {% trans "Profil en attente" %}
+              </span>
+            {% elif profile_status == "REJECTED" %}
+              <span class="db-badge danger">
+                <i class="fas fa-times" aria-hidden="true"></i> {% trans "Profil refusé" %}
+              </span>
+            {% elif profile_status == "APPROVED" %}
+              <span class="db-badge success">
+                <i class="fas fa-check" aria-hidden="true"></i> {% trans "Profil validé" %}
+              </span>
+            {% endif %}
+          {% endif %}
+
+          <a class="btn btn-outline-danger" href="{% url 'accounts_users:web:auth:logout' %}">
+            <i class="fas fa-sign-out-alt me-2" aria-hidden="true"></i>{% trans "Déconnexion" %}
+          </a>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  {# ========================= #}
+  {#        KPI CARDS          #}
+  {# ========================= #}
+  <div class="row g-3 g-md-4 mb-4">
+
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="db-card h-100">
+        <div class="db-card-body">
+          <div class="db-stat">
+            <div class="db-stat-left">
+              <div class="db-stat-label">{% trans "Dons" %}</div>
+              <div class="db-stat-value">{{ kpi_donations_count|default:0|intcomma }}</div>
+              <div class="db-muted mt-1" style="font-weight:700;">{% trans "Total transactions" %}</div>
+            </div>
+            <div class="db-stat-icon">
+              <i class="fas fa-donate" aria-hidden="true"></i>
+            </div>
+          </div>
+
+          {% if kpi_donations_amount %}
+            <div class="db-muted mt-2">
+              <i class="fas fa-coins me-1" aria-hidden="true"></i>
+              {% trans "Montant" %} : <strong>{{ kpi_donations_amount|floatformat:0|intcomma }}</strong>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="db-card h-100">
+        <div class="db-card-body">
+          <div class="db-stat">
+            <div class="db-stat-left">
+              <div class="db-stat-label">{% trans "Commandes" %}</div>
+              <div class="db-stat-value">{{ kpi_orders_count|default:0|intcomma }}</div>
+              <div class="db-muted mt-1" style="font-weight:700;">{% trans "E-commerce" %}</div>
+            </div>
+            <div class="db-stat-icon" style="background: rgba(25,135,84,.10); border-color: rgba(25,135,84,.18);">
+              <i class="fas fa-receipt" aria-hidden="true"></i>
+            </div>
+          </div>
+
+          {% if kpi_orders_amount %}
+            <div class="db-muted mt-2">
+              <i class="fas fa-money-bill-wave me-1" aria-hidden="true"></i>
+              {% trans "Total" %} : <strong>{{ kpi_orders_amount|floatformat:0|intcomma }}</strong>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="db-card h-100">
+        <div class="db-card-body">
+          <div class="db-stat">
+            <div class="db-stat-left">
+              <div class="db-stat-label">{% trans "Notes" %}</div>
+              <div class="db-stat-value">{{ kpi_notes_count|default:0|intcomma }}</div>
+              <div class="db-muted mt-1" style="font-weight:700;">{% trans "Personnelles" %}</div>
+            </div>
+            <div class="db-stat-icon" style="background: rgba(255,193,7,.14); border-color: rgba(255,193,7,.25);">
+              <i class="fas fa-sticky-note" aria-hidden="true"></i>
+            </div>
+          </div>
+
+          {% if kpi_notes_last %}
+            <div class="db-muted mt-2">
+              <i class="fas fa-clock me-1" aria-hidden="true"></i>
+              {% trans "Dernière note" %} : <strong>{{ kpi_notes_last|naturaltime }}</strong>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="db-card h-100">
+        <div class="db-card-body">
+          <div class="db-stat">
+            <div class="db-stat-left">
+              <div class="db-stat-label">{% trans "Accès" %}</div>
+              <div class="db-stat-value" style="font-size:1.35rem;">
+                {% if request.user.is_staff %}
+                  <span class="db-badge success"><i class="fas fa-shield-alt" aria-hidden="true"></i> {% trans "Staff" %}</span>
+                {% else %}
+                  <span class="db-badge"><i class="fas fa-user" aria-hidden="true"></i> {% trans "Utilisateur" %}</span>
+                {% endif %}
+              </div>
+              <div class="db-muted mt-1" style="font-weight:700;">{% trans "Statut" %}</div>
+            </div>
+            <div class="db-stat-icon" style="background: rgba(13,110,253,.10); border-color: rgba(13,110,253,.18);">
+              <i class="fas fa-id-badge" aria-hidden="true"></i>
+            </div>
+          </div>
+
+          {% if request.user.last_login %}
+            <div class="db-muted mt-2">
+              <i class="fas fa-sign-in-alt me-1" aria-hidden="true"></i>
+              {% trans "Dernière connexion" %} : <strong>{{ request.user.last_login|naturaltime }}</strong>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  {# ========================= #}
+  {#   CHART + QUICK ACTIONS   #}
+  {# ========================= #}
+  <div class="row g-3 g-md-4 mb-4">
+
+    <div class="col-12 col-xl-8">
+      <div class="db-card h-100">
+        <div class="db-card-header">
+          <div class="d-flex justify-content-between align-items-start gap-2">
+            <div>
+              <h3 class="db-card-title mb-1">{% trans "Activité" %}</h3>
+              <p class="db-card-subtitle mb-0">{% trans "Aperçu des actions sur la période sélectionnée." %}</p>
+            </div>
+
+            {# mini légende optionnelle #}
+            <span class="db-badge">
+              <i class="fas fa-chart-line" aria-hidden="true"></i>
+              {{ range_label|default:_("Période") }}
+            </span>
+          </div>
+        </div>
+
+        <div class="db-card-body">
+          <div class="db-chart-wrap" style="min-height:240px;">
+            <canvas id="dbActivityChart" height="110" aria-label="{% trans 'Graphique activité' %}"></canvas>
+          </div>
+
+          <div class="db-muted mt-3">
+            {% trans "Si aucune donnée n’est disponible, le graphique affiche une série vide." %}
+          </div>
+
+          <noscript>
+            <div class="alert alert-info mt-3 mb-0">
+              {% trans "JavaScript est désactivé : le graphique ne peut pas s’afficher." %}
+            </div>
+          </noscript>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-xl-4">
+      <div class="db-card h-100">
+        <div class="db-card-header">
+          <h3 class="db-card-title">{% trans "Actions rapides" %}</h3>
+          <p class="db-card-subtitle">{% trans "Raccourcis" %}</p>
+        </div>
+
+        <div class="db-card-body">
+          <div class="d-grid gap-2">
+            <a class="btn btn-outline-primary" href="{% url 'dashboard:notes_list' %}">
+              <i class="fas fa-sticky-note me-2" aria-hidden="true"></i>{% trans "Créer / Voir mes notes" %}
+            </a>
+
+            <a class="btn btn-outline-primary" href="{% url 'dashboard:donations' %}">
+              <i class="fas fa-credit-card me-2" aria-hidden="true"></i>{% trans "Voir mes donations" %}
+            </a>
+
+            <a class="btn btn-outline-primary" href="{% url 'dashboard:orders' %}">
+              <i class="fas fa-shopping-bag me-2" aria-hidden="true"></i>{% trans "Voir mes commandes" %}
+            </a>
+
+            {% if request.user.is_staff %}
+              <a class="btn btn-outline-dark" href="{% url 'dashboard:pending_profiles' %}">
+                <i class="fas fa-hourglass-half me-2" aria-hidden="true"></i>{% trans "Profils en attente" %}
+              </a>
+            {% endif %}
+          </div>
+
+          {% if quick_hint %}
+            <div class="db-muted mt-3">
+              <i class="fas fa-info-circle me-1" aria-hidden="true"></i>{{ quick_hint }}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  {# ========================= #}
+  {#       RECENT LIST         #}
+  {# ========================= #}
+  <div class="db-card">
+    <div class="db-card-header">
+      <h3 class="db-card-title">{% trans "Dernières activités" %}</h3>
+      <p class="db-card-subtitle mb-0">{% trans "Journal récent" %}</p>
+    </div>
+
+    <div class="db-card-body">
+      <div class="table-responsive">
+        <table class="db-table" role="table" aria-label="{% trans 'Dernières activités' %}">
+          <thead>
+            <tr>
+              <th scope="col">{% trans "Date" %}</th>
+              <th scope="col">{% trans "Type" %}</th>
+              <th scope="col">{% trans "Détail" %}</th>
+              <th scope="col" class="text-end">{% trans "Statut" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in recent_activity %}
+              <tr>
+                <td>{{ row.date|date:"d/m/Y H:i" }}</td>
+                <td>
+                  <span class="db-badge">
+                    <i class="fas fa-bolt" aria-hidden="true"></i> {{ row.kind }}
+                  </span>
+                </td>
+                <td>{{ row.label }}</td>
+                <td class="text-end">
+                  {% if row.status == "success" %}
+                    <span class="db-badge success"><i class="fas fa-check" aria-hidden="true"></i> {% trans "OK" %}</span>
+                  {% elif row.status == "warning" %}
+                    <span class="db-badge warning"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i> {% trans "Attention" %}</span>
+                  {% elif row.status == "danger" %}
+                    <span class="db-badge danger"><i class="fas fa-times" aria-hidden="true"></i> {% trans "Erreur" %}</span>
+                  {% else %}
+                    <span class="db-badge"><i class="fas fa-info-circle" aria-hidden="true"></i> {% trans "Info" %}</span>
+                  {% endif %}
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="4" class="db-muted">{% trans "Aucune activité récente." %}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      {% if recent_activity_more_url %}
+        <div class="mt-3 text-end">
+          <a class="btn btn-sm btn-outline-secondary" href="{{ recent_activity_more_url }}">
+            {% trans "Voir tout" %} <i class="fas fa-arrow-right ms-1" aria-hidden="true"></i>
+          </a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+  {{ block.super }}
+
+  <script>
+    (function () {
+      // Chart.js local must be loaded in base.html
+      if (!window.Chart) return;
+
+      const el = document.getElementById("dbActivityChart");
+      if (!el) return;
+
+      // Backend JSON arrays: ensure they are valid JSON strings.
+      // IMPORTANT: chart_labels/chart_values should be prepared server-side as JSON dumps.
+      const labels = {{ chart_labels|default:"[]"|safe }};
+      const values = {{ chart_values|default:"[]"|safe }};
+
+      const safeLabels = Array.isArray(labels) ? labels : [];
+      const safeValues = Array.isArray(values) ? values : [];
+
+      // Respect reduced motion preference
+      const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      new Chart(el.getContext("2d"), {
+        type: "line",
+        data: {
+          labels: safeLabels,
+          datasets: [{
+            label: "{{ _('Activité')|escapejs }}",
+            data: safeValues,
+            tension: 0.35,
+            fill: true,
+            pointRadius: 2,
+            pointHoverRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: reduceMotion ? false : true,
+          plugins: {
+            legend: { display: true }
+          },
+          scales: {
+            x: { grid: { display: false } },
+            y: { beginAtZero: true }
+          }
+        }
+      });
+    })();
+  </script>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+
+{% comment %} {# templates/dashboard/home.html #}
+{% extends "dashboard/base.html" %}
 {% load i18n humanize %}
 
 {% block title %}{% trans "Dashboard" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
@@ -33,7 +1706,7 @@
         <a class="btn btn-outline-secondary" href="{% url 'dashboard:donations' %}">
           <i class="fas fa-donate me-2"></i>{% trans "Donations" %}
         </a>
-        <a class="btn btn-outline-danger ms-auto" href="{% url 'accounts_users_web:logout' %}">
+        <a class="btn btn-outline-danger ms-auto" href="{% url 'accounts_users:web:auth:logout' %}">
           <i class="fas fa-sign-out-alt me-2"></i>{% trans "Déconnexion" %}
         </a>
       </div>
@@ -279,7 +1952,7 @@
     })();
   </script>
 {% endblock %}
-
+ {% endcomment %}
 
 
 

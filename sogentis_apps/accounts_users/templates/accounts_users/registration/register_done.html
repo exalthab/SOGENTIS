@@ -1,0 +1,230 @@
+{# accounts_users/registration/register.html #}
+
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Créer un compte | SOGENTIS" %}{% endblock %}
+{% block auth_title %}{% trans "Créer un compte" %}{% endblock %}
+{% block auth_subtitle %}
+  {% trans "Remplissez les informations ci-dessous pour rejoindre SOGENTIS." %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts_users/css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+
+{# -------------------------------------------- #}
+{#                  MESSAGES                    #}
+{# -------------------------------------------- #}
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} text-center mb-3">{{ message }}</div>
+  {% endfor %}
+{% endif %}
+
+{# Message après enregistrement – avant activation email #}
+{% if account_created %}
+  <div class="alert alert-success text-center mb-3">
+    {% trans "Votre compte a été créé avec succès. Veuillez vérifier votre e-mail pour l'activer." %}
+  </div>
+  <script>
+    setTimeout(() => {
+      window.location.href = "{% url 'accounts_users:web:auth:login' %}";
+    }, 5000);
+  </script>
+{% endif %}
+
+<form method="post" enctype="multipart/form-data" novalidate>
+  {% csrf_token %}
+
+  {{ form.non_field_errors }}
+  {{ profile_form.non_field_errors }}
+
+  {# -------------------------------------------- #}
+  {#              CHAMPS DU USER                  #}
+  {# -------------------------------------------- #}
+  {% for field in form %}
+    <div class="mb-3">
+      <label class="form-label fw-semibold" for="{{ field.id_for_label }}">
+        {{ field.label }}{% if field.field.required %} *{% endif %}
+      </label>
+      {{ field }}
+      {% if field.errors %}
+        <div class="text-danger small">{{ field.errors|join:", " }}</div>
+      {% endif %}
+    </div>
+  {% endfor %}
+
+  {# -------------------------------------------- #}
+  {#          CHAMPS DU PROFILE (général)         #}
+  {# -------------------------------------------- #}
+  {% for field in profile_form %}
+    {% if field.name not in ['terms', 'judicial_record', 'profile_picture'] %}
+      <div class="mb-3">
+        <label class="form-label fw-semibold" for="{{ field.id_for_label }}">
+          {{ field.label }}{% if field.field.required %} *{% endif %}
+        </label>
+        {{ field }}
+        {% if field.errors %}
+          <div class="text-danger small">{{ field.errors|join:", " }}</div>
+        {% endif %}
+      </div>
+    {% endif %}
+  {% endfor %}
+
+  {# -------------------------------------------- #}
+  {#             PHOTO DE PROFIL                  #}
+  {# -------------------------------------------- #}
+  <div class="mb-3">
+    <label class="form-label fw-semibold" for="{{ profile_form.profile_picture.id_for_label }}">
+      {{ profile_form.profile_picture.label }}
+    </label>
+    {{ profile_form.profile_picture }}
+    {% for error in profile_form.profile_picture.errors %}
+      <div class="text-danger small">{{ error }}</div>
+    {% endfor %}
+  </div>
+
+  {# -------------------------------------------- #}
+  {#               CASIER JUDICIAIRE (PDF)        #}
+  {# -------------------------------------------- #}
+  <div class="mb-3">
+    <label class="form-label fw-semibold" for="{{ profile_form.judicial_record.id_for_label }}">
+      {{ profile_form.judicial_record.label }} *
+    </label>
+    {{ profile_form.judicial_record }}
+    {% for error in profile_form.judicial_record.errors %}
+      <div class="text-danger small">{{ error }}</div>
+    {% endfor %}
+    <div id="pdf-preview" class="mt-2"></div>
+  </div>
+
+  {# -------------------------------------------- #}
+  {#                   TERMS                      #}
+  {# -------------------------------------------- #}
+  <div class="form-check mb-3">
+    {{ profile_form.terms }}
+    <label class="form-check-label" for="{{ profile_form.terms.id_for_label }}">
+      {% trans "J'accepte les conditions générales et je confirme sur mon honneur l'authenticité de mon identification." %}
+    </label>
+    {% for error in profile_form.terms.errors %}
+      <div class="text-danger small">{{ error }}</div>
+    {% endfor %}
+  </div>
+
+  {% if next %}
+    <input type="hidden" name="next" value="{{ next }}">
+  {% endif %}
+
+  <div class="d-grid mt-4">
+    <button type="submit" class="btn btn-success py-2 fw-bold">
+      {% trans "S'inscrire" %}
+    </button>
+  </div>
+</form>
+
+<div class="text-center mt-3 small">
+  {% trans "Déjà inscrit ?" %}
+  <a href="{% url 'accounts_users:web:auth:login' %}">{% trans "Se connecter" %}</a>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts_users/js/signup.js' %}"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const input = document.getElementById("id_judicial_record");
+  const preview = document.getElementById("pdf-preview");
+
+  if (!input) return;
+
+  input.addEventListener("change", () => {
+    const file = input.files[0];
+    if (!file) return;
+
+    // PDF uniquement
+    if (file.type === "application/pdf") {
+      const reader = new FileReader();
+      reader.onload = e => {
+        preview.innerHTML = `
+          <embed src="${e.target.result}" type="application/pdf"
+                 width="100%" height="300px" class="rounded border shadow-sm"/>
+        `;
+      };
+      reader.readAsDataURL(file);
+    } else {
+      preview.innerHTML = `
+        <p class="text-danger fw-semibold">
+          {% trans "Format incorrect. Le fichier doit être un PDF." %}
+        </p>
+      `;
+    }
+  });
+});
+</script>
+{% endblock %}
+
+
+
+
+
+{% comment %} {# accounts_users/registration/signup_done.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Inscription réussie | SOGENTIS" %}{% endblock %}
+{% block auth_title %}🎉 {% trans "Inscription réussie" %}{% endblock %}
+{% block auth_subtitle %}
+  {% trans "Merci pour votre inscription ! Vérifiez votre e-mail pour activer votre compte." %}
+{% endblock %}
+
+{% block content %}
+<div class="text-center mt-3">
+
+  <p class="mb-2">
+    {% trans "Un lien d’activation vous a été envoyé. Veuillez consulter votre boîte e-mail." %}
+  </p>
+
+  <p class="text-muted small mb-4">
+    {% trans "Vous serez automatiquement redirigé dans quelques secondes…" %}
+  </p>
+
+  <a href="{% url 'accounts_users_web:login' %}"
+     class="btn btn-primary btn-sm mt-2">
+    {% trans "Aller à la connexion" %}
+  </a>
+
+  <script>
+    setTimeout(function () {
+      window.location.href = "{% url 'accounts_users_web:login' %}";
+    }, 5000);
+  </script>
+
+</div>
+{% endblock %}
+ {% endcomment %}
+
+
+
+
+{% comment %} {# /accounts_users/registration/signup_done.html #}
+{% extends "accounts_users/registration/base_auth.html" %}
+{% load static i18n %}
+
+{% block content %}
+<div class="container py-5 text-center">
+  <h2>{% trans "Merci pour votre inscription !" %}</h2>
+  <p>{% trans "Veuillez vérifier votre email afin d'activer votre compte." %}</p>
+  <p>{% trans "Vous serez redirigé dans quelques secondes..." %}</p>
+
+  <script>
+    setTimeout(function () {
+      window.location.href = "{% url 'accounts_users_web:login' %}";
+    }, 5000);
+  </script>
+</div>
+{% endblock %} {% endcomment %}

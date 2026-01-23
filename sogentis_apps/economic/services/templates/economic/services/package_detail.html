@@ -1,0 +1,186 @@
+{# templates/economic/services/package_detail.html #}
+{% extends "economic/base_economic.html" %}
+{% load i18n static %}
+
+{% block title %}
+  {{ package.name|default:"Pack" }} | {{ PROJECT_NAME|default:"SOGENTIS" }}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'economic/css/services.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+
+  <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
+    <div>
+      <div class="text-muted small mb-1">
+        {% trans "Pack de services" %}
+        {% if package.tier %} · {{ package.get_tier_display }}{% endif %}
+        {% if package.billing_period %} · {{ package.get_billing_period_display }}{% endif %}
+      </div>
+
+      <h1 class="h3 fw-bold mb-2">
+        {{ package.name|default:_("Pack") }}
+      </h1>
+
+      {% if package.tagline %}
+        <p class="lead text-muted mb-3">{{ package.tagline }}</p>
+      {% endif %}
+    </div>
+
+    <div class="text-end">
+      <div class="h4 fw-bold mb-1">
+        {% if package.billing_period == "custom" %}
+          {% trans "Sur devis" %}
+        {% else %}
+          {{ package.total_price }} {{ package.currency }}
+        {% endif %}
+      </div>
+      <div class="text-muted small mb-3">
+        {% if package.billing_period %}{{ package.get_billing_period_display }}{% endif %}
+      </div>
+
+      <a class="btn btn-primary"
+         href="{% url 'economic:services:package_quote' slug=package.slug %}">
+        {{ package.cta_label|default:_("Demander un devis") }}
+      </a>
+
+      <a class="btn btn-outline-secondary ms-2"
+         href="{% url 'economic:services:index' %}">
+        {% trans "Retour" %}
+      </a>
+    </div>
+  </div>
+
+  <hr class="my-4">
+
+  <div class="row g-4">
+    <div class="col-lg-8">
+
+      {# Description #}
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+          <h2 class="h5 fw-bold mb-3">{% trans "Description" %}</h2>
+          {% if package.description %}
+            <div class="content-rich">{{ package.description|safe }}</div>
+          {% else %}
+            <p class="text-muted mb-0">{% trans "Aucune description." %}</p>
+          {% endif %}
+        </div>
+      </div>
+
+      {# Features du pack #}
+      {% if package.features.all %}
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+          <h2 class="h5 fw-bold mb-3">{% trans "Ce qui est inclus" %}</h2>
+          <ul class="list-unstyled mb-0">
+            {% for f in package.features.all %}
+              <li class="d-flex gap-2 mb-2">
+                <span class="{% if f.is_highlight %}text-success{% else %}text-muted{% endif %}">
+                  <i class="fa-solid fa-circle-check"></i>
+                </span>
+                <span class="{% if f.is_highlight %}fw-semibold{% endif %}">{{ f.label }}</span>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      {% endif %}
+
+      {# Services inclus #}
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <h2 class="h5 fw-bold mb-3">{% trans "Services inclus" %}</h2>
+
+          {% if package.services.all %}
+            <div class="row g-3">
+              {% for s in package.services.all %}
+                <div class="col-md-6">
+                  <div class="border rounded-3 p-3 h-100">
+                    <div class="d-flex align-items-start justify-content-between gap-2">
+                      <div>
+                        <div class="fw-bold">
+                          {{ s.title|default:"Service" }}
+                        </div>
+                        {% if s.short_description %}
+                          <div class="text-muted small mt-1">{{ s.short_description }}</div>
+                        {% endif %}
+                      </div>
+                      <a class="btn btn-sm btn-outline-primary"
+                         href="{% url 'economic:services:detail' slug=s.slug %}">
+                        {% trans "Voir" %}
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <p class="text-muted mb-0">{% trans "Aucun service associé à ce pack." %}</p>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <h3 class="h6 fw-bold mb-3">{% trans "Détails" %}</h3>
+
+          {% if package.tier %}
+          <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted">{% trans "Niveau" %}</span>
+            <span class="fw-semibold">{{ package.get_tier_display }}</span>
+          </div>
+          {% endif %}
+
+          {% if package.support_level %}
+          <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted">{% trans "Support" %}</span>
+            <span class="fw-semibold">{{ package.get_support_level_display }}</span>
+          </div>
+          {% endif %}
+
+          <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted">{% trans "SSL" %}</span>
+            <span class="fw-semibold">{% if package.included_ssl %}{% trans "Inclus" %}{% else %}{% trans "Non" %}{% endif %}</span>
+          </div>
+
+          <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted">{% trans "Domaine (1 an)" %}</span>
+            <span class="fw-semibold">{% if package.included_domain_year %}{% trans "Inclus" %}{% else %}{% trans "Non" %}{% endif %}</span>
+          </div>
+
+          <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted">{% trans "E-mails pro" %}</span>
+            <span class="fw-semibold">{{ package.emails_count }}</span>
+          </div>
+
+          {% if package.max_pages %}
+          <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted">{% trans "Pages max" %}</span>
+            <span class="fw-semibold">{{ package.max_pages }}</span>
+          </div>
+          {% endif %}
+
+          <hr>
+
+          <a class="btn btn-primary w-100"
+             href="{% url 'economic:services:package_quote' slug=package.slug %}">
+            {{ package.cta_label|default:_("Demander un devis") }}
+          </a>
+
+          <div class="small text-muted mt-3">
+            {% trans "Un conseiller vous répond rapidement avec une proposition adaptée." %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

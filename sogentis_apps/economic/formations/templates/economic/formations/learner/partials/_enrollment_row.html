@@ -1,0 +1,25 @@
+{# templates/economic/formations/learner/partials/_enrollment_row.html #}
+{% load i18n %}
+
+<div class="list-group-item px-0">
+  <div class="d-flex align-items-start justify-content-between gap-2">
+    <div>
+      <div class="fw-semibold">{{ e.course }}</div>
+      <div class="text-muted small">
+        {% if e.course.category %}{{ e.course.category }} · {% endif %}
+        {% trans "Progression" %} : {{ e.progress_percent|default:0 }}%
+      </div>
+    </div>
+
+    <div class="text-end">
+      {% if e.paid %}
+        <span class="badge text-bg-success">{% trans "Payé" %}</span>
+      {% else %}
+        <span class="badge text-bg-secondary">{% trans "Non payé" %}</span>
+      {% endif %}
+      <div class="text-muted small mt-1">
+        {% if e.status %}{{ e.get_status_display|default:e.status }}{% endif %}
+      </div>
+    </div>
+  </div>
+</div>

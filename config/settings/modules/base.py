@@ -80,6 +80,8 @@ SEO_DESCRIPTION_DEFAULT = config(
 # Chemin static (pas une URL absolue) : utilisé via static() dans le context processor
 SEO_OG_IMAGE_DEFAULT_PATH = config("SEO_OG_IMAGE_DEFAULT_PATH", default="global/image/og_default_sogentis.png")
 
+LOGIN_URL = "accounts_users:web:auth:login"
+LOGIN_REDIRECT_URL = "dashboard:hub"
 
 
 

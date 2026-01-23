@@ -1,5 +1,124 @@
-{% extends "main.html" %}
 {# templates/core/base.html #}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{# ==========================================================
+   CORE BASE — SOGENTIS
+   - Hérite de main.html
+   - Wrapper standard pour les pages core :
+     core_header / core_content
+   - Intègre banner + modal cookies (global)
+   ========================================================== #}
+
+{# SEO defaults pour les pages core (override possible) #}
+{% block seo_title %}
+  {% block core_title %}{{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+{% endblock %}
+
+{% block seo_description %}
+  {% block core_description %}{{ SEO_DESCRIPTION_DEFAULT }}{% endblock %}
+{% endblock %}
+
+{% block extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'core/css/core_base.css' %}">
+  {# Cookies consent (banner + modal) #}
+  <link rel="stylesheet" href="{% static 'core/css/cookies_consent.css' %}">
+{% endblock %}
+
+{# ✅ Par défaut, les pages core utilisent un main avec marge pour topbar/sticky #}
+{% block main_class %}
+  container-fluid pt-5 mt-4
+{% endblock %}
+
+{# ==========================================================
+   CONTENT
+   - Wrapper core-page
+   - Blocs : core_header / core_content
+   - Cookies : banner + modal inclus globalement
+   ========================================================== #}
+{% block content %}
+  <section class="core-page">
+    <div class="container">
+      {% block core_header %}{% endblock %}
+      {% block core_content %}{% endblock %}
+    </div>
+  </section>
+
+  {# ✅ Cookies : banner + modal (peuvent être placés n'importe où car fixed) #}
+  {% include "core/partials/_cookie_consent_banner.html" %}
+  {% include "core/partials/_cookie_consent_modal.html" %}
+{% endblock %}
+
+{% block extra_js %}
+  {{ block.super }}
+  {# Cookies consent JS (accept/reject/customize) #}
+  <script defer src="{% static 'core/js/cookies_consent.js' %}"></script>
+
+  {# Hook optionnel pour scripts additionnels core #}
+  {% block core_extra_js %}{% endblock %}
+{% endblock %}
+
+
+
+
+
+
+
+{% comment %} {# templates/core/base.html #}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{# ==========================================================
+   CORE BASE — SOGENTIS
+   - Hérite de main.html
+   - Fournit une structure standard :
+     core_header / core_content
+   - Compatible avec le block "topbar" et "main_class" de main.html
+   ========================================================== #}
+
+{# SEO defaults pour les pages core (override possible) #}
+{% block seo_title %}{% block core_title %}{{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}{% endblock %}
+{% block seo_description %}{% block core_description %}{{ SEO_DESCRIPTION_DEFAULT }}{% endblock %}{% endblock %}
+
+{% block extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'core/css/core_base.css' %}">
+
+  {% endblock %}
+
+{# ✅ Par défaut, les pages core utilisent un main "container"
+   (home peut override via block main_class = p-0 m-0) #}
+{% block main_class %}
+  container-fluid pt-5 mt-4
+{% endblock %}
+
+{# ==========================================================
+   CONTENT
+   - On garde ton wrapper "core-page"
+   - On utilise core_header / core_content
+   ========================================================== #}
+{% block content %}
+  <section class="core-page">
+    <div class="container">
+      {% block core_header %}{% endblock %}
+      {% block core_content %}{% endblock %}
+    </div>
+  </section>
+{% endblock %}
+
+{% block extra_js %}
+  {{ block.super }}
+{% endblock %}
+
+ {% endcomment %}
+
+
+
+
+{% comment %} {# templates/core/base.html #}
+
+{% extends "main.html" %}
 
 {% load static i18n %}
 
@@ -22,4 +141,4 @@
 
 {% block extra_js %}
   {{ block.super }}
-{% endblock %}
+{% endblock %} {% endcomment %}

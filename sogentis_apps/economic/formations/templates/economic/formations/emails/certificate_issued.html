@@ -1,0 +1,24 @@
+{# templates/economic/formations/emails/certificate_issued.html #}
+
+<!doctype html>
+<html>
+  <body style="font-family: Arial, sans-serif; line-height:1.5;">
+    <p>Bonjour <strong>{{ user.get_short_name|default:user.get_username }}</strong>,</p>
+
+    <p>Votre certificat est disponible pour la formation :</p>
+
+    <p style="margin:0.5rem 0; padding:0.75rem; background:#f6f7f9; border:1px solid #e5e7eb;">
+      <strong>{{ course.title }}</strong><br>
+      Code : <strong>{{ certificate.code }}</strong><br>
+      Date : {{ certificate.issued_at|date:"d/m/Y" }}
+    </p>
+
+    <p>Le PDF est joint à cet email (si disponible) et accessible depuis votre espace apprenant.</p>
+
+    {% if site_url %}
+      <p style="font-size: 0.95rem; color:#555;">Site : {{ site_url }}</p>
+    {% endif %}
+
+    <p>Merci,<br><strong>{{ project_name }}</strong></p>
+  </body>
+</html>

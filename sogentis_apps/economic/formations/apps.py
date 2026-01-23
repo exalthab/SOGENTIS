@@ -10,3 +10,6 @@ class FormationsConfig(AppConfig):
     name = "economic.formations"
 
     verbose_name = _("Formations en ligne")
+    
+    def ready(self):
+        from . import signals

@@ -1,0 +1,11 @@
+{# templates/economic/formations/partials/_category_pills.html #}
+{% load i18n %}
+
+<div class="d-flex flex-wrap gap-2">
+  {% for cat in categories %}
+    <a class="btn btn-sm btn-outline-secondary rounded-pill"
+       href="{% url 'economic:formations:courses:list' %}?category={{ cat.slug }}">
+      {{ cat }}
+    </a>
+  {% endfor %}
+</div>

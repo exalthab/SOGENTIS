@@ -1,4 +1,4 @@
-{# core/partials/_menu_mobile.html #}
+{% comment %} {# core/partials/_menu_mobile.html #}
 {% load static i18n %}
 
 <div class="offcanvas offcanvas-end bg-dark text-white" tabindex="-1" id="mobileMenu">
@@ -28,7 +28,7 @@
         <i class="fas fa-hand-holding-heart me-2"></i> {% trans "Pôle Social" %}
       </a>
 
-      <a href="{% url 'econ:index' %}" class="mobile-nav-link">
+      <a href="{% url 'econnomic:index' %}" class="mobile-nav-link">
         <i class="fas fa-briefcase me-2"></i> {% trans "Pôle Économique" %}
       </a>
 
@@ -151,7 +151,7 @@
       </form>
 
       {% else %}
-      <a href="{% url 'accounts_users_web:login' %}?next={{ request.get_full_path|urlencode }}"
+      <a href="{% url 'accounts_users:web:login' %}?next={{ request.get_full_path|urlencode }}"
          class="btn btn-sm btn-primary w-100">
         <i class="fas fa-sign-in-alt me-1"></i> {% trans "Se connecter" %}
       </a>
@@ -159,4 +159,4 @@
     </div>
 
   </div>
-</div>
+</div> {% endcomment %}

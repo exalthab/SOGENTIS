@@ -1,46 +1,19 @@
 # accounts_users/admin/admin_profile_admin.py
-
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 
+from accounts_users.admin.admin_base import BaseAdmin
 from accounts_users.models.users_profile import UserProfile
 
 
 @admin.register(UserProfile)
-class UserProfileAdmin(admin.ModelAdmin):
-    """
-    Admin du profil SOCIAL (identité de base uniquement).
-    ⚠️ Aucun workflow ici : pas de status, pas de validation, pas de codes.
-    """
-
-    list_display = (
-        "user",
-        "get_full_identity",
-        "phone_number",
-        "created_at",
-        "updated_at",
-    )
-
-    list_filter = (
-        "created_at",
-    )
-
-    search_fields = (
-        "user__email",
-        "user__username",
-        "last_name",
-        "first_name",
-        "middle_names",
-        "nickname",
-        "phone_number",
-    )
-
+class UserProfileAdmin(BaseAdmin):
+    list_display = ("user", "get_full_identity", "phone_number", "created_at_display", "updated_at_display")
+    list_filter = ("created_at",)
+    search_fields = ("user__email", "user__username", "last_name", "first_name", "middle_names", "nickname", "phone_number")
     ordering = ("-created_at",)
 
-    readonly_fields = (
-        "created_at",
-        "updated_at",
-    )
+    autocomplete_fields = ("user",)
 
     fieldsets = (
         (_("Utilisateur"), {"fields": ("user",)}),
@@ -53,6 +26,66 @@ class UserProfileAdmin(admin.ModelAdmin):
     def get_full_identity(self, obj: UserProfile):
         full_name = " ".join(filter(None, [obj.last_name, obj.first_name, obj.middle_names]))
         return full_name.strip() or obj.user.get_username()
+
+
+
+
+
+# # accounts_users/admin/admin_profile_admin.py
+
+# from django.contrib import admin
+# from django.utils.translation import gettext_lazy as _
+
+# from accounts_users.models.users_profile import UserProfile
+
+
+# @admin.register(UserProfile)
+# class UserProfileAdmin(admin.ModelAdmin):
+#     """
+#     Admin du profil SOCIAL (identité de base uniquement).
+#     ⚠️ Aucun workflow ici : pas de status, pas de validation, pas de codes.
+#     """
+
+#     list_display = (
+#         "user",
+#         "get_full_identity",
+#         "phone_number",
+#         "created_at",
+#         "updated_at",
+#     )
+
+#     list_filter = (
+#         "created_at",
+#     )
+
+#     search_fields = (
+#         "user__email",
+#         "user__username",
+#         "last_name",
+#         "first_name",
+#         "middle_names",
+#         "nickname",
+#         "phone_number",
+#     )
+
+#     ordering = ("-created_at",)
+
+#     readonly_fields = (
+#         "created_at",
+#         "updated_at",
+#     )
+
+#     fieldsets = (
+#         (_("Utilisateur"), {"fields": ("user",)}),
+#         (_("Identité"), {"fields": ("last_name", "first_name", "middle_names", "nickname")}),
+#         (_("Contact"), {"fields": ("phone_number", "message")}),
+#         (_("Dates"), {"fields": ("created_at", "updated_at")}),
+#     )
+
+#     @admin.display(description=_("Identité"), ordering="last_name")
+#     def get_full_identity(self, obj: UserProfile):
+#         full_name = " ".join(filter(None, [obj.last_name, obj.first_name, obj.middle_names]))
+#         return full_name.strip() or obj.user.get_username()
 
 
 

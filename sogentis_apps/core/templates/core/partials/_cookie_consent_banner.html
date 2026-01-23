@@ -1,0 +1,24 @@
+{% load i18n %}
+
+<div class="cookie-banner" data-cookie-banner hidden role="region" aria-label="{% trans 'Consentement cookies' %}">
+  <div class="cookie-banner-inner">
+    <div class="cookie-banner-text">
+      <div class="fw-semibold">{% trans "Nous respectons votre vie privée" %}</div>
+      <div class="text-muted small">
+        {% trans "Nous utilisons des cookies pour le fonctionnement du site, et (avec votre accord) pour mesurer l’audience et améliorer l’expérience." %}
+      </div>
+    </div>
+
+    <div class="cookie-banner-actions">
+      <button type="button" class="btn btn-outline-secondary btn-sm" data-cookie-open="preferences">
+        {% trans "Personnaliser" %}
+      </button>
+      <button type="button" class="btn btn-outline-dark btn-sm" data-cookie-action="reject_all">
+        {% trans "Refuser" %}
+      </button>
+      <button type="button" class="btn btn-primary btn-sm" data-cookie-action="accept_all">
+        {% trans "Accepter" %}
+      </button>
+    </div>
+  </div>
+</div>

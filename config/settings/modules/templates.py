@@ -12,6 +12,7 @@ USE_TEMPLATE_CACHING = config("USE_TEMPLATE_CACHING", cast=bool, default=not DEB
 TEMPLATES_DIR = (BASE_DIR / "templates").resolve()
 
 BASE_CONTEXT_PROCESSORS = [
+    "django.template.context_processors.debug",
     "django.template.context_processors.request",
     "django.template.context_processors.i18n",
     "django.contrib.auth.context_processors.auth",

@@ -1,4 +1,4 @@
-{# accounts_users/registration/base_auth.html  #}
+{# templates/accounts_users/registration/base_auth.html #}
 {% load static i18n widget_tweaks user_form_tags %}
 {% get_current_language as CUR_LANG %}
 {% get_current_language_bidi as CUR_BIDI %}
@@ -9,93 +9,123 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>{% block title %}SOGENTIS{% endblock %}</title>
-  <meta name="description" content="{% block meta_description %}SOGENTIS — Auth{% endblock %}">
+  <title>{% block title %}{{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}{{ PROJECT_NAME|default:"SOGENTIS" }} — Auth{% endblock %}">
+  <meta name="robots" content="{% block robots %}noindex,nofollow{% endblock %}">
   <meta http-equiv="Cache-Control" content="no-store">
   <meta http-equiv="Pragma" content="no-cache">
 
-  <!-- Vendors / Core CSS -->
   <link rel="stylesheet" href="{% static 'accounts_users/css/vendors/bootstrap/css/bootstrap.min.css' %}">
   <link rel="stylesheet" href="{% static 'accounts_users/css/vendors/fontawesome/css/all.min.css' %}">
+  <link rel="stylesheet" href="{% static 'core/vendors/bootstrap-icons/bootstrap-icons.css' %}">
   <link rel="stylesheet" href="{% static 'accounts_users/css/users_menu.css' %}">
-
-  <!-- Auth layout CSS -->
   <link rel="stylesheet" href="{% static 'accounts_users/css/auth_base.css' %}">
 
   {% block extra_css %}{% endblock %}
 </head>
 
-<body class="{% block body_class %}bg-light{% endblock %}">
-  
-  <!-- BACKGROUND -->
-  <div class="auth-bg"
-       style="--auth-bg-image: url('{% block auth_bg_image %}{% static 'accounts_users/img/auth_bg.jpg' %}{% endblock %}');"
-       aria-hidden="true"></div>
+<body class="auth-body {% block body_class %}{% endblock %}"
+      style="--auth-bg: {% block auth_bg_image %}none{% endblock %};">
 
-  <div class="auth-overlay" aria-hidden="true"></div>
+  {% url "core:home" as home_url %}
+  {% url "core:switch_language" as switch_lang_url %}
+  {% url "accounts_users:web:auth:auth_choice" as auth_choice_url %}
+  {% url "accounts_users:web:auth:login" as login_url %}
+  {% url "accounts_users:web:registration:choice" as reg_choice_url %}
 
-  <!-- LANGUAGE SWITCH (FLOAT RIGHT, OUT OF FLOW) -->
-  <div class="auth-lang-switch position-absolute" style="top:1rem; right:1.5rem; z-index:50;">
-    <form action="{% url 'switch_language' %}" method="get"
-          class="d-inline-flex align-items-center gap-2">
-      <input type="hidden" name="next" value="{{ request.get_full_path }}">
-      <label class="text-muted small" for="auth-lang-select">{% trans "Langue" %}</label>
-      <select id="auth-lang-select"
-              name="language"
-              class="form-select form-select-sm"
-              onchange="this.form.submit()">
-        <option value="fr" {% if CUR_LANG == 'fr' %}selected{% endif %}>🇫🇷 Français</option>
-        <option value="en" {% if CUR_LANG == 'en' %}selected{% endif %}>🇬🇧 English</option>
-      </select>
-    </form>
-  </div>
+  <!-- TOPBAR -->
+  <header class="border-bottom bg-white">
+    <div class="container py-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
 
-  <!-- AUTH SHELL (CENTRAGE PARFAIT) -->
-  <div class="auth-shell">
+      <a class="auth-brand d-inline-flex align-items-center gap-2 text-decoration-none"
+        href="{{ home_url }}"
+        style="--brand-logo: url('{% static 'global/image/Sogentis3.png' %}');">
+        <span class="auth-brand-mark" aria-hidden="true"></span>
+        <span class="auth-brand-name">{{ PROJECT_NAME|default:"SOGENTIS" }}</span>
+      </a>
 
-    <!-- CENTRAL CARD WRAPPER (sans Bootstrap container!) -->
-    <div class="auth-wrapper mx-auto">
 
-      <div class="card auth-card">
-        <div class="card-body p-4 p-md-5">
+      <div class="d-flex align-items-center gap-2 flex-wrap">
+        <a class="btn btn-sm btn-outline-secondary" href="{{ auth_choice_url }}">
+          <i class="bi bi-grid me-1"></i> {% trans "Hub Auth" %}
+        </a>
+        <a class="btn btn-sm btn-outline-secondary" href="{{ reg_choice_url }}">
+          <i class="bi bi-person-plus me-1"></i> {% trans "Inscription" %}
+        </a>
+        <a class="btn btn-sm btn-outline-secondary" href="{{ login_url }}">
+          <i class="bi bi-box-arrow-in-right me-1"></i> {% trans "Connexion" %}
+        </a>
 
-          <!-- Brand -->
-          <div class="auth-brand text-center mb-3">
-            <a href="{% url 'core:home' %}" aria-label="SOGENTIS">
-              <img src="{% static 'global/image/Sogentis3.png' %}" alt="SOGENTIS">
-            </a>
-          </div>
+        {# LANG SWITCH (AUTH) #}
+        <form action="{{ switch_lang_url }}" method="post"
+              class="d-inline-flex align-items-center gap-2">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ request.get_full_path }}">
+          <label class="text-muted small" for="auth-lang-select">{% trans "Langue" %}</label>
 
-          <!-- Title -->
-          <h1 class="h3 text-center mb-2">
-            {% block auth_title %}{% trans "Connexion" %}{% endblock %}
-          </h1>
+          <select id="auth-lang-select"
+                  name="language"
+                  class="form-select form-select-sm"
+                  onchange="this.form.submit()">
+            <option value="fr" {% if CUR_LANG == 'fr' %}selected{% endif %}>🇫🇷 Français</option>
+            <option value="en" {% if CUR_LANG == 'en' %}selected{% endif %}>🇬🇧 English</option>
+          </select>
+        </form>
+      </div>
+    </div>
+  </header>
 
-          <!-- Subtitle -->
-          <p class="text-center text-muted mb-4 small">
-            {% block auth_subtitle %}{% trans "Accédez à votre compte SOGENTIS" %}{% endblock %}
-          </p>
+  <main class="py-4">
+    <div class="container {% block auth_wrapper_class %}{% endblock %}">
 
-          <!-- Messages -->
-          {% if messages %}
+      {# Messages (1 seule fois, évite les doublons) #}
+      {% block auth_messages %}
+        {% if messages %}
+          <div class="mb-3">
             {% for message in messages %}
-              <div class="alert alert-{{ message.tags|default:'info' }} mb-3" role="alert">
+              <div class="alert alert-{{ message.tags|default:'info' }} mb-2" role="alert">
                 {{ message }}
               </div>
             {% endfor %}
-          {% endif %}
+          </div>
+        {% endif %}
+      {% endblock %}
 
-          <!-- PAGE CONTENT (login form, signup form, etc.) -->
-          {% block content %}{% endblock %}
+      <div class="row justify-content-center">
+        <div class="{% block auth_col_class %}col-12 col-md-10 col-lg-8{% endblock %}">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body p-4 p-md-5">
 
+              <div class="text-center mb-4">
+                <h1 class="h4 mb-1">{% block auth_title %}{{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}</h1>
+                <p class="text-muted mb-0">{% block auth_subtitle %}{% endblock %}</p>
+              </div>
+
+              {% block content %}{% endblock %}
+
+              {% block auth_footer %}
+                <hr class="my-4">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                  <a class="btn btn-link px-0" href="{{ home_url }}">← {% trans "Retour au site" %}</a>
+                  <a class="btn btn-link px-1" href="{% url 'core:contact' %}">
+                    {% trans "Besoin d’aide ? Contactez le support SOGENTIS." %}
+                  </a>
+                </div>
+              {% endblock %}
+
+            </div>
+          </div>
+
+          <div class="text-center mt-3 small text-muted">
+            © {{ YEAR|default:2026 }} — {{ PROJECT_NAME|default:"SOGENTIS" }}
+          </div>
         </div>
       </div>
-
     </div>
-  </div>
+  </main>
 
-  <!-- JS -->
-  <script src="{% static 'accounts_users/js/vendors/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'global/js/vendors/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
   {% block extra_js %}{% endblock %}
 </body>
 </html>
@@ -104,25 +134,122 @@
 
 
 
-{% comment %} {% load static i18n %}
-{% get_current_language as LANGUAGE_CODE %}
+
+{% comment %} {# templates/accounts_users/registration/base_auth.html #}
+{% load static i18n widget_tweaks user_form_tags %}
+{% get_current_language as CUR_LANG %}
+{% get_current_language_bidi as CUR_BIDI %}
+
 <!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE }}">
+<html lang="{{ CUR_LANG|default:'fr' }}" {% if CUR_BIDI %}dir="rtl"{% endif %}>
 <head>
   <meta charset="UTF-8">
-  <title>{% block title %}SOGENTIS{% endblock %}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>{% block title %}{{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}{{ PROJECT_NAME|default:"SOGENTIS" }} — Auth{% endblock %}">
+  <meta name="robots" content="{% block robots %}noindex,nofollow{% endblock %}">
+  <meta http-equiv="Cache-Control" content="no-store">
+  <meta http-equiv="Pragma" content="no-cache">
 
   <link rel="stylesheet" href="{% static 'accounts_users/css/vendors/bootstrap/css/bootstrap.min.css' %}">
   <link rel="stylesheet" href="{% static 'accounts_users/css/vendors/fontawesome/css/all.min.css' %}">
-  <link rel="stylesheet" href="{% static 'accounts_users/css/users_menu.css' %}" />
-
+  <link rel="stylesheet" href="{% static 'core/vendors/bootstrap-icons/bootstrap-icons.css' %}">
+  <link rel="stylesheet" href="{% static 'accounts_users/css/users_menu.css' %}">
+  <link rel="stylesheet" href="{% static 'accounts_users/css/auth/base_auth.css' %}">
   {% block extra_css %}{% endblock %}
 </head>
-<body class="bg-light">
-  {% block content %}{% endblock %}
 
-  <script src="{% static 'accounts_users/js/vendors/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<body class="auth-body {% block body_class %}{% endblock %}"
+      style="background-image:{% block auth_bg_image %}none{% endblock %};">
+
+  {% url "core:home" as home_url %}
+  {% url "switch_language" as switch_lang_url %}
+  {% url "accounts_users:web:auth:auth_choice" as auth_choice_url %}
+  {% url "accounts_users:web:auth:login" as login_url %}
+  {% url "accounts_users:web:registration:choice" as reg_choice_url %}
+
+  <!-- TOPBAR -->
+  <header class="border-bottom bg-white">
+    <div class="container py-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
+      <a class="text-decoration-none fw-bold" href="{{ home_url }}">
+        {{ PROJECT_NAME|default:"SOGENTIS" }}
+      </a>
+
+      <div class="d-flex align-items-center gap-2 flex-wrap">
+        <a class="btn btn-sm btn-outline-secondary" href="{{ auth_choice_url }}">
+          <i class="bi bi-grid me-1"></i> {% trans "Hub Auth" %}
+        </a>
+        <a class="btn btn-sm btn-outline-secondary" href="{{ reg_choice_url }}">
+          <i class="bi bi-person-plus me-1"></i> {% trans "Inscription" %}
+        </a>
+        <a class="btn btn-sm btn-outline-secondary" href="{{ login_url }}">
+          <i class="bi bi-box-arrow-in-right me-1"></i> {% trans "Connexion" %}
+        </a>
+        
+        {# ========================== #}
+        {# LANG SWITCH (AUTH)         #}
+        {# IMPORTANT: utiliser core:switch_language (pas switch_language) #}
+        {# ========================== #}
+        <form action="{% url 'core:switch_language' %}" method="post"
+              class="d-inline-flex align-items-center gap-2">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ request.get_full_path }}">
+          <label class="text-muted small" for="auth-lang-select">{% trans "Langue" %}</label>
+
+          <select id="auth-lang-select"
+                  name="language"
+                  class="form-select form-select-sm"
+                  onchange="this.form.submit()">
+            <option value="fr" {% if CUR_LANG == 'fr' %}selected{% endif %}>🇫🇷 Français</option>
+            <option value="en" {% if CUR_LANG == 'en' %}selected{% endif %}>🇬🇧 English</option>
+          </select>
+        </form>
+    </div>
+  </header>
+
+  <main class="py-4">
+    <div class="container {% block auth_wrapper_class %}{% endblock %}">
+      {% if messages %}
+        <div class="mb-3">
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'info' }} mb-2" role="alert">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="row justify-content-center">
+        <div class="{% block auth_col_class %}col-12 col-md-10 col-lg-8{% endblock %}">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body p-4 p-md-5">
+
+              <div class="text-center mb-4">
+                <h1 class="h4 mb-1">{% block auth_title %}{{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}</h1>
+                <p class="text-muted mb-0">{% block auth_subtitle %}{% endblock %}</p>
+              </div>
+
+              {% block content %}{% endblock %}
+              {% block auth_footer %}
+                    <hr class="my-4">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                      <a class="btn btn-link px-0" href="{% url 'core:home' %}">← {% trans "Retour au site" %}</a>
+                      <a class="btn btn-link px-1" href="{% url 'core:contact' %}">{% trans "Besoin d’aide ? Contactez le support SOGENTIS." %}</a>
+                    </div>
+                  {% endblock %}              
+            </div>
+          </div>
+
+          <div class="text-center mt-3 small text-muted">
+            © {{ YEAR|default:2026 }} — {{ PROJECT_NAME|default:"SOGENTIS" }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="{% static 'accounts_users/css/vendors/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
   {% block extra_js %}{% endblock %}
 </body>
 </html> {% endcomment %}
@@ -130,32 +257,110 @@
 
 
 
-{% comment %} {% load static i18n %}
+
+
+
+
+
+{% comment %} {# templates/accounts_users/registration/base_auth.html #}
+{% load static i18n widget_tweaks user_form_tags %}
+{% get_current_language as CUR_LANG %}
+{% get_current_language_bidi as CUR_BIDI %}
+
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="{{ CUR_LANG|default:'fr' }}" {% if CUR_BIDI %}dir="rtl"{% endif %}>
 <head>
   <meta charset="UTF-8">
-  <title>{% block title %}SOGENTIS – Authentification{% endblock %}</title>
-  <link rel="stylesheet" href="{% static 'dashboard/css/bootstrap.min.css' %}">
-  <link rel="stylesheet" href="{% static 'dashboard/css/auth.css' %}">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>{% block title %}{{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}{{ PROJECT_NAME|default:"SOGENTIS" }} — Auth{% endblock %}">
+  <meta name="robots" content="{% block robots %}noindex,nofollow{% endblock %}">
+  <meta http-equiv="Cache-Control" content="no-store">
+  <meta http-equiv="Pragma" content="no-cache">
+
+  <link rel="stylesheet" href="{% static 'accounts_users/css/vendors/bootstrap/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'accounts_users/css/vendors/fontawesome/css/all.min.css' %}">
+  <link rel="stylesheet" href="{% static 'core/vendors/bootstrap-icons/bootstrap-icons.css' %}">
+  <link rel="stylesheet" href="{% static 'accounts_users/css/users_menu.css' %}">
+  <link rel="stylesheet" href="{% static 'accounts_users/css/auth/base_auth.css' %}">
   {% block extra_css %}{% endblock %}
 </head>
-<body class="bg-light">
 
-  <div class="container py-5">
-    <div class="row justify-content-center">
-      <div class="col-md-6 col-lg-5">
-        <div class="card shadow-sm border-0">
-          <div class="card-body">
-            <h3 class="card-title text-center mb-4">{% block form_title %}Connexion{% endblock %}</h3>
-            {% block content %}{% endblock %}
+<body class="auth-body">
+
+  {% url "core:home" as home_url %}
+  {% url "switch_language" as switch_lang_url %}
+  {% url "accounts_users:web:auth:auth_choice" as auth_choice_url %}
+  {% url "accounts_users:web:auth:login" as login_url %}
+  {% url "accounts_users:web:registration:choice" as reg_choice_url %}
+
+  <!-- TOPBAR -->
+  <header class="border-bottom bg-white">
+    <div class="container py-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
+      <a class="text-decoration-none fw-bold" href="{{ home_url }}">
+        {{ PROJECT_NAME|default:"SOGENTIS" }}
+      </a>
+
+      <div class="d-flex align-items-center gap-2 flex-wrap">
+        <a class="btn btn-sm btn-outline-secondary" href="{{ auth_choice_url }}">
+          <i class="bi bi-grid me-1"></i> {% trans "Hub Auth" %}
+        </a>
+        <a class="btn btn-sm btn-outline-secondary" href="{{ reg_choice_url }}">
+          <i class="bi bi-person-plus me-1"></i> {% trans "Inscription" %}
+        </a>
+        <a class="btn btn-sm btn-outline-secondary" href="{{ login_url }}">
+          <i class="bi bi-box-arrow-in-right me-1"></i> {% trans "Connexion" %}
+        </a>
+
+        <form method="post" action="{{ switch_lang_url }}" class="m-0">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ request.get_full_path }}">
+          <select name="language" class="form-select form-select-sm" onchange="this.form.submit()">
+            <option value="fr" {% if request.LANGUAGE_CODE == 'fr' %}selected{% endif %}>FR</option>
+            <option value="en" {% if request.LANGUAGE_CODE == 'en' %}selected{% endif %}>EN</option>
+          </select>
+        </form>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="py-4">
+    <div class="container">
+      {% if messages %}
+        <div class="mb-3">
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'info' }} mb-2" role="alert">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="row justify-content-center">
+        <div class="{% block auth_col_class %}col-12 col-md-10 col-lg-8{% endblock %}">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body p-4 p-md-5">
+
+              <div class="text-center mb-4">
+                <h1 class="h4 mb-1">{% block auth_title %}{{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}</h1>
+                <p class="text-muted mb-0">{% block auth_subtitle %}{% endblock %}</p>
+              </div>
+
+              {% block content %}{% endblock %}
+            </div>
+          </div>
+
+          <div class="text-center mt-3 small text-muted">
+            © {{ YEAR|default:2026 }} — {{ PROJECT_NAME|default:"SOGENTIS" }}
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </main>
 
-  <script src="{% static 'dashboard/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'accounts_users/css/vendors/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
   {% block extra_js %}{% endblock %}
 </body>
 </html> {% endcomment %}

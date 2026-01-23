@@ -1,0 +1,84 @@
+{% comment %} {% load i18n %}
+<!doctype html>
+<html lang="{{ LANGUAGE_CODE|default:'fr' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>🏢 B2B — {{ company.name }}</title>
+</head>
+<body>
+
+  <header>
+    <h1>🏢 {% trans "Dashboard B2B" %}</h1>
+    <p><strong>{{ company.name }}</strong></p>
+  </header>
+
+  <section>
+    <h2>📊 {% trans "Statistiques" %}</h2>
+    <ul>
+      <li>{% trans "Utilisateurs" %}: {{ stats.users_count }}</li>
+      <li>{% trans "Commandes en gros" %}: {{ stats.orders_count }}</li>
+      <li>{% trans "Total dépensé" %}: {{ stats.total_spent }}</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🧭 {% trans "Navigation" %}</h2>
+    <ul>
+      <li><a href="{% url 'b2b:company_users' %}">👥 {% trans "Utilisateurs entreprise" %}</a></li>
+      <li><a href="{% url 'b2b:bulk_orders' %}">📦 {% trans "Commandes en gros" %}</a></li>
+      <li><a href="{% url 'b2b:invoice_dashboard' %}">🧾 {% trans "Facturation" %}</a></li>
+      <li><a href="{% url 'b2b:vendors' %}">🏪 {% trans "Espace vendeur" %}</a></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🧾 {% trans "Dernières commandes" %}</h2>
+    {% if orders %}
+      <table border="1" cellpadding="6" cellspacing="0">
+        <thead>
+          <tr>
+            <th>{% trans "UUID" %}</th>
+            <th>{% trans "Statut" %}</th>
+            <th>{% trans "Montant" %}</th>
+            <th>{% trans "Créée le" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for o in orders %}
+            <tr>
+              <td>{{ o.uuid }}</td>
+              <td>{{ o.get_status_display }}</td>
+              <td>{{ o.total_amount }}</td>
+              <td>{{ o.created_at }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>{% trans "Aucune commande pour le moment." %}</p>
+    {% endif %}
+  </section>
+
+</body>
+</html> {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/economic/b2b/index.html #}
+{% extends "main.html" %}
+{% load static i18n %}
+
+{% block content %}
+<h1>{% trans "Dashboard entreprise" %}</h1>
+
+<p><strong>{{ company.name }}</strong></p>
+
+<ul>
+  <li>{% trans "Utilisateurs" %}: {{ stats.users_count }}</li>
+  <li>{% trans "Commandes" %}: {{ stats.orders_count }}</li>
+  <li>{% trans "Total dépensé" %}: {{ stats.total_spent }}</li>
+</ul>
+{% endblock %} {% endcomment %}

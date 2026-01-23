@@ -1,5 +1,411 @@
 {# templates/dashboard/admin/users_list.html #}
 {% extends "dashboard/base.html" %}
+{% load i18n dashboard_tags %}
+
+{% block title %}{% trans "Utilisateurs" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block dashboard_header %}
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div>
+      <h1 class="fw-bold mb-1">👥 {% trans "Gestion des utilisateurs" %}</h1>
+      <p class="text-muted mb-0">{% trans "Recherche et accès rapide aux profils." %}</p>
+    </div>
+
+    <form method="get" class="d-flex gap-2" role="search" aria-label="{% trans 'Recherche utilisateurs' %}">
+      <input type="text" name="q" value="{{ q }}"
+             class="form-control form-control-sm"
+             placeholder="{% trans 'Recherche (nom, email...)' %}">
+      <button class="btn btn-sm btn-outline-secondary" type="submit">🔎</button>
+    </form>
+  </div>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="card shadow-sm border-0">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th style="width:90px;">#</th>
+            <th>{% trans "Nom" %}</th>
+            <th>Email</th>
+            <th>{% trans "Rôle" %}</th>
+            <th>{% trans "Actif" %}</th>
+            <th class="text-end">{% trans "Actions" %}</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for u in users %}
+            {# Toujours définir admin_change_url pour éviter variable inexistante #}
+            {% with admin_change_url="" %}
+              {# URL Admin change (SAFE : pas de _meta dans le template + pas de NoReverseMatch) #}
+              {% with app=u|app_label model=u|model_name %}
+                {% if app and model %}
+                  {% with admin_change_url_name="admin:"|add:app|add:"_"|add:model|add:"_change" %}
+                    {% safe_url admin_change_url_name u.pk as admin_change_url %}
+                  {% endwith %}
+                {% endif %}
+              {% endwith %}
+
+              <tr>
+                <td class="text-muted">
+                  {# numérotation correcte même avec pagination #}
+                  {% if page_obj %}
+                    {{ page_obj.start_index|add:forloop.counter0 }}
+                  {% else %}
+                    {{ forloop.counter }}
+                  {% endif %}
+                </td>
+
+                <td class="fw-semibold">
+                  {{ u.get_full_name|default:u.username }}
+                  <div class="text-muted small">{{ u.username|default:"" }}</div>
+                </td>
+
+                <td>{{ u.email|default:"—" }}</td>
+
+                <td>
+                  {% if u.is_superuser %}
+                    <span class="badge bg-danger">{% trans "Superadmin" %}</span>
+                  {% elif u.is_staff %}
+                    <span class="badge bg-primary">{% trans "Staff" %}</span>
+                  {% else %}
+                    <span class="badge bg-secondary">{% trans "Utilisateur" %}</span>
+                  {% endif %}
+                </td>
+
+                <td>
+                  {% if u.is_active %}
+                    <span class="badge bg-success">{% trans "Oui" %}</span>
+                  {% else %}
+                    <span class="badge bg-danger">{% trans "Non" %}</span>
+                  {% endif %}
+                </td>
+
+                <td class="text-end">
+                  {% if admin_change_url %}
+                    <a href="{{ admin_change_url }}"
+                       class="btn btn-sm btn-outline-primary"
+                       title="{% trans 'Voir/éditer dans l’admin' %}">
+                      ✎
+                    </a>
+                  {% else %}
+                    <a href="/admin/"
+                       class="btn btn-sm btn-outline-primary"
+                       title="{% trans 'Ouvrir admin' %}">
+                      ✎
+                    </a>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endwith %}
+
+          {% empty %}
+            <tr>
+              <td colspan="6" class="text-center text-muted py-4">
+                {% trans "Aucun utilisateur trouvé." %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+
+      </table>
+    </div>
+
+    {# ================== PAGINATION ================== #}
+    {% if is_paginated and page_obj %}
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 p-3 border-top">
+        <div class="small text-muted">
+          {% trans "Affichage" %} {{ page_obj.start_index }}–{{ page_obj.end_index }}
+          {% trans "sur" %} {{ paginator.count }}
+        </div>
+
+        <nav aria-label="{% trans 'Pagination' %}">
+          <ul class="pagination pagination-sm mb-0">
+            {% if page_obj.has_previous %}
+              <li class="page-item">
+                <a class="page-link" href="?q={{ q|urlencode }}&page=1">«</a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" href="?q={{ q|urlencode }}&page={{ page_obj.previous_page_number }}">‹</a>
+              </li>
+            {% else %}
+              <li class="page-item disabled"><span class="page-link">«</span></li>
+              <li class="page-item disabled"><span class="page-link">‹</span></li>
+            {% endif %}
+
+            <li class="page-item disabled">
+              <span class="page-link">
+                {% trans "Page" %} {{ page_obj.number }} / {{ paginator.num_pages }}
+              </span>
+            </li>
+
+            {% if page_obj.has_next %}
+              <li class="page-item">
+                <a class="page-link" href="?q={{ q|urlencode }}&page={{ page_obj.next_page_number }}">›</a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" href="?q={{ q|urlencode }}&page={{ paginator.num_pages }}">»</a>
+              </li>
+            {% else %}
+              <li class="page-item disabled"><span class="page-link">›</span></li>
+              <li class="page-item disabled"><span class="page-link">»</span></li>
+            {% endif %}
+          </ul>
+        </nav>
+      </div>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+{% comment %} {# templates/dashboard/admin/users_list.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n dashboard_tags %}
+
+{% block title %}{% trans "Utilisateurs" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block dashboard_header %}
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div>
+      <h1 class="fw-bold mb-1">👥 {% trans "Gestion des utilisateurs" %}</h1>
+      <p class="text-muted mb-0">{% trans "Recherche et accès rapide aux profils." %}</p>
+    </div>
+
+    <form method="get" class="d-flex gap-2">
+      <input type="text" name="q" value="{{ request.GET.q|default:'' }}"
+             class="form-control form-control-sm"
+             placeholder="{% trans 'Recherche (nom, email...)' %}">
+      <button class="btn btn-sm btn-outline-secondary" type="submit">🔎</button>
+    </form>
+  </div>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="card shadow-sm border-0">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th style="width:70px;">#</th>
+            <th>{% trans "Nom" %}</th>
+            <th>Email</th>
+            <th>{% trans "Rôle" %}</th>
+            <th>{% trans "Actif" %}</th>
+            <th class="text-end">{% trans "Actions" %}</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for u in users %}
+
+            {# URL Admin change (SAFE : pas de _meta dans le template + pas de NoReverseMatch) #}
+            {% with app=u|app_label model=u|model_name %}
+              {% if app and model %}
+                {% with admin_change_url_name="admin:"|add:app|add:"_"|add:model|add:"_change" %}
+                  {% safe_url admin_change_url_name u.pk as admin_change_url %}
+                {% endwith %}
+              {% else %}
+                {% with admin_change_url="" %}{% endwith %}
+              {% endif %}
+            {% endwith %}
+
+            <tr>
+              <td class="text-muted">{{ forloop.counter }}</td>
+
+              <td class="fw-semibold">
+                {{ u.get_full_name|default:u.username }}
+                <div class="text-muted small">{{ u.username|default:"" }}</div>
+              </td>
+
+              <td>{{ u.email|default:"—" }}</td>
+
+              <td>
+                {% if u.is_superuser %}
+                  <span class="badge bg-danger">{% trans "Superadmin" %}</span>
+                {% elif u.is_staff %}
+                  <span class="badge bg-primary">{% trans "Staff" %}</span>
+                {% else %}
+                  <span class="badge bg-secondary">{% trans "Utilisateur" %}</span>
+                {% endif %}
+              </td>
+
+              <td>
+                {% if u.is_active %}
+                  <span class="badge bg-success">{% trans "Oui" %}</span>
+                {% else %}
+                  <span class="badge bg-danger">{% trans "Non" %}</span>
+                {% endif %}
+              </td>
+
+              <td class="text-end">
+                {% if admin_change_url %}
+                  <a href="{{ admin_change_url }}"
+                     class="btn btn-sm btn-outline-primary"
+                     title="{% trans 'Voir/éditer dans l’admin' %}">
+                    ✎
+                  </a>
+                {% else %}
+                  <a href="/admin/"
+                     class="btn btn-sm btn-outline-primary"
+                     title="{% trans 'Ouvrir admin' %}">
+                    ✎
+                  </a>
+                {% endif %}
+              </td>
+            </tr>
+
+          {% empty %}
+            <tr>
+              <td colspan="6" class="text-center text-muted py-4">
+                {% trans "Aucun utilisateur trouvé." %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+{% comment %} {# templates/dashboard/admin/users_list.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n dashboard_tags %}
+
+{% block title %}{% trans "Utilisateurs" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block dashboard_header %}
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div>
+      <h1 class="fw-bold mb-1">👥 {% trans "Gestion des utilisateurs" %}</h1>
+      <p class="text-muted mb-0">{% trans "Recherche et accès rapide aux profils." %}</p>
+    </div>
+
+    <form method="get" class="d-flex gap-2">
+      <input type="text" name="q" value="{{ request.GET.q|default:'' }}"
+             class="form-control form-control-sm"
+             placeholder="{% trans 'Recherche (nom, email...)' %}">
+      <button class="btn btn-sm btn-outline-secondary" type="submit">🔎</button>
+    </form>
+  </div>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="card shadow-sm border-0">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th style="width:70px;">#</th>
+            <th>{% trans "Nom" %}</th>
+            <th>Email</th>
+            <th>{% trans "Rôle" %}</th>
+            <th>{% trans "Actif" %}</th>
+            <th class="text-end">{% trans "Actions" %}</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for u in users %}
+
+            {# URL Admin change (safe, sans _meta) #}
+            {% with app=u|app_label model=u|model_name %}
+              {% if app and model %}
+                {% with admin_change_url_name="admin:"|add:app|add:"_"|add:model|add:"_change" %}
+                  {% url admin_change_url_name u.pk as admin_change_url %}
+                {% endwith %}
+              {% else %}
+                {% with admin_change_url="" %}
+                {% endwith %}
+              {% endif %}
+            {% endwith %}
+
+            <tr>
+              <td class="text-muted">{{ forloop.counter }}</td>
+
+              <td class="fw-semibold">
+                {{ u.get_full_name|default:u.username }}
+                <div class="text-muted small">{{ u.username|default:"" }}</div>
+              </td>
+
+              <td>{{ u.email|default:"—" }}</td>
+
+              <td>
+                {% if u.is_superuser %}
+                  <span class="badge bg-danger">{% trans "Superadmin" %}</span>
+                {% elif u.is_staff %}
+                  <span class="badge bg-primary">{% trans "Staff" %}</span>
+                {% else %}
+                  <span class="badge bg-secondary">{% trans "Utilisateur" %}</span>
+                {% endif %}
+              </td>
+
+              <td>
+                {% if u.is_active %}
+                  <span class="badge bg-success">{% trans "Oui" %}</span>
+                {% else %}
+                  <span class="badge bg-danger">{% trans "Non" %}</span>
+                {% endif %}
+              </td>
+
+              <td class="text-end">
+                {% if admin_change_url %}
+                  <a href="{{ admin_change_url }}"
+                     class="btn btn-sm btn-outline-primary"
+                     title="{% trans 'Voir/éditer dans l’admin' %}">
+                    ✎
+                  </a>
+                {% else %}
+                  <a href="/admin/"
+                     class="btn btn-sm btn-outline-primary"
+                     title="{% trans 'Ouvrir admin' %}">
+                    ✎
+                  </a>
+                {% endif %}
+              </td>
+            </tr>
+
+          {% empty %}
+            <tr>
+              <td colspan="6" class="text-center text-muted py-4">
+                {% trans "Aucun utilisateur trouvé." %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/dashboard/admin/users_list.html #}
+{% extends "dashboard/base.html" %}
 {% load i18n %}
 
 {% block title %}{% trans "Utilisateurs" %} | SOGENTIS{% endblock %}
@@ -82,4 +488,4 @@
   </div>
 
 </div>
-{% endblock %}
+{% endblock %} {% endcomment %}

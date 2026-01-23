@@ -1,4 +1,843 @@
 {# templates/economic/partials/_economic_menu.html #}
+{% load i18n dashboard_tags %}
+
+{% safe_url "economic:index" as eco_home_url %}
+{% safe_url "economic:ecommerce:index" as ecommerce_index_url %}
+{% safe_url "economic:services:index" as services_index_url %}
+{% safe_url "economic:formations:index" as formations_index_url %}
+{% safe_url "economic:b2b:index" as b2b_index_url %}
+{% safe_url "economic:ecommerce:cart" as cart_url %}
+{% safe_url "economic:ecommerce:favorites_list" as favorites_url %}
+
+{% safe_url "switch_language" as switch_language_url %}
+
+{% safe_url "accounts_users:web:auth:login" as login_url %}
+{% safe_url "accounts_users:web:auth:logout" as logout_url %}
+{% safe_url "dashboard:hub" as dashboard_hub_url %}
+{% safe_url "economic:ecommerce:order_list" as orders_url %}
+{% safe_url "dashboard:vendor:home" as vendor_home_url %}
+{% safe_url "economic:b2b:index" as b2b_url %}
+{% safe_url "accounts_users:web:profile:profile" as profile_url %}
+
+{% with rm=request.resolver_match ns=request.resolver_match.namespace|default:'' cur=ECOMMERCE_CURRENCY|default:"XOF" lang=request.LANGUAGE_CODE|default:"fr"|upper country=request.session.ECOMMERCE_COUNTRY|default:"SN" %}
+{% with ns=rm.namespace|default:'' %}
+
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom sticky-top eco-navbar"
+     role="navigation" aria-label="{% trans 'Menu pôle économique' %}">
+  <div class="container-fluid px-3 px-lg-4">
+
+    <a class="navbar-brand eco-brand {% if not eco_home_url %}disabled{% endif %}"
+       href="{{ eco_home_url|default:'#' }}"
+       {% if not eco_home_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      💼 <span>{% trans "Pôle Économique" %}</span>
+    </a>
+
+    <button class="navbar-toggler" type="button"
+            data-bs-toggle="collapse" data-bs-target="#ecoNavbar"
+            aria-controls="ecoNavbar" aria-expanded="false"
+            aria-label="{% trans 'Ouvrir le menu' %}">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="ecoNavbar">
+      <div class="eco-navbar-inner w-100 d-flex flex-column flex-lg-row align-items-lg-center gap-2">
+
+        {# LEFT (scroll si manque de place) #}
+        <ul class="navbar-nav eco-nav-primary flex-row flex-nowrap me-lg-auto">
+
+          <li class="nav-item">
+            <a class="nav-link eco-nav-link {% if 'ecommerce' in ns %}active{% endif %} {% if not ecommerce_index_url %}disabled{% endif %}"
+               href="{{ ecommerce_index_url|default:'#' }}"
+               {% if 'ecommerce' in ns %}aria-current="page"{% endif %}
+               {% if not ecommerce_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+              🛒 {% trans "Particulier (B2C)" %}
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link eco-nav-link {% if 'services' in ns %}active{% endif %} {% if not services_index_url %}disabled{% endif %}"
+               href="{{ services_index_url|default:'#' }}"
+               {% if 'services' in ns %}aria-current="page"{% endif %}
+               {% if not services_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+              🧰 {% trans "Services" %}
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link eco-nav-link {% if 'formations' in ns %}active{% endif %} {% if not formations_index_url %}disabled{% endif %}"
+               href="{{ formations_index_url|default:'#' }}"
+               {% if 'formations' in ns %}aria-current="page"{% endif %}
+               {% if not formations_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+              🎓 {% trans "Formations" %}
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link eco-nav-link {% if 'b2b' in ns %}active{% endif %} {% if not b2b_index_url %}disabled{% endif %}"
+               href="{{ b2b_index_url|default:'#' }}"
+               {% if 'b2b' in ns %}aria-current="page"{% endif %}
+               {% if not b2b_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+              🏢 {% trans "Entreprise (B2B)" %}
+            </a>
+          </li>
+
+        </ul>
+
+        {# RIGHT (fixe) #}
+        <ul class="navbar-nav eco-nav-tools flex-row flex-nowrap ms-lg-auto align-items-lg-center">
+
+          <li class="nav-item dropdown">
+            <a class="nav-link eco-nav-link dropdown-toggle"
+               href="#"
+               role="button"
+               data-bs-toggle="dropdown"
+               data-bs-auto-close="outside"
+               aria-expanded="false">
+              🌍 {{ lang }} / {{ country }} / {{ cur }}
+            </a>
+
+            <div class="dropdown-menu dropdown-menu-end p-3" style="min-width:240px;">
+              <form method="post" action="{{ switch_language_url|default:'#' }}">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+
+                <div class="mb-2">
+                  <label class="form-label mb-1 small">{% trans "Pays" %}</label>
+                  <select class="form-select form-select-sm" name="country">
+                    <option value="SN" {% if country == "SN" %}selected{% endif %}>🇸🇳 {% trans "Sénégal" %}</option>
+                    <option value="CI" {% if country == "CI" %}selected{% endif %}>🇨🇮 {% trans "Côte d’Ivoire" %}</option>
+                    <option value="FR" {% if country == "FR" %}selected{% endif %}>🇫🇷 {% trans "France" %}</option>
+                  </select>
+                </div>
+
+                <div class="mb-2">
+                  <label class="form-label mb-1 small">{% trans "Langue" %}</label>
+                  <select class="form-select form-select-sm" name="language">
+                    <option value="fr" {% if request.LANGUAGE_CODE == 'fr' %}selected{% endif %}>{% trans "Français" %}</option>
+                    <option value="en" {% if request.LANGUAGE_CODE == 'en' %}selected{% endif %}>{% trans "Anglais" %}</option>
+                  </select>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label mb-1 small">{% trans "Devise" %}</label>
+                  <select class="form-select form-select-sm" name="currency">
+                    <option value="XOF" {% if cur == 'XOF' %}selected{% endif %}>XOF (CFA BCEAO)</option>
+                    <option value="EUR" {% if cur == 'EUR' %}selected{% endif %}>EUR (€)</option>
+                    <option value="USD" {% if cur == 'USD' %}selected{% endif %}>USD ($)</option>
+                  </select>
+                </div>
+
+                <button type="submit" class="btn btn-dark btn-sm w-100" {% if not switch_language_url %}disabled{% endif %}>
+                  {% trans "Enregistrer" %}
+                </button>
+              </form>
+            </div>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link eco-nav-link position-relative {% if not favorites_url %}disabled{% endif %}"
+               href="{{ favorites_url|default:'#' }}"
+               {% if not favorites_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+              ❤️ {% trans "Favoris" %}
+              {% if favorites_count|default:0|add:0 > 0 %}
+                <span class="eco-dot-badge">{{ favorites_count }}</span>
+              {% endif %}
+            </a>
+          </li>
+
+          {% if user.is_authenticated %}
+            <li class="nav-item dropdown">
+              <a class="nav-link eco-nav-link dropdown-toggle"
+                 href="#"
+                 role="button"
+                 data-bs-toggle="dropdown"
+                 aria-expanded="false">
+                👤 <span class="eco-user-name">{{ user.first_name|default:user.username }}</span>
+              </a>
+
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="{{ dashboard_hub_url|default:'#' }}">📊 {% trans "Mon dashboard" %}</a></li>
+                <li><a class="dropdown-item" href="{{ orders_url|default:'#' }}">🧾 {% trans "Mes commandes" %}</a></li>
+                {% if user.is_staff or user.vendor %}
+                  <li><a class="dropdown-item" href="{{ vendor_home_url|default:'#' }}">🏪 {% trans "Espace vendeur" %}</a></li>
+                {% endif %}
+                <li><a class="dropdown-item" href="{{ b2b_url|default:'#' }}">🏢 {% trans "Espace B2B" %}</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="{{ profile_url|default:'#' }}">⚙️ {% trans "Mon profil" %}</a></li>
+                <li>
+                  <form method="post" action="{{ logout_url|default:'#' }}" class="m-0">
+                    {% csrf_token %}
+                    <button type="submit" class="dropdown-item text-danger">🚪 {% trans "Déconnexion" %}</button>
+                  </form>
+                </li>
+              </ul>
+            </li>
+          {% else %}
+            <li class="nav-item">
+              <a class="nav-link eco-nav-link {% if not login_url %}disabled{% endif %}"
+                 href="{% if login_url %}{{ login_url }}?context=economic&next={{ request.get_full_path|urlencode }}{% else %}#{% endif %}">
+                🔐 {% trans "Connexion / Inscription" %}
+              </a>
+            </li>
+          {% endif %}
+
+          <li class="nav-item">
+            <a class="nav-link eco-nav-link position-relative {% if not cart_url %}disabled{% endif %}"
+               href="{{ cart_url|default:'#' }}">
+              🛒 {% trans "Panier" %}
+              {% if cart_items_count|default:0|add:0 > 0 %}
+                <span class="eco-dot-badge">{{ cart_items_count }}</span>
+              {% endif %}
+            </a>
+          </li>
+
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</nav>
+
+{% endwith %}
+{% endwith %}
+
+
+
+
+
+{% comment %} {# templates/economic/partials/_economic_menu.html #}
+{% load i18n dashboard_tags %}
+
+{# URLs safe (prod-friendly) #}
+{% safe_url "economic:index" as eco_home_url %}
+{% safe_url "economic:ecommerce:index" as ecommerce_index_url %}
+{% safe_url "economic:services:index" as services_index_url %}
+{% safe_url "economic:formations:index" as formations_index_url %}
+{% safe_url "economic:b2b:index" as b2b_index_url %}
+{% safe_url "economic:ecommerce:cart" as cart_url %}
+{% safe_url "economic:ecommerce:favorites_list" as favorites_url %}
+
+{% safe_url "switch_language" as switch_language_url %}
+
+{# User menu URLs #}
+{% safe_url "accounts_users:web:auth:login" as login_url %}
+{% safe_url "accounts_users:web:auth:logout" as logout_url %}
+{% safe_url "dashboard:hub" as dashboard_hub_url %}
+{% safe_url "economic:ecommerce:order_list" as orders_url %}
+{% safe_url "dashboard:vendor:home" as vendor_home_url %}
+{% safe_url "economic:b2b:index" as b2b_url %}
+{% safe_url "accounts_users:web:profile:profile" as profile_url %}
+
+{% with rm=request.resolver_match ns=request.resolver_match.namespace|default:'' cur=ECOMMERCE_CURRENCY|default:"XOF" lang=request.LANGUAGE_CODE|default:"fr"|upper country=request.session.ECOMMERCE_COUNTRY|default:"SN" %}
+{% with ns=rm.namespace|default:'' %}
+
+<nav class="eco-hub-menu border-bottom bg-white" role="navigation" aria-label="{% trans 'Menu pôle économique' %}">
+  <div class="container eco-hub-row d-flex align-items-center py-2 gap-2 gap-md-3">
+
+    {# ✅ GAUCHE : liens (scroll horizontal si écran étroit) #}
+    <div class="eco-hub-primary d-flex align-items-center flex-nowrap gap-2 gap-md-3 flex-grow-1">
+      <a href="{{ eco_home_url|default:'#' }}"
+         class="eco-hub-link flex-shrink-0 {% if rm and rm.url_name == 'index' and ns == 'economic' %}active{% endif %} {% if not eco_home_url %}disabled{% endif %}"
+         {% if rm and rm.url_name == 'index' and ns == 'economic' %}aria-current="page"{% endif %}
+         {% if not eco_home_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+        💼 {% trans "Pôle Économique" %}
+      </a>
+
+      <a href="{{ ecommerce_index_url|default:'#' }}"
+         class="eco-hub-link flex-shrink-0 {% if 'ecommerce' in ns %}active{% endif %} {% if not ecommerce_index_url %}disabled{% endif %}"
+         {% if 'ecommerce' in ns %}aria-current="page"{% endif %}
+         {% if not ecommerce_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+        🛒 {% trans "Particulier (B2C)" %}
+      </a>
+
+      <a href="{{ services_index_url|default:'#' }}"
+         class="eco-hub-link flex-shrink-0 {% if 'services' in ns %}active{% endif %} {% if not services_index_url %}disabled{% endif %}"
+         {% if 'services' in ns %}aria-current="page"{% endif %}
+         {% if not services_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+        🧰 {% trans "Services" %}
+      </a>
+
+      <a href="{{ formations_index_url|default:'#' }}"
+         class="eco-hub-link flex-shrink-0 {% if 'formations' in ns %}active{% endif %} {% if not formations_index_url %}disabled{% endif %}"
+         {% if 'formations' in ns %}aria-current="page"{% endif %}
+         {% if not formations_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+        🎓 {% trans "Formations" %}
+      </a>
+
+      <a href="{{ b2b_index_url|default:'#' }}"
+         class="eco-hub-link flex-shrink-0 {% if 'b2b' in ns %}active{% endif %} {% if not b2b_index_url %}disabled{% endif %}"
+         {% if 'b2b' in ns %}aria-current="page"{% endif %}
+         {% if not b2b_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+        🏢 {% trans "Entreprise (B2B)" %}
+      </a>
+    </div>
+
+    {# ✅ DROITE : outils (reste sur 1 ligne, ne wrap pas) #}
+    <div class="eco-hub-tools d-flex align-items-center flex-nowrap gap-2 gap-md-3 ms-auto">
+
+      {# Lang / Country / Currency #}
+      <div class="dropdown economic-lang-menu flex-shrink-0">
+        <a class="eco-hub-link dropdown-toggle small"
+           href="#"
+           role="button"
+           data-bs-toggle="dropdown"
+           aria-expanded="false">
+          🌍 {{ lang }} / {{ country }} / {{ cur }}
+        </a>
+
+        <div class="dropdown-menu dropdown-menu-end p-3 small" style="min-width:220px;">
+          <form method="post" action="{{ switch_language_url|default:'#' }}">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+
+            <div class="mb-2">
+              <label class="form-label mb-1">{% trans "Pays" %}</label>
+              <select class="form-select form-select-sm" name="country">
+                <option value="SN" {% if country == "SN" %}selected{% endif %}>🇸🇳 {% trans "Sénégal" %}</option>
+                <option value="CI" {% if country == "CI" %}selected{% endif %}>🇨🇮 {% trans "Côte d’Ivoire" %}</option>
+                <option value="FR" {% if country == "FR" %}selected{% endif %}>🇫🇷 {% trans "France" %}</option>
+              </select>
+            </div>
+
+            <div class="mb-2">
+              <label class="form-label mb-1">{% trans "Langue" %}</label>
+              <select class="form-select form-select-sm" name="language">
+                <option value="fr" {% if request.LANGUAGE_CODE == 'fr' %}selected{% endif %}>{% trans "Français" %}</option>
+                <option value="en" {% if request.LANGUAGE_CODE == 'en' %}selected{% endif %}>{% trans "Anglais" %}</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label mb-1">{% trans "Devise" %}</label>
+              <select class="form-select form-select-sm" name="currency">
+                <option value="XOF" {% if cur == 'XOF' %}selected{% endif %}>XOF (CFA BCEAO)</option>
+                <option value="EUR" {% if cur == 'EUR' %}selected{% endif %}>EUR (€)</option>
+                <option value="USD" {% if cur == 'USD' %}selected{% endif %}>USD ($)</option>
+              </select>
+            </div>
+
+            <button type="submit" class="btn btn-dark btn-sm w-100" {% if not switch_language_url %}disabled{% endif %}>
+              {% trans "Enregistrer" %}
+            </button>
+          </form>
+        </div>
+      </div>
+
+      {# Favoris #}
+      <a href="{{ favorites_url|default:'#' }}"
+         class="eco-hub-link position-relative flex-shrink-0 {% if not favorites_url %}disabled{% endif %}"
+         {% if not favorites_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+        ❤️ {% trans "Favoris" %}
+        {% if favorites_count|default:0|add:0 > 0 %}
+          <span class="eco-cart-badge position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            {{ favorites_count }}
+          </span>
+        {% endif %}
+      </a>
+
+      {# ✅ USER MENU — intégré (plus de include) #}
+      {% if user.is_authenticated %}
+        <div class="dropdown economic-user-menu flex-shrink-0">
+          <a class="eco-hub-link dropdown-toggle text-decoration-none"
+             href="#"
+             role="button"
+             data-bs-toggle="dropdown"
+             aria-expanded="false">
+            👤
+            <span class="eco-user-name text-truncate d-inline-block align-middle" style="max-width:160px;">
+              {{ user.first_name|default:user.username }}
+            </span>
+          </a>
+
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li>
+              <a class="dropdown-item {% if not dashboard_hub_url %}disabled{% endif %}"
+                 href="{{ dashboard_hub_url|default:'#' }}"
+                 {% if not dashboard_hub_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+                📊 {% trans "Mon dashboard" %}
+              </a>
+            </li>
+
+            <li>
+              <a class="dropdown-item {% if not orders_url %}disabled{% endif %}"
+                 href="{{ orders_url|default:'#' }}"
+                 {% if not orders_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+                🧾 {% trans "Mes commandes" %}
+              </a>
+            </li>
+
+            {% if user.is_staff or user.vendor %}
+              <li>
+                <a class="dropdown-item {% if not vendor_home_url %}disabled{% endif %}"
+                   href="{{ vendor_home_url|default:'#' }}"
+                   {% if not vendor_home_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+                  🏪 {% trans "Espace vendeur" %}
+                </a>
+              </li>
+            {% endif %}
+
+            <li>
+              <a class="dropdown-item {% if not b2b_url %}disabled{% endif %}"
+                 href="{{ b2b_url|default:'#' }}"
+                 {% if not b2b_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+                🏢 {% trans "Espace B2B" %}
+              </a>
+            </li>
+
+            <li><hr class="dropdown-divider"></li>
+
+            <li>
+              <a class="dropdown-item {% if not profile_url %}disabled{% endif %}"
+                 href="{{ profile_url|default:'#' }}"
+                 {% if not profile_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+                ⚙️ {% trans "Mon profil" %}
+              </a>
+            </li>
+
+            <li>
+              <form method="post" action="{{ logout_url|default:'#' }}" class="m-0">
+                {% csrf_token %}
+                <button type="submit" class="dropdown-item text-danger" {% if not logout_url %}disabled aria-disabled="true"{% endif %}>
+                  🚪 {% trans "Déconnexion" %}
+                </button>
+              </form>
+            </li>
+          </ul>
+        </div>
+      {% else %}
+        <a href="{% if login_url %}{{ login_url }}?context=economic&next={{ request.get_full_path|urlencode }}{% else %}#{% endif %}"
+           class="eco-hub-link flex-shrink-0 {% if not login_url %}disabled{% endif %}"
+           {% if not login_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+          🔐 {% trans "Connexion / Inscription" %}
+        </a>
+      {% endif %}
+
+      {# Panier #}
+      <a href="{{ cart_url|default:'#' }}"
+         class="eco-hub-link position-relative flex-shrink-0 {% if not cart_url %}disabled{% endif %}"
+         {% if not cart_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+        🛒 {% trans "Panier" %}
+        {% if cart_items_count|default:0|add:0 > 0 %}
+          <span class="eco-cart-badge position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            {{ cart_items_count }}
+          </span>
+        {% endif %}
+      </a>
+
+    </div>
+  </div>
+</nav>
+
+{% endwith %}
+{% endwith %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/partials/_economic_menu.html #}
+{% load i18n %}
+
+{% url 'economic:index' as eco_home_url %}
+{% url 'economic:ecommerce:index' as ecommerce_index_url %}
+{% url 'economic:services:index' as services_index_url %}
+{% url 'economic:formations:index' as formations_index_url %}
+{% url 'economic:b2b:index' as b2b_index_url %}
+{% url 'economic:ecommerce:cart' as cart_url %}
+{% url 'economic:ecommerce:favorites_list' as favorites_url %}
+
+{% with rm=request.resolver_match ns=request.resolver_match.namespace|default:'' cur=ECOMMERCE_CURRENCY|default:"XOF" lang=request.LANGUAGE_CODE|default:"fr"|upper country=request.session.ECOMMERCE_COUNTRY|default:"SN" %}
+{% with ns=rm.namespace|default:'' %}
+
+<nav class="eco-hub-menu border-bottom bg-white" role="navigation" aria-label="{% trans 'Menu pôle économique' %}">
+  <div class="container eco-hub-row d-flex align-items-center py-2 gap-2 gap-md-3">
+
+    {# ✅ GAUCHE : liens (scroll horizontal si écran étroit) #}
+    <div class="eco-hub-primary d-flex align-items-center flex-nowrap gap-2 gap-md-3 flex-grow-1">
+      <a href="{{ eco_home_url|default:'#' }}"
+         class="eco-hub-link flex-shrink-0 {% if rm and rm.url_name == 'index' and ns == 'economic' %}active{% endif %} {% if not eco_home_url %}disabled{% endif %}"
+         {% if rm and rm.url_name == 'index' and ns == 'economic' %}aria-current="page"{% endif %}
+         {% if not eco_home_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+        💼 {% trans "Pôle Économique" %}
+      </a>
+
+      <a href="{{ ecommerce_index_url|default:'#' }}"
+         class="eco-hub-link flex-shrink-0 {% if 'ecommerce' in ns %}active{% endif %} {% if not ecommerce_index_url %}disabled{% endif %}"
+         {% if 'ecommerce' in ns %}aria-current="page"{% endif %}
+         {% if not ecommerce_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+        🛒 {% trans "Particulier (B2C)" %}
+      </a>
+
+      <a href="{{ services_index_url|default:'#' }}"
+         class="eco-hub-link flex-shrink-0 {% if 'services' in ns %}active{% endif %} {% if not services_index_url %}disabled{% endif %}"
+         {% if 'services' in ns %}aria-current="page"{% endif %}
+         {% if not services_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+        🧰 {% trans "Services" %}
+      </a>
+
+      <a href="{{ formations_index_url|default:'#' }}"
+         class="eco-hub-link flex-shrink-0 {% if 'formations' in ns %}active{% endif %} {% if not formations_index_url %}disabled{% endif %}"
+         {% if 'formations' in ns %}aria-current="page"{% endif %}
+         {% if not formations_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+        🎓 {% trans "Formations" %}
+      </a>
+
+      <a href="{{ b2b_index_url|default:'#' }}"
+         class="eco-hub-link flex-shrink-0 {% if 'b2b' in ns %}active{% endif %} {% if not b2b_index_url %}disabled{% endif %}"
+         {% if 'b2b' in ns %}aria-current="page"{% endif %}
+         {% if not b2b_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+        🏢 {% trans "Entreprise (B2B)" %}
+      </a>
+    </div>
+
+    {# ✅ DROITE : outils (reste sur 1 ligne, ne wrap pas) #}
+    <div class="eco-hub-tools d-flex align-items-center flex-nowrap gap-2 gap-md-3 ms-auto">
+
+      <div class="dropdown economic-lang-menu flex-shrink-0">
+        <a class="eco-hub-link dropdown-toggle small"
+           href="#"
+           role="button"
+           data-bs-toggle="dropdown"
+           aria-expanded="false">
+          🌍 {{ lang }} / {{ country }} / {{ cur }}
+        </a>
+
+        <div class="dropdown-menu dropdown-menu-end p-3 small" style="min-width:220px;">
+          <form method="post" action="{% url 'switch_language' %}">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+
+            <div class="mb-2">
+              <label class="form-label mb-1">{% trans "Pays" %}</label>
+              <select class="form-select form-select-sm" name="country">
+                <option value="SN" {% if country == "SN" %}selected{% endif %}>🇸🇳 {% trans "Sénégal" %}</option>
+                <option value="CI" {% if country == "CI" %}selected{% endif %}>🇨🇮 {% trans "Côte d’Ivoire" %}</option>
+                <option value="FR" {% if country == "FR" %}selected{% endif %}>🇫🇷 {% trans "France" %}</option>
+              </select>
+            </div>
+
+            <div class="mb-2">
+              <label class="form-label mb-1">{% trans "Langue" %}</label>
+              <select class="form-select form-select-sm" name="language">
+                <option value="fr" {% if request.LANGUAGE_CODE == 'fr' %}selected{% endif %}>{% trans "Français" %}</option>
+                <option value="en" {% if request.LANGUAGE_CODE == 'en' %}selected{% endif %}>{% trans "Anglais" %}</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label mb-1">{% trans "Devise" %}</label>
+              <select class="form-select form-select-sm" name="currency">
+                <option value="XOF" {% if cur == 'XOF' %}selected{% endif %}>XOF (CFA BCEAO)</option>
+                <option value="EUR" {% if cur == 'EUR' %}selected{% endif %}>EUR (€)</option>
+                <option value="USD" {% if cur == 'USD' %}selected{% endif %}>USD ($)</option>
+              </select>
+            </div>
+
+            <button type="submit" class="btn btn-dark btn-sm w-100">{% trans "Enregistrer" %}</button>
+          </form>
+        </div>
+      </div>
+
+      <a href="{{ favorites_url|default:'#' }}"
+         class="eco-hub-link position-relative flex-shrink-0 {% if not favorites_url %}disabled{% endif %}"
+         {% if not favorites_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+        ❤️ {% trans "Favoris" %}
+        {% if favorites_count|default:0|add:0 > 0 %}
+          <span class="eco-cart-badge position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            {{ favorites_count }}
+          </span>
+        {% endif %}
+      </a>
+
+      <div class="eco-hub-user flex-shrink-0">
+        {% include "economic/partials/_user_menu_economic.html" %}
+      </div>
+
+      <a href="{{ cart_url|default:'#' }}"
+         class="eco-hub-link position-relative flex-shrink-0 {% if not cart_url %}disabled{% endif %}"
+         {% if not cart_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+        🛒 {% trans "Panier" %}
+        {% if cart_items_count|default:0|add:0 > 0 %}
+          <span class="eco-cart-badge position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            {{ cart_items_count }}
+          </span>
+        {% endif %}
+      </a>
+
+    </div>
+  </div>
+</nav>
+
+{% endwith %}
+{% endwith %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/partials/_economic_menu.html #}
+{% load i18n %}
+
+{% url 'economic:index' as eco_home_url %}
+{% url 'economic:ecommerce:index' as ecommerce_index_url %}
+{% url 'economic:services:index' as services_index_url %}
+{% url 'economic:formations:index' as formations_index_url %}
+{% url 'economic:b2b:index' as b2b_index_url %}
+{% url 'economic:ecommerce:cart' as cart_url %}
+{% url 'economic:ecommerce:favorites_list' as favorites_url %}
+
+{% with rm=request.resolver_match ns=request.resolver_match.namespace|default:'' cur=ECOMMERCE_CURRENCY|default:"XOF" lang=request.LANGUAGE_CODE|default:"fr"|upper country=request.session.ECOMMERCE_COUNTRY|default:"SN" %}
+{% with ns=rm.namespace|default:'' %}
+<nav class="eco-hub-menu border-bottom bg-white" role="navigation" aria-label="{% trans 'Menu pôle économique' %}">
+  <div class="container d-flex flex-wrap align-items-center py-2 gap-2 gap-md-3">
+
+    <div class="d-flex flex-wrap align-items-center gap-2 gap-md-3 flex-grow-1">
+      <a href="{{ eco_home_url|default:'#' }}"
+         class="eco-hub-link {% if rm and rm.url_name == 'index' and ns == 'economic' %}active{% endif %} {% if not eco_home_url %}disabled{% endif %}"
+         {% if rm and rm.url_name == 'index' and ns == 'economic' %}aria-current="page"{% endif %}
+         {% if not eco_home_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+        💼 {% trans "Pôle Économique" %}
+      </a>
+
+      <a href="{{ ecommerce_index_url|default:'#' }}"
+         class="eco-hub-link {% if 'ecommerce' in ns %}active{% endif %} {% if not ecommerce_index_url %}disabled{% endif %}"
+         {% if 'ecommerce' in ns %}aria-current="page"{% endif %}
+         {% if not ecommerce_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+        🛒 {% trans "Particulier (B2C)" %}
+      </a>
+
+      <a href="{{ services_index_url|default:'#' }}"
+         class="eco-hub-link {% if 'services' in ns %}active{% endif %} {% if not services_index_url %}disabled{% endif %}"
+         {% if 'services' in ns %}aria-current="page"{% endif %}
+         {% if not services_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+        🧰 {% trans "Services" %}
+      </a>
+
+      <a href="{{ formations_index_url|default:'#' }}"
+         class="eco-hub-link {% if 'formations' in ns %}active{% endif %} {% if not formations_index_url %}disabled{% endif %}"
+         {% if 'formations' in ns %}aria-current="page"{% endif %}
+         {% if not formations_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+        🎓 {% trans "Formations" %}
+      </a>
+
+      <a href="{{ b2b_index_url|default:'#' }}"
+         class="eco-hub-link {% if 'b2b' in ns %}active{% endif %} {% if not b2b_index_url %}disabled{% endif %}"
+         {% if 'b2b' in ns %}aria-current="page"{% endif %}
+         {% if not b2b_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+        🏢 {% trans "Entreprise (B2B)" %}
+      </a>
+    </div>
+
+    <div class="d-flex flex-wrap align-items-center gap-2 gap-md-3 ms-auto">
+
+      <div class="dropdown economic-lang-menu">
+        <a class="eco-hub-link dropdown-toggle small"
+           href="#"
+           role="button"
+           data-bs-toggle="dropdown"
+           aria-expanded="false">
+          🌍 {{ lang }} / {{ country }} / {{ cur }}
+        </a>
+
+        <div class="dropdown-menu dropdown-menu-end p-3 small" style="min-width:220px;">
+          <form method="post" action="{% url 'switch_language' %}">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+
+            <div class="mb-2">
+              <label class="form-label mb-1">{% trans "Pays" %}</label>
+              <select class="form-select form-select-sm" name="country">
+                <option value="SN" {% if country == "SN" %}selected{% endif %}>🇸🇳 {% trans "Sénégal" %}</option>
+                <option value="CI" {% if country == "CI" %}selected{% endif %}>🇨🇮 {% trans "Côte d’Ivoire" %}</option>
+                <option value="FR" {% if country == "FR" %}selected{% endif %}>🇫🇷 {% trans "France" %}</option>
+              </select>
+            </div>
+
+            <div class="mb-2">
+              <label class="form-label mb-1">{% trans "Langue" %}</label>
+              <select class="form-select form-select-sm" name="language">
+                <option value="fr" {% if request.LANGUAGE_CODE == 'fr' %}selected{% endif %}>{% trans "Français" %}</option>
+                <option value="en" {% if request.LANGUAGE_CODE == 'en' %}selected{% endif %}>{% trans "Anglais" %}</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label mb-1">{% trans "Devise" %}</label>
+              <select class="form-select form-select-sm" name="currency">
+                <option value="XOF" {% if cur == 'XOF' %}selected{% endif %}>XOF (CFA BCEAO)</option>
+                <option value="EUR" {% if cur == 'EUR' %}selected{% endif %}>EUR (€)</option>
+                <option value="USD" {% if cur == 'USD' %}selected{% endif %}>USD ($)</option>
+              </select>
+            </div>
+
+            <button type="submit" class="btn btn-dark btn-sm w-100">{% trans "Enregistrer" %}</button>
+          </form>
+        </div>
+      </div>
+
+      <a href="{{ favorites_url|default:'#' }}"
+         class="eco-hub-link position-relative {% if not favorites_url %}disabled{% endif %}"
+         {% if not favorites_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+        ❤️ {% trans "Favoris" %}
+        {% if favorites_count|default:0|add:0 > 0 %}
+          <span class="eco-cart-badge position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            {{ favorites_count }}
+          </span>
+        {% endif %}
+      </a>
+
+      {% include "economic/partials/_user_menu_economic.html" %}
+
+      <a href="{{ cart_url|default:'#' }}"
+         class="eco-hub-link position-relative {% if not cart_url %}disabled{% endif %}"
+         {% if not cart_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+        🛒 {% trans "Panier" %}
+        {% if cart_items_count|default:0|add:0 > 0 %}
+          <span class="eco-cart-badge position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            {{ cart_items_count }}
+          </span>
+        {% endif %}
+      </a>
+
+    </div>
+  </div>
+</nav>
+{% endwith %}
+{% endwith %} {% endcomment %}
+
+
+
+
+{% comment %} {# templates/economic/partials/_economic_menu.html #}
+{% load i18n %}
+ 
+{% url 'economic:index' as eco_home_url %}
+{% url 'economic:ecommerce:index' as ecommerce_index_url %}
+{% url 'economic:services:index' as services_index_url %}
+{% url 'economic:formations:index' as formations_index_url %}
+{% url 'economic:b2b:index' as b2b_index_url %}
+{% url 'economic:ecommerce:cart' as cart_url %}
+{% url 'economic:ecommerce:favorites_list' as favorites_url %}
+
+{% with rm=request.resolver_match ns=request.resolver_match.namespace|default:'' cur=ECOMMERCE_CURRENCY|default:"XOF" lang=request.LANGUAGE_CODE|default:"fr"|upper country=request.session.ECOMMERCE_COUNTRY|default:"SN" %}
+<nav class="eco-hub-menu border-bottom bg-white" aria-label="{% trans 'Menu pôle économique' %}">
+  <div class="container d-flex flex-wrap align-items-center py-2 gap-2 gap-md-3">
+
+    <div class="d-flex flex-wrap align-items-center gap-2 gap-md-3 flex-grow-1">
+      <a href="{{ eco_home_url|default:'#' }}"
+         class="eco-hub-link {% if rm and rm.url_name == 'index' and ns == 'economic' %}active{% endif %} {% if not eco_home_url %}disabled{% endif %}"
+         {% if not eco_home_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+        💼 {% trans "Pôle Économique" %}
+      </a>
+
+      <a href="{{ ecommerce_index_url|default:'#' }}"
+         class="eco-hub-link {% if 'ecommerce' in ns %}active{% endif %} {% if not ecommerce_index_url %}disabled{% endif %}"
+         {% if not ecommerce_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+        🛒 {% trans "Particulier (B2C)" %}
+      </a>
+
+      <a href="{{ services_index_url|default:'#' }}"
+         class="eco-hub-link {% if 'services' in ns %}active{% endif %} {% if not services_index_url %}disabled{% endif %}"
+         {% if not services_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+        🧰 {% trans "Services" %}
+      </a>
+
+      <a href="{{ formations_index_url|default:'#' }}"
+         class="eco-hub-link {% if 'formations' in ns %}active{% endif %} {% if not formations_index_url %}disabled{% endif %}"
+         {% if not formations_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+        🎓 {% trans "Formations" %}
+      </a>
+
+      <a href="{{ b2b_index_url|default:'#' }}"
+         class="eco-hub-link {% if 'b2b' in ns %}active{% endif %} {% if not b2b_index_url %}disabled{% endif %}"
+         {% if not b2b_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+        🏢 {% trans "Entreprise (B2B)" %}
+      </a>
+    </div>
+
+    <div class="d-flex flex-wrap align-items-center gap-2 gap-md-3 ms-auto">
+
+      <div class="dropdown economic-lang-menu">
+        <a class="eco-hub-link dropdown-toggle small" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+          🌍 {{ lang }} / {{ country }} / {{ cur }}
+        </a>
+
+        <div class="dropdown-menu dropdown-menu-end p-3 small" style="min-width:220px;">
+          <form method="post" action="{% url 'switch_language' %}">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+
+            <div class="mb-2">
+              <label class="form-label mb-1">{% trans "Pays" %}</label>
+              <select class="form-select form-select-sm" name="country">
+                <option value="SN" {% if country == "SN" %}selected{% endif %}>🇸🇳 {% trans "Sénégal" %}</option>
+                <option value="CI" {% if country == "CI" %}selected{% endif %}>🇨🇮 {% trans "Côte d’Ivoire" %}</option>
+                <option value="FR" {% if country == "FR" %}selected{% endif %}>🇫🇷 {% trans "France" %}</option>
+              </select>
+            </div>
+
+            <div class="mb-2">
+              <label class="form-label mb-1">{% trans "Langue" %}</label>
+              <select class="form-select form-select-sm" name="language">
+                <option value="fr" {% if request.LANGUAGE_CODE == 'fr' %}selected{% endif %}>{% trans "Français" %}</option>
+                <option value="en" {% if request.LANGUAGE_CODE == 'en' %}selected{% endif %}>{% trans "Anglais" %}</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label mb-1">{% trans "Devise" %}</label>
+              <select class="form-select form-select-sm" name="currency">
+                <option value="XOF" {% if cur == 'XOF' %}selected{% endif %}>XOF (CFA BCEAO)</option>
+                <option value="EUR" {% if cur == 'EUR' %}selected{% endif %}>EUR (€)</option>
+                <option value="USD" {% if cur == 'USD' %}selected{% endif %}>USD ($)</option>
+              </select>
+            </div>
+
+            <button type="submit" class="btn btn-dark btn-sm w-100">{% trans "Enregistrer" %}</button>
+          </form>
+        </div>
+      </div>
+
+      <a href="{{ favorites_url|default:'#' }}"
+         class="eco-hub-link position-relative {% if not favorites_url %}disabled{% endif %}"
+         {% if not favorites_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+        ❤️ {% trans "Favoris" %}
+        {% if favorites_count|default:0|add:0 > 0 %}
+          <span class="eco-cart-badge position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            {{ favorites_count }}
+          </span>
+        {% endif %}
+      </a>
+
+      {% include "economic/partials/_user_menu_economic.html" %}
+
+      <a href="{{ cart_url|default:'#' }}"
+         class="eco-hub-link position-relative {% if not cart_url %}disabled{% endif %}"
+         {% if not cart_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+        🛒 {% trans "Panier" %}
+        {% if cart_items_count|default:0|add:0 > 0 %}
+          <span class="eco-cart-badge position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            {{ cart_items_count }}
+          </span>
+        {% endif %}
+      </a>
+
+    </div>
+
+  </div>
+</nav>
+{% endwith %}
+ {% endcomment %}
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/partials/_economic_menu.html #}
 {% load i18n %}
 
 {% url 'economic:index' as eco_home_url %}
@@ -119,7 +958,7 @@
 {% endwith %}
 {% endwith %}
 {% endwith %}
-
+ {% endcomment %}
 
 
 

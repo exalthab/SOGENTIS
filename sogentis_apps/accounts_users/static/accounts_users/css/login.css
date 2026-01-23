@@ -1,165 +1,135 @@
 /* ============================================================
-   LOGIN PAGE — SOGENTIS (2025)
+   LOGIN PAGE — SOGENTIS
    Fichier : static/accounts_users/css/login.css
-   Optimisé, harmonisé, multi-langues, RTL-ready
-   Bouton Se connecter centré et responsive
+   Harmonisé avec auth_base.css
+   Scoped via body.auth-login
    ============================================================ */
 
-/* ------------------------------------------------------------
-   WRAPPER
-   ------------------------------------------------------------ */
-.auth-shell {
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
-  padding: 1.5rem 1rem;
-  position: relative;
-  z-index: 2;
+/* ✅ IMPORTANT : neutralise tout background "global" d'autres css */
+body.auth-login .auth-shell{
+  background: transparent !important;
+  padding: 2rem 1rem;
 }
 
 /* ------------------------------------------------------------
-   CARD (Glassmorphism Premium)
+   TITRES / TEXTES
    ------------------------------------------------------------ */
-.auth-card {
-  background: rgba(255, 255, 255, 0.96);
-  border-radius: 1.1rem;
-  border: 0;
-  box-shadow: 0 10px 35px rgba(0,0,0,.15);
-  -webkit-backdrop-filter: blur(6px);
-  backdrop-filter: blur(6px);
-  max-width: 420px;
-  width: 100%;
-}
-
-.auth-card .card-body {
-  padding: clamp(1.25rem, 1rem + 1.2vw, 2rem);
-}
-
-/* ------------------------------------------------------------
-   TITRES
-   ------------------------------------------------------------ */
-.auth-card h1,
-.auth-card h3 {
-  font-weight: 700;
+body.auth-login .auth-card h1,
+body.auth-login .auth-card h3,
+body.auth-login .auth-card .h3{
+  font-weight: 800;
   text-align: center;
   margin-bottom: .25rem;
 }
 
-.auth-card .small {
-  color: #6c757d;
+body.auth-login .auth-card .login-intro{
+  color: rgba(0,0,0,.62);
   text-align: center;
+  margin-bottom: 1rem;
+  font-size: .95rem;
 }
 
 /* ------------------------------------------------------------
    FORM
    ------------------------------------------------------------ */
-.auth-card .form-label {
-  font-weight: 600;
+body.auth-login .auth-card .form-label{
+  font-weight: 700;
   margin-bottom: .35rem;
 }
 
-.auth-card .form-control {
+body.auth-login .auth-card .form-control{
   height: 44px;
-  padding: .5rem .75rem;
-  border-radius: .5rem;
+  padding: .55rem .9rem;
+  border-radius: 12px;
   transition: border-color .2s ease, box-shadow .2s ease;
 }
 
-.auth-card .form-control:focus {
-  border-color: #0d6efd;
-  box-shadow: 0 0 0 2px rgba(13,110,253,.25);
+body.auth-login .auth-card .form-control:focus{
+  border-color: rgba(25,135,84,.55);
+  box-shadow: 0 0 0 .18rem rgba(25,135,84,.16);
 }
 
-.invalid-feedback.d-block {
+/* Erreurs */
+body.auth-login .auth-card .invalid-feedback.d-block{
   font-size: .9rem;
+  font-weight: 600;
 }
 
 /* ------------------------------------------------------------
    INPUT GROUP (password + toggle)
    ------------------------------------------------------------ */
-.auth-card .input-group > .form-control {
+body.auth-login .auth-card .input-group > .form-control{
   border-right: 0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
 }
 
-.auth-card .input-group .btn {
+body.auth-login .auth-card .input-group .btn{
   border-color: #ced4da;
   background: #fff;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
 }
 
-.auth-card #togglePassword {
+body.auth-login .auth-card .input-group .toggle-password{
   border-left: 0;
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 }
 
-/* CAPS LOCK HINT */
-#capsLockHint {
-  font-size: .85rem;
-  display: none;
+/* Si le champ est invalid, garde un contour cohérent */
+body.auth-login .auth-card .input-group .form-control.is-invalid + .btn{
+  border-color: #dc3545;
 }
 
 /* ------------------------------------------------------------
-   BOUTON LOGIN
+   BOUTON
    ------------------------------------------------------------ */
-.auth-card .btn-primary {
-  display: inline-block;
-  min-width: 180px;
-  max-width: 260px;
-  width: auto;
-  padding: 0.6rem 1.5rem;
-  font-weight: 600;
-  border-radius: 0.6rem;
-  box-shadow: 0 6px 18px rgba(13,110,253,0.18);
-  transition: transform 0.12s ease, box-shadow 0.12s ease;
-  margin: 0 auto;
-}
-
-.auth-card .btn-primary:hover {
-  box-shadow: 0 8px 22px rgba(13,110,253,0.22);
-}
-
-.auth-card .btn-primary:active {
-  transform: translateY(1px);
-}
-
-/* Wrapper pour centrer le bouton */
-.auth-card .btn-wrapper {
-  display: flex;
-  justify-content: center;
-  margin-top: 1rem;
+body.auth-login .auth-card .btn.btn-success,
+body.auth-login .auth-card .btn.btn-primary{
+  font-weight: 800;
+  border-radius: 14px;
+  padding: 12px 14px;
 }
 
 /* ------------------------------------------------------------
    LIENS SECONDAIRES
    ------------------------------------------------------------ */
-.auth-card .small a {
-  color: #0d6efd;
-  text-decoration: none;
-  font-weight: 500;
-  transition: color .2s ease;
+body.auth-login .auth-card .login-links{
+  margin-top: .75rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: .9rem;
 }
 
-.auth-card .small a:hover {
+body.auth-login .auth-card .login-links a{
+  text-decoration: none;
+  font-weight: 800;
+  color: inherit;
+  opacity: .92;
+}
+
+body.auth-login .auth-card .login-links a:hover{
   text-decoration: underline;
+  opacity: 1;
 }
 
 /* ------------------------------------------------------------
    RESPONSIVE
    ------------------------------------------------------------ */
-@media (max-width: 768px) {
-  .auth-card .form-control {
-    height: 42px;
-  }
-  .auth-card .card-body {
-    padding: 1.1rem;
-  }
+@media (max-width: 768px){
+  body.auth-login .auth-card .form-control{ height: 42px; }
 }
 
-@media (max-width: 480px) {
-  .auth-card .btn-primary {
-    min-width: 140px;
-    max-width: 200px;
-    padding: 0.55rem 1.2rem;
+@media (max-width: 480px){
+  body.auth-login .auth-card .login-links{
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 
@@ -167,29 +137,68 @@
    NAVIGATEURS — masquage œil/password natif
    ------------------------------------------------------------ */
 input[type="password"]::-ms-reveal,
-input[type="password"]::-ms-clear {
+input[type="password"]::-ms-clear{
   display: none;
 }
 
-input[type="password"]::-webkit-credentials-auto-fill-button {
+input[type="password"]::-webkit-credentials-auto-fill-button{
   visibility: hidden !important;
   display: none !important;
 }
 
 /* ------------------------------------------------------------
-   MODE RTL (Arabic, Hebrew…)
+   MODE SOMBRE — cohérent avec auth_base.css
    ------------------------------------------------------------ */
-html[dir="rtl"] .input-group > .form-control {
+body.dark-mode.auth-login .auth-card .login-intro{
+  color: rgba(255,255,255,.70);
+}
+
+body.dark-mode.auth-login .auth-card .form-label{
+  color: rgba(255,255,255,.85);
+}
+
+body.dark-mode.auth-login .auth-card .form-control{
+  background: rgba(255,255,255,.06);
+  border-color: rgba(255,255,255,.12);
+  color: rgba(255,255,255,.92);
+}
+
+body.dark-mode.auth-login .auth-card .form-control::placeholder{
+  color: rgba(255,255,255,.45);
+}
+
+body.dark-mode.auth-login .auth-card .input-group .btn{
+  background: rgba(255,255,255,.06);
+  border-color: rgba(255,255,255,.12);
+  color: rgba(255,255,255,.88);
+}
+
+body.dark-mode.auth-login .auth-card .form-control:focus{
+  border-color: rgba(25,135,84,.55);
+  box-shadow: 0 0 0 .18rem rgba(25,135,84,.18);
+}
+
+body.dark-mode.auth-login .auth-card .login-links a{
+  color: rgba(255,255,255,.90);
+}
+
+/* ------------------------------------------------------------
+   MODE RTL
+   ------------------------------------------------------------ */
+html[dir="rtl"] body.auth-login .auth-card .input-group > .form-control{
   border-left: 0;
   border-right: 1px solid #ced4da;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
 }
 
-html[dir="rtl"] .input-group .btn {
+html[dir="rtl"] body.auth-login .auth-card .input-group .toggle-password{
   border-right: 0;
   border-left: 1px solid #ced4da;
-}
-
-html[dir="rtl"] #togglePassword {
-  border-left: 1px solid #ced4da;
-  border-right: 0;
+  border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
 }

@@ -8,22 +8,103 @@ from core.services.email_domain_check import is_email_domain_allowed
 
 
 class ContactForm(forms.Form):
+    """
+    Formulaire de contact (public).
+    - Normalise les entrées (trim, espaces)
+    - Vérifie domaine email via is_email_domain_allowed()
+    """
+
     name = forms.CharField(
-        label=_("Nom"),
+        label=_("Nom / Prénom"),
+        required=True,
+        min_length=2,
         max_length=255,
-        widget=forms.TextInput(attrs={"class": "form-control", "autocomplete": "name"}),
-    )
-    email = forms.EmailField(
-        label=_("Email"),
-        widget=forms.EmailInput(attrs={"class": "form-control", "autocomplete": "email"}),
-    )
-    message = forms.CharField(
-        label=_("Message"),
-        widget=forms.Textarea(attrs={"class": "form-control", "rows": 6}),
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "autocomplete": "name",
+                "placeholder": _("Votre nom ou prénom"),
+                "inputmode": "text",
+            }
+        ),
+        error_messages={
+            "required": _("Veuillez indiquer votre nom ou prénom."),
+            "min_length": _("Veuillez saisir au moins 2 caractères."),
+            "max_length": _("Veuillez saisir au maximum 255 caractères."),
+        },
     )
 
+    email = forms.EmailField(
+        label=_("Email"),
+        required=True,
+        max_length=254,  # standard pratique
+        widget=forms.EmailInput(
+            attrs={
+                "class": "form-control",
+                "autocomplete": "email",
+                "placeholder": _("ex: nom@domaine.com"),
+                "inputmode": "email",
+            }
+        ),
+        error_messages={
+            "required": _("Veuillez indiquer une adresse email."),
+            "invalid": _("Veuillez saisir une adresse email valide."),
+            "max_length": _("Adresse email trop longue."),
+        },
+    )
+
+    message = forms.CharField(
+        label=_("Message"),
+        required=True,
+        min_length=10,
+        max_length=5000,
+        widget=forms.Textarea(
+            attrs={
+                "class": "form-control",
+                "rows": 6,
+                "placeholder": _("Écrivez votre message…"),
+            }
+        ),
+        error_messages={
+            "required": _("Veuillez écrire un message."),
+            "min_length": _("Votre message est trop court (au moins 10 caractères)."),
+            "max_length": _("Votre message est trop long (max 5000 caractères)."),
+        },
+    )
+
+    # =========================================================
+    # Normalisation globale
+    # =========================================================
+    def clean(self):
+        cleaned = super().clean()
+
+        # -------- Name: trim + compresse espaces multiples --------
+        name = (cleaned.get("name") or "").strip()
+        if name:
+            name = " ".join(name.split())
+            cleaned["name"] = name
+
+        # -------- Email: trim + lower --------
+        email = (cleaned.get("email") or "").strip().lower()
+        if email:
+            cleaned["email"] = email
+
+        # -------- Message: trim (évite message vide déguisé) --------
+        message = (cleaned.get("message") or "").strip()
+        if message:
+            cleaned["message"] = message
+
+        return cleaned
+
+    # =========================================================
+    # Validations spécifiques
+    # =========================================================
     def clean_email(self) -> str:
-        email = (self.cleaned_data.get("email") or "").strip()
+        email = (self.cleaned_data.get("email") or "").strip().lower()
+        if not email:
+            # Normalement couvert par required, mais on garde robuste
+            raise forms.ValidationError(_("Veuillez indiquer une adresse email."), code="required")
+
         ok, reason = is_email_domain_allowed(email)
         if not ok:
             raise forms.ValidationError(
@@ -31,6 +112,159 @@ class ContactForm(forms.Form):
                 code=reason or "invalid-email-domain",
             )
         return email
+
+    def clean_message(self) -> str:
+        """
+        Empêche un message "vide" rempli d'espaces, tout en laissant min_length gérer le reste.
+        """
+        message = (self.cleaned_data.get("message") or "").strip()
+        if not message:
+            raise forms.ValidationError(_("Veuillez écrire un message."), code="required")
+        return message
+
+
+
+
+
+
+# # core/forms.py
+# from __future__ import annotations
+
+# from django import forms
+# from django.utils.translation import gettext_lazy as _
+
+# from core.services.email_domain_check import is_email_domain_allowed
+
+
+# class ContactForm(forms.Form):
+#     name = forms.CharField(
+#         label=_("Nom / Prénom"),
+#         required=True,
+#         min_length=2,
+#         max_length=255,
+#         widget=forms.TextInput(
+#             attrs={
+#                 "class": "form-control",
+#                 "autocomplete": "name",
+#                 "placeholder": _("Votre nom ou prénom"),
+#                 "required": "required",
+#             }
+#         ),
+#         error_messages={
+#             "required": _("Veuillez indiquer votre nom ou prénom."),
+#             "min_length": _("Veuillez saisir au moins 2 caractères."),
+#             "max_length": _("Veuillez saisir au maximum 255 caractères."),
+#         },
+#     )
+
+#     email = forms.EmailField(
+#         label=_("Email"),
+#         required=True,
+#         widget=forms.EmailInput(
+#             attrs={
+#                 "class": "form-control",
+#                 "autocomplete": "email",
+#                 "placeholder": _("ex: nom@domaine.com"),
+#                 "required": "required",
+#                 "inputmode": "email",
+#             }
+#         ),
+#         error_messages={
+#             "required": _("Veuillez indiquer une adresse email."),
+#             "invalid": _("Veuillez saisir une adresse email valide."),
+#         },
+#     )
+
+#     message = forms.CharField(
+#         label=_("Message"),
+#         required=True,
+#         min_length=10,
+#         max_length=5000,
+#         widget=forms.Textarea(
+#             attrs={
+#                 "class": "form-control",
+#                 "rows": 6,
+#                 "placeholder": _("Écrivez votre message…"),
+#                 "required": "required",
+#             }
+#         ),
+#         error_messages={
+#             "required": _("Veuillez écrire un message."),
+#             "min_length": _("Votre message est trop court (au moins 10 caractères)."),
+#             "max_length": _("Votre message est trop long (max 5000 caractères)."),
+#         },
+#     )
+
+#     def clean_name(self) -> str:
+#         name = (self.cleaned_data.get("name") or "").strip()
+#         if not name:
+#             raise forms.ValidationError(_("Veuillez indiquer votre nom ou prénom."), code="required")
+#         # Optionnel: éviter 1 seul caractère ou des entrées absurdes
+#         if len(name) < 2:
+#             raise forms.ValidationError(_("Veuillez saisir au moins 2 caractères."), code="min_length")
+#         return name
+
+#     def clean_email(self) -> str:
+#         email = (self.cleaned_data.get("email") or "").strip().lower()
+#         if not email:
+#             raise forms.ValidationError(_("Veuillez indiquer une adresse email."), code="required")
+
+#         ok, reason = is_email_domain_allowed(email)
+#         if not ok:
+#             raise forms.ValidationError(
+#                 _("Adresse email refusée. Merci d’utiliser une adresse valide."),
+#                 code=reason or "invalid-email-domain",
+#             )
+#         return email
+
+#     def clean_message(self) -> str:
+#         message = (self.cleaned_data.get("message") or "").strip()
+#         if not message:
+#             raise forms.ValidationError(_("Veuillez écrire un message."), code="required")
+#         if len(message) < 10:
+#             raise forms.ValidationError(_("Votre message est trop court (au moins 10 caractères)."), code="min_length")
+#         return message
+
+
+
+
+
+
+
+
+# # core/forms.py
+# from __future__ import annotations
+
+# from django import forms
+# from django.utils.translation import gettext_lazy as _
+
+# from core.services.email_domain_check import is_email_domain_allowed
+
+
+# class ContactForm(forms.Form):
+#     name = forms.CharField(
+#         label=_("Nom"),
+#         max_length=255,
+#         widget=forms.TextInput(attrs={"class": "form-control", "autocomplete": "name"}),
+#     )
+#     email = forms.EmailField(
+#         label=_("Email"),
+#         widget=forms.EmailInput(attrs={"class": "form-control", "autocomplete": "email"}),
+#     )
+#     message = forms.CharField(
+#         label=_("Message"),
+#         widget=forms.Textarea(attrs={"class": "form-control", "rows": 6}),
+#     )
+
+#     def clean_email(self) -> str:
+#         email = (self.cleaned_data.get("email") or "").strip()
+#         ok, reason = is_email_domain_allowed(email)
+#         if not ok:
+#             raise forms.ValidationError(
+#                 _("Adresse email refusée. Merci d’utiliser une adresse valide."),
+#                 code=reason or "invalid-email-domain",
+#             )
+#         return email
 
 
 

@@ -1,0 +1,209 @@
+{# templates/dashboard/account_pending.html #}
+{% extends "dashboard/base_pending.html" %}
+{% load i18n %}
+
+{% block title %}
+  {{ PROJECT_NAME|default:"SOGENTIS" }} — {% trans "État du compte" %}
+{% endblock %}
+
+{% block header_right %}
+  <span class="badge text-bg-warning border">
+    <i class="fas fa-info-circle me-1" aria-hidden="true"></i>
+    {% trans "Informations" %}
+  </span>
+{% endblock %}
+
+{% block content %}
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-10 col-lg-8">
+
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4 p-md-5">
+
+          <h1 class="h4 fw-bold mb-2">{% trans "État du compte" %}</h1>
+
+          <p class="text-muted mb-0">
+            {% trans "Votre navigation sur le site n’est pas bloquée. Cette page sert uniquement à expliquer pourquoi certaines sections du dashboard (ex : vendeur, B2B, admin) peuvent être limitées." %}
+          </p>
+
+          {% if rejected_rows %}
+            <div class="alert alert-danger mt-4" role="alert">
+              <div class="fw-bold mb-1">{% trans "Profil refusé" %}</div>
+              <div class="small">{% trans "Un ou plusieurs profils ont été refusés. Vous pouvez continuer à utiliser le site, mais certaines sections du dashboard peuvent rester indisponibles." %}</div>
+            </div>
+          {% elif pending_rows %}
+            <div class="alert alert-warning mt-4" role="alert">
+              <div class="fw-bold mb-1">{% trans "Validation en cours" %}</div>
+              <div class="small">{% trans "Certaines sections du dashboard peuvent être limitées tant que la validation n’est pas terminée." %}</div>
+            </div>
+          {% else %}
+            <div class="alert alert-success mt-4" role="alert">
+              <div class="fw-bold mb-1">{% trans "Aucune restriction détectée" %}</div>
+              <div class="small">{% trans "Si une section reste indisponible, contactez le support." %}</div>
+            </div>
+          {% endif %}
+
+          {% if profiles_rows %}
+            <hr class="my-4">
+            <div class="fw-semibold mb-2">{% trans "Profils détectés" %}</div>
+            <div class="table-responsive">
+              <table class="table table-sm align-middle">
+                <thead>
+                  <tr>
+                    <th>{% trans "Type" %}</th>
+                    <th>{% trans "Modèle" %}</th>
+                    <th>{% trans "Statut" %}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for r in profiles_rows %}
+                    <tr>
+                      <td>{{ r.kind_label }}</td>
+                      <td class="text-muted">{{ r.model }}</td>
+                      <td>
+                        {% if r.status == "approved" %}
+                          <span class="badge text-bg-success">{% trans "Validé" %}</span>
+                        {% elif r.status == "pending" %}
+                          <span class="badge text-bg-warning border">{% trans "En attente" %}</span>
+                        {% elif r.status == "rejected" %}
+                          <span class="badge text-bg-danger">{% trans "Refusé" %}</span>
+                        {% else %}
+                          <span class="badge text-bg-light border">{{ r.status|default:"—" }}</span>
+                        {% endif %}
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% endif %}
+
+          <hr class="my-4">
+
+          <div class="d-flex flex-wrap gap-2">
+            <a class="btn btn-primary" href="{% url 'dashboard:hub' %}">
+              <i class="fas fa-layer-group me-2" aria-hidden="true"></i>{% trans "Retour au Hub" %}
+            </a>
+
+            <a class="btn btn-outline-secondary" href="{% url 'accounts_users:web:profile:profile_edit' %}">
+              <i class="fas fa-user-edit me-2" aria-hidden="true"></i>{% trans "Mettre à jour mon profil" %}
+            </a>
+
+            <a class="btn btn-outline-danger" href="{% url 'accounts_users:web:auth:logout' %}">
+              <i class="fas fa-sign-out-alt me-2" aria-hidden="true"></i>{% trans "Déconnexion" %}
+            </a>
+          </div>
+
+          {% if support_email %}
+            <div class="mt-4 small text-muted">
+              {% trans "Support :" %} <span class="fw-semibold">{{ support_email }}</span>
+            </div>
+          {% endif %}
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+{% endblock %}
+
+
+
+
+
+
+
+{% comment %} {# templates/dashboard/account_pending.html #}
+{% extends "dashboard/base_pending.html" %}
+{% load i18n %}
+
+{% block title %}
+  {{ PROJECT_NAME|default:"SOGENTIS" }} — {% trans "Compte en attente" %}
+{% endblock %}
+
+{% block content %}
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-10 col-lg-8">
+
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4 p-md-5">
+
+          <div class="d-flex align-items-start justify-content-between gap-3">
+            <div>
+              <h1 class="h4 fw-bold mb-2">{% trans "Compte en attente de validation" %}</h1>
+              <p class="text-muted mb-0">
+                {% trans "Votre compte est bien activé, mais il doit encore être validé par l’équipe. Vous serez notifié dès que ce sera fait." %}
+              </p>
+            </div>
+
+            <span class="badge text-bg-warning border">
+              <i class="fas fa-hourglass-half me-1" aria-hidden="true"></i>
+              {% trans "En attente" %}
+            </span>
+          </div>
+
+          {% if profile_status %}
+            <div class="mt-3">
+              <div class="small text-muted">
+                {% trans "Statut détecté" %} :
+                <span class="fw-semibold">{{ profile_status }}</span>
+              </div>
+            </div>
+          {% endif %}
+
+          <hr class="my-4">
+
+          <div class="d-flex flex-wrap gap-2">
+            <a class="btn btn-primary" href="{% url 'dashboard:hub' %}">
+              <i class="fas fa-layer-group me-2" aria-hidden="true"></i>{% trans "Aller au Hub" %}
+            </a>
+
+            <a class="btn btn-outline-secondary" href="{% url 'accounts_users:web:profile:profile_edit' %}">
+              <i class="fas fa-user-edit me-2" aria-hidden="true"></i>{% trans "Mettre à jour mon profil" %}
+            </a>
+
+            <a class="btn btn-outline-danger" href="{% url 'accounts_users:web:auth:logout' %}">
+              <i class="fas fa-sign-out-alt me-2" aria-hidden="true"></i>{% trans "Déconnexion" %}
+            </a>
+          </div>
+
+          <div class="mt-4 small text-muted">
+            {% trans "Si vous pensez qu’il s’agit d’une erreur, contactez le support." %}
+            {% if support_email %}
+              <span class="ms-1 fw-semibold">{{ support_email }}</span>
+            {% endif %}
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+{% endblock %}
+ {% endcomment %}
+
+
+
+{% comment %} {# templates/dashboard/account_pending.html #}
+{% extends "dashboard/base_pending.html" %}
+{% load i18n %}
+
+{% block content %}
+  <div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4 p-md-5">
+          <h1 class="h4 fw-bold mb-2">{% trans "Compte en attente de validation" %}</h1>
+          <p class="text-muted mb-4">
+            {% trans "Votre compte est bien activé, mais il doit encore être validé. Vous serez notifié dès que ce sera fait." %}
+          </p>
+
+          <div class="d-flex flex-wrap gap-2">
+            <a class="btn btn-outline-primary" href="{% url 'dashboard:hub' %}">{% trans "Retour au hub" %}</a>
+            <a class="btn btn-outline-secondary" href="{% url 'accounts_users:web:auth:logout' %}">{% trans "Déconnexion" %}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %} {% endcomment %}

@@ -1,5 +1,4 @@
 # accounts_users/web/views/activation_web_views.py
-
 from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import redirect, render
@@ -53,18 +52,18 @@ def resend_activation_view(request):
     Attend un POST avec 'email'.
     """
     if request.method != "POST":
-        return redirect("accounts_users_web:login")
+        return redirect("accounts_users:web:auth:login")
 
     email = (request.POST.get("email") or "").strip().lower()
     if not email:
         messages.error(request, _("Veuillez fournir une adresse e-mail."))
-        return redirect("accounts_users_web:login")
+        return redirect("accounts_users:web:auth:login")
 
     try:
         result = resend_activation_link(request=request, email=email)
     except Exception:
         messages.error(request, _("Impossible d’envoyer le lien d’activation pour le moment."))
-        return redirect("accounts_users_web:login")
+        return redirect("accounts_users:web:auth:login")
 
     status = result.get("status")
 
@@ -77,7 +76,7 @@ def resend_activation_view(request):
     else:
         messages.error(request, _("Impossible d’envoyer le lien d’activation."))
 
-    return redirect("accounts_users_web:login")
+    return redirect("accounts_users:web:auth:login")
 
 
 

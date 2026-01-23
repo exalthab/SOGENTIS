@@ -9,14 +9,14 @@ from economic.b2b.models import Company
 def b2b_home_view(request):
     """
     Hub B2B : liste des entreprises accessibles (owner ou membership).
-    Template: economic/b2b/b2b_home.html
+    Template: economic/b2b/index.html
     """
     companies = (
         Company.objects.filter(owner=request.user)
         | Company.objects.filter(users__user=request.user, users__is_active=True)
     ).distinct().order_by("name")
 
-    return render(request, "economic/b2b/b2b_home.html", {"companies": companies})
+    return render(request, "economic/b2b/index.html", {"companies": companies})
 
 
 

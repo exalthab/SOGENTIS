@@ -1,4 +1,1739 @@
-{# templates/economic/formations/partials/_menu_formations.html #}
+{% comment %} {# templates/economic/formations/partials/_menu_formations.html #}
+{% load i18n dashboard_tags %}
+
+{% safe_url "economic:formations:index" as u_index %}
+{% safe_url "economic:formations:course_list" as u_course_list %}
+{% safe_url "economic:formations:my_dashboard" as u_my_dashboard %}
+{% safe_url "economic:formations:my_calendar" as u_my_calendar %}
+{% safe_url "economic:formations:my_certificates" as u_my_certs %}
+
+{% safe_url "economic:support:index" as u_support %}
+{% safe_url "core:contact" as u_contact %}
+{% safe_url "economic:index" as u_economic_home %}
+
+{% safe_url "accounts_users:web:auth:login" as u_login %}
+{% safe_url "accounts_users:web:registration:choice" as u_signup %}
+
+{% with rm=request.resolver_match %}
+
+<nav class="navbar navbar-expand-lg bg-light border-bottom shadow-sm sticky-top formations-navbar"
+     aria-label="{% trans 'Menu éducation & formations' %}">
+  <div class="container-fluid flex-column">
+
+    {# =========================   #}
+    {#   LIGNE PRINCIPALE          #}
+    {#   ========================= #}
+    <div class="w-100 d-flex align-items-center">
+      <a class="navbar-brand fw-semibold d-flex align-items-center me-2 {% if not u_index %}disabled{% endif %}"
+         href="{{ u_index|default:'#' }}">
+        <i class="fa-solid fa-graduation-cap me-2"></i>
+        {% trans "Éducation & Formations" %}
+      </a>
+
+      <button class="navbar-toggler ms-auto" type="button"
+              data-bs-toggle="collapse" data-bs-target="#educSubnav"
+              aria-controls="educSubnav" aria-expanded="false"
+              aria-label="{% trans 'Menu' %}">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="educSubnav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 formations-appnav">
+
+          <li class="nav-item">
+            <a class="nav-link {% if rm and rm.url_name in 'course_list course_detail enroll enroll_confirm' %}active{% endif %}"
+               href="{{ u_course_list|default:u_index|default:'#' }}">
+              <i class="fa-solid fa-book-open"></i>
+              <span class="nav-text">{% trans "Catalogue" %}</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="{% if u_index %}{{ u_index }}#parcours{% else %}#{% endif %}">
+              <i class="fa-solid fa-route"></i>
+              <span class="nav-text">{% trans "Parcours" %}</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="{% if u_index %}{{ u_index }}#calendar{% else %}#{% endif %}">
+              <i class="fa-regular fa-calendar-days"></i>
+              <span class="nav-text">{% trans "Calendrier" %}</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="{% if u_index %}{{ u_index }}#certifications{% else %}#{% endif %}">
+              <i class="fa-solid fa-certificate"></i>
+              <span class="nav-text">{% trans "Certifications" %}</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="{% if u_index %}{{ u_index }}#instructors{% else %}#{% endif %}">
+              <i class="fa-regular fa-user"></i>
+              <span class="nav-text">{% trans "Formateurs" %}</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="{% if u_index %}{{ u_index }}#pricing{% else %}#{% endif %}">
+              <i class="fa-solid fa-tags"></i>
+              <span class="nav-text">{% trans "Tarifs" %}</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link {% if rm and rm.namespace == 'support' %}active{% endif %}"
+               href="{{ u_support|default:'#' }}">
+              <i class="fa-regular fa-circle-question"></i>
+              <span class="nav-text">{% trans "FAQ" %}</span>
+            </a>
+          </li>
+
+          {% if request.user.is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link {% if rm and rm.url_name == 'my_dashboard' %}active{% endif %}"
+                 href="{{ u_my_dashboard|default:'#' }}">
+                <i class="fa-solid fa-user-graduate"></i>
+                <span class="nav-text">{% trans "Mon espace" %}</span>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link {% if rm and rm.url_name == 'my_calendar' %}active{% endif %}"
+                 href="{{ u_my_calendar|default:'#' }}">
+                <i class="fa-regular fa-calendar-check"></i>
+                <span class="nav-text">{% trans "Mes sessions" %}</span>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link {% if rm and rm.url_name in 'my_certificates certificate_detail certificate_download' %}active{% endif %}"
+                 href="{{ u_my_certs|default:'#' }}">
+                <i class="fa-solid fa-award"></i>
+                <span class="nav-text">{% trans "Mes certificats" %}</span>
+              </a>
+            </li>
+          {% endif %}
+        </ul>
+
+        <form class="d-flex formations-search me-lg-2" method="get"
+              action="{{ u_course_list|default:u_index|default:'#' }}">
+          <input class="form-control formations-search-input"
+                 type="search" name="q"
+                 value="{{ request.GET.q|default:'' }}"
+                 placeholder="{% trans 'Rechercher…' %}"
+                 aria-label="{% trans 'Rechercher une formation' %}">
+          <button class="btn btn-outline-primary formations-search-btn" type="submit"
+                  aria-label="{% trans 'Rechercher' %}">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </button>
+        </form>
+
+        <div class="d-flex align-items-center gap-2">
+          {% if request.user.is_authenticated %}
+            <span class="small text-muted d-none d-lg-inline">
+              {{ request.user.get_short_name|default:request.user.get_username }}
+            </span>
+          {% else %}
+            <a class="btn btn-outline-primary btn-sm formations-auth-btn" href="{{ u_login|default:'#' }}">
+              {% trans "Espace apprenant" %}
+            </a>
+            <a class="btn btn-primary btn-sm formations-auth-btn" href="{{ u_signup|default:'#' }}">
+              {% trans "S’inscrire" %}
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    {# =========================    #}
+    {#   SOUS-LIGNE (en bas du topbar)#}
+    {#  =========================    #}
+    <div class="formations-subline w-100 border-top">
+      <div class="d-flex flex-wrap align-items-center gap-3 py-2 formations-subline-inner">
+
+        <a href="{{ u_economic_home|default:'#' }}" class="text-decoration-none formations-sublink">
+          <i class="fa-solid fa-arrow-left-long me-1"></i>
+          <span>{% trans "Accueil économique" %}</span>
+        </a>
+
+        <span class="text-muted small">•</span>
+
+        <a class="text-decoration-none formations-subpill"
+           href="{% if u_index %}{{ u_index }}#certifications{% else %}#{% endif %}">
+          <i class="fa-solid fa-graduation-cap me-1"></i>
+          <span>{% trans "Certifications reconnues" %}</span>
+        </a>
+
+        <a class="text-decoration-none formations-subpill"
+           href="{% if u_index %}{{ u_index }}#calendar{% else %}#{% endif %}">
+          <i class="fa-solid fa-desktop me-1"></i>
+          <span>{% trans "Présentiel & en ligne" %}</span>
+        </a>
+
+        <a class="text-decoration-none formations-subpill"
+           href="{% if u_index %}{{ u_index }}#pricing{% else %}#{% endif %}">
+          <i class="fa-solid fa-sack-dollar me-1"></i>
+          <span>{% trans "Financements possibles" %}</span>
+        </a>
+
+        <a href="{{ u_contact|default:'#' }}" class="ms-auto text-decoration-none formations-sublink">
+          <span>{% trans "Contact pédagogique" %}</span>
+          <i class="fa-solid fa-arrow-right-long ms-1"></i>
+        </a>
+
+      </div>
+    </div>
+
+  </div>
+</nav>
+
+{% endwith %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/formations/partials/_menu_formations.html #}
+{% load i18n dashboard_tags %}
+
+{% safe_url "economic:formations:index" as u_index %}
+{% safe_url "economic:formations:course_list" as u_course_list %}
+{% safe_url "economic:formations:my_dashboard" as u_my_dashboard %}
+{% safe_url "economic:formations:my_calendar" as u_my_calendar %}
+{% safe_url "economic:formations:my_certificates" as u_my_certs %}
+
+{% safe_url "economic:support:index" as u_support %}
+
+{% safe_url "accounts_users:web:auth:login" as u_login %}
+{% if not u_login %}{% safe_url "accounts_users:login" as u_login %}{% endif %}
+{% safe_url "accounts_users:web:registration:choice" as u_signup %}
+{% if not u_signup %}{% safe_url "accounts_users:signup" as u_signup %}{% endif %}
+
+{% with rm=request.resolver_match %}
+{% with current_slug=rm.kwargs.slug|default:'' %}
+
+<nav class="navbar navbar-expand-lg bg-light border-bottom shadow-sm sticky-top formations-navbar"
+     aria-label="{% trans 'Menu éducation & formations' %}">
+  <div class="container-fluid">
+
+    <a class="navbar-brand fw-semibold d-flex align-items-center {% if not u_index %}disabled{% endif %}"
+       href="{{ u_index|default:'#' }}">
+      <i class="fa-solid fa-graduation-cap me-2"></i>
+      {% trans "Éducation & Formations" %}
+    </a>
+
+    <button class="navbar-toggler formations-toggler" type="button"
+            data-bs-toggle="collapse" data-bs-target="#educSubnav"
+            aria-controls="educSubnav" aria-expanded="false" aria-label="{% trans 'Menu' %}">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="educSubnav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0 formations-nav">
+
+        <li class="nav-item">
+          <a class="nav-link {% if rm and rm.url_name in 'course_list course_detail enroll enroll_confirm' %}active{% endif %}"
+             href="{{ u_course_list|default:u_index|default:'#' }}">
+            <i class="fa-solid fa-book-open me-1"></i> {% trans "Catalogue" %}
+          </a>
+        </li>
+
+        {% if current_slug %}
+          <li class="nav-item">
+            <a class="nav-link {% if rm and rm.url_name == 'learning' %}active{% endif %}"
+               href="{% url 'economic:formations:learning' slug=current_slug %}">
+              <i class="fa-solid fa-laptop-code me-1"></i> {% trans "Apprentissage" %}
+            </a>
+          </li>
+        {% endif %}
+
+        <li class="nav-item">
+          <a class="nav-link" href="{% if u_index %}{{ u_index }}#parcours{% else %}#{% endif %}">
+            <i class="fa-solid fa-route me-1"></i> {% trans "Parcours" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="{% if u_index %}{{ u_index }}#calendar{% else %}#{% endif %}">
+            <i class="fa-regular fa-calendar-days me-1"></i> {% trans "Calendrier" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="{% if u_index %}{{ u_index }}#certifications{% else %}#{% endif %}">
+            <i class="fa-solid fa-certificate me-1"></i> {% trans "Certifications" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="{% if u_index %}{{ u_index }}#instructors{% else %}#{% endif %}">
+            <i class="fa-regular fa-user me-1"></i> {% trans "Formateurs" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="{% if u_index %}{{ u_index }}#pricing{% else %}#{% endif %}">
+            <i class="fa-solid fa-tags me-1"></i> {% trans "Tarifs" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link {% if rm and rm.namespace == 'support' %}active{% endif %}"
+             href="{{ u_support|default:'#' }}">
+            <i class="fa-regular fa-circle-question me-1"></i> {% trans "FAQ" %}
+          </a>
+        </li>
+
+        {% if request.user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link {% if rm and rm.url_name == 'my_dashboard' %}active{% endif %}"
+               href="{{ u_my_dashboard|default:'#' }}">
+              <i class="fa-solid fa-user-graduate me-1"></i> {% trans "Mon espace" %}
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link {% if rm and rm.url_name == 'my_calendar' %}active{% endif %}"
+               href="{{ u_my_calendar|default:'#' }}">
+              <i class="fa-regular fa-calendar-check me-1"></i> {% trans "Mes sessions" %}
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link {% if rm and rm.url_name in 'my_certificates certificate_detail certificate_download' %}active{% endif %}"
+               href="{{ u_my_certs|default:'#' }}">
+              <i class="fa-solid fa-award me-1"></i> {% trans "Mes certificats" %}
+            </a>
+          </li>
+        {% endif %}
+
+      </ul>
+
+      {# search avec validation (submit bouton) #}
+      <form class="d-flex gap-2 ms-lg-2 formations-search" method="get"
+            action="{{ u_course_list|default:u_index|default:'#' }}" role="search">
+        <input class="form-control formations-search-input" type="search" name="q"
+               value="{{ request.GET.q|default:'' }}"
+               placeholder="{% trans 'Rechercher…' %}">
+        <button class="btn btn-outline-primary formations-search-btn" type="submit" aria-label="{% trans 'Rechercher' %}">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+      </form>
+
+      <div class="d-flex align-items-center gap-2 ms-lg-3">
+        {% if request.user.is_authenticated %}
+          <span class="small text-muted d-none d-lg-inline">
+            {{ request.user.get_short_name|default:request.user.get_username }}
+          </span>
+        {% else %}
+          <a class="btn btn-outline-primary btn-sm formations-auth-btn" href="{{ u_login|default:'#' }}">
+            {% trans "Espace apprenant" %}
+          </a>
+          <a class="btn btn-primary btn-sm formations-auth-btn" href="{{ u_signup|default:'#' }}">
+            {% trans "S’inscrire" %}
+          </a>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+</nav>
+
+{% endwith %}
+{% endwith %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/formations/partials/_menu_formations.html #}
+{% load i18n dashboard_tags %}
+
+{# Formations #}
+{% safe_url "economic:formations:index" as u_index %}
+{% safe_url "economic:formations:course_list" as u_course_list %}
+{% safe_url "economic:formations:my_dashboard" as u_my_dashboard %}
+{% safe_url "economic:formations:my_calendar" as u_my_calendar %}
+{% safe_url "economic:formations:my_certificates" as u_my_certs %}
+
+{# Autres #}
+{% safe_url "economic:index" as u_economic_home %}
+{% if not u_economic_home %}{% safe_url "economic:home" as u_economic_home %}{% endif %}
+
+{% safe_url "economic:support:index" as u_support %}
+{% safe_url "core:contact" as u_contact %}
+
+{# Auth #}
+{% safe_url "accounts_users:web:auth:login" as u_login %}
+{% if not u_login %}{% safe_url "accounts_users:login" as u_login %}{% endif %}
+
+{% safe_url "accounts_users:web:registration:choice" as u_signup %}
+{% if not u_signup %}{% safe_url "accounts_users:signup" as u_signup %}{% endif %}
+
+{% with rm=request.resolver_match %}
+{% with current_slug=rm.kwargs.slug|default:'' %}
+
+<nav class="navbar navbar-expand-lg bg-light border-bottom shadow-sm sticky-top"
+     aria-label="{% trans 'Menu éducation & formations' %}">
+  <div class="container-fluid">
+
+    <a class="navbar-brand fw-semibold d-flex align-items-center {% if not u_index %}disabled{% endif %}"
+       href="{{ u_index|default:'#' }}">
+      <i class="fa-solid fa-graduation-cap me-2"></i>
+      {% trans "Éducation & Formations" %}
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#educSubnav"
+            aria-controls="educSubnav" aria-expanded="false" aria-label="{% trans 'Menu' %}">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="educSubnav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+        {# Catalogue #}
+        <li class="nav-item">
+          <a class="nav-link {% if rm and rm.url_name in 'course_list course_detail enroll enroll_confirm' %}active{% endif %}"
+             href="{{ u_course_list|default:u_index|default:'#' }}">
+            <i class="fa-solid fa-book-open me-1"></i> {% trans "Catalogue" %}
+          </a>
+        </li>
+
+        {# Parcours (si on est sur learning) sinon ancre) #}
+        {% if current_slug %}
+          <li class="nav-item">
+            <a class="nav-link {% if rm and rm.url_name == 'learning' %}active{% endif %}"
+               href="{% url 'economic:formations:learning' slug=current_slug %}">
+              <i class="fa-solid fa-route me-1"></i> {% trans "Parcours" %}
+            </a>
+          </li>
+        {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% if u_index %}{{ u_index }}#parcours{% else %}#{% endif %}">
+              <i class="fa-solid fa-route me-1"></i> {% trans "Parcours" %}
+            </a>
+          </li>
+        {% endif %}
+
+        <li class="nav-item">
+          <a class="nav-link" href="{% if u_index %}{{ u_index }}#calendar{% else %}#{% endif %}">
+            <i class="fa-regular fa-calendar-days me-1"></i> {% trans "Calendrier" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="{% if u_index %}{{ u_index }}#certifications{% else %}#{% endif %}">
+            <i class="fa-solid fa-certificate me-1"></i> {% trans "Certifications" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="{% if u_index %}{{ u_index }}#instructors{% else %}#{% endif %}">
+            <i class="fa-regular fa-user me-1"></i> {% trans "Formateurs" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="{% if u_index %}{{ u_index }}#pricing{% else %}#{% endif %}">
+            <i class="fa-solid fa-tags me-1"></i> {% trans "Tarifs" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link {% if rm and rm.namespace == 'support' %}active{% endif %}"
+             href="{{ u_support|default:'#' }}">
+            <i class="fa-regular fa-circle-question me-1"></i> {% trans "FAQ" %}
+          </a>
+        </li>
+
+        {% if request.user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link {% if rm and rm.url_name == 'my_dashboard' %}active{% endif %}"
+               href="{{ u_my_dashboard|default:'#' }}">
+              <i class="fa-solid fa-user-graduate me-1"></i> {% trans "Mon espace" %}
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link {% if rm and rm.url_name == 'my_calendar' %}active{% endif %}"
+               href="{{ u_my_calendar|default:'#' }}">
+              <i class="fa-regular fa-calendar-check me-1"></i> {% trans "Mes sessions" %}
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link {% if rm and rm.url_name in 'my_certificates certificate_detail certificate_download' %}active{% endif %}"
+               href="{{ u_my_certs|default:'#' }}">
+              <i class="fa-solid fa-award me-1"></i> {% trans "Mes certificats" %}
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+
+      {# ✅ Recherche avec validation + bouton #}
+      <form class="d-flex gap-2 ms-lg-2" method="get"
+            action="{{ u_course_list|default:u_index|default:'#' }}"
+            role="search" aria-label="{% trans 'Rechercher une formation' %}">
+        <input class="form-control"
+               type="search"
+               name="q"
+               required
+               minlength="2"
+               value="{{ request.GET.q|default:'' }}"
+               placeholder="{% trans 'Rechercher une formation…' %}"
+               aria-label="{% trans 'Rechercher une formation' %}">
+        <button class="btn btn-outline-primary" type="submit">
+          <i class="fa-solid fa-magnifying-glass me-1"></i> {% trans "Rechercher" %}
+        </button>
+      </form>
+
+      <div class="d-flex align-items-center gap-2 ms-lg-3">
+        {% if request.user.is_authenticated %}
+          <span class="small text-muted d-none d-lg-inline">
+            {{ request.user.get_short_name|default:request.user.get_username }}
+          </span>
+        {% else %}
+          <a class="btn btn-outline-primary" href="{{ u_login|default:'#' }}">{% trans "Espace apprenant" %}</a>
+          <a class="btn btn-primary" href="{{ u_signup|default:'#' }}">{% trans "S’inscrire" %}</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="bg-white border-bottom">
+  <div class="container-fluid py-2 d-flex flex-wrap gap-3 align-items-center">
+
+    {# ✅ Retour accueil économique #}
+    <a href="{{ u_economic_home|default:'#' }}" class="text-decoration-none">
+      <i class="fa-solid fa-arrow-left-long me-1"></i> {% trans "Accueil économique" %}
+    </a>
+
+    <span class="ms-2">🎓 {% trans "Certifications reconnues" %}</span>
+    <span>💻 {% trans "Cours en présentiel & en ligne" %}</span>
+    <span>💰 {% trans "Financements possibles" %}</span>
+
+    <a href="{{ u_contact|default:'#' }}" class="ms-auto text-decoration-none">
+      {% trans "Contact pédagogique" %}
+    </a>
+  </div>
+</div>
+
+{% endwith %}
+{% endwith %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/formations/partials/_menu_formations.html #}
+{% load i18n dashboard_tags %}
+
+{% safe_url "economic:formations:index" as u_index %}
+{% safe_url "economic:formations:course_list" as u_course_list %}
+{% safe_url "economic:formations:my_dashboard" as u_my_dashboard %}
+{% safe_url "economic:formations:my_calendar" as u_my_calendar %}
+{% safe_url "economic:formations:my_certificates" as u_my_certs %}
+{% safe_url "economic:support:index" as u_support %}
+{% safe_url "core:contact" as u_contact %}
+
+{% safe_url "accounts_users:web:auth:login" as u_login %}
+{% if not u_login %}{% safe_url "accounts_users:login" as u_login %}{% endif %}
+
+{% safe_url "accounts_users:web:registration:choice" as u_signup %}
+{% if not u_signup %}{% safe_url "accounts_users:signup" as u_signup %}{% endif %}
+
+{% with rm=request.resolver_match %}
+{% with current_slug=rm.kwargs.slug|default:'' %}
+
+<nav class="navbar navbar-expand-lg bg-light border-bottom shadow-sm sticky-top"
+     aria-label="{% trans 'Menu éducation & formations' %}">
+  <div class="container-fluid">
+
+    <a class="navbar-brand fw-semibold d-flex align-items-center {% if not u_index %}disabled{% endif %}"
+       href="{{ u_index|default:'#' }}">
+      <i class="fa-solid fa-graduation-cap me-2"></i>
+      {% trans "Éducation & Formations" %}
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#educSubnav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="educSubnav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+        {# Catalogue #}
+        <li class="nav-item">
+          <a class="nav-link {% if rm and rm.url_name in 'course_list course_detail enroll enroll_confirm' %}active{% endif %}"
+             href="{{ u_course_list|default:u_index|default:'#' }}">
+            <i class="fa-solid fa-book-open me-1"></i> {% trans "Catalogue" %}
+          </a>
+        </li>
+
+        {# Apprentissage (visible si on a un slug dans l'URL) #}
+        {% if current_slug %}
+          <li class="nav-item">
+            <a class="nav-link {% if rm and rm.url_name == 'learning' %}active{% endif %}"
+               href="{% url 'economic:formations:learning' slug=current_slug %}">
+              <i class="fa-solid fa-laptop-code me-1"></i> {% trans "Parcours" %}
+            </a>
+          </li>
+        {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% if u_index %}{{ u_index }}#parcours{% else %}#{% endif %}">
+              <i class="fa-solid fa-route me-1"></i> {% trans "Parcours" %}
+            </a>
+          </li>
+        {% endif %}
+
+        {# Calendrier (section home) #}
+        <li class="nav-item">
+          <a class="nav-link" href="{% if u_index %}{{ u_index }}#calendar{% else %}#{% endif %}">
+            <i class="fa-regular fa-calendar-days me-1"></i> {% trans "Calendrier" %}
+          </a>
+        </li>
+
+        {# Certifications (section home) #}
+        <li class="nav-item">
+          <a class="nav-link" href="{% if u_index %}{{ u_index }}#certifications{% else %}#{% endif %}">
+            <i class="fa-solid fa-certificate me-1"></i> {% trans "Certifications" %}
+          </a>
+        </li>
+
+        {# Formateurs (section home) #}
+        <li class="nav-item">
+          <a class="nav-link" href="{% if u_index %}{{ u_index }}#instructors{% else %}#{% endif %}">
+            <i class="fa-regular fa-user me-1"></i> {% trans "Formateurs" %}
+          </a>
+        </li>
+
+        {# Tarifs (section home) #}
+        <li class="nav-item">
+          <a class="nav-link" href="{% if u_index %}{{ u_index }}#pricing{% else %}#{% endif %}">
+            <i class="fa-solid fa-tags me-1"></i> {% trans "Tarifs" %}
+          </a>
+        </li>
+
+        {# FAQ #}
+        <li class="nav-item">
+          <a class="nav-link {% if rm and rm.namespace == 'support' %}active{% endif %}"
+             href="{{ u_support|default:'#' }}">
+            <i class="fa-regular fa-circle-question me-1"></i> {% trans "FAQ" %}
+          </a>
+        </li>
+
+        {# Espace apprenant #}
+        {% if request.user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link {% if rm and rm.url_name == 'my_dashboard' %}active{% endif %}"
+               href="{{ u_my_dashboard|default:'#' }}">
+              <i class="fa-solid fa-user-graduate me-1"></i> {% trans "Mon espace" %}
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link {% if rm and rm.url_name == 'my_calendar' %}active{% endif %}"
+               href="{{ u_my_calendar|default:'#' }}">
+              <i class="fa-regular fa-calendar-check me-1"></i> {% trans "Mes sessions" %}
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link {% if rm and rm.url_name in 'my_certificates certificate_detail certificate_download' %}active{% endif %}"
+               href="{{ u_my_certs|default:'#' }}">
+              <i class="fa-solid fa-award me-1"></i> {% trans "Mes certificats" %}
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+
+      <form class="d-flex me-3" method="get" action="{{ u_course_list|default:u_index|default:'#' }}">
+        <input class="form-control" type="search" name="q"
+               value="{{ request.GET.q|default:'' }}"
+               placeholder="{% trans 'Rechercher une formation…' %}">
+      </form>
+
+      <div class="d-flex align-items-center gap-2">
+        {% if request.user.is_authenticated %}
+          <span class="small text-muted d-none d-lg-inline">
+            {{ request.user.get_short_name|default:request.user.get_username }}
+          </span>
+        {% else %}
+          <a class="btn btn-outline-primary" href="{{ u_login|default:'#' }}">{% trans "Espace apprenant" %}</a>
+          <a class="btn btn-primary" href="{{ u_signup|default:'#' }}">{% trans "S’inscrire" %}</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="bg-white border-bottom">
+  <div class="container-fluid py-2 d-flex flex-wrap gap-3 align-items-center">
+    <span>🎓 {% trans "Certifications reconnues" %}</span>
+    <span>💻 {% trans "Cours en présentiel & en ligne" %}</span>
+    <span>💰 {% trans "Financements possibles" %}</span>
+
+    <a href="{{ u_contact|default:'#' }}" class="ms-auto text-decoration-none">
+      {% trans "Contact pédagogique" %}
+    </a>
+  </div>
+</div>
+
+{% endwith %}
+{% endwith %} {% endcomment %}
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/formations/partials/_menu_formations.html #}
+{% load i18n dashboard_tags %}
+
+{% safe_url "economic:formations:index" as u_index %}
+{% safe_url "economic:formations:course_list" as u_course_list %}
+{% safe_url "economic:formations:my_dashboard" as u_my_dashboard %}
+{% safe_url "economic:formations:my_calendar" as u_my_calendar %}
+{% safe_url "economic:formations:my_certificates" as u_my_certs %}
+
+{% safe_url "economic:support:index" as u_support %}
+{% safe_url "core:contact" as u_contact %}
+
+{% safe_url "accounts_users:web:auth:login" as u_login %}
+{% if not u_login %}{% safe_url "accounts_users:web:auth:login" as u_login %}{% endif %}
+{% safe_url "accounts_users:web:auth:signup" as u_signup %}
+{% if not u_signup %}{% safe_url "accounts_users:web:registration:choice" as u_signup %}{% endif %}
+
+{% with rm=request.resolver_match %}
+{% with url_name=rm.url_name|default:'' %}
+{% with namespace=rm.namespace|default:'' %}
+
+<nav class="navbar navbar-expand-lg bg-light border-bottom shadow-sm sticky-top"
+     aria-label="{% trans 'Menu éducation & formations' %}">
+  <div class="container-fluid">
+
+    <a class="navbar-brand fw-semibold d-flex align-items-center {% if not u_index %}disabled{% endif %}"
+       href="{{ u_index|default:'#' }}">
+      <i class="fa-solid fa-graduation-cap me-2"></i>
+      {% trans "Éducation & Formations" %}
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#educSubnav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="educSubnav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+        {# =========================  #}
+        {# PAGES                      #}
+        {# =========================  #}
+        <li class="nav-item">
+          <a class="nav-link
+             {% if url_name == 'course_list' or url_name == 'course_detail' or url_name == 'enroll' or url_name == 'enroll_confirm' %}
+               active
+             {% endif %}"
+             href="{{ u_course_list|default:u_index|default:'#' }}">
+            <i class="fa-solid fa-book-open me-1"></i> {% trans "Catalogue" %}
+          </a>
+        </li>
+
+        {# =========================    #}
+        {#   ANCRES (index)             #}
+        {#   => activées en JS          #}
+        {#   =========================  #}
+        <li class="nav-item">
+          <a class="nav-link js-formations-anchor {% if is_index %}js-can-activate{% endif %}"
+             href="{% if u_index %}{{ u_index }}#parcours{% else %}#{% endif %}"
+             data-anchor="parcours">
+            <i class="fa-solid fa-route me-1"></i> {% trans "Parcours" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link js-formations-anchor {% if is_index %}js-can-activate{% endif %}"
+             href="{% if u_index %}{{ u_index }}#calendar{% else %}#{% endif %}"
+             data-anchor="calendar">
+            <i class="fa-regular fa-calendar-days me-1"></i> {% trans "Calendrier" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link js-formations-anchor {% if is_index %}js-can-activate{% endif %}"
+             href="{% if u_index %}{{ u_index }}#certifications{% else %}#{% endif %}"
+             data-anchor="certifications">
+            <i class="fa-solid fa-certificate me-1"></i> {% trans "Certifications" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link js-formations-anchor {% if is_index %}js-can-activate{% endif %}"
+             href="{% if u_index %}{{ u_index }}#instructors{% else %}#{% endif %}"
+             data-anchor="instructors">
+            <i class="fa-regular fa-user me-1"></i> {% trans "Formateurs" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link js-formations-anchor {% if is_index %}js-can-activate{% endif %}"
+             href="{% if u_index %}{{ u_index }}#pricing{% else %}#{% endif %}"
+             data-anchor="pricing">
+            <i class="fa-solid fa-tags me-1"></i> {% trans "Tarifs" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link {% if namespace == 'support' %}active{% endif %}"
+             href="{{ u_support|default:'#' }}">
+            <i class="fa-regular fa-circle-question me-1"></i> {% trans "FAQ" %}
+          </a>
+        </li>
+
+        {% if request.user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link {% if url_name == 'my_dashboard' %}active{% endif %}"
+               href="{{ u_my_dashboard|default:'#' }}">
+              <i class="fa-solid fa-user-graduate me-1"></i> {% trans "Mon espace" %}
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link {% if url_name == 'my_calendar' %}active{% endif %}"
+               href="{{ u_my_calendar|default:'#' }}">
+              <i class="fa-regular fa-calendar-check me-1"></i> {% trans "Mes sessions" %}
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link
+               {% if url_name == 'my_certificates' or url_name == 'certificate_detail' or url_name == 'certificate_download' %}
+                 active
+               {% endif %}"
+               href="{{ u_my_certs|default:'#' }}">
+              <i class="fa-solid fa-award me-1"></i> {% trans "Mes certificats" %}
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+
+      <form class="d-flex me-3" method="get" action="{{ u_course_list|default:u_index|default:'#' }}">
+        <input class="form-control" type="search" name="q"
+               value="{{ request.GET.q|default:'' }}"
+               placeholder="{% trans 'Rechercher une formation…' %}">
+      </form>
+
+      <div class="d-flex align-items-center gap-2">
+        {% if request.user.is_authenticated %}
+          <span class="small text-muted d-none d-lg-inline">
+            {{ request.user.get_short_name|default:request.user.get_username }}
+          </span>
+        {% else %}
+          <a class="btn btn-outline-primary" href="{{ u_login|default:'#' }}">{% trans "Espace apprenant" %}</a>
+          <a class="btn btn-primary" href="{{ u_signup|default:'#' }}">{% trans "S’inscrire" %}</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="bg-white border-bottom">
+  <div class="container-fluid py-2 d-flex flex-wrap gap-3 align-items-center">
+    <span>🎓 {% trans "Certifications reconnues" %}</span>
+    <span>💻 {% trans "Cours en présentiel & en ligne" %}</span>
+    <span>💰 {% trans "Financements possibles" %}</span>
+
+    <a href="{{ u_contact|default:'#' }}" class="ms-auto text-decoration-none">
+      {% trans "Contact pédagogique" %}
+    </a>
+  </div>
+</div>
+
+{# =========================   #}
+{# JS: active menu for anchors #}
+{# =========================   #}
+<script>
+(function(){
+  function setActiveByHash(){
+    var hash = (window.location.hash || "").replace("#","");
+    if(!hash) return;
+
+    // Only manage anchor actives when we are on formations index (we tagged links with js-can-activate)
+    var candidates = document.querySelectorAll(".js-formations-anchor.js-can-activate");
+    if(!candidates.length) return;
+
+    candidates.forEach(function(a){ a.classList.remove("active"); });
+    var active = document.querySelector('.js-formations-anchor.js-can-activate[data-anchor="'+hash+'"]');
+    if(active) active.classList.add("active");
+  }
+
+  // On click: update active immediately (better UX)
+  document.addEventListener("click", function(e){
+    var a = e.target.closest && e.target.closest(".js-formations-anchor.js-can-activate");
+    if(!a) return;
+    var anchor = a.getAttribute("data-anchor");
+    if(!anchor) return;
+    // Let navigation happen, but update active now
+    document.querySelectorAll(".js-formations-anchor.js-can-activate").forEach(function(x){
+      x.classList.toggle("active", x === a);
+    });
+  });
+
+  window.addEventListener("hashchange", setActiveByHash);
+  document.addEventListener("DOMContentLoaded", setActiveByHash);
+  // also run once immediately in case DOMContentLoaded already passed
+  setActiveByHash();
+})();
+</script>
+
+{% endwith %}
+{% endwith %}
+{% endwith %}
+ {% endcomment %}
+
+
+
+
+{% comment %} {# templates/economic/formations/partials/_menu_formations.html #}
+{% load i18n dashboard_tags %}
+
+{% safe_url "economic:formations:index" as u_index %}
+{% safe_url "economic:formations:course_list" as u_course_list %}
+{% safe_url "economic:formations:course_detail" as u_course_detail %}
+{% safe_url "economic:formations:my_dashboard" as u_my_dashboard %}
+{% safe_url "economic:formations:my_calendar" as u_my_calendar %}
+{% safe_url "economic:formations:my_certificates" as u_my_certs %}
+
+{% safe_url "economic:support:index" as u_support %}
+{% safe_url "core:contact" as u_contact %}
+
+{% safe_url "accounts_users:web:auth:login" as u_login %}
+{% if not u_login %}{% safe_url "accounts_users:web:auth:login" as u_login %}{% endif %}
+{% safe_url "accounts_users:web:auth:signup" as u_signup %}
+{% if not u_signup %}{% safe_url "accounts_users:web:registration:choice" as u_signup %}{% endif %}
+
+{% with rm=request.resolver_match %}
+{% with current_slug=rm.kwargs.slug|default:'' %}
+
+<nav class="navbar navbar-expand-lg bg-light border-bottom shadow-sm sticky-top"
+     aria-label="{% trans 'Menu éducation & formations' %}">
+  <div class="container-fluid">
+
+    <a class="navbar-brand fw-semibold d-flex align-items-center {% if not u_index %}disabled{% endif %}"
+       href="{{ u_index|default:'#' }}">
+      <i class="fa-solid fa-graduation-cap me-2"></i>
+      {% trans "Éducation & Formations" %}
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#educSubnav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="educSubnav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+        <li class="nav-item">
+          <a class="nav-link {% if rm and rm.url_name == 'course_list' or rm.url_name == 'course_detail' or rm.url_name == 'enroll' or rm.url_name == 'enroll_confirm' %}active{% endif %}"
+             href="{{ u_course_list|default:u_index|default:'#' }}">
+            <i class="fa-solid fa-book-open me-1"></i> {% trans "Catalogue" %}
+          </a>
+        </li>
+
+        {% if current_slug %}
+          {% safe_url "economic:formations:learning" as u_learning %}
+          {% if u_learning %}
+            <li class="nav-item">
+              <a class="nav-link {% if rm and rm.url_name == 'learning' %}active{% endif %}"
+                 href="{% url 'economic:formations:learning' slug=current_slug %}">
+                <i class="fa-solid fa-laptop-code me-1"></i> {% trans "Apprentissage" %}
+              </a>
+            </li>
+          {% endif %}
+        {% endif %}
+
+        <li class="nav-item">
+          <a class="nav-link" href="{% if u_index %}{{ u_index }}#parcours{% else %}#{% endif %}">
+            <i class="fa-solid fa-route me-1"></i> {% trans "Parcours" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="{% if u_index %}{{ u_index }}#calendar{% else %}#{% endif %}">
+            <i class="fa-regular fa-calendar-days me-1"></i> {% trans "Calendrier" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="{% if u_index %}{{ u_index }}#certifications{% else %}#{% endif %}">
+            <i class="fa-solid fa-certificate me-1"></i> {% trans "Certifications" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="{% if u_index %}{{ u_index }}#instructors{% else %}#{% endif %}">
+            <i class="fa-regular fa-user me-1"></i> {% trans "Formateurs" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="{% if u_index %}{{ u_index }}#pricing{% else %}#{% endif %}">
+            <i class="fa-solid fa-tags me-1"></i> {% trans "Tarifs" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link {% if rm and rm.namespace == 'support' %}active{% endif %}"
+             href="{{ u_support|default:'#' }}">
+            <i class="fa-regular fa-circle-question me-1"></i> {% trans "FAQ" %}
+          </a>
+        </li>
+
+        {% if request.user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link {% if rm and rm.url_name == 'my_dashboard' %}active{% endif %}"
+               href="{{ u_my_dashboard|default:'#' }}">
+              <i class="fa-solid fa-user-graduate me-1"></i> {% trans "Mon espace" %}
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if rm and rm.url_name == 'my_calendar' %}active{% endif %}"
+               href="{{ u_my_calendar|default:'#' }}">
+              <i class="fa-regular fa-calendar-check me-1"></i> {% trans "Mes sessions" %}
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if rm and rm.url_name == 'my_certificates' or rm.url_name == 'certificate_detail' or rm.url_name == 'certificate_download' %}active{% endif %}"
+               href="{{ u_my_certs|default:'#' }}">
+              <i class="fa-solid fa-award me-1"></i> {% trans "Mes certificats" %}
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+
+      <form class="d-flex me-3" method="get" action="{{ u_course_list|default:u_index|default:'#' }}">
+        <input class="form-control" type="search" name="q"
+               value="{{ request.GET.q|default:'' }}"
+               placeholder="{% trans 'Rechercher une formation…' %}">
+      </form>
+
+      <div class="d-flex align-items-center gap-2">
+        {% if request.user.is_authenticated %}
+          <span class="small text-muted d-none d-lg-inline">
+            {{ request.user.get_short_name|default:request.user.get_username }}
+          </span>
+        {% else %}
+          <a class="btn btn-outline-primary" href="{{ u_login|default:'#' }}">{% trans "Espace apprenant" %}</a>
+          <a class="btn btn-primary" href="{{ u_signup|default:'#' }}">{% trans "S’inscrire" %}</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="bg-white border-bottom">
+  <div class="container-fluid py-2 d-flex flex-wrap gap-3 align-items-center">
+    <span>🎓 {% trans "Certifications reconnues" %}</span>
+    <span>💻 {% trans "Cours en présentiel & en ligne" %}</span>
+    <span>💰 {% trans "Financements possibles" %}</span>
+
+    <a href="{{ u_contact|default:'#' }}" class="ms-auto text-decoration-none">
+      {% trans "Contact pédagogique" %}
+    </a>
+  </div>
+</div>
+
+{% endwith %}
+{% endwith %}
+ {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/economic/formations/partials/_menu_formations.html #}
+{% load i18n dashboard_tags %}
+
+{% safe_url "economic:formations:index" as u_index %}
+{% safe_url "economic:formations:course_list" as u_course_list %}
+{% safe_url "economic:formations:course_detail" as u_course_detail %}
+{% safe_url "economic:formations:my_dashboard" as u_my_dashboard %}
+{% safe_url "economic:formations:my_calendar" as u_my_calendar %}
+{% safe_url "economic:formations:my_certificates" as u_my_certs %}
+
+{% safe_url "economic:support:index" as u_support %}
+{% safe_url "core:contact" as u_contact %}
+
+{% safe_url "accounts_users:web:auth:login" as u_login %}
+{% if not u_login %}{% safe_url "accounts_users:web:auth:login" as u_login %}{% endif %}
+{% safe_url "accounts_users:web:auth:signup" as u_signup %}
+{% if not u_signup %}{% safe_url "accounts_users:web:registration:choice" as u_signup %}{% endif %}
+
+{% with rm=request.resolver_match %}
+{% with current_slug=rm.kwargs.slug|default:'' %}
+  {% if current_slug %}{% safe_url "economic:formations:learning" as u_learning_base %}{% endif %}
+
+<nav class="navbar navbar-expand-lg bg-light border-bottom shadow-sm sticky-top"
+     aria-label="{% trans 'Menu éducation & formations' %}">
+  <div class="container-fluid">
+
+    <a class="navbar-brand fw-semibold d-flex align-items-center {% if not u_index %}disabled{% endif %}"
+       href="{{ u_index|default:'#' }}">
+      <i class="fa-solid fa-graduation-cap me-2"></i>
+      {% trans "Éducation & Formations" %}
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#educSubnav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="educSubnav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+        <li class="nav-item">
+          <a class="nav-link {% if rm and rm.url_name in ['course_list','course_detail','enroll','enroll_confirm'] %}active{% endif %}"
+             href="{{ u_course_list|default:u_index|default:'#' }}">
+            <i class="fa-solid fa-book-open me-1"></i> {% trans "Catalogue" %}
+          </a>
+        </li>
+
+        {% if current_slug %}
+          {% safe_url "economic:formations:learning" as u_learning %}
+          {% if u_learning %}
+            <li class="nav-item">
+              <a class="nav-link {% if rm and rm.url_name == 'learning' %}active{% endif %}"
+                 href="{% url 'economic:formations:learning' slug=current_slug %}">
+                <i class="fa-solid fa-laptop-code me-1"></i> {% trans "Apprentissage" %}
+              </a>
+            </li>
+          {% endif %}
+        {% endif %}
+
+        <li class="nav-item">
+          <a class="nav-link" href="{% if u_index %}{{ u_index }}#parcours{% else %}#{% endif %}">
+            <i class="fa-solid fa-route me-1"></i> {% trans "Parcours" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="{% if u_index %}{{ u_index }}#calendar{% else %}#{% endif %}">
+            <i class="fa-regular fa-calendar-days me-1"></i> {% trans "Calendrier" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="{% if u_index %}{{ u_index }}#certifications{% else %}#{% endif %}">
+            <i class="fa-solid fa-certificate me-1"></i> {% trans "Certifications" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="{% if u_index %}{{ u_index }}#instructors{% else %}#{% endif %}">
+            <i class="fa-regular fa-user me-1"></i> {% trans "Formateurs" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="{% if u_index %}{{ u_index }}#pricing{% else %}#{% endif %}">
+            <i class="fa-solid fa-tags me-1"></i> {% trans "Tarifs" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link {% if rm and rm.namespace == 'support' %}active{% endif %}"
+             href="{{ u_support|default:'#' }}">
+            <i class="fa-regular fa-circle-question me-1"></i> {% trans "FAQ" %}
+          </a>
+        </li>
+
+        {% if request.user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link {% if rm and rm.url_name == 'my_dashboard' %}active{% endif %}"
+               href="{{ u_my_dashboard|default:'#' }}">
+              <i class="fa-solid fa-user-graduate me-1"></i> {% trans "Mon espace" %}
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if rm and rm.url_name == 'my_calendar' %}active{% endif %}"
+               href="{{ u_my_calendar|default:'#' }}">
+              <i class="fa-regular fa-calendar-check me-1"></i> {% trans "Mes sessions" %}
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if rm and rm.url_name in ['my_certificates','certificate_detail','certificate_download'] %}active{% endif %}"
+               href="{{ u_my_certs|default:'#' }}">
+              <i class="fa-solid fa-award me-1"></i> {% trans "Mes certificats" %}
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+
+      <form class="d-flex me-3" method="get" action="{{ u_course_list|default:u_index|default:'#' }}">
+        <input class="form-control" type="search" name="q"
+               value="{{ request.GET.q|default:'' }}"
+               placeholder="{% trans 'Rechercher une formation…' %}">
+      </form>
+
+      <div class="d-flex align-items-center gap-2">
+        {% if request.user.is_authenticated %}
+          <span class="small text-muted d-none d-lg-inline">
+            {{ request.user.get_short_name|default:request.user.get_username }}
+          </span>
+        {% else %}
+          <a class="btn btn-outline-primary" href="{{ u_login|default:'#' }}">{% trans "Espace apprenant" %}</a>
+          <a class="btn btn-primary" href="{{ u_signup|default:'#' }}">{% trans "S’inscrire" %}</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="bg-white border-bottom">
+  <div class="container-fluid py-2 d-flex flex-wrap gap-3 align-items-center">
+    <span>🎓 {% trans "Certifications reconnues" %}</span>
+    <span>💻 {% trans "Cours en présentiel & en ligne" %}</span>
+    <span>💰 {% trans "Financements possibles" %}</span>
+
+    <a href="{{ u_contact|default:'#' }}" class="ms-auto text-decoration-none">
+      {% trans "Contact pédagogique" %}
+    </a>
+  </div>
+</div>
+
+{% endwith %}
+{% endwith %}
+
+ {% endcomment %}
+
+
+
+{% comment %} {# templates/economic/formations/partials/_menu_formations.html #}
+{% load i18n %}
+
+{% url 'economic:formations:index' as formations_index_url %}
+{% url 'economic:formations:course_list' as formations_course_list_url %}
+{% url 'economic:formations:my_dashboard' as formations_dashboard_url %}
+{% url 'economic:formations:my_calendar' as formations_calendar_url %}
+{% url 'economic:formations:my_certificates' as formations_certs_url %}
+
+{% url 'economic:support:index' as support_index_url %}
+{% url 'core:contact' as core_contact_url %}
+
+{% url 'accounts_users:web:auth:login' as login_url %}
+{% if not login_url %}{% url 'accounts_users:web:auth:login' as login_url %}{% endif %}
+{% url 'accounts_users:signup' as signup_url %}
+{% if not signup_url %}{% url 'accounts_users:web:registration:choice' as signup_url %}{% endif %}
+
+{% with rm=request.resolver_match %}
+{% with current_slug=rm.kwargs.slug|default:'' %}
+  {% if current_slug %}{% url 'economic:formations:learning' slug=current_slug as formations_learning_url %}{% endif %}
+
+<nav class="navbar navbar-expand-lg bg-light border-bottom shadow-sm sticky-top"
+     aria-label="{% trans 'Menu éducation & formations' %}">
+  <div class="container-fluid">
+
+    <a class="navbar-brand fw-semibold d-flex align-items-center {% if not formations_index_url %}disabled{% endif %}"
+       href="{{ formations_index_url|default:'#' }}">
+      <i class="fa-solid fa-graduation-cap me-2"></i>
+      {% trans "Éducation & Formations" %}
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#educSubnav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="educSubnav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+        <li class="nav-item">
+          <a class="nav-link {% if rm and rm.namespace == 'formations' and rm.url_name in 'course_list course_detail enroll' %}active{% endif %}"
+             href="{{ formations_course_list_url|default:formations_index_url|default:'#' }}">
+            <i class="fa-solid fa-book-open me-1"></i> {% trans "Catalogue" %}
+          </a>
+        </li>
+
+        {% if formations_learning_url %}
+        <li class="nav-item">
+          <a class="nav-link {% if rm and rm.url_name == 'learning' %}active{% endif %}" href="{{ formations_learning_url }}">
+            <i class="fa-solid fa-laptop-code me-1"></i> {% trans "Apprentissage" %}
+          </a>
+        </li>
+        {% endif %}
+
+        <li class="nav-item"><a class="nav-link" href="{% if formations_index_url %}{{ formations_index_url }}#parcours{% else %}#{% endif %}">
+          <i class="fa-solid fa-route me-1"></i> {% trans "Parcours" %}</a></li>
+
+        <li class="nav-item"><a class="nav-link" href="{% if formations_index_url %}{{ formations_index_url }}#calendar{% else %}#{% endif %}">
+          <i class="fa-regular fa-calendar-days me-1"></i> {% trans "Calendrier" %}</a></li>
+
+        <li class="nav-item"><a class="nav-link" href="{% if formations_index_url %}{{ formations_index_url }}#certifications{% else %}#{% endif %}">
+          <i class="fa-solid fa-certificate me-1"></i> {% trans "Certifications" %}</a></li>
+
+        <li class="nav-item"><a class="nav-link" href="{% if formations_index_url %}{{ formations_index_url }}#instructors{% else %}#{% endif %}">
+          <i class="fa-regular fa-user me-1"></i> {% trans "Formateurs" %}</a></li>
+
+        <li class="nav-item"><a class="nav-link" href="{% if formations_index_url %}{{ formations_index_url }}#pricing{% else %}#{% endif %}">
+          <i class="fa-solid fa-tags me-1"></i> {% trans "Tarifs" %}</a></li>
+
+        <li class="nav-item">
+          <a class="nav-link {% if rm and rm.namespace == 'support' %}active{% endif %}"
+             href="{{ support_index_url|default:'#' }}">
+            <i class="fa-regular fa-circle-question me-1"></i> {% trans "FAQ" %}
+          </a>
+        </li>
+
+        {% if request.user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link {% if rm and rm.url_name == 'my_dashboard' %}active{% endif %}"
+               href="{{ formations_dashboard_url|default:'#' }}">
+              <i class="fa-solid fa-user-graduate me-1"></i> {% trans "Mon espace" %}
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if rm and rm.url_name == 'my_calendar' %}active{% endif %}"
+               href="{{ formations_calendar_url|default:'#' }}">
+              <i class="fa-regular fa-calendar-check me-1"></i> {% trans "Mes sessions" %}
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if rm and rm.url_name in 'my_certificates certificate_detail certificate_download' %}active{% endif %}"
+               href="{{ formations_certs_url|default:'#' }}">
+              <i class="fa-solid fa-award me-1"></i> {% trans "Mes certificats" %}
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+
+      <form class="d-flex me-3" method="get" action="{{ formations_course_list_url|default:formations_index_url|default:'#' }}">
+        <input class="form-control" type="search" name="q" value="{{ request.GET.q|default:'' }}"
+               placeholder="{% trans 'Rechercher une formation…' %}">
+      </form>
+
+      <div class="d-flex align-items-center gap-2">
+        {% if request.user.is_authenticated %}
+          <span class="small text-muted d-none d-lg-inline">{{ request.user.get_short_name|default:request.user.get_username }}</span>
+        {% else %}
+          <a class="btn btn-outline-primary" href="{{ login_url|default:'#' }}">{% trans "Espace apprenant" %}</a>
+          <a class="btn btn-primary" href="{{ signup_url|default:'#' }}">{% trans "S’inscrire" %}</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="bg-white border-bottom">
+  <div class="container-fluid py-2 d-flex flex-wrap gap-3 align-items-center">
+    <span>🎓 {% trans "Certifications reconnues" %}</span>
+    <span>💻 {% trans "Cours en présentiel & en ligne" %}</span>
+    <span>💰 {% trans "Financements possibles" %}</span>
+
+    <a href="{{ core_contact_url|default:'#' }}" class="ms-auto text-decoration-none">
+      {% trans "Contact pédagogique" %}
+    </a>
+  </div>
+</div>
+
+{% endwith %}
+{% endwith %}
+ {% endcomment %}
+
+
+
+
+{% comment %} {# templates/economic/formations/partials/_menu_formations.html #}
+
+{% load i18n %}
+
+{# ------------------------------------------------------------------ #}
+{# SAFE URLS (ne casse jamais en prod)                                 #}
+{# - On essaie plusieurs namespaces pour login/signup (selon ton projet) #}
+{# ------------------------------------------------------------------ #}
+{% url 'economic:formations:index' as formations_index_url %}
+{% url 'economic:formations:course_list' as formations_course_list_url %}
+{% url 'economic:formations:my_dashboard' as formations_dashboard_url %}
+{% url 'economic:formations:my_calendar' as formations_calendar_url %}
+{% url 'economic:formations:my_certificates' as formations_certs_url %}
+
+{% url 'economic:support:index' as support_index_url %}
+{% url 'core:contact' as core_contact_url %}
+
+{# Login/Signup : fallback multi-namespace #}
+{% url 'accounts_users:login' as login_url %}
+{% if not login_url %}{% url 'accounts_users:web:auth:login' as login_url %}{% endif %}
+{% url 'accounts_users:signup' as signup_url %}
+{% if not signup_url %}{% url 'accounts_users:web:registration:choice' as signup_url %}{% endif %}
+
+{% with rm=request.resolver_match %}
+<nav class="navbar navbar-expand-lg bg-light border-bottom shadow-sm sticky-top"
+     aria-label="{% trans 'Menu éducation & formations' %}">
+
+  <div class="container-fluid">
+
+    <!-- Branding -->
+    <a class="navbar-brand fw-semibold d-flex align-items-center {% if not formations_index_url %}disabled{% endif %}"
+       href="{{ formations_index_url|default:'#' }}">
+      <i class="fa-solid fa-graduation-cap me-2"></i>
+      {% trans "Éducation & Formations" %}
+    </a>
+
+    <button class="navbar-toggler" type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#educSubnav"
+            aria-controls="educSubnav"
+            aria-expanded="false"
+            aria-label="{% trans 'Basculer la navigation' %}">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="educSubnav">
+
+      <!-- Liens principaux -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+        {# ---------------------------------------------------------- #}
+        {# Catalogue (ou accueil si course_list absent)               #}
+        {# ---------------------------------------------------------- #}
+        <li class="nav-item">
+          <a class="nav-link
+                    {% if rm and rm.namespace == 'formations' and rm.url_name in 'course_list course_detail enroll' %}active{% endif %}
+                    {% if not formations_course_list_url and not formations_index_url %}disabled{% endif %}"
+             href="{{ formations_course_list_url|default:formations_index_url|default:'#' }}">
+            <i class="fa-solid fa-book-open me-1"></i>
+            {% trans "Catalogue" %}
+          </a>
+        </li>
+
+        {# ---------------------------------------------------------- #}
+        {# Ancres landing (toujours sur index)                        #}
+        {# ---------------------------------------------------------- #}
+        <li class="nav-item">
+          <a class="nav-link {% if not formations_index_url %}disabled{% endif %}"
+             href="{% if formations_index_url %}{{ formations_index_url }}#parcours{% else %}#{% endif %}">
+            <i class="fa-solid fa-route me-1"></i>
+            {% trans "Parcours" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link {% if not formations_index_url %}disabled{% endif %}"
+             href="{% if formations_index_url %}{{ formations_index_url }}#calendar{% else %}#{% endif %}">
+            <i class="fa-regular fa-calendar-days me-1"></i>
+            {% trans "Calendrier" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link {% if not formations_index_url %}disabled{% endif %}"
+             href="{% if formations_index_url %}{{ formations_index_url }}#certifications{% else %}#{% endif %}">
+            <i class="fa-solid fa-certificate me-1"></i>
+            {% trans "Certifications" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link {% if not formations_index_url %}disabled{% endif %}"
+             href="{% if formations_index_url %}{{ formations_index_url }}#instructors{% else %}#{% endif %}">
+            <i class="fa-regular fa-user me-1"></i>
+            {% trans "Formateurs" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link {% if not formations_index_url %}disabled{% endif %}"
+             href="{% if formations_index_url %}{{ formations_index_url }}#pricing{% else %}#{% endif %}">
+            <i class="fa-solid fa-tags me-1"></i>
+            {% trans "Tarifs" %}
+          </a>
+        </li>
+
+        {# ---------------------------------------------------------- #}
+        {# FAQ / Support                                               #}
+        {# ---------------------------------------------------------- #}
+        <li class="nav-item">
+          <a class="nav-link {% if rm and rm.namespace == 'support' %}active{% endif %} {% if not support_index_url %}disabled{% endif %}"
+             href="{{ support_index_url|default:'#' }}">
+            <i class="fa-regular fa-circle-question me-1"></i>
+            {% trans "FAQ" %}
+          </a>
+        </li>
+
+        {# ---------------------------------------------------------- #}
+        {# Espace apprenant (si connecté) + sous liens utiles          #}
+        {# ---------------------------------------------------------- #}
+        {% if request.user.is_authenticated %}
+          {% if formations_dashboard_url %}
+          <li class="nav-item">
+            <a class="nav-link
+                      {% if rm and rm.namespace == 'formations' and rm.url_name in 'my_dashboard my_courses learning' %}active{% endif %}"
+               href="{{ formations_dashboard_url }}">
+              <i class="fa-solid fa-user-graduate me-1"></i>
+              {% trans "Mon espace" %}
+            </a>
+          </li>
+          {% endif %}
+
+          {% if formations_calendar_url %}
+          <li class="nav-item">
+            <a class="nav-link {% if rm and rm.url_name == 'my_calendar' %}active{% endif %}"
+               href="{{ formations_calendar_url }}">
+              <i class="fa-regular fa-calendar-check me-1"></i>
+              {% trans "Mes sessions" %}
+            </a>
+          </li>
+          {% endif %}
+
+          {% if formations_certs_url %}
+          <li class="nav-item">
+            <a class="nav-link {% if rm and rm.url_name in 'my_certificates certificate_detail certificate_download' %}active{% endif %}"
+               href="{{ formations_certs_url }}">
+              <i class="fa-solid fa-award me-1"></i>
+              {% trans "Mes certificats" %}
+            </a>
+          </li>
+          {% endif %}
+        {% endif %}
+
+      </ul>
+
+      <!-- Recherche -->
+      <form class="d-flex me-3"
+            method="get"
+            action="{{ formations_course_list_url|default:formations_index_url|default:'#' }}"
+            role="search">
+        <input class="form-control"
+               type="search"
+               name="q"
+               value="{{ request.GET.q|default:'' }}"
+               placeholder="{% trans 'Rechercher une formation…' %}"
+               {% if not formations_course_list_url and not formations_index_url %}disabled{% endif %}>
+      </form>
+
+      <!-- Actions -->
+      <div class="d-flex align-items-center gap-2">
+        {% if request.user.is_authenticated %}
+          <span class="small text-muted d-none d-lg-inline">
+            {{ request.user.get_short_name|default:request.user.get_username }}
+          </span>
+        {% else %}
+          <a class="btn btn-outline-primary {% if not login_url %}disabled{% endif %}"
+             href="{{ login_url|default:'#' }}">
+            {% trans "Espace apprenant" %}
+          </a>
+          <a class="btn btn-primary {% if not signup_url %}disabled{% endif %}"
+             href="{{ signup_url|default:'#' }}">
+            {% trans "S’inscrire" %}
+          </a>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+</nav>
+
+<!-- Bandeau informations (conservé) -->
+<div class="bg-white border-bottom">
+  <div class="container-fluid py-2 d-flex flex-wrap gap-3 align-items-center">
+
+    <span>🎓 {% trans "Certifications reconnues" %}</span>
+    <span>💻 {% trans "Cours en présentiel & en ligne" %}</span>
+    <span>💰 {% trans "Financements possibles" %}</span>
+
+    <a href="{{ core_contact_url|default:'#' }}"
+       class="ms-auto text-decoration-none {% if not core_contact_url %}disabled{% endif %}">
+      {% trans "Contact pédagogique" %}
+    </a>
+
+  </div>
+</div>
+{% endwith %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/formations/partials/_menu_formations.html #}
+{% load i18n %}
+
+{# ------------------------------------------------------------------ #}
+{# SAFE URLS                                                          #}
+{# ------------------------------------------------------------------ #}
+{% url 'economic:formations:index' as formations_index_url %}
+{% url 'economic:formations:course_list' as formations_course_list_url %}
+{% url 'economic:support:index' as support_index_url %}
+{% url 'core:contact' as core_contact_url %}
+{% url 'accounts_users:login' as login_url %}
+{% url 'accounts_users:signup' as signup_url %}
+{% url 'economic:formations:my_dashboard' as formations_dashboard_url %}
+
+{% with rm=request.resolver_match %}
+
+<nav class="navbar navbar-expand-lg bg-light border-bottom shadow-sm sticky-top"
+     aria-label="{% trans 'Menu éducation & formations' %}">
+
+  <div class="container-fluid">
+
+    <!-- Branding -->
+    <a class="navbar-brand fw-semibold d-flex align-items-center {% if not formations_index_url %}disabled{% endif %}"
+       href="{{ formations_index_url|default:'#' }}">
+      <i class="fa-solid fa-graduation-cap me-2"></i>
+      {% trans "Éducation & Formations" %}
+    </a>
+
+    <button class="navbar-toggler" type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#educSubnav"
+            aria-controls="educSubnav"
+            aria-expanded="false"
+            aria-label="{% trans 'Basculer la navigation' %}">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="educSubnav">
+
+      <!-- Liens principaux -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+        <!-- Catalogue -->
+        <li class="nav-item">
+          <a class="nav-link
+                    {% if rm and rm.namespace == 'formations' %}active{% endif %}
+                    {% if not formations_course_list_url and not formations_index_url %}disabled{% endif %}"
+             href="{{ formations_course_list_url|default:formations_index_url|default:'#' }}">
+            <i class="fa-solid fa-book-open me-1"></i>
+            {% trans "Catalogue" %}
+          </a>
+        </li>
+
+        <!-- Ancres landing (fichier 1 conservé) -->
+        <li class="nav-item">
+          <a class="nav-link {% if not formations_index_url %}disabled{% endif %}"
+             href="{% if formations_index_url %}{{ formations_index_url }}#parcours{% else %}#{% endif %}">
+            <i class="fa-solid fa-route me-1"></i>
+            {% trans "Parcours" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link {% if not formations_index_url %}disabled{% endif %}"
+             href="{% if formations_index_url %}{{ formations_index_url }}#calendar{% else %}#{% endif %}">
+            <i class="fa-regular fa-calendar-days me-1"></i>
+            {% trans "Calendrier" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link {% if not formations_index_url %}disabled{% endif %}"
+             href="{% if formations_index_url %}{{ formations_index_url }}#certifications{% else %}#{% endif %}">
+            <i class="fa-solid fa-certificate me-1"></i>
+            {% trans "Certifications" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link {% if not formations_index_url %}disabled{% endif %}"
+             href="{% if formations_index_url %}{{ formations_index_url }}#instructors{% else %}#{% endif %}">
+            <i class="fa-regular fa-user me-1"></i>
+            {% trans "Formateurs" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link {% if not formations_index_url %}disabled{% endif %}"
+             href="{% if formations_index_url %}{{ formations_index_url }}#pricing{% else %}#{% endif %}">
+            <i class="fa-solid fa-tags me-1"></i>
+            {% trans "Tarifs" %}
+          </a>
+        </li>
+
+        <!-- FAQ -->
+        <li class="nav-item">
+          <a class="nav-link {% if rm and rm.namespace == 'support' %}active{% endif %}"
+             href="{{ support_index_url|default:'#' }}">
+            <i class="fa-regular fa-circle-question me-1"></i>
+            {% trans "FAQ" %}
+          </a>
+        </li>
+
+        <!-- Apport fichier 2 : espace apprenant -->
+        {% if request.user.is_authenticated and formations_dashboard_url %}
+        <li class="nav-item">
+          <a class="nav-link {% if rm and rm.url_name == 'my_dashboard' %}active{% endif %}"
+             href="{{ formations_dashboard_url }}">
+            <i class="fa-solid fa-user-graduate me-1"></i>
+            {% trans "Mon espace" %}
+          </a>
+        </li>
+        {% endif %}
+
+      </ul>
+
+      <!-- Recherche -->
+      <form class="d-flex me-3"
+            method="get"
+            action="{{ formations_course_list_url|default:'#' }}"
+            role="search">
+        <input class="form-control"
+               type="search"
+               name="q"
+               value="{{ request.GET.q }}"
+               placeholder="{% trans 'Rechercher une formation…' %}"
+               {% if not formations_course_list_url %}disabled{% endif %}>
+      </form>
+
+      <!-- Actions -->
+      <div class="d-flex align-items-center gap-2">
+        {% if request.user.is_authenticated %}
+          <span class="small text-muted d-none d-lg-inline">
+            {{ request.user.get_short_name|default:request.user.get_username }}
+          </span>
+        {% else %}
+          <a class="btn btn-outline-primary"
+             href="{{ login_url|default:'#' }}">
+            {% trans "Espace apprenant" %}
+          </a>
+          <a class="btn btn-primary"
+             href="{{ signup_url|default:'#' }}">
+            {% trans "S’inscrire" %}
+          </a>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+</nav>
+
+<!-- Bandeau informations (fichier 1 intact) -->
+<div class="bg-white border-bottom">
+  <div class="container-fluid py-2 d-flex flex-wrap gap-3 align-items-center">
+
+    <span>🎓 {% trans "Certifications reconnues" %}</span>
+    <span>💻 {% trans "Cours en présentiel & en ligne" %}</span>
+    <span>💰 {% trans "Financements possibles" %}</span>
+
+    <a href="{{ core_contact_url|default:'#' }}"
+       class="ms-auto text-decoration-none">
+      {% trans "Contact pédagogique" %}
+    </a>
+
+  </div>
+</div>
+
+{% endwith %}
+ {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/formations/partials/_menu_formations.html #}
 {% load i18n %}
 
 {# ✅ URLs SAFE (aucun NoReverseMatch en prod) #}
@@ -167,7 +1902,7 @@
   </div>
 </div>
 
-{% endwith %}
+{% endwith %} {% endcomment %}
 
 
 

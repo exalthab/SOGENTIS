@@ -1,24 +1,62 @@
 # dashboard/views/social/donor.py
+from __future__ import annotations
+
 from django.contrib.auth.decorators import login_required
+from django.db.models import Sum
+from django.http import FileResponse, Http404
 from django.shortcuts import render
 from django.utils.translation import gettext_lazy as _
 
+from dashboard.access import require_social_role
 from dashboard.views.utils import StatCard, breadcrumb
 
 
-@login_required
+def _get_donation_qs(user):
+    """
+    Best-effort: donations.models.Donation
+    Champs: user/author/donor + amount/montant
+    """
+    try:
+        from donations.models import Donation  # type: ignore
+    except Exception:
+        return None, None, None
+
+    user_field = None
+    for f in ("user", "author", "donor"):
+        if hasattr(Donation, "_meta") and any(getattr(x, "name", None) == f for x in Donation._meta.get_fields()):
+            user_field = f
+            break
+
+    amount_field = None
+    for f in ("amount", "montant", "total_amount", "total"):
+        if hasattr(Donation, "_meta") and any(getattr(x, "name", None) == f for x in Donation._meta.get_fields()):
+            amount_field = f
+            break
+
+    qs = Donation.objects.all()
+    if user_field:
+        qs = qs.filter(**{user_field: user})
+
+    order_field = "created_at" if hasattr(Donation, "_meta") and any(getattr(x, "name", None) == "created_at" for x in Donation._meta.get_fields()) else "id"
+    qs = qs.order_by(f"-{order_field}")
+
+    return Donation, qs, amount_field
+
+
+@require_social_role("SPONSOR", "DONOR")
 def donor_home_view(request):
+    Donation, qs, amount_field = _get_donation_qs(request.user)
+
     donations = []
     total = 0
 
-    try:
-        from donations.models import Donation
-        qs = Donation.objects.filter(user=request.user).order_by("-created_at")
-        donations = qs[:8]
-        total = qs.aggregate(s=__import__("django").db.models.Sum("amount"))["s"] or 0
-    except Exception:
-        donations = []
-        total = 0
+    if qs is not None:
+        donations = list(qs[:8])
+        if amount_field:
+            try:
+                total = qs.aggregate(s=Sum(amount_field)).get("s") or 0
+            except Exception:
+                total = 0
 
     cards = [
         StatCard(label=_("Total donné"), value=total, icon="💝"),
@@ -26,63 +64,145 @@ def donor_home_view(request):
     ]
 
     return render(request, "dashboard/social/donor/home.html", {
+        "page_title": _("Donateur"),
         "breadcrumbs": breadcrumb((_('Dashboard'), "/dashboard/"), (_("Social"), "/dashboard/social/"), (_("Donateur"), None)),
         "cards": [c.__dict__ for c in cards],
         "donations": donations,
     })
 
 
-@login_required
+@require_social_role("SPONSOR", "DONOR")
 def donor_donations_list_view(request):
-    donations = []
-    try:
-        from donations.models import Donation
-        donations = Donation.objects.filter(user=request.user).order_by("-created_at")[:200]
-    except Exception:
-        donations = []
+    _Donation, qs, _amount_field = _get_donation_qs(request.user)
+    donations = list(qs[:200]) if qs is not None else []
 
     return render(request, "dashboard/social/donor/donations_list.html", {
+        "page_title": _("Mes dons"),
         "breadcrumbs": breadcrumb((_('Dashboard'), "/dashboard/"), (_("Social"), "/dashboard/social/"), (_("Mes dons"), None)),
         "donations": donations,
     })
 
 
-@login_required
+@require_social_role("SPONSOR", "DONOR")
 def donor_impact_view(request):
+    _Donation, qs, amount_field = _get_donation_qs(request.user)
     total = 0
-    try:
-        from donations.models import Donation
-        total = Donation.objects.filter(user=request.user).aggregate(s=__import__("django").db.models.Sum("amount"))["s"] or 0
-    except Exception:
-        total = 0
+    if qs is not None and amount_field:
+        try:
+            total = qs.aggregate(s=Sum(amount_field)).get("s") or 0
+        except Exception:
+            total = 0
 
     return render(request, "dashboard/social/donor/impact.html", {
+        "page_title": _("Impact"),
         "breadcrumbs": breadcrumb((_('Dashboard'), "/dashboard/"), (_("Social"), "/dashboard/social/"), (_("Impact"), None)),
         "total_donated": total,
     })
 
 
-@login_required
-def donor_receipt_download_view(request, pk):
-    """
-    Téléchargement reçu: la logique dépend de ton système PDF.
-    Ici on fait strictement un contrôle d'accès et on délègue.
-    """
+@require_social_role("SPONSOR", "DONOR")
+def donor_receipt_download_view(request, pk: int):
     try:
-        from donations.models import Donation
+        from donations.models import Donation  # type: ignore
         donation = Donation.objects.get(pk=pk, user=request.user)
     except Exception:
-        from django.http import Http404
         raise Http404
 
-    # adapte: si donation.receipt_file existe
     receipt = getattr(donation, "receipt_file", None) or getattr(donation, "receipt", None)
     if not receipt:
-        from django.http import Http404
         raise Http404
 
-    from django.http import FileResponse
     return FileResponse(receipt.open("rb"), as_attachment=True, filename=getattr(receipt, "name", "receipt.pdf"))
+
+
+
+
+
+# # dashboard/views/social/donor.py
+# from django.contrib.auth.decorators import login_required
+# from django.shortcuts import render
+# from django.utils.translation import gettext_lazy as _
+
+# from dashboard.views.utils import StatCard, breadcrumb
+
+
+# @login_required
+# def donor_home_view(request):
+#     donations = []
+#     total = 0
+
+#     try:
+#         from donations.models import Donation
+#         qs = Donation.objects.filter(user=request.user).order_by("-created_at")
+#         donations = qs[:8]
+#         total = qs.aggregate(s=__import__("django").db.models.Sum("amount"))["s"] or 0
+#     except Exception:
+#         donations = []
+#         total = 0
+
+#     cards = [
+#         StatCard(label=_("Total donné"), value=total, icon="💝"),
+#         StatCard(label=_("Nombre de dons"), value=len(donations), icon="💳"),
+#     ]
+
+#     return render(request, "dashboard/social/donor/home.html", {
+#         "breadcrumbs": breadcrumb((_('Dashboard'), "/dashboard/"), (_("Social"), "/dashboard/social/"), (_("Donateur"), None)),
+#         "cards": [c.__dict__ for c in cards],
+#         "donations": donations,
+#     })
+
+
+# @login_required
+# def donor_donations_list_view(request):
+#     donations = []
+#     try:
+#         from donations.models import Donation
+#         donations = Donation.objects.filter(user=request.user).order_by("-created_at")[:200]
+#     except Exception:
+#         donations = []
+
+#     return render(request, "dashboard/social/donor/donations_list.html", {
+#         "breadcrumbs": breadcrumb((_('Dashboard'), "/dashboard/"), (_("Social"), "/dashboard/social/"), (_("Mes dons"), None)),
+#         "donations": donations,
+#     })
+
+
+# @login_required
+# def donor_impact_view(request):
+#     total = 0
+#     try:
+#         from donations.models import Donation
+#         total = Donation.objects.filter(user=request.user).aggregate(s=__import__("django").db.models.Sum("amount"))["s"] or 0
+#     except Exception:
+#         total = 0
+
+#     return render(request, "dashboard/social/donor/impact.html", {
+#         "breadcrumbs": breadcrumb((_('Dashboard'), "/dashboard/"), (_("Social"), "/dashboard/social/"), (_("Impact"), None)),
+#         "total_donated": total,
+#     })
+
+
+# @login_required
+# def donor_receipt_download_view(request, pk):
+#     """
+#     Téléchargement reçu: la logique dépend de ton système PDF.
+#     Ici on fait strictement un contrôle d'accès et on délègue.
+#     """
+#     try:
+#         from donations.models import Donation
+#         donation = Donation.objects.get(pk=pk, user=request.user)
+#     except Exception:
+#         from django.http import Http404
+#         raise Http404
+
+#     # adapte: si donation.receipt_file existe
+#     receipt = getattr(donation, "receipt_file", None) or getattr(donation, "receipt", None)
+#     if not receipt:
+#         from django.http import Http404
+#         raise Http404
+
+#     from django.http import FileResponse
+#     return FileResponse(receipt.open("rb"), as_attachment=True, filename=getattr(receipt, "name", "receipt.pdf"))
 
 
 

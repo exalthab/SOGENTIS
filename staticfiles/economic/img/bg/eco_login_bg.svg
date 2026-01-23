@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="1600" y2="900" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0B2A55"/>
+      <stop offset="0.45" stop-color="#0E6BA8"/>
+      <stop offset="1" stop-color="#19B394"/>
+    </linearGradient>
+
+    <radialGradient id="glow1" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse"
+      gradientTransform="translate(1220 210) rotate(128) scale(520 520)">
+      <stop stop-color="#FFFFFF" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="glow2" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse"
+      gradientTransform="translate(380 760) rotate(20) scale(640 640)">
+      <stop stop-color="#FFFFFF" stop-opacity="0.20"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+
+    <filter id="blur" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+
+    <pattern id="dots" width="26" height="26" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.4" fill="#FFFFFF" opacity="0.10"/>
+    </pattern>
+  </defs>
+
+  <!-- Base gradient -->
+  <rect width="1600" height="900" fill="url(#g1)"/>
+
+  <!-- Subtle dots -->
+  <rect width="1600" height="900" fill="url(#dots)" opacity="0.55"/>
+
+  <!-- Large soft glows -->
+  <circle cx="1220" cy="210" r="340" fill="url(#glow1)" filter="url(#blur)"/>
+  <circle cx="380" cy="760" r="420" fill="url(#glow2)" filter="url(#blur)"/>
+
+  <!-- Curved shapes -->
+  <path d="M-40 260C170 120 470 120 680 260C900 410 1170 420 1440 300C1540 256 1610 230 1660 222V0H-40V260Z"
+        fill="#FFFFFF" opacity="0.08"/>
+  <path d="M-40 940V690C90 600 220 560 350 570C540 585 640 720 860 720C1080 720 1230 560 1450 520C1540 492 1610 484 1660 485V940H-40Z"
+        fill="#000000" opacity="0.10"/>
+
+  <!-- Tiny “econ” glyphs (very subtle) -->
+  <g opacity="0.16">
+    <path d="M1210 590h160v18h-160v-18zm0 52h110v18h-110v-18zm0 52h140v18h-140v-18z" fill="#FFFFFF"/>
+    <path d="M230 300c0-28 22-50 50-50h90c28 0 50 22 50 50v16h-18v-16c0-18-14-32-32-32h-90c-18 0-32 14-32 32v210c0 18 14 32 32 32h90c18 0 32-14 32-32v-16h18v16c0 28-22 50-50 50h-90c-28 0-50-22-50-50V300z" fill="#FFFFFF"/>
+    <path d="M980 160l26 26 54-54 18 18-72 72-44-44 18-18z" fill="#FFFFFF"/>
+  </g>
+</svg>

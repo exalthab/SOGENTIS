@@ -1,0 +1,93 @@
+{% load i18n %}
+
+<div class="cookie-modal-backdrop" data-cookie-modal="backdrop" hidden></div>
+
+<div class="cookie-modal" role="dialog" aria-modal="true"
+     aria-labelledby="cookieModalTitle"
+     data-cookie-modal="dialog"
+     hidden>
+  <div class="cookie-modal-card">
+    <div class="cookie-modal-header">
+      <div>
+        <h2 id="cookieModalTitle" class="h5 mb-1">{% trans "Préférences cookies" %}</h2>
+        <p class="text-muted mb-0">{% trans "Choisissez les catégories que vous autorisez. Vous pouvez changer d’avis à tout moment." %}</p>
+      </div>
+      <button type="button" class="btn btn-sm btn-outline-secondary" data-cookie-close="modal" aria-label="{% trans 'Fermer' %}">
+        ✕
+      </button>
+    </div>
+
+    <div class="cookie-modal-body">
+
+      <div class="cookie-pref">
+        <div class="d-flex justify-content-between align-items-start gap-3">
+          <div>
+            <div class="fw-semibold">{% trans "Strictement nécessaires" %}</div>
+            <div class="text-muted small">{% trans "Indispensables au fonctionnement (sécurité, session, authentification)." %}</div>
+          </div>
+          <div class="form-check form-switch m-0">
+            <input class="form-check-input" type="checkbox" checked disabled>
+          </div>
+        </div>
+      </div>
+
+      <div class="cookie-pref">
+        <div class="d-flex justify-content-between align-items-start gap-3">
+          <div>
+            <div class="fw-semibold">{% trans "Préférences" %}</div>
+            <div class="text-muted small">{% trans "Mémoriser vos choix (ex. langue, affichage, options UI)." %}</div>
+          </div>
+          <div class="form-check form-switch m-0">
+            <input class="form-check-input" type="checkbox" data-cookie-toggle="preferences">
+          </div>
+        </div>
+      </div>
+
+      <div class="cookie-pref">
+        <div class="d-flex justify-content-between align-items-start gap-3">
+          <div>
+            <div class="fw-semibold">{% trans "Statistiques / Mesure d’audience" %}</div>
+            <div class="text-muted small">{% trans "Nous aide à améliorer le site (pages vues, performance)." %}</div>
+          </div>
+          <div class="form-check form-switch m-0">
+            <input class="form-check-input" type="checkbox" data-cookie-toggle="analytics">
+          </div>
+        </div>
+      </div>
+
+      <div class="cookie-pref">
+        <div class="d-flex justify-content-between align-items-start gap-3">
+          <div>
+            <div class="fw-semibold">{% trans "Marketing" %}</div>
+            <div class="text-muted small">{% trans "Publicité personnalisée / pixels marketing (optionnel)." %}</div>
+          </div>
+          <div class="form-check form-switch m-0">
+            <input class="form-check-input" type="checkbox" data-cookie-toggle="marketing">
+          </div>
+        </div>
+      </div>
+
+      <div class="cookie-minihelp mt-3">
+        <div class="small text-muted">
+          {% trans "Astuce : si vous refusez tout, seules les fonctionnalités essentielles restent actives." %}
+        </div>
+      </div>
+
+    </div>
+
+    <div class="cookie-modal-footer">
+      <div class="d-flex gap-2 flex-wrap">
+        <button type="button" class="btn btn-outline-dark" data-cookie-action="reject_all">
+          {% trans "Refuser tout" %}
+        </button>
+        <button type="button" class="btn btn-outline-primary" data-cookie-action="accept_all">
+          {% trans "Accepter tout" %}
+        </button>
+      </div>
+      <button type="button" class="btn btn-primary" data-cookie-action="save_preferences">
+        {% trans "Enregistrer mes choix" %}
+      </button>
+    </div>
+
+  </div>
+</div>

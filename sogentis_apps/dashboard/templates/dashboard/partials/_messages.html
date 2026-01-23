@@ -1,4 +1,87 @@
+{# templates/dashboard/partials/_messages.html #}
+{% load i18n %}
+
 {% if messages %}
+  <div class="mb-3">
+    {% for message in messages %}
+
+      {% if "error" in message.tags %}
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close"
+                  data-bs-dismiss="alert"
+                  aria-label="{% trans 'Fermer' %}">
+          </button>
+        </div>
+
+      {% elif "success" in message.tags %}
+        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close"
+                  data-bs-dismiss="alert"
+                  aria-label="{% trans 'Fermer' %}">
+          </button>
+        </div>
+
+      {% elif "warning" in message.tags %}
+        <div class="alert alert-warning alert-dismissible fade show shadow-sm" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close"
+                  data-bs-dismiss="alert"
+                  aria-label="{% trans 'Fermer' %}">
+          </button>
+        </div>
+
+      {% else %}
+        <div class="alert alert-info alert-dismissible fade show shadow-sm" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close"
+                  data-bs-dismiss="alert"
+                  aria-label="{% trans 'Fermer' %}">
+          </button>
+        </div>
+      {% endif %}
+
+    {% endfor %}
+  </div>
+{% endif %}
+
+
+
+
+
+
+{% comment %} {# templates/dashboard/partials/_messages.html #}
+{% load i18n %}
+
+{% if messages %}
+  <div class="mb-3">
+    {% for message in messages %}
+      {% if "error" in message.tags %}
+        {% with bs="danger" %}
+      {% elif "success" in message.tags %}
+        {% with bs="success" %}
+      {% elif "warning" in message.tags %}
+        {% with bs="warning" %}
+      {% else %}
+        {% with bs="info" %}
+      {% endif %}
+
+      <div class="alert alert-{{ bs }} alert-dismissible fade show shadow-sm" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{% trans 'Fermer' %}"></button>
+      </div>
+
+      {% endwith %}
+    {% endfor %}
+  </div>
+{% endif %} {% endcomment %}
+
+
+
+
+
+{% comment %} {% if messages %}
   <div class="mb-3">
     {% for message in messages %}
       <div class="alert alert-{{ message.tags|default:'info' }} mb-2" role="alert">
@@ -6,4 +89,4 @@
       </div>
     {% endfor %}
   </div>
-{% endif %}
+{% endif %} {% endcomment %}

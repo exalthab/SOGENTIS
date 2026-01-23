@@ -1,0 +1,168 @@
+/* ============================================================
+   AUTH CHOICE — SOGENTIS
+   static/accounts_users/css/auth_choice.css
+   Harmonisé avec auth_base.css
+   ============================================================ */
+
+/* Contexte (badge en haut) */
+.choice-context{
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .5rem .75rem;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: .9rem;
+  margin: 0 auto 1rem;
+  background: rgba(255,255,255,.85);
+  border: 1px solid rgba(0,0,0,.08);
+  box-shadow: 0 10px 30px rgba(0,0,0,.08);
+  width: fit-content;
+}
+
+/* Grille */
+.choice-grid{
+  display: grid;
+  gap: 16px;
+}
+
+@media (min-width: 768px){
+  .choice-grid{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+  }
+}
+
+/* Card */
+.choice-card{
+  border: 0;
+  border-radius: 18px;
+  background: rgba(255,255,255,.92);
+  box-shadow: 0 18px 55px rgba(0,0,0,.10);
+  overflow: hidden;
+  height: 100%;
+}
+
+.choice-card::before{
+  content:"";
+  display:block;
+  height: 6px;
+  opacity: .95;
+}
+
+.choice-card--social::before{
+  background: linear-gradient(90deg, rgba(13,110,253,.95), rgba(13,110,253,.45));
+}
+.choice-card--economic::before{
+  background: linear-gradient(90deg, rgba(25,135,84,.95), rgba(25,135,84,.45));
+}
+
+.choice-card-body{
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+}
+
+/* En-tête */
+.choice-top{
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+}
+
+.choice-icon{
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size: 22px;
+  flex: 0 0 auto;
+  background: rgba(0,0,0,.04);
+}
+
+.choice-card--social .choice-icon{ background: rgba(13,110,253,.12); }
+.choice-card--economic .choice-icon{ background: rgba(25,135,84,.12); }
+
+.choice-head{
+  flex: 1;
+  min-width: 0;
+}
+
+.choice-title{
+  margin: 0;
+  font-weight: 900;
+  font-size: 1.05rem;
+  line-height: 1.25;
+}
+
+.choice-desc{
+  margin: .25rem 0 0;
+  color: rgba(0,0,0,.62);
+  font-size: .95rem;
+}
+
+/* Actions */
+.choice-actions{
+  display: grid;
+  gap: 10px;
+  margin-top: auto; /* pousse les boutons en bas */
+}
+
+.choice-card .btn{
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-weight: 900;
+}
+
+/* Améliore le rendu des outlines */
+.choice-card .btn-outline-primary,
+.choice-card .btn-outline-success{
+  background: rgba(255,255,255,.75);
+}
+
+/* Footer (s'il est affiché via base_auth) */
+.choice-footer small{
+  opacity: .9;
+}
+
+/* Responsive fin */
+@media (max-width: 480px){
+  .choice-card-body{ padding: 14px; }
+  .choice-icon{ width: 48px; height: 48px; border-radius: 14px; }
+  .choice-title{ font-size: 1rem; }
+}
+
+/* Dark mode (compatible avec body.dark-mode) */
+body.dark-mode .choice-context{
+  background: rgba(20, 22, 25, .72);
+  border-color: rgba(255,255,255,.10);
+  color: rgba(255,255,255,.92);
+  box-shadow: 0 18px 55px rgba(0,0,0,.35);
+}
+
+body.dark-mode .choice-card{
+  background: rgba(20, 22, 25, .78);
+  box-shadow: 0 18px 55px rgba(0,0,0,.45);
+}
+
+body.dark-mode .choice-desc{
+  color: rgba(255,255,255,.70);
+}
+
+body.dark-mode .choice-card .btn-outline-primary,
+body.dark-mode .choice-card .btn-outline-success{
+  background: rgba(255,255,255,.06);
+}
+
+/* RTL */
+html[dir="rtl"] .choice-top{
+  flex-direction: row-reverse;
+}
+html[dir="rtl"] .choice-head{
+  text-align: right;
+}

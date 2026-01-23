@@ -170,6 +170,7 @@ CONTACT_BLOCKED_EMAIL_DOMAINS = config(
     default="mailinator.com,10minutemail.com,tempmail.com",
 )
 
+PHONE_OTP_ENABLED = config("PHONE_OTP_ENABLED", cast=bool, default=False)
 
 
 

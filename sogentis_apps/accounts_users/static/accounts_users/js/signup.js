@@ -1,812 +1,445 @@
-document.addEventListener("DOMContentLoaded", function () {
-
+// static/accounts_users/js/signup.js
+document.addEventListener("DOMContentLoaded", () => {
   const form = document.querySelector("form[method='post']");
   if (!form) return;
 
-  const submitBtn = form.querySelector("button[type='submit']");
+  // ============================
+  // CSRF (hidden input + cookie fallback)
+  // ============================
+  const csrfInput = form.querySelector("input[name='csrfmiddlewaretoken']");
+  let csrfToken = csrfInput ? csrfInput.value : "";
 
-  const password1 = form.querySelector(".password-strong");
-  const password2 = form.querySelector(".password-confirm");
-  const toggleBtn = document.getElementById("togglePassword");
-  const toggleIcon = document.getElementById("togglePasswordIcon");
-  const capsHint = document.getElementById("capsLockHint");
-
-  const profileInput = form.querySelector('input[name="profile_picture"]');
-  const profilePreview = document.getElementById("profile_picture");
-
-  const judicialInput = document.getElementById("id_judicial_record");
-  const pdfPreview = document.getElementById("pdf-preview");
-
-  const countrySelect = document.getElementById("id_country_of_residence");
-  const phoneInput = document.getElementById("id_phone_number");
-
-  const MAX_PDF_SIZE = 2 * 1024 * 1024;
-
-  const countryDialCodes = {
-    SN: "+221",
-    FR: "+33",
-    BE: "+32",
-    CI: "+225",
-    US: "+1",
-    GB: "+44"
-  };
-
-  let currentDialCode = "";
-
-  /* =======================
-     RÈGLES DE VALIDATION
-  ======================= */
-  const strongPassword = v =>
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/.test(v);
-
-  const validPhone = v =>
-    /^\+[0-9]{8,15}$/.test(v);
-
-  const validateField = (field) => {
-    let valid = true;
-
-    if (field === phoneInput) {
-      const fullPhone = currentDialCode + field.value.replace(/\s+/g, "");
-      valid = validPhone(fullPhone);
-    } else if (field.type === "password") {
-      valid = strongPassword(field.value);
-    } else if (field.type === "email") {
-      valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(field.value);
-    } else if (field.type === "checkbox") {
-      valid = field.checked;
-    } else if (field.type === "file" && field.required) {
-      valid = field.files.length > 0;
-    } else {
-      valid = field.value.trim() !== "";
-    }
-
-    field.classList.toggle("is-valid", valid);
-    field.classList.toggle("is-invalid", !valid);
-    return valid;
-  };
-
-  const validateForm = () => {
-    let ok = true;
-
-    form.querySelectorAll(".form-control, .form-check-input").forEach(field => {
-      if (!validateField(field)) ok = false;
-    });
-
-    // mots de passe identiques
-    if (password1 && password2 && password1.value !== password2.value) {
-      password2.setCustomValidity("Les mots de passe ne sont pas identiques.");
-      password2.classList.add("is-invalid");
-      ok = false;
-    } else if (password2) {
-      password2.setCustomValidity("");
-    }
-
-    // casier judiciaire
-    if (judicialInput) {
-      const f = judicialInput.files[0];
-      if (!f || f.type !== "application/pdf" || f.size > MAX_PDF_SIZE) {
-        ok = false;
-        judicialInput.classList.add("is-invalid");
-      } else {
-        judicialInput.classList.add("is-valid");
-      }
-    }
-
-    submitBtn.disabled = !ok;
-    return ok;
-  };
-
-  /* =======================
-     PDF – CASIER JUDICIAIRE
-  ======================= */
-  if (judicialInput) {
-    judicialInput.required = true;
-    judicialInput.addEventListener("change", () => {
-      pdfPreview.innerHTML = "";
-      const file = judicialInput.files[0];
-      if (!file) return;
-
-      if (file.type === "application/pdf" && file.size <= MAX_PDF_SIZE) {
-        pdfPreview.innerHTML =
-          `<iframe src="${URL.createObjectURL(file)}" width="100%" height="300"></iframe>`;
-      }
-      validateForm();
-    });
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+    return "";
   }
+  if (!csrfToken) csrfToken = getCookie("csrftoken");
 
-  /* =======================
-     PHOTO DE PROFIL
-  ======================= */
-  if (profileInput && profilePreview) {
-    profileInput.addEventListener("change", () => {
-      if (profileInput.files[0]) {
-        const reader = new FileReader();
-        reader.onload = e => {
-          profilePreview.src = e.target.result;
-          profilePreview.style.display = "block";
-        };
-        reader.readAsDataURL(profileInput.files[0]);
-      } else {
-        profilePreview.style.display = "none";
-      }
-      validateForm();
+  // ============================
+  // Toggle password
+  // ============================
+  document.querySelectorAll(".toggle-password").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const targetId = btn.getAttribute("data-target");
+      const input = targetId ? document.getElementById(targetId) : null;
+      if (!input) return;
+
+      const show = input.type === "password";
+      input.type = show ? "text" : "password";
+      btn.textContent = show ? "🙈" : "👁️";
     });
-  }
-
-  /* =======================
-     TÉLÉPHONE + INDICATIF (SANS RÉÉCRITURE)
-  ======================= */
-  if (countrySelect && phoneInput) {
-
-    const applyDialCode = () => {
-      currentDialCode = countryDialCodes[countrySelect.value] || "";
-      phoneInput.placeholder = currentDialCode
-        ? `${currentDialCode} XXXXXXXX`
-        : "XXXXXXXX";
-    };
-
-    countrySelect.addEventListener("change", applyDialCode);
-    applyDialCode();
-
-    // empêcher l'utilisateur de saisir +
-    phoneInput.addEventListener("input", () => {
-      phoneInput.value = phoneInput.value.replace(/\+/g, "");
-      validateForm();
-    });
-  }
-
-  /* =======================
-     TOGGLE MOT DE PASSE
-  ======================= */
-  if (toggleBtn && toggleIcon && password1) {
-    toggleBtn.addEventListener("click", () => {
-      const show = password1.type === "password";
-      password1.type = show ? "text" : "password";
-      if (password2) password2.type = show ? "text" : "password";
-      toggleIcon.textContent = show ? "🙈" : "👁️";
-    });
-  }
-
-  /* =======================
-     CAPS LOCK
-  ======================= */
-  if (password1 && capsHint) {
-    ["keydown", "keyup", "focus"].forEach(evt =>
-      password1.addEventListener(evt, e =>
-        capsHint.classList.toggle("d-none", !e.getModifierState("CapsLock"))
-      )
-    );
-    password1.addEventListener("blur", () => capsHint.classList.add("d-none"));
-  }
-
-  /* =======================
-     SUBMIT
-  ======================= */
-  form.addEventListener("input", validateForm);
-
-  form.addEventListener("submit", e => {
-    e.preventDefault();
-    if (!validateForm()) return;
-
-    // recomposer le numéro final avant envoi
-    if (phoneInput && currentDialCode) {
-      phoneInput.value =
-        currentDialCode + phoneInput.value.replace(/\s+/g, "");
-    }
-
-    submitBtn.disabled = true;
-    submitBtn.setAttribute("aria-busy", "true");
-    form.submit();
   });
 
-  validateForm();
+  // ============================
+  // PDF preview (optionnel) - casier judiciaire
+  // ============================
+  const pdfInput =
+    document.getElementById("id_judicial_record") ||
+    form.querySelector("input[type='file'][name$='judicial_record']");
+  const pdfPreview = document.getElementById("pdf-preview");
+
+  if (pdfInput && pdfPreview) {
+    pdfInput.addEventListener("change", () => {
+      const file = pdfInput.files && pdfInput.files[0];
+      if (!file) {
+        pdfPreview.innerHTML = "";
+        return;
+      }
+
+      if (file.type === "application/pdf") {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          pdfPreview.innerHTML = `
+            <embed src="${e.target.result}" type="application/pdf"
+                   width="100%" height="300px" class="rounded border" />
+          `;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        pdfPreview.innerHTML = `
+          <p class="text-danger fw-semibold">
+            Format non pris en charge. Le fichier doit être en PDF.
+          </p>
+        `;
+      }
+    });
+  }
+
+  // ============================
+  // OTP (Email) - éléments
+  // ============================
+  const sendBtn = document.getElementById("send-otp-btn");
+  if (!sendBtn) return; // page sans OTP
+
+  const verifyBtn = document.getElementById("verify-otp-btn");
+  const emailFieldId = sendBtn.getAttribute("data-email-field") || "id_email";
+
+  // Récupère URLs (priorité: sendBtn puis verifyBtn)
+  const sendUrl = (sendBtn.getAttribute("data-url") || "").trim();
+  const verifyUrl =
+    (sendBtn.getAttribute("data-verify-url") || "").trim() ||
+    (verifyBtn ? (verifyBtn.getAttribute("data-verify-url") || "").trim() : "");
+
+  const emailInput =
+    document.getElementById(emailFieldId) ||
+    form.querySelector("input[name='email']");
+
+  const otpInput =
+    document.getElementById("id_email_otp_code") ||
+    form.querySelector("input[name$='email_otp_code']");
+
+  const submitBtn =
+    document.getElementById("signup-submit-btn") ||
+    form.querySelector("button[type='submit']");
+
+  const termsCheckbox =
+    form.querySelector("input[type='checkbox'][name$='terms']") ||
+    document.getElementById("id_terms");
+
+  const statusBox = document.getElementById("otp-status");
+
+  // ============================
+  // Helpers UI
+  // ============================
+  const setStatus = (type, text) => {
+    if (!statusBox) return;
+    if (!text) {
+      statusBox.className = "";
+      statusBox.textContent = "";
+      return;
+    }
+    const cls =
+      type === "success"
+        ? "alert alert-success py-2"
+        : type === "error"
+        ? "alert alert-danger py-2"
+        : "alert alert-info py-2";
+    statusBox.className = cls;
+    statusBox.textContent = text;
+  };
+
+  const setButtonBusy = (btn, isBusy, text) => {
+    if (!btn) return;
+    btn.disabled = isBusy;
+    btn.setAttribute("aria-busy", isBusy ? "true" : "false");
+    if (text) btn.textContent = text;
+  };
+
+  const normalizeEmail = (v) => (v || "").trim().toLowerCase();
+  const normalizeCode = (v) => (v || "").replace(/\D/g, "").slice(0, 6);
+
+  const isValidEmail = (v) => {
+    const s = normalizeEmail(v);
+    // léger: côté serveur fait la validation forte
+    return s.includes("@") && s.includes(".");
+  };
+
+  function termsOk() {
+    return termsCheckbox ? !!termsCheckbox.checked : true;
+  }
+
+  // ============================
+  // State
+  // ============================
+  let otpSentForEmail = "";
+  let otpVerifiedForEmail = "";
+  let sendBusy = false;
+  let verifyBusy = false;
+
+  const originalSendText = sendBtn.textContent || "Envoyer le code";
+  const originalVerifyText = verifyBtn ? (verifyBtn.textContent || "Vérifier") : "Vérifier";
+
+  function updateSubmitState() {
+    if (!submitBtn) return;
+    // submit activé seulement si OTP vérifié + CGU cochées
+    submitBtn.disabled = !(otpVerifiedForEmail && termsOk());
+  }
+
+  // IMPORTANT:
+  // - Avant vérification: otpInput est disabled (empêche saisie)
+  // - Après vérif OK: otpInput DOIT RESTER ENABLED pour être envoyé au POST
+  function lockOtpUIAfterSuccess() {
+    if (otpInput) {
+      otpInput.readOnly = true;          // ✅ reste envoyé au POST
+      otpInput.classList.add("is-valid");
+    }
+    if (verifyBtn) verifyBtn.disabled = true;
+  }
+
+  function enableOtpEntry() {
+    if (!otpInput) return;
+    otpInput.disabled = false;
+    otpInput.removeAttribute("disabled");
+    otpInput.readOnly = false;
+    otpInput.classList.remove("is-valid");
+    otpInput.focus();
+  }
+
+  function resetOtpState({ keepStatus = false } = {}) {
+    otpSentForEmail = "";
+    otpVerifiedForEmail = "";
+
+    if (otpInput) {
+      otpInput.value = "";
+      otpInput.readOnly = false;
+      otpInput.classList.remove("is-valid");
+      otpInput.disabled = true;
+      otpInput.setAttribute("disabled", "disabled");
+    }
+
+    if (verifyBtn) {
+      verifyBtn.disabled = true;
+      verifyBtn.textContent = originalVerifyText;
+    }
+
+    updateSubmitState();
+    if (!keepStatus) setStatus("info", "");
+  }
+
+  // ============================
+  // Init
+  // ============================
+  if (submitBtn) submitBtn.disabled = true;
+
+  if (otpInput) {
+    otpInput.disabled = true;
+    otpInput.setAttribute("disabled", "disabled");
+    otpInput.addEventListener("input", () => {
+      otpInput.value = normalizeCode(otpInput.value);
+
+      // Dès que l'utilisateur modifie -> on rebloque submit tant que pas "Vérifié"
+      otpVerifiedForEmail = "";
+      updateSubmitState();
+
+      // Active "Vérifier" uniquement si 6 chiffres + OTP envoyé
+      const ok = /^\d{6}$/.test(otpInput.value) && !!otpSentForEmail;
+      if (verifyBtn) verifyBtn.disabled = !ok;
+    });
+  }
+
+  if (termsCheckbox) {
+    termsCheckbox.addEventListener("change", () => {
+      updateSubmitState();
+    });
+  }
+
+  if (emailInput) {
+    emailInput.addEventListener("input", () => {
+      const current = normalizeEmail(emailInput.value);
+
+      // Si l'email change après envoi OTP -> invalide OTP
+      if (otpSentForEmail && current !== otpSentForEmail) {
+        resetOtpState({ keepStatus: true });
+        setStatus("info", "Email modifié : veuillez renvoyer un code OTP.");
+      }
+    });
+  }
+
+  // ============================
+  // Cooldown resend (429 retry_after)
+  // ============================
+  function cooldown(seconds) {
+    let s = parseInt(seconds, 10) || 0;
+    const timer = setInterval(() => {
+      if (s <= 0) {
+        clearInterval(timer);
+        setButtonBusy(sendBtn, false, originalSendText);
+        sendBusy = false;
+        return;
+      }
+      setButtonBusy(sendBtn, true, `Réessayer (${s}s)`);
+      s -= 1;
+    }, 1000);
+  }
+
+  // ============================
+  // Send OTP
+  // ============================
+  sendBtn.addEventListener("click", async () => {
+    if (sendBusy) return;
+
+    if (!emailInput) {
+      setStatus("error", "Champ email introuvable.");
+      return;
+    }
+
+    const email = normalizeEmail(emailInput.value);
+
+    if (!email || !isValidEmail(email)) {
+      setStatus("error", "Veuillez saisir un email valide d’abord.");
+      emailInput.focus();
+      return;
+    }
+
+    if (!sendUrl) {
+      setStatus("error", "URL OTP manquante (data-url).");
+      return;
+    }
+
+    // reset état OTP précédent
+    otpVerifiedForEmail = "";
+    updateSubmitState();
+
+    sendBusy = true;
+    setButtonBusy(sendBtn, true, "Envoi…");
+    setStatus("info", "Envoi du code en cours…");
+
+    try {
+      const res = await fetch(sendUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrfToken,
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (data.retry_after) {
+        setStatus("error", data.error || "Veuillez patienter avant de réessayer.");
+        cooldown(data.retry_after);
+        return;
+      }
+
+      if (data.ok) {
+        otpSentForEmail = email;
+
+        setStatus("success", data.message || "Code envoyé. Vérifiez votre email.");
+        setButtonBusy(sendBtn, false, originalSendText);
+        sendBusy = false;
+
+        enableOtpEntry();
+        if (otpInput) otpInput.value = "";
+
+        if (verifyBtn) {
+          verifyBtn.disabled = true; // activé quand 6 chiffres
+          verifyBtn.textContent = originalVerifyText;
+        }
+      } else {
+        setStatus("error", data.error || "Échec d’envoi du code.");
+        setButtonBusy(sendBtn, false, originalSendText);
+        sendBusy = false;
+      }
+    } catch (e) {
+      setStatus("error", "Erreur réseau lors de l’envoi du code.");
+      setButtonBusy(sendBtn, false, originalSendText);
+      sendBusy = false;
+    }
+  });
+
+  // ============================
+  // Verify OTP (bouton)
+  // ============================
+  async function verifyOtp() {
+    if (verifyBusy) return;
+
+    if (!emailInput) {
+      setStatus("error", "Champ email introuvable.");
+      return;
+    }
+    if (!otpInput) {
+      setStatus("error", "Champ OTP introuvable.");
+      return;
+    }
+
+    const email = normalizeEmail(emailInput.value);
+    const code = normalizeCode(otpInput.value);
+
+    if (!otpSentForEmail) {
+      setStatus("error", "Veuillez d’abord envoyer un code OTP.");
+      return;
+    }
+    if (email !== otpSentForEmail) {
+      setStatus("error", "Email différent : renvoyez un nouveau code OTP.");
+      resetOtpState({ keepStatus: true });
+      return;
+    }
+    if (!/^\d{6}$/.test(code)) {
+      setStatus("error", "Veuillez saisir un code à 6 chiffres.");
+      otpInput.focus();
+      return;
+    }
+
+    // Si verifyUrl absent: fallback -> on laisse le serveur revalider au submit
+    if (!verifyUrl) {
+      otpVerifiedForEmail = email;
+      setStatus("success", "Code saisi. Vous pouvez créer le compte (validation serveur).");
+      updateSubmitState();
+      return;
+    }
+
+    verifyBusy = true;
+    if (verifyBtn) setButtonBusy(verifyBtn, true, "Vérification…");
+    setStatus("info", "Vérification du code…");
+    updateSubmitState();
+
+    try {
+      const res = await fetch(verifyUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrfToken,
+        },
+        body: JSON.stringify({ email, code }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (data.ok) {
+        otpVerifiedForEmail = email;
+        setStatus("success", data.message || "Email vérifié avec succès.");
+
+        // ✅ On verrouille sans désactiver (sinon code non envoyé au POST)
+        lockOtpUIAfterSuccess();
+
+        updateSubmitState();
+      } else {
+        otpVerifiedForEmail = "";
+        setStatus("error", data.error || "Code incorrect.");
+        updateSubmitState();
+
+        // Laisse corriger
+        otpInput.readOnly = false;
+        otpInput.focus();
+        if (verifyBtn) {
+          verifyBtn.disabled = !/^\d{6}$/.test(normalizeCode(otpInput.value));
+          setButtonBusy(verifyBtn, false, originalVerifyText);
+        }
+      }
+    } catch (e) {
+      otpVerifiedForEmail = "";
+      setStatus("error", "Erreur réseau lors de la vérification.");
+      updateSubmitState();
+      if (verifyBtn) setButtonBusy(verifyBtn, false, originalVerifyText);
+    } finally {
+      verifyBusy = false;
+      if (verifyBtn && !verifyBtn.disabled) verifyBtn.textContent = originalVerifyText;
+    }
+  }
+
+  if (verifyBtn) {
+    verifyBtn.addEventListener("click", verifyOtp);
+  }
+
+  // ============================
+  // Sécurité UX : empêche submit si conditions pas remplies
+  // ============================
+  form.addEventListener("submit", (e) => {
+    const ok = otpVerifiedForEmail && termsOk();
+    if (!ok) {
+      e.preventDefault();
+
+      if (!termsOk()) {
+        setStatus("error", "Veuillez accepter les conditions générales.");
+        termsCheckbox?.focus();
+        return;
+      }
+
+      setStatus("error", "Veuillez vérifier votre email via le code OTP avant de créer le compte.");
+      otpInput?.focus();
+    }
+  });
 });
-
-
-
-
-
-
-
-
-
-
-// // static/accounts_users/js/signup.js
-// document.addEventListener("DOMContentLoaded", function () {
-
-//   const form = document.querySelector("form[method='post']");
-//   if (!form) return;
-
-//   const submitBtn = form.querySelector("button[type='submit']");
-
-//   const password1 = form.querySelector(".password-strong");
-//   const password2 = form.querySelector(".password-confirm");
-//   const toggleBtn = document.getElementById("togglePassword");
-//   const toggleIcon = document.getElementById("togglePasswordIcon");
-//   const capsHint = document.getElementById("capsLockHint");
-
-//   const profileInput = form.querySelector('input[name="profile_picture"]');
-//   const profilePreview = document.getElementById("profile_picture");
-
-//   const judicialInput = document.getElementById("id_judicial_record");
-//   const pdfPreview = document.getElementById("pdf-preview");
-
-//   const countrySelect = document.getElementById("id_country_of_residence");
-//   const phoneInput = document.getElementById("id_phone_number");
-
-//   const MAX_PDF_SIZE = 2 * 1024 * 1024;
-
-//   const countryDialCodes = {
-//     SN: "+221",
-//     FR: "+33",
-//     BE: "+32",
-//     CI: "+225",
-//     US: "+1",
-//     GB: "+44"
-//   };
-
-//   /* =======================
-//      RÈGLES DE VALIDATION
-//   ======================= */
-//   const strongPassword = (v) =>
-//     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/.test(v);
-
-//   const validPhone = (v) =>
-//     /^\+[0-9]{8,15}$/.test(v);
-
-//   const validateField = (field) => {
-//     let valid = true;
-
-//     if (field === phoneInput) {
-//       valid = validPhone(field.value);
-//     } else if (field.type === "password") {
-//       valid = strongPassword(field.value);
-//     } else if (field.type === "email") {
-//       valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(field.value);
-//     } else if (field.type === "checkbox") {
-//       valid = field.checked;
-//     } else if (field.type === "file" && field.required) {
-//       valid = field.files.length > 0;
-//     } else {
-//       valid = field.value.trim() !== "";
-//     }
-
-//     field.classList.toggle("is-valid", valid);
-//     field.classList.toggle("is-invalid", !valid);
-//     return valid;
-//   };
-
-//   const validateForm = () => {
-//     let ok = true;
-
-//     form.querySelectorAll(".form-control, .form-check-input").forEach(field => {
-//       if (!validateField(field)) ok = false;
-//     });
-
-//     // mot de passe identique
-//     if (password1 && password2 && password1.value !== password2.value) {
-//       password2.setCustomValidity("Les mots de passe ne sont pas identiques.");
-//       password2.classList.add("is-invalid");
-//       ok = false;
-//     } else if (password2) {
-//       password2.setCustomValidity("");
-//     }
-
-//     // casier judiciaire
-//     if (judicialInput) {
-//       const f = judicialInput.files[0];
-//       if (!f || f.type !== "application/pdf" || f.size > MAX_PDF_SIZE) {
-//         ok = false;
-//         judicialInput.classList.add("is-invalid");
-//       } else {
-//         judicialInput.classList.add("is-valid");
-//       }
-//     }
-
-//     submitBtn.disabled = !ok;
-//     return ok;
-//   };
-
-//   /* =======================
-//      PDF – CASIER JUDICIAIRE
-//   ======================= */
-//   if (judicialInput) {
-//     judicialInput.required = true;
-//     judicialInput.addEventListener("change", () => {
-//       pdfPreview.innerHTML = "";
-//       const file = judicialInput.files[0];
-//       if (!file) return;
-
-//       if (file.type === "application/pdf" && file.size <= MAX_PDF_SIZE) {
-//         pdfPreview.innerHTML =
-//           `<iframe src="${URL.createObjectURL(file)}" width="100%" height="300"></iframe>`;
-//       }
-//       validateForm();
-//     });
-//   }
-
-//   /* =======================
-//      PHOTO DE PROFIL
-//   ======================= */
-//   if (profileInput && profilePreview) {
-//     profileInput.addEventListener("change", () => {
-//       if (profileInput.files[0]) {
-//         const reader = new FileReader();
-//         reader.onload = e => {
-//           profilePreview.src = e.target.result;
-//           profilePreview.style.display = "block";
-//         };
-//         reader.readAsDataURL(profileInput.files[0]);
-//       } else {
-//         profilePreview.style.display = "none";
-//       }
-//       validateForm();
-//     });
-//   }
-
-//   /* =======================
-//      TÉLÉPHONE + INDICATIF
-//   ======================= */
-//   if (countrySelect && phoneInput) {
-//     countrySelect.addEventListener("change", () => {
-//       const code = countryDialCodes[countrySelect.value];
-//       if (code && !phoneInput.value.startsWith("+")) {
-//         phoneInput.value = code + " ";
-//       }
-//       validateForm();
-//     });
-//   }
-
-//   /* =======================
-//      TOGGLE MOT DE PASSE
-//   ======================= */
-//   if (toggleBtn && toggleIcon && password1) {
-//     toggleBtn.addEventListener("click", () => {
-//       const show = password1.type === "password";
-//       password1.type = show ? "text" : "password";
-//       if (password2) password2.type = show ? "text" : "password";
-//       toggleIcon.textContent = show ? "🙈" : "👁️";
-//     });
-//   }
-
-//   /* =======================
-//      CAPS LOCK
-//   ======================= */
-//   if (password1 && capsHint) {
-//     ["keydown", "keyup", "focus"].forEach(evt =>
-//       password1.addEventListener(evt, e =>
-//         capsHint.classList.toggle("d-none", !e.getModifierState("CapsLock"))
-//       )
-//     );
-//     password1.addEventListener("blur", () => capsHint.classList.add("d-none"));
-//   }
-
-//   /* =======================
-//      SUBMIT
-//   ======================= */
-//   form.addEventListener("input", validateForm);
-
-//   form.addEventListener("submit", e => {
-//     e.preventDefault();
-//     if (!validateForm()) return;
-
-//     submitBtn.disabled = true;
-//     submitBtn.setAttribute("aria-busy", "true");
-//     form.submit();
-//   });
-
-//   validateForm();
-// });
-
-
-
-
-
-
-// document.addEventListener("DOMContentLoaded", function () {
-
-//   const form = document.querySelector("form[method='post']");
-//   if (!form) return;
-
-//   const submitBtn = form.querySelector("button[type='submit']");
-//   const passwordInput = form.querySelector("input[type='password']");
-//   const toggleBtn = document.getElementById("togglePassword");
-//   const toggleIcon = document.getElementById("togglePasswordIcon");
-//   const capsHint = document.getElementById("capsLockHint");
-
-//   const profileInput = form.querySelector('input[name="profile_picture"]');
-//   const profilePreview = document.getElementById("profile_picture");
-
-//   const judicialInput = document.getElementById("id_judicial_record");
-//   const pdfPreview = document.getElementById("pdf-preview");
-
-//   const countrySelect = document.getElementById("id_country_of_residence");
-//   const phoneInput = document.getElementById("id_phone_number");
-
-//   const MAX_PDF_SIZE = 2 * 1024 * 1024;
-
-//   const countryDialCodes = {
-//     "SN": "+221",
-//     "FR": "+33",
-//     "BE": "+32",
-//     "CI": "+225",
-//     "US": "+1",
-//     "GB": "+44"
-//   };
-
-//   const errorMessages = {
-//     text: "Ce champ est requis.",
-//     email: "Entrez une adresse email valide.",
-//     password: "Le mot de passe doit contenir au moins 6 caractères.",
-//     checkbox: "Vous devez accepter les conditions générales.",
-//     file: "Vous devez sélectionner un fichier.",
-//     pdf: "Le fichier doit être au format PDF.",
-//     pdfSize: "Le fichier ne doit pas dépasser 2 Mo."
-//   };
-
-//   const validateField = (field) => {
-//     let valid = true;
-//     let message = "";
-
-//     if (field.type === "checkbox") {
-//       valid = field.checked;
-//       message = errorMessages.checkbox;
-//     } else if (field.type === "file" && field.required) {
-//       valid = field.files.length > 0;
-//       message = errorMessages.file;
-//     } else if (field.type === "email") {
-//       valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(field.value);
-//       message = errorMessages.email;
-//     } else if (field.type === "password") {
-//       valid = field.value.trim().length >= 6;
-//       message = errorMessages.password;
-//     } else {
-//       valid = field.value.trim() !== "";
-//       message = errorMessages.text;
-//     }
-
-//     field.classList.toggle("is-valid", valid);
-//     field.classList.toggle("is-invalid", !valid);
-
-//     const errorDiv = field.closest(".mb-3, .form-check")?.querySelector(".text-danger");
-//     if (errorDiv) errorDiv.textContent = valid ? "" : message;
-
-//     return valid;
-//   };
-
-//   const validateForm = () => {
-//     let allValid = true;
-//     form.querySelectorAll(".form-control, .form-check-input").forEach(field => {
-//       if (!validateField(field)) allValid = false;
-//     });
-//     submitBtn.disabled = !allValid;
-//   };
-
-//   // PDF preview + validation
-//   if (judicialInput) {
-//     judicialInput.required = true;
-//     judicialInput.addEventListener("change", () => {
-//       pdfPreview.innerHTML = "";
-//       const file = judicialInput.files[0];
-//       if (!file) return;
-
-//       if (file.type !== "application/pdf") {
-//         pdfPreview.innerHTML = `<p class="text-danger">${errorMessages.pdf}</p>`;
-//         judicialInput.classList.add("is-invalid");
-//         return;
-//       }
-
-//       if (file.size > MAX_PDF_SIZE) {
-//         pdfPreview.innerHTML = `<p class="text-danger">${errorMessages.pdfSize}</p>`;
-//         judicialInput.classList.add("is-invalid");
-//         return;
-//       }
-
-//       judicialInput.classList.add("is-valid");
-//       const url = URL.createObjectURL(file);
-//       pdfPreview.innerHTML = `<iframe src="${url}" width="100%" height="300" style="border:1px solid #ddd;"></iframe>`;
-//       validateForm();
-//     });
-//   }
-
-//   // Profile picture preview
-//   if (profileInput && profilePreview) {
-//     profileInput.addEventListener("change", () => {
-//       if (profileInput.files[0]) {
-//         const reader = new FileReader();
-//         reader.onload = e => {
-//           profilePreview.src = e.target.result;
-//           profilePreview.style.display = "block";
-//         };
-//         reader.readAsDataURL(profileInput.files[0]);
-//       } else {
-//         profilePreview.style.display = "none";
-//       }
-//       validateForm();
-//     });
-//   }
-
-//   // Phone prefix by country
-//   if (countrySelect && phoneInput) {
-//     countrySelect.addEventListener("change", function () {
-//       const code = countryDialCodes[this.value];
-//       if (code && !phoneInput.value.startsWith("+")) {
-//         phoneInput.value = code + " ";
-//       }
-//     });
-//   }
-
-//   // Password toggle
-//   if (toggleBtn && toggleIcon && passwordInput) {
-//     toggleBtn.addEventListener("click", () => {
-//       const show = passwordInput.type === "password";
-//       passwordInput.type = show ? "text" : "password";
-//       toggleIcon.textContent = show ? "🙈" : "👁️";
-//     });
-//   }
-
-//   // Caps lock hint
-//   if (passwordInput && capsHint) {
-//     ["keydown", "keyup", "focus"].forEach(evt =>
-//       passwordInput.addEventListener(evt, e =>
-//         capsHint.classList.toggle("d-none", !e.getModifierState("CapsLock"))
-//       )
-//     );
-//     passwordInput.addEventListener("blur", () => capsHint.classList.add("d-none"));
-//   }
-
-//   // Submit anti double-click
-//   form.addEventListener("submit", e => {
-//     e.preventDefault();
-//     validateForm();
-//     if (submitBtn.disabled) return;
-
-//     submitBtn.disabled = true;
-//     submitBtn.setAttribute("aria-busy", "true");
-
-//     if (!submitBtn.querySelector(".spinner-border")) {
-//       const spinner = document.createElement("span");
-//       spinner.className = "spinner-border spinner-border-sm ms-2";
-//       submitBtn.appendChild(spinner);
-//     }
-
-//     form.submit();
-//   });
-
-//   validateForm();
-// });
-
-// document.addEventListener("DOMContentLoaded", function () {
-//   const p1 = document.querySelector(".password-strong");
-//   const p2 = document.querySelector(".password-confirm");
-
-//   if (p1 && p2) {
-//     p2.addEventListener("input", () => {
-//       if (p2.value && p1.value !== p2.value) {
-//         p2.setCustomValidity("Les mots de passe ne sont pas identiques.");
-//       } else {
-//         p2.setCustomValidity("");
-//       }
-//     });
-//   }
-// });
-
-
-
-
-
-
-
-// document.addEventListener("DOMContentLoaded", () => {
-
-//   /* ---------------------------------------------------------
-//      ELEMENTS
-//   --------------------------------------------------------- */
-//   const form = document.getElementById("economic-form");
-//   const submitBtn = document.getElementById("submit-btn");
-//   const termsCheckbox = document.getElementById("id_terms");
-//   const inputs = form.querySelectorAll(".form-control, .form-check-input");
-
-//   const passwordInput =
-//     form.querySelector("input[type='password']") ||
-//     form.querySelector("input[name='password']");
-//   const toggleBtn = form.querySelector("#togglePassword");
-//   const toggleIcon = form.querySelector("#togglePasswordIcon");
-//   const capsHint = form.querySelector("#capsLockHint");
-
-//   /* ---------------------------------------------------------
-//      FOCUS AUTOMATIQUE SUR LE PREMIER CHAMP
-//   --------------------------------------------------------- */
-//   if (inputs.length) {
-//     setTimeout(() => inputs[0].focus(), 80);
-//   }
-
-//   /* ---------------------------------------------------------
-//      CAPS LOCK DETECTOR
-//   --------------------------------------------------------- */
-//   if (passwordInput && capsHint) {
-//     const detectCaps = (e) => {
-//       const active = e.getModifierState?.("CapsLock");
-//       capsHint.classList.toggle("d-none", !active);
-//     };
-//     ["keyup", "keydown", "focus"].forEach(evt =>
-//       passwordInput.addEventListener(evt, detectCaps)
-//     );
-//     passwordInput.addEventListener("blur", () =>
-//       capsHint.classList.add("d-none")
-//     );
-//   }
-
-//   /* ---------------------------------------------------------
-//      TOGGLE PASSWORD VISIBILITY
-//   --------------------------------------------------------- */
-//   if (toggleBtn && passwordInput && toggleIcon) {
-//     toggleBtn.addEventListener("click", () => {
-//       const show = passwordInput.type === "password";
-//       passwordInput.type = show ? "text" : "password";
-//       toggleIcon.textContent = show ? "🙈" : "👁️";
-//       toggleBtn.setAttribute(
-//         "aria-label",
-//         show ? "Masquer le mot de passe" : "Afficher le mot de passe"
-//       );
-//       passwordInput.focus({ preventScroll: true });
-//     });
-//   }
-
-//   /* ---------------------------------------------------------
-//      VALIDATION INSTANTANEE
-//   --------------------------------------------------------- */
-//   const validateField = (field) => {
-//     let valid = true;
-
-//     if (field.type === "checkbox") {
-//       valid = field.checked;
-//     } else if (field.type === "file") {
-//       valid = field.files.length > 0 || !field.required;
-//     } else if (field.type === "email") {
-//       valid = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(field.value);
-//     } else if (field.type === "password") {
-//       valid = field.value.trim().length >= 6; // exemple: password >=6 caractères
-//     } else {
-//       valid = field.value.trim() !== "";
-//     }
-
-//     field.classList.toggle("is-valid", valid);
-//     field.classList.toggle("is-invalid", !valid);
-
-//     return valid;
-//   };
-
-//   const validateForm = () => {
-//     let allValid = true;
-//     inputs.forEach(field => {
-//       if (!validateField(field)) allValid = false;
-//     });
-//     submitBtn.disabled = !allValid;
-//   };
-
-//   inputs.forEach(field => {
-//     field.addEventListener("input", validateForm);
-//     field.addEventListener("change", validateForm);
-//   });
-
-//   /* ---------------------------------------------------------
-//      APERCU DES FICHIERS
-//   --------------------------------------------------------- */
-//   const profilePreview = document.getElementById("profile_picture");
-//   const profileInput = form.querySelector('input[name="profile_picture"]');
-//   if (profileInput) {
-//     profileInput.addEventListener("change", () => {
-//       if (profileInput.files && profileInput.files[0]) {
-//         const reader = new FileReader();
-//         reader.onload = (e) => {
-//           profilePreview.src = e.target.result;
-//           profilePreview.style.display = "block";
-//         };
-//         reader.readAsDataURL(profileInput.files[0]);
-//       } else {
-//         profilePreview.style.display = "none";
-//       }
-//       validateForm();
-//     });
-//   }
-
-//   const tradePreview = document.getElementById("trade_register_document");
-//   const tradeInput = form.querySelector('input[name="trade_register_document"]');
-//   if (tradeInput) {
-//     tradeInput.addEventListener("change", () => {
-//       tradePreview.textContent = tradeInput.files.length ? tradeInput.files[0].name : "Aucun fichier sélectionné";
-//       validateForm();
-//     });
-//   }
-
-//   /* ---------------------------------------------------------
-//      ANTI DOUBLE-SUBMIT + SPINNER
-//   --------------------------------------------------------- */
-//   form.addEventListener("submit", () => {
-//     if (submitBtn.disabled) return;
-//     submitBtn.disabled = true;
-//     submitBtn.setAttribute("aria-busy", "true");
-
-//     if (!submitBtn.querySelector(".spinner-border")) {
-//       const spinner = document.createElement("span");
-//       spinner.className = "spinner-border spinner-border-sm ms-2";
-//       spinner.setAttribute("role", "status");
-//       spinner.setAttribute("aria-hidden", "true");
-//       submitBtn.appendChild(spinner);
-//     }
-//   });
-
-//   /* ---------------------------------------------------------
-//      VALIDATION INITIAL
-//   --------------------------------------------------------- */
-//   validateForm();
-
-// });
-
-
-
-
-
-
-
-
-
-
-
-// document.addEventListener("DOMContentLoaded", function () {
-//   const form = document.querySelector("form");
-//   const password1 = document.querySelector('input[name="password1"], input[name="password"]');
-//   const password2 = document.querySelector('input[name="password2"], input[name="password_confirm"]');
-
-//   if (form && password1 && password2) {
-//     form.addEventListener("submit", function (e) {
-//       if (password1.value !== password2.value) {
-//         e.preventDefault();
-//         alert("⚠️ Les mots de passe ne correspondent pas.");
-//         password2.focus();
-//         password2.classList.add("is-invalid");
-//       } else {
-//         password2.classList.remove("is-invalid");
-//       }
-//     });
-//   }
-
-//   // Amélioration UX pour les fichiers choisis
-//   const fileInputs = document.querySelectorAll('input[type="file"]');
-//   fileInputs.forEach(input => {
-//     input.addEventListener("change", function () {
-//       const label = this.nextElementSibling;
-//       if (label && this.files.length > 0) {
-//         label.textContent = this.files[0].name;
-//       }
-//     });
-//   });
-// });
-
-
-
-// // signup.js
-
-// document.addEventListener("DOMContentLoaded", () => {
-//   const form = document.querySelector("form");
-
-//   if (form) {
-//     console.log("Signup form ready.");
-
-//     // Simple client-side UX improvement
-//     const inputs = form.querySelectorAll("input, select, textarea");
-//     inputs.forEach(input => {
-//       input.addEventListener("focus", () => {
-//         input.style.borderColor = "#007bff";
-//       });
-//       input.addEventListener("blur", () => {
-//         input.style.borderColor = "#ced4da";
-//       });
-//     });
-
-//     form.addEventListener("submit", () => {
-//       console.log("Submitting signup form...");
-//     });
-//   }
-// });

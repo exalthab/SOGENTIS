@@ -1,4 +1,373 @@
-{# dashboard/profile/pending_list.html #}
+{# templates/dashboard/profile/pending_list.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Profils en attente de validation" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block dashboard_header %}
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div>
+      <h1 class="fw-bold mb-1">⏳ {% trans "Profils en attente" %}</h1>
+      <p class="text-muted mb-0">
+        {% trans "1 utilisateur = 1 ligne. La validation met à jour tous ses profils en attente." %}
+      </p>
+    </div>
+    <span class="badge text-bg-warning">
+      {{ pending_count|default:0 }} {% trans "en attente" %}
+    </span>
+  </div>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="card shadow-sm border-0">
+  <div class="card-body p-0">
+
+    {% if profiles %}
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>{% trans "Utilisateur" %}</th>
+              <th>Email</th>
+              <th>{% trans "Téléphone" %}</th>
+              <th>{% trans "Profils" %}</th>
+              <th>{% trans "Rôle" %}</th>
+              <th>{% trans "Créé" %}</th>
+              <th class="text-end">{% trans "Actions" %}</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for p in profiles %}
+              <tr>
+                <td class="fw-semibold">
+                  {{ p.full_name|default:"—" }}
+                  {% if p.username %}<div class="text-muted small">@{{ p.username }}</div>{% endif %}
+                </td>
+
+                <td>{{ p.email|default:"—" }}</td>
+                <td>{{ p.phone|default:"—" }}</td>
+
+                <td>
+                  <span class="badge text-bg-light border">{{ p.kinds_label|default:"—" }}</span>
+                </td>
+
+                <td>{{ p.role_label|default:"—" }}</td>
+
+                <td class="text-muted small">
+                  {% if p.created_at %}{{ p.created_at|date:"d/m/Y H:i" }}{% else %}—{% endif %}
+                </td>
+
+                <td class="text-end">
+                  <div class="d-inline-flex gap-2 flex-wrap justify-content-end">
+
+                    {# ✅ VALIDATION — POST ONLY #}
+                    <form method="post"
+                          action="{{ p.approve_url|default:'#' }}"
+                          class="d-inline">
+                      {% csrf_token %}
+                      <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                      <button type="submit" class="btn btn-sm btn-success">
+                        ✅ {% trans "Valider" %}
+                      </button>
+                    </form>
+
+                    {# ⛔ REFUS — POST ONLY #}
+                    <form method="post"
+                          action="{{ p.refuse_url|default:'#' }}"
+                          class="d-inline">
+                      {% csrf_token %}
+                      <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                      <button type="submit"
+                              class="btn btn-sm btn-outline-danger"
+                              onclick="return confirm('{% trans "Confirmer le refus de ce profil ?" %}');">
+                        ⛔ {% trans "Refuser" %}
+                      </button>
+                    </form>
+
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+
+        </table>
+      </div>
+
+      {% if is_paginated and page_obj %}
+      <div class="p-3 border-top d-flex justify-content-between align-items-center">
+        <div class="text-muted small">
+          {% trans "Page" %} {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+        </div>
+        <div class="d-flex gap-2">
+          {% if page_obj.has_previous %}
+            <a class="btn btn-sm btn-outline-secondary" href="?page={{ page_obj.previous_page_number }}">‹</a>
+          {% endif %}
+          {% if page_obj.has_next %}
+            <a class="btn btn-sm btn-outline-secondary" href="?page={{ page_obj.next_page_number }}">›</a>
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+
+    {% else %}
+      <div class="p-4 text-center text-muted">
+        <div class="fs-3 mb-2">✅</div>
+        <p class="mb-0">{% trans "Aucun profil en attente." %}</p>
+      </div>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+{% comment %} {# templates/dashboard/profile/pending_list.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Profils en attente de validation" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block dashboard_header %}
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div>
+      <h1 class="fw-bold mb-1">⏳ {% trans "Profils en attente" %}</h1>
+      <p class="text-muted mb-0">
+        {% trans "1 utilisateur = 1 ligne. La validation met à jour tous ses profils en attente." %}
+      </p>
+    </div>
+    <span class="badge text-bg-warning">
+      {{ pending_count|default:0 }} {% trans "en attente" %}
+    </span>
+  </div>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="card shadow-sm border-0">
+  <div class="card-body p-0">
+
+    {% if profiles %}
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>{% trans "Utilisateur" %}</th>
+              <th>Email</th>
+              <th>{% trans "Téléphone" %}</th>
+              <th>{% trans "Profils" %}</th>
+              <th>{% trans "Rôle" %}</th>
+              <th>{% trans "Créé" %}</th>
+              <th class="text-end">{% trans "Actions" %}</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for p in profiles %}
+              <tr>
+                <td class="fw-semibold">
+                  {{ p.full_name|default:"—" }}
+                  {% if p.username %}<div class="text-muted small">@{{ p.username }}</div>{% endif %}
+                </td>
+
+                <td>{{ p.email|default:"—" }}</td>
+                <td>{{ p.phone|default:"—" }}</td>
+
+                <td>
+                  <span class="badge text-bg-light border">{{ p.kinds_label|default:"—" }}</span>
+                </td>
+
+                <td>{{ p.role_label|default:"—" }}</td>
+
+                <td class="text-muted small">
+                  {% if p.created_at %}{{ p.created_at|date:"d/m/Y H:i" }}{% else %}—{% endif %}
+                </td>
+
+                <td class="text-end">
+                  <a href="{{ p.approve_url|default:'#' }}" class="btn btn-sm btn-success">
+                    ✅ {% trans "Valider" %}
+                  </a>
+                  <a href="{{ p.refuse_url|default:'#' }}" class="btn btn-sm btn-outline-danger">
+                    ⛔ {% trans "Refuser" %}
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+
+        </table>
+      </div>
+
+      {% if is_paginated and page_obj %}
+      <div class="p-3 border-top d-flex justify-content-between align-items-center">
+        <div class="text-muted small">
+          {% trans "Page" %} {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+        </div>
+        <div class="d-flex gap-2">
+          {% if page_obj.has_previous %}
+            <a class="btn btn-sm btn-outline-secondary" href="?page={{ page_obj.previous_page_number }}">‹</a>
+          {% endif %}
+          {% if page_obj.has_next %}
+            <a class="btn btn-sm btn-outline-secondary" href="?page={{ page_obj.next_page_number }}">›</a>
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+
+    {% else %}
+      <div class="p-4 text-center text-muted">
+        <div class="fs-3 mb-2">✅</div>
+        <p class="mb-0">{% trans "Aucun profil en attente." %}</p>
+      </div>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/dashboard/profile/pending_list.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Profils en attente" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block dashboard_header %}
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div>
+      <h1 class="fw-bold mb-1">⏳ {% trans "Profils en attente" %}</h1>
+      <p class="text-muted mb-0">{% trans "Valider ou refuser les comptes avant activation." %}</p>
+    </div>
+  </div>
+{% endblock %}
+
+{% block dashboard_content %}
+{% with rows=pending_profiles|default:profiles %}
+<div class="card shadow-sm border-0">
+  <div class="card-body p-0">
+
+    {% if rows %}
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th style="width:80px;">#</th>
+              <th>{% trans "Utilisateur" %}</th>
+              <th>Email</th>
+              <th>{% trans "Téléphone" %}</th>
+              <th>{% trans "Rôle" %}</th>
+              <th class="text-end">{% trans "Actions" %}</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for p in rows %}
+              <tr>
+                <td class="text-muted">
+                  {% if page_obj %}{{ page_obj.start_index|add:forloop.counter0 }}{% else %}{{ forloop.counter }}{% endif %}
+                </td>
+
+                <td class="fw-semibold">
+                  {{ p.user.get_full_name|default:p.user.username|default:"—" }}
+                  <div class="text-muted small">{{ p.user.username|default:"" }}</div>
+                </td>
+
+                <td>{{ p.user.email|default:"—" }}</td>
+
+                <td>
+                  {{ p.phone_number|default:p.phone|default:"—" }}
+                </td>
+
+                <td>
+                  <span class="badge bg-info text-dark">
+                    {{ p.membership_role.label|default:p.role|default:"—" }}
+                  </span>
+                </td>
+
+                <td class="text-end">
+                  {# PROD: idéalement POST. Si tes vues acceptent seulement GET, garde les <a> #}
+
+                  <form class="d-inline" method="post" action="{% url 'dashboard:profile_approve' p.id %}">
+                    {% csrf_token %}
+                    <button class="btn btn-sm btn-success" type="submit">
+                      <span aria-hidden="true">✅</span> {% trans "Valider" %}
+                    </button>
+                  </form>
+
+                  <form class="d-inline" method="post" action="{% url 'dashboard:profile_refuse' p.id %}">
+                    {% csrf_token %}
+                    <button class="btn btn-sm btn-outline-danger" type="submit">
+                      <span aria-hidden="true">⛔</span> {% trans "Refuser" %}
+                    </button>
+                  </form>
+
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+
+        </table>
+      </div>
+
+      {# Pagination (si fournie par la vue) #}
+      {% if is_paginated and page_obj %}
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 p-3 border-top">
+          <div class="small text-muted">
+            {% trans "Affichage" %} {{ page_obj.start_index }}–{{ page_obj.end_index }}
+            {% trans "sur" %} {{ paginator.count }}
+          </div>
+
+          <nav aria-label="{% trans 'Pagination' %}">
+            <ul class="pagination pagination-sm mb-0">
+              {% if page_obj.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page=1">«</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">‹</a></li>
+              {% else %}
+                <li class="page-item disabled"><span class="page-link">«</span></li>
+                <li class="page-item disabled"><span class="page-link">‹</span></li>
+              {% endif %}
+
+              <li class="page-item disabled">
+                <span class="page-link">{% trans "Page" %} {{ page_obj.number }} / {{ paginator.num_pages }}</span>
+              </li>
+
+              {% if page_obj.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">›</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ paginator.num_pages }}">»</a></li>
+              {% else %}
+                <li class="page-item disabled"><span class="page-link">›</span></li>
+                <li class="page-item disabled"><span class="page-link">»</span></li>
+              {% endif %}
+            </ul>
+          </nav>
+        </div>
+      {% endif %}
+
+    {% else %}
+      <div class="p-4 text-center text-muted">
+        <div style="font-size:2rem;">✅</div>
+        <p class="mb-0">{% trans "Aucun profil en attente." %}</p>
+      </div>
+    {% endif %}
+
+  </div>
+</div>
+{% endwith %}
+{% endblock %} {% endcomment %}
+
+
+
+
+
+{% comment %} {# dashboard/profile/pending_list.html #}
 {% extends "dashboard/base.html" %}
 {% load i18n %}
 
@@ -90,7 +459,7 @@
 
 {% endblock %}
 
-
+ {% endcomment %}
 
 
 

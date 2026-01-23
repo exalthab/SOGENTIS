@@ -1,3 +1,67 @@
+{# templates/dashboard/admin/pending_profiles_list.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n dashboard_tags %}
+
+{% block title %}{% trans "Profils en attente" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block dashboard_header %}
+  <h1 class="fw-bold mb-1">⏳ {% trans "Profils en attente" %}</h1>
+  <p class="text-muted mb-0">{% trans "Valider ou refuser les comptes." %}</p>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="card shadow-sm border-0">
+  <div class="card-body">
+
+    {% if pending_profiles %}
+      <div class="table-responsive">
+        <table class="table align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>{% trans "Utilisateur" %}</th>
+              <th>{% trans "Email" %}</th>
+              <th>{% trans "Rôle" %}</th>
+              <th>{% trans "Créé" %}</th>
+              <th class="text-end">{% trans "Actions" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in pending_profiles %}
+            <tr>
+              <td class="fw-semibold">{{ p.user.get_full_name|default:p.user.username }}</td>
+              <td>{{ p.user.email|default:"—" }}</td>
+              <td>{{ p.membership_role.label|default:p.role.label|default:p.role|default:"—" }}</td>
+              <td class="text-muted">
+                {{ p.created_at|date:"d/m/Y H:i"|default:"—" }}
+              </td>
+              <td class="text-end">
+                <a class="btn btn-sm btn-success" href="{% url 'dashboard:profile_approve' p.pk %}">
+                  {% trans "Valider" %}
+                </a>
+                <a class="btn btn-sm btn-outline-danger" href="{% url 'dashboard:profile_refuse' p.pk %}">
+                  {% trans "Refuser" %}
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      {% include "dashboard/partials/_empty_state.html" with icon="✅" title=_("Aucun profil en attente") text=_("Tout est à jour.") %}
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+{% comment %} {# dashboard/admin/pending_profiles_list.html #}
 {% extends "dashboard/base.html" %}
 {% load i18n %}
 
@@ -42,4 +106,4 @@
     {% endif %}
   </div>
 </div>
-{% endblock %}
+{% endblock %} {% endcomment %}

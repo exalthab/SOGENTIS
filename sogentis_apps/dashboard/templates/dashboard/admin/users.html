@@ -1,0 +1,28 @@
+{# templates/dashboard/admin/users.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Utilisateurs" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block dashboard_header %}
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div>
+      <h1 class="fw-bold mb-1">👥 {% trans "Utilisateurs" %}</h1>
+      <p class="text-muted mb-0">{% trans "Gestion et recherche des comptes." %}</p>
+    </div>
+
+    <form method="get" class="d-flex gap-2" role="search" aria-label="{% trans 'Recherche utilisateurs' %}">
+      <input type="text"
+             name="q"
+             value="{{ q|default:'' }}"
+             class="form-control form-control-sm"
+             placeholder="{% trans 'Recherche (nom, email...)' %}">
+      <button class="btn btn-sm btn-outline-secondary" type="submit">🔎</button>
+    </form>
+  </div>
+{% endblock %}
+
+{% block dashboard_content %}
+  {# Réutilise ton tableau #}
+  {% include "dashboard/admin/users_list.html" %}
+{% endblock %}

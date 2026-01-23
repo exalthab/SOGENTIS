@@ -38,7 +38,7 @@
     {% else %}
 
         <!-- ===== GUEST ACTIONS ===== -->
-        <a href="{% url 'accounts_users_web:login' %}?next={{ request.get_full_path|urlencode }}"
+        <a href="{% url 'accounts_users:web:login' %}?next={{ request.get_full_path|urlencode }}"
         class="btn-login-premium">
         <i class="fas fa-user-lock me-1"></i>
         {% trans "Se connecter" %}

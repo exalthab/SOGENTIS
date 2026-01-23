@@ -1,0 +1,37 @@
+{# templates/economic/formations/partials/_course_card.html #}
+{% load i18n %}
+
+<div class="card h-100 shadow-sm border-0 formations-card">
+  <div class="card-body">
+    <div class="d-flex align-items-start justify-content-between gap-2">
+      <div>
+        <div class="small text-muted mb-1">
+          {% if course.category %}{{ course.category }}{% else %}{% trans "Sans catégorie" %}{% endif %}
+        </div>
+        <div class="fw-bold mb-1">{{ course }}</div>
+      </div>
+      {% if course.is_free %}
+        <span class="badge text-bg-success">{% trans "Gratuit" %}</span>
+      {% else %}
+        <span class="badge text-bg-primary">{% trans "Payant" %}</span>
+      {% endif %}
+    </div>
+
+    <div class="small text-muted mt-2">
+      <span class="me-2">🧭 {{ course.get_level_display|default:course.level }}</span>
+      <span class="me-2">🧩 {{ course.get_type_display|default:course.type }}</span>
+      {% if course.duration_hours %}<span>⏱ {{ course.duration_hours }}h</span>{% endif %}
+    </div>
+
+    {% if course.short_description %}
+      <p class="text-muted small mt-3 mb-0">{{ course.short_description }}</p>
+    {% endif %}
+  </div>
+
+  <div class="card-footer bg-transparent border-0 pt-0">
+    <a class="btn btn-outline-dark w-100"
+       href="{% url 'economic:formations:courses:detail' slug=course.slug %}">
+      {% trans "Voir" %}
+    </a>
+  </div>
+</div>

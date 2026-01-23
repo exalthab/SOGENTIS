@@ -2,6 +2,37 @@
 {% extends "economic/base_economic.html" %}
 {% load i18n %}
 
+{# Titre SEO #}
+{% block title %}{% block b2b_title %}{% trans "Espace B2B" %}{% endblock %} | {{ PROJECT_NAME }}{% endblock %}
+
+{# Menu haut économique (hub) #}
+{% block section_menu %}
+  {% include "economic/partials/_economic_menu.html" %}
+{% endblock %}
+
+{% block content %}
+
+  {# Sous-menu B2B #}
+  {% block economic_subnav %}
+    {% include "economic/b2b/partials/_b2b_navbar.html" %}
+  {% endblock %}
+
+  {# Contenu pages B2B #}
+  <div class="container py-4">
+    {% block b2b_content %}{% endblock %}
+  </div>
+
+{% endblock %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/b2b/base_b2b.html #}
+{% extends "economic/base_economic.html" %}
+{% load i18n %}
+
 {# Optionnel : titre SEO propre #}
 {% block economic_title %}{% trans "Espace B2B" %}{% endblock %}
 
@@ -14,4 +45,4 @@
   <div class="container py-4">
     {% block b2b_content %}{% endblock %}
   </div>
-{% endblock %}
+{% endblock %} {% endcomment %}
