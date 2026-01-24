@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="520" height="140" viewBox="0 0 520 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="520" y2="140" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0E6BA8"/>
+      <stop offset="1" stop-color="#19B394"/>
+    </linearGradient>
+  </defs>
+  <rect width="520" height="140" rx="22" fill="rgba(255,255,255,0.86)"/>
+  <rect x="18" y="18" width="104" height="104" rx="26" fill="url(#g)"/>
+  <path d="M54 76c10-22 38-22 48 0" stroke="white" stroke-width="10" stroke-linecap="round"/>
+  <path d="M54 76c10 22 38 22 48 0" stroke="white" stroke-width="10" stroke-linecap="round" opacity="0.55"/>
+  <text x="140" y="88" font-family="system-ui, -apple-system, Segoe UI, Roboto, Arial"
+        font-size="44" font-weight="800" fill="#0B1320" letter-spacing="1.5">
+    SOGENTIS
+  </text>
+</svg>

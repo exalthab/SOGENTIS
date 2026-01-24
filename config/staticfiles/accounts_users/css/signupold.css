@@ -1,0 +1,203 @@
+/* ============================================================
+   SIGNUP / REGISTER FORMS — SOGENTIS (2025)
+   Fichier : static/accounts_users/css/signup.css
+
+   ✅ IMPORTANT :
+   - Ne définit PAS .auth-shell / .auth-card (gérés par auth_base.css)
+   - Tout est "scopé" dans .auth-card pour éviter les conflits
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   TITRES DE SECTIONS
+   ------------------------------------------------------------ */
+.auth-card h6.fw-bold{
+  position: relative;
+  padding-bottom: .35rem;
+  margin-top: 1.25rem;
+}
+.auth-card h6.fw-bold:first-of-type{ margin-top: 0; }
+
+.auth-card h6.fw-bold::after{
+  content:"";
+  display:block;
+  height: 1px;
+  width: 100%;
+  background: rgba(0,0,0,.08);
+  margin-top: .5rem;
+}
+
+/* ------------------------------------------------------------
+   LABELS / TEXTES
+   ------------------------------------------------------------ */
+.auth-card .form-label{
+  font-weight: 700;
+  margin-bottom: .35rem;
+}
+
+.auth-card .form-text{
+  color: rgba(0,0,0,.56);
+}
+
+/* ------------------------------------------------------------
+   INPUTS / SELECTS
+   ------------------------------------------------------------ */
+.auth-card .form-control,
+.auth-card .form-select{
+  padding: .65rem .9rem;
+  font-size: 1rem;
+  border-radius: 12px;
+  border: 1px solid #ced4da;
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.auth-card .form-control:focus,
+.auth-card .form-select:focus{
+  border-color: rgba(25,135,84,.55);
+  box-shadow: 0 0 0 .18rem rgba(25,135,84,.16);
+}
+
+/* Valid / Invalid (Bootstrap compatible) */
+.auth-card .form-control.is-invalid,
+.auth-card .form-select.is-invalid{
+  border-color: #dc3545;
+}
+
+.auth-card .invalid-feedback{
+  display: block;
+  color: #dc3545;
+  font-size: .9rem;
+  font-weight: 600;
+}
+
+/* ------------------------------------------------------------
+   INPUT GROUP (password + eye)
+   ------------------------------------------------------------ */
+.auth-card .input-group > .form-control{
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.auth-card .input-group .btn{
+  border-color: #ced4da;
+  background: #fff;
+}
+
+.auth-card .toggle-password{
+  border-left: 0;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-radius: 12px;
+}
+
+/* ------------------------------------------------------------
+   OTP BUTTON
+   ------------------------------------------------------------ */
+.auth-card #send-otp-btn{
+  border-radius: 12px;
+  font-weight: 800;
+}
+
+/* ------------------------------------------------------------
+   TERMS BLOCK
+   ------------------------------------------------------------ */
+.auth-card .form-check{
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(0,0,0,.03);
+  border: 1px solid rgba(0,0,0,.06);
+}
+
+.auth-card .form-check .form-check-label{
+  font-size: .9rem;
+}
+
+.auth-card .form-check .form-check-label a{
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.auth-card .form-check .form-check-label a:hover{
+  text-decoration: underline;
+}
+
+/* ------------------------------------------------------------
+   SUBMIT BUTTON
+   ------------------------------------------------------------ */
+.auth-card .btn.btn-success{
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-weight: 800;
+}
+
+/* ------------------------------------------------------------
+   UPLOAD / PREVIEW
+   ------------------------------------------------------------ */
+.auth-card .form-control[type="file"]{
+  padding: .55rem .75rem;
+}
+
+.profile-preview{
+  width:150px;
+  height:150px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-top: 1rem;
+  border:2px solid rgba(0,0,0,.10);
+}
+
+#pdf-preview embed,
+#pdf-preview iframe{
+  width: 100%;
+  height: 300px;
+  border: none;
+}
+
+/* ------------------------------------------------------------
+   RESPONSIVE
+   ------------------------------------------------------------ */
+@media (max-width: 768px){
+  .profile-preview{
+    width:120px;
+    height:120px;
+  }
+}
+
+@media (max-width: 480px){
+  .auth-card .card-body{
+    padding: 1.25rem !important;
+  }
+}
+
+/* ------------------------------------------------------------
+   NAVIGATEURS — masquage œil/password natif
+   ------------------------------------------------------------ */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear{
+  display: none;
+}
+
+input[type="password"]::-webkit-credentials-auto-fill-button{
+  visibility: hidden !important;
+  display: none !important;
+}
+
+/* ------------------------------------------------------------
+   RTL (optionnel)
+   ------------------------------------------------------------ */
+html[dir="rtl"] .auth-card .input-group > .form-control{
+  border-left: 0;
+  border-right: 1px solid #ced4da;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+html[dir="rtl"] .auth-card .toggle-password{
+  border-right: 0;
+  border-left: 1px solid #ced4da;
+  border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}

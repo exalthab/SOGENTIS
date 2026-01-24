@@ -1,0 +1,74 @@
+/* static/economic/css/services.css */
+
+/* HERO */
+.svc-hero{
+  background: radial-gradient(1200px 600px at 20% 10%, rgba(255,255,255,.18), transparent 55%),
+              radial-gradient(900px 500px at 90% 30%, rgba(255,255,255,.12), transparent 60%),
+              linear-gradient(135deg, rgba(13,110,253,.95), rgba(111,66,193,.95));
+  color: #fff;
+}
+.svc-hero .svc-kicker{ opacity: .9; letter-spacing: .08em; }
+
+/* ICONS */
+.svc-icon{
+  width: 44px; height: 44px;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  background: rgba(13,110,253,.10);
+  border: 1px solid rgba(13,110,253,.12);
+  color: rgba(13,110,253,1);
+}
+.svc-icon i{ font-size: 1.05rem; }
+.svc-icon-lg{ width: 56px; height: 56px; border-radius: 18px; }
+.svc-icon-lg i{ font-size: 1.25rem; }
+
+/* CARDS */
+.svc-card .svc-title{ line-height: 1.2; }
+.svc-card .svc-price{ white-space: nowrap; }
+
+.svc-pack-price{ line-height: 1.1; }
+.svc-pack-featured{
+  outline: 2px solid rgba(255,193,7,.55);
+}
+
+/* LIST */
+.svc-list{
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+.svc-list li{
+  display: flex;
+  align-items: flex-start;
+  gap: .35rem;
+  margin-bottom: .4rem;
+}
+.svc-list i{
+  margin-top: .15rem;
+  opacity: .85;
+}
+
+/* PILL */
+.svc-pill{
+  border: 1px solid rgba(16,24,40,.10);
+  background: rgba(16,24,40,.02);
+  border-radius: 14px;
+  padding: .55rem .75rem;
+}
+
+/* CKEDITOR content */
+.content-rich :is(h1,h2,h3){ margin-top: 1rem; }
+.content-rich :is(p,ul,ol){ margin-bottom: .75rem; }
+.content-rich img{ max-width: 100%; height: auto; border-radius: 12px; }
+
+/* Improve bootstrap inputs in case forms have no classes */
+form input[type="text"],
+form input[type="email"],
+form input[type="tel"],
+form input[type="search"],
+form input[type="number"],
+form select,
+form textarea{
+  border-radius: 12px;
+}

@@ -1,0 +1,88 @@
+/* static/accounts_users/css/economic_choice.css */
+
+.eco-choice-header{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:14px;
+}
+
+.eco-choice-grid{
+  display:grid;
+  gap:16px;
+}
+@media(min-width: 768px){
+  .eco-choice-grid{ grid-template-columns: repeat(3, minmax(0,1fr)); }
+}
+
+.eco-card{
+  background: rgba(255,255,255,.96);
+  border: 1px solid rgba(0,0,0,.08);
+  border-radius: 16px;
+  padding: 16px;
+  display:flex;
+  flex-direction:column;
+  height:100%;
+}
+
+.eco-card-top{
+  display:flex;
+  gap:12px;
+  align-items:center;
+  margin-bottom:10px;
+  min-width:0;
+}
+
+.eco-icon{
+  width:46px; height:46px;
+  border-radius:14px;
+  display:flex; align-items:center; justify-content:center;
+  background: rgba(25,135,84,.12);
+  font-size:22px;
+  flex:0 0 auto;
+}
+
+.eco-head{ flex:1; min-width:0; }
+
+.eco-topline{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;   /* ✅ badge passe ligne si besoin */
+}
+
+.eco-title{
+  margin:0;
+  font-weight:800;
+  font-size:1.05rem;
+  line-height:1.2;
+  flex: 1 1 auto;
+  min-width: 180px;
+}
+
+.eco-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:.82rem;
+  border:1px solid rgba(0,0,0,.10);
+  background:#fff;
+  white-space:nowrap;
+}
+
+.eco-desc{
+  color:#6c757d;
+  font-size:.95rem;
+  margin:0;
+  flex:1;
+}
+
+.eco-footnote{
+  margin-top:10px;
+  color:#6c757d;
+  font-size:.85rem;
+}
