@@ -3,6 +3,43 @@
 from django.db import migrations, models
 
 
+def _add_col_if_missing(table: str, column: str, ddl: str) -> str:
+    """
+    Postgres-safe: exécute `ddl` seulement si la colonne n'existe pas.
+    """
+    return f"""
+    DO $$
+    BEGIN
+      IF NOT EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema='public'
+          AND table_name='{table}'
+          AND column_name='{column}'
+      ) THEN
+        {ddl};
+      END IF;
+    END $$;
+    """
+
+
+def _try_sql(sql: str) -> str:
+    """
+    Exécute un SQL en "best effort" : si ça échoue, on ignore.
+    Utile pour DROP NOT NULL / SET DEFAULT sur colonnes déjà OK ou contraintes anciennes.
+    """
+    return f"""
+    DO $$
+    BEGIN
+      BEGIN
+        {sql};
+      EXCEPTION WHEN others THEN
+        NULL;
+      END;
+    END $$;
+    """
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -10,37 +47,136 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name="product",
-            name="fiche_technique",
-            field=models.TextField(blank=True, verbose_name="Fiche technique"),
+        # ------------------------------------------------------------------
+        # fiche_technique
+        # ------------------------------------------------------------------
+        migrations.SeparateDatabaseAndState(
+            database_operations=[
+                migrations.RunSQL(
+                    sql=_add_col_if_missing(
+                        "ecommerce_product",
+                        "fiche_technique",
+                        "ALTER TABLE ecommerce_product "
+                        "ADD COLUMN fiche_technique text NOT NULL DEFAULT ''",
+                    ),
+                    reverse_sql=migrations.RunSQL.noop,
+                ),
+                # Si la colonne existe déjà en NOT NULL sans default, ce n'est pas bloquant.
+                # On peut quand même tenter de mettre un default propre (optionnel)
+                migrations.RunSQL(
+                    sql=_try_sql(
+                        "ALTER TABLE ecommerce_product "
+                        "ALTER COLUMN fiche_technique SET DEFAULT ''"
+                    ),
+                    reverse_sql=migrations.RunSQL.noop,
+                ),
+            ],
+            state_operations=[
+                migrations.AddField(
+                    model_name="product",
+                    name="fiche_technique",
+                    field=models.TextField(blank=True, verbose_name="Fiche technique"),
+                ),
+            ],
         ),
-        migrations.AddField(
-            model_name="product",
-            name="image",
-            field=models.ImageField(
-                blank=True,
-                null=True,
-                upload_to="products/main/%Y/%m/",
-                verbose_name="Image principale",
-            ),
+
+        # ------------------------------------------------------------------
+        # image (ImageField -> varchar en DB). Sur ton VPS, image existe déjà
+        # en varchar(100) NOT NULL. Ton modèle veut null=True/blank=True.
+        # On rend la colonne nullable sans casser si déjà OK.
+        # ------------------------------------------------------------------
+        migrations.SeparateDatabaseAndState(
+            database_operations=[
+                migrations.RunSQL(
+                    sql=_add_col_if_missing(
+                        "ecommerce_product",
+                        "image",
+                        "ALTER TABLE ecommerce_product "
+                        "ADD COLUMN image varchar(100) NULL",
+                    ),
+                    reverse_sql=migrations.RunSQL.noop,
+                ),
+                migrations.RunSQL(
+                    sql=_try_sql(
+                        "ALTER TABLE ecommerce_product "
+                        "ALTER COLUMN image DROP NOT NULL"
+                    ),
+                    reverse_sql=migrations.RunSQL.noop,
+                ),
+            ],
+            state_operations=[
+                migrations.AddField(
+                    model_name="product",
+                    name="image",
+                    field=models.ImageField(
+                        blank=True,
+                        null=True,
+                        upload_to="products/main/%Y/%m/",
+                        verbose_name="Image principale",
+                    ),
+                ),
+            ],
         ),
-        migrations.AddField(
-            model_name="product",
-            name="is_new",
-            field=models.BooleanField(
-                db_index=True, default=False, verbose_name="Nouveau"
-            ),
+
+        # ------------------------------------------------------------------
+        # is_new
+        # ------------------------------------------------------------------
+        migrations.SeparateDatabaseAndState(
+            database_operations=[
+                migrations.RunSQL(
+                    sql=_add_col_if_missing(
+                        "ecommerce_product",
+                        "is_new",
+                        "ALTER TABLE ecommerce_product "
+                        "ADD COLUMN is_new boolean NOT NULL DEFAULT false",
+                    ),
+                    reverse_sql=migrations.RunSQL.noop,
+                ),
+                # Assure un DEFAULT false (si la colonne existe déjà sans default)
+                migrations.RunSQL(
+                    sql=_try_sql(
+                        "ALTER TABLE ecommerce_product "
+                        "ALTER COLUMN is_new SET DEFAULT false"
+                    ),
+                    reverse_sql=migrations.RunSQL.noop,
+                ),
+            ],
+            state_operations=[
+                migrations.AddField(
+                    model_name="product",
+                    name="is_new",
+                    field=models.BooleanField(db_index=True, default=False, verbose_name="Nouveau"),
+                ),
+            ],
         ),
-        migrations.AlterField(
-            model_name="category",
-            name="id",
-            field=models.BigAutoField(primary_key=True, serialize=False),
+
+        # ------------------------------------------------------------------
+        # Index (safe). On le crée en SQL IF NOT EXISTS côté DB, et on déclare
+        # l'état Django via AddIndex.
+        # ------------------------------------------------------------------
+        migrations.SeparateDatabaseAndState(
+            database_operations=[
+                migrations.RunSQL(
+                    sql="""
+                    CREATE INDEX IF NOT EXISTS ecommerce_p_is_new_3bcaab_idx
+                    ON ecommerce_product (is_new, is_active);
+                    """,
+                    reverse_sql=migrations.RunSQL.noop,
+                ),
+            ],
+            state_operations=[
+                migrations.AddIndex(
+                    model_name="product",
+                    index=models.Index(
+                        fields=["is_new", "is_active"],
+                        name="ecommerce_p_is_new_3bcaab_idx",
+                    ),
+                ),
+            ],
         ),
-        migrations.AddIndex(
-            model_name="product",
-            index=models.Index(
-                fields=["is_new", "is_active"], name="ecommerce_p_is_new_3bcaab_idx"
-            ),
-        ),
+
+        # ------------------------------------------------------------------
+        # IMPORTANT : on ne touche PAS à category.id en prod.
+        # (Suppression volontaire de migrations.AlterField(category, id, ...))
+        # ------------------------------------------------------------------
     ]
