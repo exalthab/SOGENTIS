@@ -11,6 +11,15 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        # ✅ Ajout SAFE si la DB est ancienne
+        migrations.RunSQL(
+            sql=(
+                "ALTER TABLE ecommerce_product "
+                "ADD COLUMN IF NOT EXISTS is_featured boolean NOT NULL DEFAULT false;"
+            ),
+            reverse_sql=migrations.RunSQL.noop,
+        ),
+
         migrations.AlterModelOptions(
             name="productimage",
             options={
@@ -52,30 +61,22 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="producttranslation",
             name="seo_description",
-            field=models.CharField(
-                blank=True, max_length=300, verbose_name="Description SEO"
-            ),
+            field=models.CharField(blank=True, max_length=300, verbose_name="Description SEO"),
         ),
         migrations.AddField(
             model_name="producttranslation",
             name="seo_title",
-            field=models.CharField(
-                blank=True, max_length=255, verbose_name="Titre SEO"
-            ),
+            field=models.CharField(blank=True, max_length=255, verbose_name="Titre SEO"),
         ),
         migrations.AlterField(
             model_name="product",
             name="is_active",
-            field=models.BooleanField(
-                db_index=True, default=True, verbose_name="Actif"
-            ),
+            field=models.BooleanField(db_index=True, default=True, verbose_name="Actif"),
         ),
         migrations.AlterField(
             model_name="product",
             name="is_featured",
-            field=models.BooleanField(
-                db_index=True, default=False, verbose_name="Mis en avant"
-            ),
+            field=models.BooleanField(db_index=True, default=False, verbose_name="Mis en avant"),
         ),
         migrations.AlterField(
             model_name="productimage",
@@ -85,9 +86,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="productimage",
             name="is_main",
-            field=models.BooleanField(
-                db_index=True, default=False, verbose_name="Image principale"
-            ),
+            field=models.BooleanField(db_index=True, default=False, verbose_name="Image principale"),
         ),
         migrations.AddIndex(
             model_name="product",
@@ -98,15 +97,11 @@ class Migration(migrations.Migration):
         ),
         migrations.AddIndex(
             model_name="product",
-            index=models.Index(
-                fields=["category", "is_active"], name="ecommerce_p_categor_c06f9a_idx"
-            ),
+            index=models.Index(fields=["category", "is_active"], name="ecommerce_p_categor_c06f9a_idx"),
         ),
         migrations.AddIndex(
             model_name="product",
-            index=models.Index(
-                fields=["vendor", "is_active"], name="ecommerce_p_vendor__4edd25_idx"
-            ),
+            index=models.Index(fields=["vendor", "is_active"], name="ecommerce_p_vendor__4edd25_idx"),
         ),
         migrations.AddIndex(
             model_name="productimage",

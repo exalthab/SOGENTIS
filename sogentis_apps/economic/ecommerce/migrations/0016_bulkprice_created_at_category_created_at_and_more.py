@@ -83,11 +83,11 @@ class Migration(migrations.Migration):
                 verbose_name="Prix unitaire",
             ),
         ),
-        migrations.AlterField(
-            model_name="category",
-            name="id",
-            field=models.BigAutoField(primary_key=True, serialize=False),
-        ),
+        # migrations.AlterField(
+        #     model_name="category",
+        #     name="id",
+        #     field=models.BigAutoField(primary_key=True, serialize=False),
+        # ),
         migrations.AlterField(
             model_name="categorytranslation",
             name="slug",
