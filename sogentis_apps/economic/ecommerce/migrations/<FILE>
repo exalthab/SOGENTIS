@@ -39,7 +39,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        # fiche_technique
         migrations.SeparateDatabaseAndState(
             database_operations=[
                 migrations.RunSQL(
@@ -51,9 +50,7 @@ class Migration(migrations.Migration):
                     reverse_sql=migrations.RunSQL.noop,
                 ),
                 migrations.RunSQL(
-                    sql=_try(
-                        "ALTER TABLE ecommerce_product ALTER COLUMN fiche_technique SET DEFAULT ''"
-                    ),
+                    sql=_try("ALTER TABLE ecommerce_product ALTER COLUMN fiche_technique SET DEFAULT ''"),
                     reverse_sql=migrations.RunSQL.noop,
                 ),
             ],
@@ -65,9 +62,7 @@ class Migration(migrations.Migration):
                 ),
             ],
         ),
-<<<<<<< HEAD
 
-        # image (ImageField => varchar). Si déjà NOT NULL sur VPS, on drop NOT NULL.
         migrations.SeparateDatabaseAndState(
             database_operations=[
                 migrations.RunSQL(
@@ -95,20 +90,8 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-=======
-      	migrations.AddField(
-            model_name="product",
-            name="image",
-            field=models.ImageField(
-                blank=True,
-                null=True,
-                upload_to="products/main/%Y/%m/",
-                verbose_name="Image principale",
-            ),
->>>>>>> f44f2316 (fix migrations_019)
         ),
 
-        # is_new
         migrations.SeparateDatabaseAndState(
             database_operations=[
                 migrations.RunSQL(
@@ -133,7 +116,6 @@ class Migration(migrations.Migration):
             ],
         ),
 
-        # index (IF NOT EXISTS)
         migrations.SeparateDatabaseAndState(
             database_operations=[
                 migrations.RunSQL(
