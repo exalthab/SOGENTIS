@@ -1,0 +1,57 @@
+/* static/economic/css/formations_topbar.css */
+
+.formations-topbar{ z-index:1035; }
+.formations-topbar .ftb-navbar{ min-height:56px; }
+
+.formations-topbar .ftb-back{
+  white-space: nowrap;
+}
+
+.formations-topbar .ftb-nav .ftb-link{
+  font-weight: 600;
+  font-size: .95rem;
+  padding: .35rem .6rem;
+  border-radius: 10px;
+  color: inherit;
+}
+
+.formations-topbar .ftb-nav .ftb-link:hover{
+  background: rgba(0,0,0,.04);
+}
+
+.formations-topbar .ftb-nav .ftb-link.active{
+  color: #0d6efd;
+}
+
+.formations-topbar .ftb-dd .ftb-link{
+  font-weight: 600;
+  font-size: .95rem;
+  padding: .35rem .6rem;
+  border-radius: 10px;
+  color: inherit;
+}
+
+.formations-topbar .ftb-dd .ftb-link:hover{
+  background: rgba(0,0,0,.04);
+}
+
+.formations-topbar .ftb-menu{
+  border-radius: 14px;
+}
+
+.formations-topbar .ftb-search .input-group{
+  width: min(740px, 45vw);
+}
+
+.formations-topbar .ftb-search .input-group-text{ border-right: 0; }
+.formations-topbar .ftb-search input{ border-left: 0; }
+
+.formations-topbar .economic-lang-menu .btn{
+  white-space: nowrap;
+}
+
+@media (max-width: 1200px){
+  .formations-topbar .ftb-search .input-group{
+    width: min(560px, 40vw);
+  }
+}

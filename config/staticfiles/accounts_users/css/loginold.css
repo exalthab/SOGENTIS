@@ -1,28 +1,23 @@
 /* ============================================================
-   LOGIN PAGE — SOGENTIS
+   LOGIN PAGE — SOGENTIS (2025)
    Fichier : static/accounts_users/css/login.css
-   Harmonisé avec auth_base.css
-   Scoped via body.auth-login
+   Harmonisé avec auth_base.css + signup.css
+   Pas de styles globaux sur .auth-shell/.auth-card (évite conflits)
    ============================================================ */
 
-/* ✅ IMPORTANT : neutralise tout background "global" d'autres css */
-body.auth-login .auth-shell{
-  background: transparent !important;
-  padding: 2rem 1rem;
-}
-
 /* ------------------------------------------------------------
-   TITRES / TEXTES
+   TITRES / TEXTES (scopés)
    ------------------------------------------------------------ */
-body.auth-login .auth-card h1,
-body.auth-login .auth-card h3,
-body.auth-login .auth-card .h3{
+
+.auth-card h1,
+.auth-card h3,
+.auth-card .h3{
   font-weight: 800;
   text-align: center;
   margin-bottom: .25rem;
 }
 
-body.auth-login .auth-card .login-intro{
+.auth-card .login-intro{
   color: rgba(0,0,0,.62);
   text-align: center;
   margin-bottom: 1rem;
@@ -32,25 +27,25 @@ body.auth-login .auth-card .login-intro{
 /* ------------------------------------------------------------
    FORM
    ------------------------------------------------------------ */
-body.auth-login .auth-card .form-label{
+.auth-card .form-label{
   font-weight: 700;
   margin-bottom: .35rem;
 }
 
-body.auth-login .auth-card .form-control{
+.auth-card .form-control{
   height: 44px;
   padding: .55rem .9rem;
-  border-radius: 12px;
+  border-radius: 12px; /* cohérent signup.css */
   transition: border-color .2s ease, box-shadow .2s ease;
 }
 
-body.auth-login .auth-card .form-control:focus{
+.auth-card .form-control:focus{
   border-color: rgba(25,135,84,.55);
   box-shadow: 0 0 0 .18rem rgba(25,135,84,.16);
 }
 
 /* Erreurs */
-body.auth-login .auth-card .invalid-feedback.d-block{
+.auth-card .invalid-feedback.d-block{
   font-size: .9rem;
   font-weight: 600;
 }
@@ -58,38 +53,34 @@ body.auth-login .auth-card .invalid-feedback.d-block{
 /* ------------------------------------------------------------
    INPUT GROUP (password + toggle)
    ------------------------------------------------------------ */
-body.auth-login .auth-card .input-group > .form-control{
+.auth-card .input-group > .form-control{
   border-right: 0;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
 }
 
-body.auth-login .auth-card .input-group .btn{
+.auth-card .input-group .btn{
   border-color: #ced4da;
   background: #fff;
   border-radius: 12px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 12px;
 }
 
-body.auth-login .auth-card .input-group .toggle-password{
+.auth-card .input-group .toggle-password{
   border-left: 0;
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 }
 
-/* Si le champ est invalid, garde un contour cohérent */
-body.auth-login .auth-card .input-group .form-control.is-invalid + .btn{
-  border-color: #dc3545;
+/* ------------------------------------------------------------
+   BOUTON (harmonisé)
+   ------------------------------------------------------------ */
+/* Tu utilises btn-success dans le template => on le stylise ici */
+.auth-card .btn.btn-success{
+  font-weight: 800;
+  border-radius: 14px;
+  padding: 12px 14px;
 }
 
-/* ------------------------------------------------------------
-   BOUTON
-   ------------------------------------------------------------ */
-body.auth-login .auth-card .btn.btn-success,
-body.auth-login .auth-card .btn.btn-primary{
+/* Si jamais une page login utilise encore btn-primary */
+.auth-card .btn.btn-primary{
   font-weight: 800;
   border-radius: 14px;
   padding: 12px 14px;
@@ -98,7 +89,7 @@ body.auth-login .auth-card .btn.btn-primary{
 /* ------------------------------------------------------------
    LIENS SECONDAIRES
    ------------------------------------------------------------ */
-body.auth-login .auth-card .login-links{
+.auth-card .login-links{
   margin-top: .75rem;
   display: flex;
   justify-content: space-between;
@@ -107,27 +98,24 @@ body.auth-login .auth-card .login-links{
   font-size: .9rem;
 }
 
-body.auth-login .auth-card .login-links a{
+.auth-card .login-links a{
   text-decoration: none;
   font-weight: 800;
-  color: inherit;
-  opacity: .92;
 }
 
-body.auth-login .auth-card .login-links a:hover{
+.auth-card .login-links a:hover{
   text-decoration: underline;
-  opacity: 1;
 }
 
 /* ------------------------------------------------------------
    RESPONSIVE
    ------------------------------------------------------------ */
 @media (max-width: 768px){
-  body.auth-login .auth-card .form-control{ height: 42px; }
+  .auth-card .form-control{ height: 42px; }
 }
 
 @media (max-width: 480px){
-  body.auth-login .auth-card .login-links{
+  .auth-card .login-links{
     flex-direction: column;
     align-items: flex-start;
   }
@@ -147,54 +135,14 @@ input[type="password"]::-webkit-credentials-auto-fill-button{
 }
 
 /* ------------------------------------------------------------
-   MODE SOMBRE — cohérent avec auth_base.css
-   ------------------------------------------------------------ */
-body.dark-mode.auth-login .auth-card .login-intro{
-  color: rgba(255,255,255,.70);
-}
-
-body.dark-mode.auth-login .auth-card .form-label{
-  color: rgba(255,255,255,.85);
-}
-
-body.dark-mode.auth-login .auth-card .form-control{
-  background: rgba(255,255,255,.06);
-  border-color: rgba(255,255,255,.12);
-  color: rgba(255,255,255,.92);
-}
-
-body.dark-mode.auth-login .auth-card .form-control::placeholder{
-  color: rgba(255,255,255,.45);
-}
-
-body.dark-mode.auth-login .auth-card .input-group .btn{
-  background: rgba(255,255,255,.06);
-  border-color: rgba(255,255,255,.12);
-  color: rgba(255,255,255,.88);
-}
-
-body.dark-mode.auth-login .auth-card .form-control:focus{
-  border-color: rgba(25,135,84,.55);
-  box-shadow: 0 0 0 .18rem rgba(25,135,84,.18);
-}
-
-body.dark-mode.auth-login .auth-card .login-links a{
-  color: rgba(255,255,255,.90);
-}
-
-/* ------------------------------------------------------------
    MODE RTL
    ------------------------------------------------------------ */
-html[dir="rtl"] body.auth-login .auth-card .input-group > .form-control{
+html[dir="rtl"] .auth-card .input-group > .form-control{
   border-left: 0;
   border-right: 1px solid #ced4da;
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-  border-top-right-radius: 12px;
-  border-bottom-right-radius: 12px;
 }
 
-html[dir="rtl"] body.auth-login .auth-card .input-group .toggle-password{
+html[dir="rtl"] .auth-card .input-group .toggle-password{
   border-right: 0;
   border-left: 1px solid #ced4da;
   border-top-left-radius: 12px;

@@ -1,35 +1,352 @@
-/* ✅ Signup.css : mise en forme du formulaire d'inscription */
-.auth-form-container {
-  background-color: #f8f9fa;
-  padding: 2rem;
-  border-radius: 8px;
+/* ============================================================
+   SIGNUP / REGISTER FORMS — SOGENTIS (2026)
+   File : static/accounts_users/css/signup.css
+
+   ✅ IMPORTANT
+   - Ne définit PAS .auth-shell / .auth-card (gérés ailleurs)
+   - Tout est "scopé" dans .auth-card pour éviter les conflits
+   - Style inspiré UX moderne (Google/ChatGPT-like): neutre, lisible, accessible
+   - Compatible Bootstrap (is-invalid / is-valid / invalid-feedback, etc.)
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   TOKENS (faciles à ajuster)
+   ------------------------------------------------------------ */
+:root{
+  --su-bg: #ffffff;
+  --su-text: #0f172a;
+  --su-muted: rgba(15,23,42,.62);
+
+  --su-border: rgba(15,23,42,.14);
+  --su-border-strong: rgba(15,23,42,.22);
+
+  --su-focus: rgba(37,99,235,.55);
+  --su-focus-ring: rgba(37,99,235,.14);
+
+  --su-danger: #dc3545;
+  --su-danger-ring: rgba(220,53,69,.14);
+
+  --su-success: #198754;
+  --su-success-ring: rgba(25,135,84,.14);
+
+  --su-surface: rgba(2,6,23,.03);
+  --su-surface-2: rgba(2,6,23,.05);
+
+  --su-radius: 12px;
+  --su-radius-sm: 10px;
+
+  --su-pad-y: .70rem;
+  --su-pad-x: .95rem;
+
+  --su-font: 1rem;
+  --su-help: .92rem;
+
+  --su-shadow-focus: 0 0 0 .22rem var(--su-focus-ring);
+  --su-shadow-danger: 0 0 0 .22rem var(--su-danger-ring);
+  --su-shadow-success: 0 0 0 .22rem var(--su-success-ring);
 }
 
-.card {
-  border-radius: 12px;
+/* ------------------------------------------------------------
+   TITRES DE SECTIONS
+   ------------------------------------------------------------ */
+.auth-card h5.text-primary,
+.auth-card h6.fw-bold{
+  position: relative;
+  margin-top: 1.15rem;
+  margin-bottom: .75rem;
+  color: inherit;
 }
 
-.form-label {
-  font-weight: 500;
-  color: #333;
+.auth-card h6.fw-bold:first-of-type,
+.auth-card h5.text-primary:first-of-type{
+  margin-top: 0;
 }
 
-.btn-success {
-  background-color: #198754;
-  border-color: #198754;
+/* petite ligne de séparation discrète */
+.auth-card h6.fw-bold::after{
+  content:"";
+  display:block;
+  height: 1px;
+  width: 100%;
+  background: rgba(2,6,23,.08);
+  margin-top: .55rem;
 }
 
-.btn-success:hover {
-  background-color: #157347;
-  border-color: #146c43;
+/* ------------------------------------------------------------
+   LABELS / TEXTES
+   ------------------------------------------------------------ */
+.auth-card .form-label{
+  font-weight: 600;
+  color: var(--su-text);
+  margin-bottom: .35rem;
 }
 
-.text-danger.small {
-  font-size: 0.85rem;
+.auth-card .form-text{
+  color: var(--su-muted);
+  font-size: var(--su-help);
+  line-height: 1.35;
 }
 
-.form-control,
-.form-select {
-  border-radius: 6px;
+.auth-card .text-muted{
+  color: var(--su-muted) !important;
 }
 
+/* ------------------------------------------------------------
+   INPUTS / SELECTS
+   ------------------------------------------------------------ */
+.auth-card .form-control,
+.auth-card .form-select{
+  padding: var(--su-pad-y) var(--su-pad-x);
+  font-size: var(--su-font);
+  border-radius: var(--su-radius-sm);
+  border: 1px solid var(--su-border);
+  background: var(--su-bg);
+  color: var(--su-text);
+  transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+}
+
+.auth-card .form-control::placeholder{
+  color: rgba(15,23,42,.38);
+}
+
+.auth-card .form-control:focus,
+.auth-card .form-select:focus{
+  border-color: var(--su-focus);
+  box-shadow: var(--su-shadow-focus);
+  outline: none;
+}
+
+/* Disabled (mais lisible) */
+.auth-card .form-control:disabled,
+.auth-card .form-select:disabled{
+  background: var(--su-surface);
+  opacity: 1;
+  cursor: not-allowed;
+  color: rgba(15,23,42,.55);
+}
+
+/* ------------------------------------------------------------
+   VALID / INVALID (Bootstrap compatible)
+   ------------------------------------------------------------ */
+.auth-card .form-control.is-invalid,
+.auth-card .form-select.is-invalid{
+  border-color: var(--su-danger);
+}
+
+.auth-card .form-control.is-invalid:focus,
+.auth-card .form-select.is-invalid:focus{
+  box-shadow: var(--su-shadow-danger);
+}
+
+.auth-card .form-control.is-valid,
+.auth-card .form-select.is-valid{
+  border-color: var(--su-success);
+}
+
+.auth-card .form-control.is-valid:focus,
+.auth-card .form-select.is-valid:focus{
+  box-shadow: var(--su-shadow-success);
+}
+
+.auth-card .invalid-feedback{
+  display: block;
+  color: var(--su-danger);
+  font-size: .90rem;
+  font-weight: 600;
+  margin-top: .35rem;
+}
+
+/* ------------------------------------------------------------
+   INPUT GROUP (password + eye)
+   ------------------------------------------------------------ */
+.auth-card .input-group > .form-control{
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.auth-card .input-group .btn{
+  border-color: var(--su-border);
+  background: #fff;
+  color: var(--su-text);
+  transition: background .18s ease, border-color .18s ease;
+}
+
+.auth-card .input-group .btn:hover{
+  background: var(--su-surface);
+}
+
+.auth-card .toggle-password{
+  border-left: 0;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-radius: var(--su-radius-sm);
+  font-weight: 700;
+}
+
+/* ------------------------------------------------------------
+   OTP BLOCK (status + buttons)
+   ------------------------------------------------------------ */
+.auth-card #otp-status{
+  margin-top: .5rem;
+}
+
+/* Rend les alertes OTP plus compactes */
+.auth-card #otp-status.alert{
+  border-radius: var(--su-radius-sm);
+  margin-bottom: .75rem;
+}
+
+/* Boutons OTP cohérents */
+.auth-card #send-otp-btn,
+.auth-card #verify-otp-btn{
+  border-radius: var(--su-radius-sm);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.auth-card #send-otp-btn[aria-busy="true"],
+.auth-card #verify-otp-btn[aria-busy="true"]{
+  opacity: .85;
+}
+
+/* ------------------------------------------------------------
+   TERMS BLOCK (plus “premium”, moins “boîte”)
+   ------------------------------------------------------------ */
+.auth-card .form-check{
+  padding: 10px 12px;
+  border-radius: var(--su-radius-sm);
+  background: transparent;
+  border: 1px dashed var(--su-border);
+}
+
+.auth-card .form-check .form-check-input{
+  margin-top: .2rem;
+}
+
+.auth-card .form-check .form-check-label{
+  font-size: .92rem;
+  color: var(--su-text);
+}
+
+.auth-card .form-check .form-check-label a{
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.auth-card .form-check .form-check-label a:hover{
+  text-decoration: underline;
+}
+
+/* ------------------------------------------------------------
+   SUBMIT BUTTONS
+   ------------------------------------------------------------ */
+.auth-card .btn.btn-success,
+.auth-card .btn.btn-primary{
+  border-radius: var(--su-radius);
+  padding: 12px 14px;
+  font-weight: 700;
+  letter-spacing: .2px;
+}
+
+.auth-card button:disabled,
+.auth-card .btn:disabled{
+  opacity: .65;
+  cursor: not-allowed;
+}
+
+/* ------------------------------------------------------------
+   UPLOAD / PREVIEW
+   ------------------------------------------------------------ */
+.auth-card .form-control[type="file"]{
+  padding: .55rem .75rem;
+}
+
+.profile-preview{
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-top: 1rem;
+  border: 2px solid rgba(2,6,23,.10);
+}
+
+#pdf-preview embed,
+#pdf-preview iframe{
+  width: 100%;
+  height: 300px;
+  border: 1px solid rgba(2,6,23,.10);
+  border-radius: var(--su-radius-sm);
+}
+
+/* ------------------------------------------------------------
+   HR / separators
+   ------------------------------------------------------------ */
+.auth-card hr{
+  border-color: rgba(2,6,23,.10);
+}
+
+/* ------------------------------------------------------------
+   RESPONSIVE
+   ------------------------------------------------------------ */
+@media (max-width: 768px){
+  .profile-preview{
+    width: 120px;
+    height: 120px;
+  }
+}
+
+@media (max-width: 480px){
+  .auth-card .card-body{
+    padding: 1.25rem !important;
+  }
+
+  .auth-card .btn.btn-success,
+  .auth-card .btn.btn-primary{
+    padding: 12px 12px;
+  }
+}
+
+/* ------------------------------------------------------------
+   NAVIGATEURS — masquage œil/password natif
+   ------------------------------------------------------------ */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear{
+  display: none;
+}
+
+input[type="password"]::-webkit-credentials-auto-fill-button{
+  visibility: hidden !important;
+  display: none !important;
+}
+
+/* ------------------------------------------------------------
+   RTL (optionnel)
+   ------------------------------------------------------------ */
+html[dir="rtl"] .auth-card .input-group > .form-control{
+  border-left: 0;
+  border-right: 1px solid var(--su-border);
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-top-right-radius: var(--su-radius-sm);
+  border-bottom-right-radius: var(--su-radius-sm);
+}
+
+html[dir="rtl"] .auth-card .toggle-password{
+  border-right: 0;
+  border-left: 1px solid var(--su-border);
+  border-top-left-radius: var(--su-radius-sm);
+  border-bottom-left-radius: var(--su-radius-sm);
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* ------------------------------------------------------------
+   (Optionnel) Support “prefers-reduced-motion”
+   ------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce){
+  .auth-card .form-control,
+  .auth-card .form-select,
+  .auth-card .input-group .btn{
+    transition: none !important;
+  }
+}

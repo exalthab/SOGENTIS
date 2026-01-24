@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Background gradient (dark / economic) -->
+    <linearGradient id="bg" x1="0" y1="0" x2="1600" y2="900" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#050B16"/>
+      <stop offset="0.45" stop-color="#0A1F3D"/>
+      <stop offset="1" stop-color="#083B35"/>
+    </linearGradient>
+
+    <!-- Soft glows -->
+    <radialGradient id="glowA" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse"
+      gradientTransform="translate(1210 210) rotate(135) scale(560 560)">
+      <stop stop-color="#19B394" stop-opacity="0.38"/>
+      <stop offset="1" stop-color="#19B394" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="glowB" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse"
+      gradientTransform="translate(420 730) rotate(25) scale(720 720)">
+      <stop stop-color="#0E6BA8" stop-opacity="0.30"/>
+      <stop offset="1" stop-color="#0E6BA8" stop-opacity="0"/>
+    </radialGradient>
+
+    <filter id="blur" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+
+    <!-- Subtle grid -->
+    <pattern id="grid" width="52" height="52" patternUnits="userSpaceOnUse">
+      <path d="M52 0H0V52" stroke="#FFFFFF" stroke-opacity="0.07" stroke-width="1"/>
+    </pattern>
+
+    <!-- Subtle dots -->
+    <pattern id="dots" width="26" height="26" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.4" fill="#FFFFFF" opacity="0.08"/>
+    </pattern>
+  </defs>
+
+  <!-- Base -->
+  <rect width="1600" height="900" fill="url(#bg)"/>
+
+  <!-- Textures -->
+  <rect width="1600" height="900" fill="url(#grid)" opacity="0.55"/>
+  <rect width="1600" height="900" fill="url(#dots)" opacity="0.45"/>
+
+  <!-- Glows -->
+  <circle cx="1210" cy="210" r="360" fill="url(#glowA)" filter="url(#blur)"/>
+  <circle cx="420" cy="730" r="440" fill="url(#glowB)" filter="url(#blur)"/>
+
+  <!-- Elegant curves -->
+  <path d="M-40 270C180 120 480 120 700 270C930 430 1170 440 1450 315C1540 270 1610 242 1660 232V0H-40V270Z"
+        fill="#FFFFFF" opacity="0.06"/>
+  <path d="M-40 940V690C90 600 230 555 370 570C560 590 650 740 870 740C1090 740 1250 570 1460 535C1545 520 1615 515 1660 516V940H-40Z"
+        fill="#000000" opacity="0.28"/>
+
+  <!-- Very subtle “economic” glyphs -->
+  <g opacity="0.16">
+    <!-- Mini bar chart -->
+    <path d="M1240 610h22v78h-22v-78zm38 26h22v52h-22v-52zm38-18h22v70h-22v-70zm38 34h22v36h-22v-36z" fill="#FFFFFF"/>
+    <path d="M1230 704h160v16h-160v-16z" fill="#FFFFFF"/>
+
+    <!-- Shield / check -->
+    <path d="M1010 150l68 20v54c0 58-36 108-68 126-32-18-68-68-68-126v-54l68-20z" fill="#FFFFFF" opacity="0.55"/>
+    <path d="M995 230l18-18 26 26 52-52 18 18-70 70-44-44z" fill="#FFFFFF"/>
+  </g>
+</svg>

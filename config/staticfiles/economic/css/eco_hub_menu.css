@@ -1,0 +1,91 @@
+/* ==========================================================
+   ECO HUB MENU — alignement 1 ligne façon GOMYCODE
+   ========================================================== */
+
+.eco-hub-menu{
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+}
+
+/* Une seule ligne, hauteur stable */
+.eco-hub-menu .eco-hub-row{
+  flex-wrap: nowrap;
+  min-height: 64px;             /* look "header" */
+  align-items: center;
+}
+
+/* Gauche : scroll horizontal si manque de place */
+.eco-hub-menu .eco-hub-primary{
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.eco-hub-menu .eco-hub-primary::-webkit-scrollbar{ display:none; }
+
+/* Droite : jamais de wrap */
+.eco-hub-menu .eco-hub-tools{
+  flex: 0 0 auto;
+  white-space: nowrap;
+  align-items: center;
+}
+
+/* Lien : UNIFORMISE (c'est ça qui corrige le “bloc droite plus bas”) */
+.eco-hub-menu .eco-hub-link{
+  display: inline-flex;          /* ✅ au lieu de inline */
+  align-items: center;           /* ✅ centre verticalement */
+  gap: .5rem;
+  white-space: nowrap;
+  line-height: 1;                /* ✅ évite baseline weird */
+  padding: .55rem .75rem;
+  border-radius: 12px;
+  text-decoration: none;
+}
+
+/* Style “GOMYCODE-like” : discret, propre */
+.eco-hub-menu .eco-hub-link:hover{
+  background: rgba(15, 23, 42, .04);
+}
+
+/* Active : pas de “pill” trop visible, juste un underline propre */
+.eco-hub-menu .eco-hub-link.active{
+  background: transparent;
+  position: relative;
+  font-weight: 700;
+}
+.eco-hub-menu .eco-hub-link.active::after{
+  content:"";
+  position:absolute;
+  left: .75rem;
+  right: .75rem;
+  bottom: -10px;
+  height: 2px;
+  background: currentColor;
+  opacity: .55;
+  border-radius: 2px;
+}
+
+/* Brand (Pôle Économique) façon logo/brand */
+.eco-hub-menu .eco-hub-brand{
+  font-weight: 800;
+}
+
+/* Dropdown caret mieux aligné */
+.eco-hub-menu .eco-hub-link.dropdown-toggle::after{
+  margin-left: .35rem;
+}
+
+/* Disabled cohérent */
+.eco-hub-menu .eco-hub-link.disabled{
+  opacity: .55;
+  pointer-events: none;
+}
+
+/* Optionnel : nom user qui ne pousse pas le menu */
+.eco-hub-menu .eco-user-name{
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
