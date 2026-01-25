@@ -2,46 +2,112 @@
 from django.db import migrations
 
 
-def _create_table_if_missing(table: str, ddl: str) -> str:
-    return f"""
-DO $$
-BEGIN
-  IF NOT EXISTS (
-    SELECT 1
-    FROM information_schema.tables
-    WHERE table_schema='public' AND table_name='{table}'
-  ) THEN
-    {ddl}
-  END IF;
-END $$;
-""".strip()
-
-
-def _create_index_if_missing(indexname: str, ddl: str) -> str:
-    return f"""
-DO $$
-BEGIN
-  IF NOT EXISTS (
-    SELECT 1
-    FROM pg_indexes
-    WHERE schemaname='public' AND indexname='{indexname}'
-  ) THEN
-    {ddl}
-  END IF;
-END $$;
-""".strip()
-
+# =========================
+# Helpers (PostgreSQL)
+# =========================
 
 def _try(sql: str) -> str:
-    # Best-effort: ignore toute erreur (constraint déjà là, type différent, etc.)
+    """Best-effort: si erreur -> ignore."""
     return f"""
 DO $$
 BEGIN
   BEGIN
-    {sql}
+    {sql};
   EXCEPTION WHEN others THEN
     NULL;
   END;
+END $$;
+""".strip()
+
+
+def _create_table_if_missing(table: str, ddl: str) -> str:
+    """
+    Crée la table uniquement si AUCUNE relation (table/vue/séquence/…) n'existe déjà
+    avec ce nom dans public.
+    """
+    return f"""
+DO $$
+BEGIN
+  IF to_regclass('public.{table}') IS NULL THEN
+    {ddl};
+  END IF;
+END $$;
+""".strip()
+
+
+def _add_column_if_missing(table: str, column: str, ddl: str) -> str:
+    """
+    Ajoute une colonne si absente.
+    DDL à fournir sans ';' final (ex: ALTER TABLE ... ADD COLUMN ...).
+    """
+    return f"""
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema='public' AND table_name='{table}' AND column_name='{column}'
+  ) THEN
+    {ddl};
+  END IF;
+END $$;
+""".strip()
+
+
+def _rename_column_if_exists(table: str, old: str, new: str) -> str:
+    """Renomme old->new si old existe et new n'existe pas."""
+    return f"""
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema='public' AND table_name='{table}' AND column_name='{old}'
+  ) AND NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema='public' AND table_name='{table}' AND column_name='{new}'
+  ) THEN
+    EXECUTE format('ALTER TABLE %I RENAME COLUMN %I TO %I', '{table}', '{old}', '{new}');
+  END IF;
+END $$;
+""".strip()
+
+
+def _create_index_if_column_exists(table: str, column: str, indexname: str, ddl: str) -> str:
+    """
+    Crée l'index si:
+    - la colonne existe
+    - l'index n'existe pas
+    DDL à fournir sans ';' final.
+    """
+    return f"""
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema='public' AND table_name='{table}' AND column_name='{column}'
+  ) AND NOT EXISTS (
+    SELECT 1 FROM pg_indexes
+    WHERE schemaname='public' AND indexname='{indexname}'
+  ) THEN
+    {ddl};
+  END IF;
+END $$;
+""".strip()
+
+
+def _create_index_if_table_exists(table: str, indexname: str, ddl: str) -> str:
+    """Crée l'index si la table existe et l'index n'existe pas."""
+    return f"""
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.tables
+    WHERE table_schema='public' AND table_name='{table}' AND table_type='BASE TABLE'
+  ) AND NOT EXISTS (
+    SELECT 1 FROM pg_indexes
+    WHERE schemaname='public' AND indexname='{indexname}'
+  ) THEN
+    {ddl};
+  END IF;
 END $$;
 """.strip()
 
@@ -53,8 +119,9 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+
         # ============================================================
-        # CART / CARTITEM (bloque souvent l'admin si manquant)
+        # 1) CART
         # ============================================================
         migrations.RunSQL(
             sql=_create_table_if_missing(
@@ -65,72 +132,126 @@ CREATE TABLE ecommerce_cart (
   user_id bigint NULL,
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now()
-);
-""",
+)
+""".strip(),
             ),
             reverse_sql=migrations.RunSQL.noop,
         ),
         migrations.RunSQL(
-            sql=_create_index_if_missing(
+            sql=_add_column_if_missing("ecommerce_cart", "user_id",
+                                      "ALTER TABLE ecommerce_cart ADD COLUMN user_id bigint NULL"),
+            reverse_sql=migrations.RunSQL.noop,
+        ),
+        migrations.RunSQL(
+            sql=_add_column_if_missing("ecommerce_cart", "created_at",
+                                      "ALTER TABLE ecommerce_cart ADD COLUMN created_at timestamptz NOT NULL DEFAULT now()"),
+            reverse_sql=migrations.RunSQL.noop,
+        ),
+        migrations.RunSQL(
+            sql=_add_column_if_missing("ecommerce_cart", "updated_at",
+                                      "ALTER TABLE ecommerce_cart ADD COLUMN updated_at timestamptz NOT NULL DEFAULT now()"),
+            reverse_sql=migrations.RunSQL.noop,
+        ),
+        migrations.RunSQL(
+            sql=_create_index_if_column_exists(
+                "ecommerce_cart", "user_id",
                 "ecommerce_cart_user_id_idx",
-                "CREATE INDEX ecommerce_cart_user_id_idx ON ecommerce_cart (user_id);",
+                "CREATE INDEX ecommerce_cart_user_id_idx ON ecommerce_cart (user_id)"
             ),
             reverse_sql=migrations.RunSQL.noop,
         ),
 
+        # ============================================================
+        # 2) CARTITEM  ✅ corrige ton cas : cart_id manquant
+        # ============================================================
         migrations.RunSQL(
             sql=_create_table_if_missing(
                 "ecommerce_cartitem",
                 """
 CREATE TABLE ecommerce_cartitem (
   id bigint GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
-  cart_id bigint NOT NULL,
-  product_id bigint NOT NULL,
+  cart_id bigint NULL,
+  product_id bigint NULL,
   quantity integer NOT NULL DEFAULT 1,
   unit_price numeric(12,2) NULL,
   created_at timestamptz NOT NULL DEFAULT now()
-);
-""",
-            ),
-            reverse_sql=migrations.RunSQL.noop,
-        ),
-        migrations.RunSQL(
-            sql=_create_index_if_missing(
-                "ecommerce_cartitem_cart_id_idx",
-                "CREATE INDEX ecommerce_cartitem_cart_id_idx ON ecommerce_cartitem (cart_id);",
-            ),
-            reverse_sql=migrations.RunSQL.noop,
-        ),
-        migrations.RunSQL(
-            sql=_create_index_if_missing(
-                "ecommerce_cartitem_product_id_idx",
-                "CREATE INDEX ecommerce_cartitem_product_id_idx ON ecommerce_cartitem (product_id);",
-            ),
-            reverse_sql=migrations.RunSQL.noop,
-        ),
-        migrations.RunSQL(
-            sql=_try(
-                """
-ALTER TABLE ecommerce_cartitem
-  ADD CONSTRAINT ecommerce_cartitem_cart_fk
-  FOREIGN KEY (cart_id) REFERENCES ecommerce_cart(id) ON DELETE CASCADE;
-"""
-            ),
-            reverse_sql=migrations.RunSQL.noop,
-        ),
-        migrations.RunSQL(
-            sql=_try(
-                """
-ALTER TABLE ecommerce_cartitem
-  ADD CONSTRAINT ecommerce_cartitem_product_fk
-  FOREIGN KEY (product_id) REFERENCES ecommerce_product(id) ON DELETE CASCADE;
-"""
+)
+""".strip(),
             ),
             reverse_sql=migrations.RunSQL.noop,
         ),
 
+        # Compat vieux schémas: cart/product au lieu de cart_id/product_id
+        migrations.RunSQL(sql=_rename_column_if_exists("ecommerce_cartitem", "cart", "cart_id"),
+                          reverse_sql=migrations.RunSQL.noop),
+        migrations.RunSQL(sql=_rename_column_if_exists("ecommerce_cartitem", "product", "product_id"),
+                          reverse_sql=migrations.RunSQL.noop),
+
+        # Colonnes essentielles (AVANT index)
+        migrations.RunSQL(
+            sql=_add_column_if_missing("ecommerce_cartitem", "cart_id",
+                                      "ALTER TABLE ecommerce_cartitem ADD COLUMN cart_id bigint NULL"),
+            reverse_sql=migrations.RunSQL.noop,
+        ),
+        migrations.RunSQL(
+            sql=_add_column_if_missing("ecommerce_cartitem", "product_id",
+                                      "ALTER TABLE ecommerce_cartitem ADD COLUMN product_id bigint NULL"),
+            reverse_sql=migrations.RunSQL.noop,
+        ),
+        migrations.RunSQL(
+            sql=_add_column_if_missing("ecommerce_cartitem", "quantity",
+                                      "ALTER TABLE ecommerce_cartitem ADD COLUMN quantity integer NOT NULL DEFAULT 1"),
+            reverse_sql=migrations.RunSQL.noop,
+        ),
+        migrations.RunSQL(
+            sql=_add_column_if_missing("ecommerce_cartitem", "unit_price",
+                                      "ALTER TABLE ecommerce_cartitem ADD COLUMN unit_price numeric(12,2) NULL"),
+            reverse_sql=migrations.RunSQL.noop,
+        ),
+        migrations.RunSQL(
+            sql=_add_column_if_missing("ecommerce_cartitem", "created_at",
+                                      "ALTER TABLE ecommerce_cartitem ADD COLUMN created_at timestamptz NOT NULL DEFAULT now()"),
+            reverse_sql=migrations.RunSQL.noop,
+        ),
+
+        # Index seulement si la colonne existe => plus d'erreur "cart_id does not exist"
+        migrations.RunSQL(
+            sql=_create_index_if_column_exists(
+                "ecommerce_cartitem", "cart_id",
+                "ecommerce_cartitem_cart_id_idx",
+                "CREATE INDEX ecommerce_cartitem_cart_id_idx ON ecommerce_cartitem (cart_id)"
+            ),
+            reverse_sql=migrations.RunSQL.noop,
+        ),
+        migrations.RunSQL(
+            sql=_create_index_if_column_exists(
+                "ecommerce_cartitem", "product_id",
+                "ecommerce_cartitem_product_id_idx",
+                "CREATE INDEX ecommerce_cartitem_product_id_idx ON ecommerce_cartitem (product_id)"
+            ),
+            reverse_sql=migrations.RunSQL.noop,
+        ),
+
+        # FK best-effort
+        migrations.RunSQL(
+            sql=_try("""
+ALTER TABLE ecommerce_cartitem
+  ADD CONSTRAINT ecommerce_cartitem_cart_fk
+  FOREIGN KEY (cart_id) REFERENCES ecommerce_cart(id) ON DELETE CASCADE
+"""),
+            reverse_sql=migrations.RunSQL.noop,
+        ),
+        migrations.RunSQL(
+            sql=_try("""
+ALTER TABLE ecommerce_cartitem
+  ADD CONSTRAINT ecommerce_cartitem_product_fk
+  FOREIGN KEY (product_id) REFERENCES ecommerce_product(id) ON DELETE CASCADE
+"""),
+            reverse_sql=migrations.RunSQL.noop,
+        ),
+
         # ============================================================
-        # WISHLIST / WISHLISTITEM
+        # 3) WISHLIST / WISHLISTITEM
         # ============================================================
         migrations.RunSQL(
             sql=_create_table_if_missing(
@@ -140,15 +261,26 @@ CREATE TABLE ecommerce_wishlist (
   id bigint GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
   user_id bigint NULL,
   created_at timestamptz NOT NULL DEFAULT now()
-);
-""",
+)
+""".strip(),
             ),
             reverse_sql=migrations.RunSQL.noop,
         ),
         migrations.RunSQL(
-            sql=_create_index_if_missing(
+            sql=_add_column_if_missing("ecommerce_wishlist", "user_id",
+                                      "ALTER TABLE ecommerce_wishlist ADD COLUMN user_id bigint NULL"),
+            reverse_sql=migrations.RunSQL.noop,
+        ),
+        migrations.RunSQL(
+            sql=_add_column_if_missing("ecommerce_wishlist", "created_at",
+                                      "ALTER TABLE ecommerce_wishlist ADD COLUMN created_at timestamptz NOT NULL DEFAULT now()"),
+            reverse_sql=migrations.RunSQL.noop,
+        ),
+        migrations.RunSQL(
+            sql=_create_index_if_column_exists(
+                "ecommerce_wishlist", "user_id",
                 "ecommerce_wishlist_user_id_idx",
-                "CREATE INDEX ecommerce_wishlist_user_id_idx ON ecommerce_wishlist (user_id);",
+                "CREATE INDEX ecommerce_wishlist_user_id_idx ON ecommerce_wishlist (user_id)"
             ),
             reverse_sql=migrations.RunSQL.noop,
         ),
@@ -162,48 +294,50 @@ CREATE TABLE ecommerce_wishlistitem (
   wishlist_id bigint NOT NULL,
   product_id bigint NOT NULL,
   added_at timestamptz NOT NULL DEFAULT now()
-);
-""",
+)
+""".strip(),
             ),
             reverse_sql=migrations.RunSQL.noop,
         ),
+        migrations.RunSQL(sql=_add_column_if_missing("ecommerce_wishlistitem", "wishlist_id",
+                                                    "ALTER TABLE ecommerce_wishlistitem ADD COLUMN wishlist_id bigint NOT NULL"),
+                          reverse_sql=migrations.RunSQL.noop),
+        migrations.RunSQL(sql=_add_column_if_missing("ecommerce_wishlistitem", "product_id",
+                                                    "ALTER TABLE ecommerce_wishlistitem ADD COLUMN product_id bigint NOT NULL"),
+                          reverse_sql=migrations.RunSQL.noop),
+        migrations.RunSQL(sql=_add_column_if_missing("ecommerce_wishlistitem", "added_at",
+                                                    "ALTER TABLE ecommerce_wishlistitem ADD COLUMN added_at timestamptz NOT NULL DEFAULT now()"),
+                          reverse_sql=migrations.RunSQL.noop),
+
         migrations.RunSQL(
-            sql=_create_index_if_missing(
+            sql=_create_index_if_column_exists(
+                "ecommerce_wishlistitem", "wishlist_id",
                 "ecommerce_wishlistitem_wishlist_id_idx",
-                "CREATE INDEX ecommerce_wishlistitem_wishlist_id_idx ON ecommerce_wishlistitem (wishlist_id);",
+                "CREATE INDEX ecommerce_wishlistitem_wishlist_id_idx ON ecommerce_wishlistitem (wishlist_id)"
             ),
             reverse_sql=migrations.RunSQL.noop,
         ),
         migrations.RunSQL(
-            sql=_create_index_if_missing(
+            sql=_create_index_if_column_exists(
+                "ecommerce_wishlistitem", "product_id",
                 "ecommerce_wishlistitem_product_id_idx",
-                "CREATE INDEX ecommerce_wishlistitem_product_id_idx ON ecommerce_wishlistitem (product_id);",
+                "CREATE INDEX ecommerce_wishlistitem_product_id_idx ON ecommerce_wishlistitem (product_id)"
             ),
             reverse_sql=migrations.RunSQL.noop,
         ),
-        migrations.RunSQL(
-            sql=_try(
-                """
+        migrations.RunSQL(sql=_try("""
 ALTER TABLE ecommerce_wishlistitem
   ADD CONSTRAINT ecommerce_wishlistitem_wishlist_fk
-  FOREIGN KEY (wishlist_id) REFERENCES ecommerce_wishlist(id) ON DELETE CASCADE;
-"""
-            ),
-            reverse_sql=migrations.RunSQL.noop,
-        ),
-        migrations.RunSQL(
-            sql=_try(
-                """
+  FOREIGN KEY (wishlist_id) REFERENCES ecommerce_wishlist(id) ON DELETE CASCADE
+"""), reverse_sql=migrations.RunSQL.noop),
+        migrations.RunSQL(sql=_try("""
 ALTER TABLE ecommerce_wishlistitem
   ADD CONSTRAINT ecommerce_wishlistitem_product_fk
-  FOREIGN KEY (product_id) REFERENCES ecommerce_product(id) ON DELETE CASCADE;
-"""
-            ),
-            reverse_sql=migrations.RunSQL.noop,
-        ),
+  FOREIGN KEY (product_id) REFERENCES ecommerce_product(id) ON DELETE CASCADE
+"""), reverse_sql=migrations.RunSQL.noop),
 
         # ============================================================
-        # REVIEW
+        # 4) REVIEW
         # ============================================================
         migrations.RunSQL(
             sql=_create_table_if_missing(
@@ -218,31 +352,30 @@ CREATE TABLE ecommerce_review (
   content text NOT NULL DEFAULT '',
   is_approved boolean NOT NULL DEFAULT false,
   created_at timestamptz NOT NULL DEFAULT now()
-);
-""",
+)
+""".strip(),
             ),
             reverse_sql=migrations.RunSQL.noop,
         ),
         migrations.RunSQL(
-            sql=_create_index_if_missing(
+            sql=_create_index_if_column_exists(
+                "ecommerce_review", "product_id",
                 "ecommerce_review_product_id_idx",
-                "CREATE INDEX ecommerce_review_product_id_idx ON ecommerce_review (product_id);",
+                "CREATE INDEX ecommerce_review_product_id_idx ON ecommerce_review (product_id)"
             ),
             reverse_sql=migrations.RunSQL.noop,
         ),
         migrations.RunSQL(
-            sql=_try(
-                """
+            sql=_try("""
 ALTER TABLE ecommerce_review
   ADD CONSTRAINT ecommerce_review_product_fk
-  FOREIGN KEY (product_id) REFERENCES ecommerce_product(id) ON DELETE CASCADE;
-"""
-            ),
+  FOREIGN KEY (product_id) REFERENCES ecommerce_product(id) ON DELETE CASCADE
+"""),
             reverse_sql=migrations.RunSQL.noop,
         ),
 
         # ============================================================
-        # PRODUCTIMAGE (si manquant)
+        # 5) PRODUCTIMAGE
         # ============================================================
         migrations.RunSQL(
             sql=_create_table_if_missing(
@@ -257,31 +390,30 @@ CREATE TABLE ecommerce_productimage (
   sort_order integer NOT NULL DEFAULT 0,
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now()
-);
-""",
+)
+""".strip(),
             ),
             reverse_sql=migrations.RunSQL.noop,
         ),
         migrations.RunSQL(
-            sql=_create_index_if_missing(
+            sql=_create_index_if_column_exists(
+                "ecommerce_productimage", "product_id",
                 "ecommerce_productimage_product_id_idx",
-                "CREATE INDEX ecommerce_productimage_product_id_idx ON ecommerce_productimage (product_id);",
+                "CREATE INDEX ecommerce_productimage_product_id_idx ON ecommerce_productimage (product_id)"
             ),
             reverse_sql=migrations.RunSQL.noop,
         ),
         migrations.RunSQL(
-            sql=_try(
-                """
+            sql=_try("""
 ALTER TABLE ecommerce_productimage
   ADD CONSTRAINT ecommerce_productimage_product_fk
-  FOREIGN KEY (product_id) REFERENCES ecommerce_product(id) ON DELETE CASCADE;
-"""
-            ),
+  FOREIGN KEY (product_id) REFERENCES ecommerce_product(id) ON DELETE CASCADE
+"""),
             reverse_sql=migrations.RunSQL.noop,
         ),
 
         # ============================================================
-        # PRODUCTPRICING / BULKPRICE
+        # 6) PRODUCTPRICING / BULKPRICE
         # ============================================================
         migrations.RunSQL(
             sql=_create_table_if_missing(
@@ -289,7 +421,7 @@ ALTER TABLE ecommerce_productimage
                 """
 CREATE TABLE ecommerce_productpricing (
   id bigint GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
-  product_id bigint NOT NULL UNIQUE,
+  product_id bigint NULL,
   pricing_type varchar(3) NOT NULL DEFAULT 'B2C',
   base_price numeric(12,2) NOT NULL DEFAULT 0,
   promo_price numeric(12,2) NULL,
@@ -298,26 +430,38 @@ CREATE TABLE ecommerce_productpricing (
   currency varchar(5) NOT NULL DEFAULT 'XOF',
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now()
-);
-""",
+)
+""".strip(),
             ),
             reverse_sql=migrations.RunSQL.noop,
         ),
         migrations.RunSQL(
-            sql=_create_index_if_missing(
+            sql=_add_column_if_missing("ecommerce_productpricing", "product_id",
+                                      "ALTER TABLE ecommerce_productpricing ADD COLUMN product_id bigint NULL"),
+            reverse_sql=migrations.RunSQL.noop,
+        ),
+        migrations.RunSQL(
+            sql=_create_index_if_column_exists(
+                "ecommerce_productpricing", "product_id",
                 "ecommerce_productpricing_product_id_idx",
-                "CREATE INDEX ecommerce_productpricing_product_id_idx ON ecommerce_productpricing (product_id);",
+                "CREATE INDEX ecommerce_productpricing_product_id_idx ON ecommerce_productpricing (product_id)"
             ),
             reverse_sql=migrations.RunSQL.noop,
         ),
         migrations.RunSQL(
-            sql=_try(
-                """
+            sql=_try("""
 ALTER TABLE ecommerce_productpricing
   ADD CONSTRAINT ecommerce_productpricing_product_fk
-  FOREIGN KEY (product_id) REFERENCES ecommerce_product(id) ON DELETE CASCADE;
-"""
-            ),
+  FOREIGN KEY (product_id) REFERENCES ecommerce_product(id) ON DELETE CASCADE
+"""),
+            reverse_sql=migrations.RunSQL.noop,
+        ),
+        migrations.RunSQL(
+            # unique product_id si possible (si déjà doublons -> ignore car best-effort)
+            sql=_try("""
+ALTER TABLE ecommerce_productpricing
+  ADD CONSTRAINT uniq_productpricing_product_id UNIQUE (product_id)
+"""),
             reverse_sql=migrations.RunSQL.noop,
         ),
 
@@ -327,35 +471,46 @@ ALTER TABLE ecommerce_productpricing
                 """
 CREATE TABLE ecommerce_bulkprice (
   id bigint GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
-  pricing_id bigint NOT NULL,
+  pricing_id bigint NULL,
   min_quantity integer NOT NULL DEFAULT 1,
   unit_price numeric(12,2) NOT NULL DEFAULT 0,
   created_at timestamptz NOT NULL DEFAULT now()
-);
-""",
+)
+""".strip(),
             ),
             reverse_sql=migrations.RunSQL.noop,
         ),
         migrations.RunSQL(
-            sql=_create_index_if_missing(
+            sql=_add_column_if_missing("ecommerce_bulkprice", "pricing_id",
+                                      "ALTER TABLE ecommerce_bulkprice ADD COLUMN pricing_id bigint NULL"),
+            reverse_sql=migrations.RunSQL.noop,
+        ),
+        migrations.RunSQL(
+            sql=_create_index_if_column_exists(
+                "ecommerce_bulkprice", "pricing_id",
                 "ecommerce_bulkprice_pricing_id_idx",
-                "CREATE INDEX ecommerce_bulkprice_pricing_id_idx ON ecommerce_bulkprice (pricing_id);",
+                "CREATE INDEX ecommerce_bulkprice_pricing_id_idx ON ecommerce_bulkprice (pricing_id)"
             ),
             reverse_sql=migrations.RunSQL.noop,
         ),
         migrations.RunSQL(
-            sql=_try(
-                """
+            sql=_try("""
 ALTER TABLE ecommerce_bulkprice
   ADD CONSTRAINT ecommerce_bulkprice_pricing_fk
-  FOREIGN KEY (pricing_id) REFERENCES ecommerce_productpricing(id) ON DELETE CASCADE;
-"""
-            ),
+  FOREIGN KEY (pricing_id) REFERENCES ecommerce_productpricing(id) ON DELETE CASCADE
+"""),
+            reverse_sql=migrations.RunSQL.noop,
+        ),
+        migrations.RunSQL(
+            sql=_try("""
+ALTER TABLE ecommerce_bulkprice
+  ADD CONSTRAINT uniq_bulkprice_pricing_minqty UNIQUE (pricing_id, min_quantity)
+"""),
             reverse_sql=migrations.RunSQL.noop,
         ),
 
         # ============================================================
-        # ORDER / ORDERITEM (si manquant)
+        # 7) ORDER / ORDERITEM
         # ============================================================
         migrations.RunSQL(
             sql=_create_table_if_missing(
@@ -371,15 +526,16 @@ CREATE TABLE ecommerce_order (
   customer_phone varchar(50) NULL,
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now()
-);
-""",
+)
+""".strip(),
             ),
             reverse_sql=migrations.RunSQL.noop,
         ),
         migrations.RunSQL(
-            sql=_create_index_if_missing(
+            sql=_create_index_if_column_exists(
+                "ecommerce_order", "uuid",
                 "ecommerce_order_uuid_idx",
-                "CREATE INDEX ecommerce_order_uuid_idx ON ecommerce_order (uuid);",
+                "CREATE INDEX ecommerce_order_uuid_idx ON ecommerce_order (uuid)"
             ),
             reverse_sql=migrations.RunSQL.noop,
         ),
@@ -390,54 +546,53 @@ CREATE TABLE ecommerce_order (
                 """
 CREATE TABLE ecommerce_orderitem (
   id bigint GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
-  order_id bigint NOT NULL,
-  product_id bigint NOT NULL,
+  order_id bigint NULL,
+  product_id bigint NULL,
   product_sku varchar(100) NOT NULL DEFAULT '',
   product_name varchar(255) NOT NULL DEFAULT '',
   quantity integer NOT NULL DEFAULT 1,
   unit_price numeric(12,2) NOT NULL DEFAULT 0
-);
-""",
+)
+""".strip(),
             ),
             reverse_sql=migrations.RunSQL.noop,
         ),
+        migrations.RunSQL(sql=_add_column_if_missing("ecommerce_orderitem", "order_id",
+                                                    "ALTER TABLE ecommerce_orderitem ADD COLUMN order_id bigint NULL"),
+                          reverse_sql=migrations.RunSQL.noop),
+        migrations.RunSQL(sql=_add_column_if_missing("ecommerce_orderitem", "product_id",
+                                                    "ALTER TABLE ecommerce_orderitem ADD COLUMN product_id bigint NULL"),
+                          reverse_sql=migrations.RunSQL.noop),
+
         migrations.RunSQL(
-            sql=_create_index_if_missing(
+            sql=_create_index_if_column_exists(
+                "ecommerce_orderitem", "order_id",
                 "ecommerce_orderitem_order_id_idx",
-                "CREATE INDEX ecommerce_orderitem_order_id_idx ON ecommerce_orderitem (order_id);",
+                "CREATE INDEX ecommerce_orderitem_order_id_idx ON ecommerce_orderitem (order_id)"
             ),
             reverse_sql=migrations.RunSQL.noop,
         ),
         migrations.RunSQL(
-            sql=_create_index_if_missing(
+            sql=_create_index_if_column_exists(
+                "ecommerce_orderitem", "product_id",
                 "ecommerce_orderitem_product_id_idx",
-                "CREATE INDEX ecommerce_orderitem_product_id_idx ON ecommerce_orderitem (product_id);",
+                "CREATE INDEX ecommerce_orderitem_product_id_idx ON ecommerce_orderitem (product_id)"
             ),
             reverse_sql=migrations.RunSQL.noop,
         ),
-        migrations.RunSQL(
-            sql=_try(
-                """
+        migrations.RunSQL(sql=_try("""
 ALTER TABLE ecommerce_orderitem
   ADD CONSTRAINT ecommerce_orderitem_order_fk
-  FOREIGN KEY (order_id) REFERENCES ecommerce_order(id) ON DELETE CASCADE;
-"""
-            ),
-            reverse_sql=migrations.RunSQL.noop,
-        ),
-        migrations.RunSQL(
-            sql=_try(
-                """
+  FOREIGN KEY (order_id) REFERENCES ecommerce_order(id) ON DELETE CASCADE
+"""), reverse_sql=migrations.RunSQL.noop),
+        migrations.RunSQL(sql=_try("""
 ALTER TABLE ecommerce_orderitem
   ADD CONSTRAINT ecommerce_orderitem_product_fk
-  FOREIGN KEY (product_id) REFERENCES ecommerce_product(id) ON DELETE RESTRICT;
-"""
-            ),
-            reverse_sql=migrations.RunSQL.noop,
-        ),
+  FOREIGN KEY (product_id) REFERENCES ecommerce_product(id) ON DELETE RESTRICT
+"""), reverse_sql=migrations.RunSQL.noop),
 
         # ============================================================
-        # PAYMENTTRANSACTION / INVOICE / FAVORITE / SKUSEQUENCE / VENDOR
+        # 8) PAYMENTTRANSACTION / INVOICE
         # ============================================================
         migrations.RunSQL(
             sql=_create_table_if_missing(
@@ -456,26 +611,25 @@ CREATE TABLE ecommerce_paymenttransaction (
   payload jsonb NULL,
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now()
-);
-""",
+)
+""".strip(),
             ),
             reverse_sql=migrations.RunSQL.noop,
         ),
         migrations.RunSQL(
-            sql=_create_index_if_missing(
+            sql=_create_index_if_column_exists(
+                "ecommerce_paymenttransaction", "uuid",
                 "ecommerce_paymenttransaction_uuid_idx",
-                "CREATE INDEX ecommerce_paymenttransaction_uuid_idx ON ecommerce_paymenttransaction (uuid);",
+                "CREATE INDEX ecommerce_paymenttransaction_uuid_idx ON ecommerce_paymenttransaction (uuid)"
             ),
             reverse_sql=migrations.RunSQL.noop,
         ),
         migrations.RunSQL(
-            sql=_try(
-                """
+            sql=_try("""
 ALTER TABLE ecommerce_paymenttransaction
   ADD CONSTRAINT ecommerce_paymenttransaction_order_fk
-  FOREIGN KEY (order_id) REFERENCES ecommerce_order(id) ON DELETE SET NULL;
-"""
-            ),
+  FOREIGN KEY (order_id) REFERENCES ecommerce_order(id) ON DELETE SET NULL
+"""),
             reverse_sql=migrations.RunSQL.noop,
         ),
 
@@ -489,19 +643,23 @@ CREATE TABLE ecommerce_invoice (
   order_id bigint NULL,
   file varchar(300) NULL,
   created_at timestamptz NOT NULL DEFAULT now()
-);
-""",
+)
+""".strip(),
             ),
             reverse_sql=migrations.RunSQL.noop,
         ),
         migrations.RunSQL(
-            sql=_create_index_if_missing(
+            sql=_create_index_if_column_exists(
+                "ecommerce_invoice", "uuid",
                 "ecommerce_invoice_uuid_idx",
-                "CREATE INDEX ecommerce_invoice_uuid_idx ON ecommerce_invoice (uuid);",
+                "CREATE INDEX ecommerce_invoice_uuid_idx ON ecommerce_invoice (uuid)"
             ),
             reverse_sql=migrations.RunSQL.noop,
         ),
 
+        # ============================================================
+        # 9) FAVORITE
+        # ============================================================
         migrations.RunSQL(
             sql=_create_table_if_missing(
                 "ecommerce_favorite",
@@ -511,44 +669,31 @@ CREATE TABLE ecommerce_favorite (
   user_id bigint NULL,
   product_id bigint NOT NULL,
   created_at timestamptz NOT NULL DEFAULT now()
-);
-""",
+)
+""".strip(),
             ),
             reverse_sql=migrations.RunSQL.noop,
         ),
         migrations.RunSQL(
-            sql=_create_index_if_missing(
+            sql=_create_index_if_column_exists(
+                "ecommerce_favorite", "product_id",
                 "ecommerce_favorite_product_id_idx",
-                "CREATE INDEX ecommerce_favorite_product_id_idx ON ecommerce_favorite (product_id);",
+                "CREATE INDEX ecommerce_favorite_product_id_idx ON ecommerce_favorite (product_id)"
             ),
             reverse_sql=migrations.RunSQL.noop,
         ),
         migrations.RunSQL(
-            sql=_try(
-                """
+            sql=_try("""
 ALTER TABLE ecommerce_favorite
   ADD CONSTRAINT ecommerce_favorite_product_fk
-  FOREIGN KEY (product_id) REFERENCES ecommerce_product(id) ON DELETE CASCADE;
-"""
-            ),
+  FOREIGN KEY (product_id) REFERENCES ecommerce_product(id) ON DELETE CASCADE
+"""),
             reverse_sql=migrations.RunSQL.noop,
         ),
 
-        migrations.RunSQL(
-            sql=_create_table_if_missing(
-                "ecommerce_skusequence",
-                """
-CREATE TABLE ecommerce_skusequence (
-  id bigint GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
-  key varchar(50) NOT NULL UNIQUE,
-  current integer NOT NULL DEFAULT 0,
-  updated_at timestamptz NOT NULL DEFAULT now()
-);
-""",
-            ),
-            reverse_sql=migrations.RunSQL.noop,
-        ),
-
+        # ============================================================
+        # 10) VENDOR
+        # ============================================================
         migrations.RunSQL(
             sql=_create_table_if_missing(
                 "ecommerce_vendor",
@@ -559,15 +704,16 @@ CREATE TABLE ecommerce_vendor (
   company_name varchar(255) NOT NULL DEFAULT '',
   is_verified boolean NOT NULL DEFAULT false,
   created_at timestamptz NOT NULL DEFAULT now()
-);
-""",
+)
+""".strip(),
             ),
             reverse_sql=migrations.RunSQL.noop,
         ),
         migrations.RunSQL(
-            sql=_create_index_if_missing(
+            sql=_create_index_if_column_exists(
+                "ecommerce_vendor", "user_id",
                 "ecommerce_vendor_user_id_idx",
-                "CREATE INDEX ecommerce_vendor_user_id_idx ON ecommerce_vendor (user_id);",
+                "CREATE INDEX ecommerce_vendor_user_id_idx ON ecommerce_vendor (user_id)"
             ),
             reverse_sql=migrations.RunSQL.noop,
         ),

@@ -12,3 +12,8 @@ __pycache__/
 .env.local
 .env.email
 logs/
+nul
+NUL
+**/nul
+**/NUL
+
