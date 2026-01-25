@@ -133,6 +133,14 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunSQL(
+            sql="""
+            ALTER TABLE ecommerce_orderitem
+            ADD COLUMN IF NOT EXISTS unit_price numeric(12,2) NOT NULL DEFAULT 0;
+            """,
+            reverse_sql=migrations.RunSQL.noop,
+        ),
+
 
         migrations.SeparateDatabaseAndState(
 
