@@ -1,4 +1,4 @@
-# sogentis_apps/economic/ecommerce/models/__init__.py
+# /economic/ecommerce/models/__init__.py
 
 from .category import Category
 from .vendor import Vendor
@@ -20,3 +20,5 @@ from .product_pricing import PricingType
 
 from .invoice import Invoice
 from .favorite import Favorite
+
+from .sku_sequence import SkuSequence
