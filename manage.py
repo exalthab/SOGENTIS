@@ -12,21 +12,21 @@ def main():
 
     if env_file.exists():
         load_dotenv(dotenv_path=env_file)
-        print(f"\033[92m✅ Fichier .env chargé depuis : {env_file}\033[0m")
+        print(f"\033[92m[OK] Fichier .env chargé depuis : {env_file}\033[0m")
     else:
-        print(f"\033[93m⚠️ Aucun fichier .env trouvé à : {env_file}\033[0m")
+        print(f"\033[93m Aucun fichier .env trouvé à : {env_file}\033[0m")
 
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.settings_loader")
-    print(f"🌐 DJANGO_SETTINGS_MODULE={os.environ['DJANGO_SETTINGS_MODULE']}")
+    print(f" DJANGO_SETTINGS_MODULE={os.environ['DJANGO_SETTINGS_MODULE']}")
 
     if not os.environ.get("VIRTUAL_ENV"):
-        print("\033[93m⚠️  Attention : l’environnement virtuel Python n’est pas activé !\033[0m")
+        print("\033[93m  Attention : l’environnement virtuel Python n’est pas activé !\033[0m")
 
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
         raise ImportError(
-            "\n❌ Django est introuvable. Vérifie si :\n"
+            "\n Django est introuvable. Vérifie si :\n"
             "- Il est installé (`pip install -r requirements.txt`)\n"
             "- Le virtualenv est activé\n"
         ) from exc
@@ -34,7 +34,7 @@ def main():
     try:
         execute_from_command_line(sys.argv)
     except Exception as e:
-        print(f"❌ Erreur lors de l'exécution de la commande : {e}")
+        print(f" Erreur lors de l'exécution de la commande : {e}")
         raise
 
 if __name__ == "__main__":
