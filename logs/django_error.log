@@ -68,3 +68,1855 @@ Traceback (most recent call last):
 django.db.utils.IntegrityError: null value in column "id" of relation "ecommerce_category" violates not-null constraint
 DETAIL:  Failing row contains (null, t, 0, null, null, null, 2026-01-25 21:51:46.419132+00, 2026-01-25 21:51:46.419142+00, null).
 
+[2026-01-26 03:05:47,161] ERROR django.request:253 :: Internal Server Error: /admin/ecommerce/category/add/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.NotNullViolation: null value in column "name" of relation "ecommerce_category" violates not-null constraint
+DETAIL:  Failing row contains (1, t, 10, null, null, null, 2026-01-26 03:05:47.033856+00, 2026-01-26 03:05:47.033866+00, PHON).
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 719, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/sites.py", line 246, in inner
+    return view(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 1984, in add_view
+    return self.changeform_view(request, None, form_url, extra_context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 1843, in changeform_view
+    return self._changeform_view(request, object_id, form_url, extra_context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 1894, in _changeform_view
+    self.save_model(request, new_object, form, not add)
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/economic/ecommerce/admin/category_admin.py", line 233, in save_model
+    super().save_model(request, obj, form, change)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 1314, in save_model
+    obj.save()
+  File "/home/ubuntu/SOGENTIS/sogentis_apps/economic/ecommerce/models/category.py", line 116, in save
+    super().save(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/models.py", line 710, in save
+    super().save(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/base.py", line 902, in save
+    self.save_base(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/base.py", line 1008, in save_base
+    updated = self._save_table(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/base.py", line 1169, in _save_table
+    results = self._do_insert(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/base.py", line 1210, in _do_insert
+    return manager._insert(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1868, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1882, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.IntegrityError: null value in column "name" of relation "ecommerce_category" violates not-null constraint
+DETAIL:  Failing row contains (1, t, 10, null, null, null, 2026-01-26 03:05:47.033856+00, 2026-01-26 03:05:47.033866+00, PHON).
+
+[2026-01-26 03:13:49,995] ERROR django.request:253 :: Internal Server Error: /admin/ecommerce/category/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.GroupingError: column "ecommerce_category.code" must appear in the GROUP BY clause or be used in an aggregate function
+LINE 1: SELECT "ecommerce_category"."id", "ecommerce_category"."code...
+                                          ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 719, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/sites.py", line 246, in inner
+    return view(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 2144, in changelist_view
+    media = self.media + formset.media
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/formsets.py", line 521, in media
+    if self.forms:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/formsets.py", line 207, in forms
+    for i in range(self.total_form_count())
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/formsets.py", line 182, in total_form_count
+    initial_forms = self.initial_form_count()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/models.py", line 697, in initial_form_count
+    return len(self.get_queryset())
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/managers.py", line 42, in _fetch_all
+    super()._fetch_all()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1949, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.ProgrammingError: column "ecommerce_category.code" must appear in the GROUP BY clause or be used in an aggregate function
+LINE 1: SELECT "ecommerce_category"."id", "ecommerce_category"."code...
+                                          ^
+
+[2026-01-26 03:14:14,963] ERROR django.request:253 :: Internal Server Error: /admin/ecommerce/category/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.GroupingError: column "ecommerce_category.code" must appear in the GROUP BY clause or be used in an aggregate function
+LINE 1: SELECT "ecommerce_category"."id", "ecommerce_category"."code...
+                                          ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 719, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/sites.py", line 246, in inner
+    return view(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 2144, in changelist_view
+    media = self.media + formset.media
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/formsets.py", line 521, in media
+    if self.forms:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/formsets.py", line 207, in forms
+    for i in range(self.total_form_count())
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/formsets.py", line 182, in total_form_count
+    initial_forms = self.initial_form_count()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/models.py", line 697, in initial_form_count
+    return len(self.get_queryset())
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/managers.py", line 42, in _fetch_all
+    super()._fetch_all()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1949, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.ProgrammingError: column "ecommerce_category.code" must appear in the GROUP BY clause or be used in an aggregate function
+LINE 1: SELECT "ecommerce_category"."id", "ecommerce_category"."code...
+                                          ^
+
+[2026-01-26 03:16:14,873] ERROR django.request:253 :: Internal Server Error: /admin/ecommerce/orderitem/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.UndefinedColumn: column ecommerce_product.vendor_id does not exist
+LINE 1: ...product"."id", "ecommerce_product"."category_id", "ecommerce...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 719, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/sites.py", line 246, in inner
+    return view(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 2163, in changelist_view
+    "selection_note": _("0 of %(cnt)s selected") % {"cnt": len(cl.result_list)},
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1949, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.ProgrammingError: column ecommerce_product.vendor_id does not exist
+LINE 1: ...product"."id", "ecommerce_product"."category_id", "ecommerce...
+                                                             ^
+
+[2026-01-26 03:16:27,316] ERROR django.request:253 :: Internal Server Error: /admin/ecommerce/orderitem/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.UndefinedColumn: column ecommerce_product.vendor_id does not exist
+LINE 1: ...product"."id", "ecommerce_product"."category_id", "ecommerce...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 719, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/sites.py", line 246, in inner
+    return view(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 2163, in changelist_view
+    "selection_note": _("0 of %(cnt)s selected") % {"cnt": len(cl.result_list)},
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1949, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.ProgrammingError: column ecommerce_product.vendor_id does not exist
+LINE 1: ...product"."id", "ecommerce_product"."category_id", "ecommerce...
+                                                             ^
+
+[2026-01-26 03:16:30,346] ERROR django.request:253 :: Internal Server Error: /admin/ecommerce/cartitem/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.UndefinedColumn: column ecommerce_product.vendor_id does not exist
+LINE 1: ...product"."id", "ecommerce_product"."category_id", "ecommerce...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 719, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/sites.py", line 246, in inner
+    return view(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 2163, in changelist_view
+    "selection_note": _("0 of %(cnt)s selected") % {"cnt": len(cl.result_list)},
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1949, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.ProgrammingError: column ecommerce_product.vendor_id does not exist
+LINE 1: ...product"."id", "ecommerce_product"."category_id", "ecommerce...
+                                                             ^
+
+[2026-01-26 03:16:33,442] ERROR django.request:253 :: Internal Server Error: /admin/ecommerce/review/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.UndefinedColumn: column ecommerce_product.vendor_id does not exist
+LINE 1: ...product"."id", "ecommerce_product"."category_id", "ecommerce...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 719, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/sites.py", line 246, in inner
+    return view(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 2163, in changelist_view
+    "selection_note": _("0 of %(cnt)s selected") % {"cnt": len(cl.result_list)},
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1949, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.ProgrammingError: column ecommerce_product.vendor_id does not exist
+LINE 1: ...product"."id", "ecommerce_product"."category_id", "ecommerce...
+                                                             ^
+
+[2026-01-26 03:17:00,998] ERROR django.request:253 :: Internal Server Error: /admin/ecommerce/productimage/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.UndefinedColumn: column ecommerce_product.vendor_id does not exist
+LINE 1: ...ory"."id") LEFT OUTER JOIN "ecommerce_vendor" ON ("ecommerce...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 719, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/sites.py", line 246, in inner
+    return view(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 2144, in changelist_view
+    media = self.media + formset.media
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/formsets.py", line 521, in media
+    if self.forms:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/formsets.py", line 207, in forms
+    for i in range(self.total_form_count())
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/formsets.py", line 182, in total_form_count
+    initial_forms = self.initial_form_count()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/models.py", line 697, in initial_form_count
+    return len(self.get_queryset())
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1949, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.ProgrammingError: column ecommerce_product.vendor_id does not exist
+LINE 1: ...ory"."id") LEFT OUTER JOIN "ecommerce_vendor" ON ("ecommerce...
+                                                             ^
+
+[2026-01-26 03:17:16,477] ERROR django.request:253 :: Internal Server Error: /admin/ecommerce/orderitem/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.UndefinedColumn: column ecommerce_product.vendor_id does not exist
+LINE 1: ...product"."id", "ecommerce_product"."category_id", "ecommerce...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 719, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/sites.py", line 246, in inner
+    return view(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 2163, in changelist_view
+    "selection_note": _("0 of %(cnt)s selected") % {"cnt": len(cl.result_list)},
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1949, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.ProgrammingError: column ecommerce_product.vendor_id does not exist
+LINE 1: ...product"."id", "ecommerce_product"."category_id", "ecommerce...
+                                                             ^
+
+[2026-01-26 03:17:19,752] ERROR django.request:253 :: Internal Server Error: /admin/ecommerce/bulkprice/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.UndefinedColumn: column ecommerce_product.vendor_id does not exist
+LINE 1: ...product"."id", "ecommerce_product"."category_id", "ecommerce...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 719, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/sites.py", line 246, in inner
+    return view(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 2163, in changelist_view
+    "selection_note": _("0 of %(cnt)s selected") % {"cnt": len(cl.result_list)},
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1949, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.ProgrammingError: column ecommerce_product.vendor_id does not exist
+LINE 1: ...product"."id", "ecommerce_product"."category_id", "ecommerce...
+                                                             ^
+
+[2026-01-26 03:17:36,656] ERROR django.request:253 :: Internal Server Error: /admin/ecommerce/wishlistitem/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.UndefinedColumn: column ecommerce_product.vendor_id does not exist
+LINE 1: ...product"."id", "ecommerce_product"."category_id", "ecommerce...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 719, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/sites.py", line 246, in inner
+    return view(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 2163, in changelist_view
+    "selection_note": _("0 of %(cnt)s selected") % {"cnt": len(cl.result_list)},
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1949, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.ProgrammingError: column ecommerce_product.vendor_id does not exist
+LINE 1: ...product"."id", "ecommerce_product"."category_id", "ecommerce...
+                                                             ^
+
+[2026-01-26 03:18:47,521] ERROR django.request:253 :: Internal Server Error: /admin/ecommerce/wishlistitem/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.UndefinedColumn: column ecommerce_product.vendor_id does not exist
+LINE 1: ...product"."id", "ecommerce_product"."category_id", "ecommerce...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 719, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/sites.py", line 246, in inner
+    return view(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 2163, in changelist_view
+    "selection_note": _("0 of %(cnt)s selected") % {"cnt": len(cl.result_list)},
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1949, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.ProgrammingError: column ecommerce_product.vendor_id does not exist
+LINE 1: ...product"."id", "ecommerce_product"."category_id", "ecommerce...
+                                                             ^
+
+[2026-01-26 03:21:18,866] ERROR django.request:253 :: Internal Server Error: /admin/ecommerce/cartitem/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.UndefinedColumn: column ecommerce_product.vendor_id does not exist
+LINE 1: ...product"."id", "ecommerce_product"."category_id", "ecommerce...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 719, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/sites.py", line 246, in inner
+    return view(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 2163, in changelist_view
+    "selection_note": _("0 of %(cnt)s selected") % {"cnt": len(cl.result_list)},
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1949, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.ProgrammingError: column ecommerce_product.vendor_id does not exist
+LINE 1: ...product"."id", "ecommerce_product"."category_id", "ecommerce...
+                                                             ^
+
+[2026-01-26 03:22:47,364] ERROR django.request:253 :: Internal Server Error: /admin/ecommerce/cartitem/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.UndefinedColumn: column ecommerce_product.vendor_id does not exist
+LINE 1: ...product"."id", "ecommerce_product"."category_id", "ecommerce...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 719, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/sites.py", line 246, in inner
+    return view(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 2163, in changelist_view
+    "selection_note": _("0 of %(cnt)s selected") % {"cnt": len(cl.result_list)},
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1949, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.ProgrammingError: column ecommerce_product.vendor_id does not exist
+LINE 1: ...product"."id", "ecommerce_product"."category_id", "ecommerce...
+                                                             ^
+
+[2026-01-26 03:22:52,053] ERROR django.request:253 :: Internal Server Error: /admin/ecommerce/review/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.UndefinedColumn: column ecommerce_product.vendor_id does not exist
+LINE 1: ...product"."id", "ecommerce_product"."category_id", "ecommerce...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 719, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/sites.py", line 246, in inner
+    return view(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 2163, in changelist_view
+    "selection_note": _("0 of %(cnt)s selected") % {"cnt": len(cl.result_list)},
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1949, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.ProgrammingError: column ecommerce_product.vendor_id does not exist
+LINE 1: ...product"."id", "ecommerce_product"."category_id", "ecommerce...
+                                                             ^
+
+[2026-01-26 03:22:56,028] ERROR django.request:253 :: Internal Server Error: /admin/ecommerce/category/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.GroupingError: column "ecommerce_category.code" must appear in the GROUP BY clause or be used in an aggregate function
+LINE 1: SELECT "ecommerce_category"."id", "ecommerce_category"."code...
+                                          ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 719, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/sites.py", line 246, in inner
+    return view(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 2144, in changelist_view
+    media = self.media + formset.media
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/formsets.py", line 521, in media
+    if self.forms:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/formsets.py", line 207, in forms
+    for i in range(self.total_form_count())
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/formsets.py", line 182, in total_form_count
+    initial_forms = self.initial_form_count()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/models.py", line 697, in initial_form_count
+    return len(self.get_queryset())
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/managers.py", line 42, in _fetch_all
+    super()._fetch_all()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1949, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.ProgrammingError: column "ecommerce_category.code" must appear in the GROUP BY clause or be used in an aggregate function
+LINE 1: SELECT "ecommerce_category"."id", "ecommerce_category"."code...
+                                          ^
+
+[2026-01-26 03:23:40,359] ERROR django.request:253 :: Internal Server Error: /admin/ecommerce/favorite/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.UndefinedColumn: column ecommerce_product.vendor_id does not exist
+LINE 1: ...ory"."id") LEFT OUTER JOIN "ecommerce_vendor" ON ("ecommerce...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 719, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/sites.py", line 246, in inner
+    return view(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 2163, in changelist_view
+    "selection_note": _("0 of %(cnt)s selected") % {"cnt": len(cl.result_list)},
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1949, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.ProgrammingError: column ecommerce_product.vendor_id does not exist
+LINE 1: ...ory"."id") LEFT OUTER JOIN "ecommerce_vendor" ON ("ecommerce...
+                                                             ^
+
+[2026-01-26 03:23:44,829] ERROR django.request:253 :: Internal Server Error: /admin/ecommerce/productimage/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.UndefinedColumn: column ecommerce_product.vendor_id does not exist
+LINE 1: ...ory"."id") LEFT OUTER JOIN "ecommerce_vendor" ON ("ecommerce...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 719, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/sites.py", line 246, in inner
+    return view(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 2144, in changelist_view
+    media = self.media + formset.media
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/formsets.py", line 521, in media
+    if self.forms:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/formsets.py", line 207, in forms
+    for i in range(self.total_form_count())
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/formsets.py", line 182, in total_form_count
+    initial_forms = self.initial_form_count()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/models.py", line 697, in initial_form_count
+    return len(self.get_queryset())
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1949, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.ProgrammingError: column ecommerce_product.vendor_id does not exist
+LINE 1: ...ory"."id") LEFT OUTER JOIN "ecommerce_vendor" ON ("ecommerce...
+                                                             ^
+
+[2026-01-26 03:24:31,754] ERROR django.request:253 :: Internal Server Error: /admin/ecommerce/bulkprice/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.UndefinedColumn: column ecommerce_product.vendor_id does not exist
+LINE 1: ...product"."id", "ecommerce_product"."category_id", "ecommerce...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 719, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/sites.py", line 246, in inner
+    return view(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 2163, in changelist_view
+    "selection_note": _("0 of %(cnt)s selected") % {"cnt": len(cl.result_list)},
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1949, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.ProgrammingError: column ecommerce_product.vendor_id does not exist
+LINE 1: ...product"."id", "ecommerce_product"."category_id", "ecommerce...
+                                                             ^
+
+[2026-01-26 03:24:39,046] ERROR django.request:253 :: Internal Server Error: /admin/ecommerce/bulkprice/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.UndefinedColumn: column ecommerce_product.vendor_id does not exist
+LINE 1: ...product"."id", "ecommerce_product"."category_id", "ecommerce...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 719, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/sites.py", line 246, in inner
+    return view(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 2163, in changelist_view
+    "selection_note": _("0 of %(cnt)s selected") % {"cnt": len(cl.result_list)},
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1949, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.ProgrammingError: column ecommerce_product.vendor_id does not exist
+LINE 1: ...product"."id", "ecommerce_product"."category_id", "ecommerce...
+                                                             ^
+
+[2026-01-26 03:24:43,860] ERROR django.request:253 :: Internal Server Error: /admin/ecommerce/bulkprice/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.UndefinedColumn: column ecommerce_product.vendor_id does not exist
+LINE 1: ...product"."id", "ecommerce_product"."category_id", "ecommerce...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 719, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/sites.py", line 246, in inner
+    return view(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 2163, in changelist_view
+    "selection_note": _("0 of %(cnt)s selected") % {"cnt": len(cl.result_list)},
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1949, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.ProgrammingError: column ecommerce_product.vendor_id does not exist
+LINE 1: ...product"."id", "ecommerce_product"."category_id", "ecommerce...
+                                                             ^
+
+[2026-01-26 03:24:47,401] ERROR django.request:253 :: Internal Server Error: /admin/ecommerce/product/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.UndefinedColumn: column ecommerce_product.vendor_id does not exist
+LINE 1: ...ory"."id") LEFT OUTER JOIN "ecommerce_vendor" ON ("ecommerce...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 719, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/sites.py", line 246, in inner
+    return view(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 2144, in changelist_view
+    media = self.media + formset.media
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/formsets.py", line 521, in media
+    if self.forms:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/formsets.py", line 207, in forms
+    for i in range(self.total_form_count())
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/formsets.py", line 182, in total_form_count
+    initial_forms = self.initial_form_count()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/models.py", line 697, in initial_form_count
+    return len(self.get_queryset())
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/parler/managers.py", line 42, in _fetch_all
+    super()._fetch_all()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1949, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.ProgrammingError: column ecommerce_product.vendor_id does not exist
+LINE 1: ...ory"."id") LEFT OUTER JOIN "ecommerce_vendor" ON ("ecommerce...
+                                                             ^
+
+[2026-01-26 03:25:15,619] ERROR django.request:253 :: Internal Server Error: /admin/ecommerce/productpricing/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.UndefinedColumn: column ecommerce_product.vendor_id does not exist
+LINE 1: ...product"."id", "ecommerce_product"."category_id", "ecommerce...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 719, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/sites.py", line 246, in inner
+    return view(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 2144, in changelist_view
+    media = self.media + formset.media
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/formsets.py", line 521, in media
+    if self.forms:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/formsets.py", line 207, in forms
+    for i in range(self.total_form_count())
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/formsets.py", line 182, in total_form_count
+    initial_forms = self.initial_form_count()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/models.py", line 697, in initial_form_count
+    return len(self.get_queryset())
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1949, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.ProgrammingError: column ecommerce_product.vendor_id does not exist
+LINE 1: ...product"."id", "ecommerce_product"."category_id", "ecommerce...
+                                                             ^
+
+[2026-01-26 03:25:20,698] ERROR django.request:253 :: Internal Server Error: /admin/ecommerce/paymenttransaction/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.UndefinedColumn: column ecommerce_paymenttransaction.uuid does not exist
+LINE 1: SELECT "ecommerce_paymenttransaction"."id", "ecommerce_payme...
+                                                    ^
+HINT:  Perhaps you meant to reference the column "ecommerce_paymenttransaction.id".
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 719, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/sites.py", line 246, in inner
+    return view(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 2163, in changelist_view
+    "selection_note": _("0 of %(cnt)s selected") % {"cnt": len(cl.result_list)},
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1949, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.ProgrammingError: column ecommerce_paymenttransaction.uuid does not exist
+LINE 1: SELECT "ecommerce_paymenttransaction"."id", "ecommerce_payme...
+                                                    ^
+HINT:  Perhaps you meant to reference the column "ecommerce_paymenttransaction.id".
+
+[2026-01-26 03:25:45,326] ERROR django.request:253 :: Internal Server Error: /admin/ecommerce/wishlistitem/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.UndefinedColumn: column ecommerce_product.vendor_id does not exist
+LINE 1: ...product"."id", "ecommerce_product"."category_id", "ecommerce...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 719, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/sites.py", line 246, in inner
+    return view(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 2163, in changelist_view
+    "selection_note": _("0 of %(cnt)s selected") % {"cnt": len(cl.result_list)},
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1949, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.ProgrammingError: column ecommerce_product.vendor_id does not exist
+LINE 1: ...product"."id", "ecommerce_product"."category_id", "ecommerce...
+                                                             ^
+
+[2026-01-26 03:25:54,984] ERROR django.request:253 :: Internal Server Error: /admin/ecommerce/wishlistitem/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.UndefinedColumn: column ecommerce_product.vendor_id does not exist
+LINE 1: ...product"."id", "ecommerce_product"."category_id", "ecommerce...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 719, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/sites.py", line 246, in inner
+    return view(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 2163, in changelist_view
+    "selection_note": _("0 of %(cnt)s selected") % {"cnt": len(cl.result_list)},
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1949, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.ProgrammingError: column ecommerce_product.vendor_id does not exist
+LINE 1: ...product"."id", "ecommerce_product"."category_id", "ecommerce...
+                                                             ^
+
+[2026-01-26 03:36:15,537] ERROR django.request:253 :: Internal Server Error: /admin/ecommerce/orderitem/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.UndefinedColumn: column ecommerce_product.vendor_id does not exist
+LINE 1: ...product"."id", "ecommerce_product"."category_id", "ecommerce...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 719, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/sites.py", line 246, in inner
+    return view(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 2163, in changelist_view
+    "selection_note": _("0 of %(cnt)s selected") % {"cnt": len(cl.result_list)},
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1949, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.ProgrammingError: column ecommerce_product.vendor_id does not exist
+LINE 1: ...product"."id", "ecommerce_product"."category_id", "ecommerce...
+                                                             ^
+
+[2026-01-26 03:36:21,703] ERROR django.request:253 :: Internal Server Error: /admin/ecommerce/orderitem/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.UndefinedColumn: column ecommerce_product.vendor_id does not exist
+LINE 1: ...product"."id", "ecommerce_product"."category_id", "ecommerce...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 719, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/sites.py", line 246, in inner
+    return view(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 2163, in changelist_view
+    "selection_note": _("0 of %(cnt)s selected") % {"cnt": len(cl.result_list)},
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1949, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.ProgrammingError: column ecommerce_product.vendor_id does not exist
+LINE 1: ...product"."id", "ecommerce_product"."category_id", "ecommerce...
+                                                             ^
+
+[2026-01-26 03:36:35,504] ERROR django.request:253 :: Internal Server Error: /admin/ecommerce/favorite/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.UndefinedColumn: column ecommerce_product.vendor_id does not exist
+LINE 1: ...ory"."id") LEFT OUTER JOIN "ecommerce_vendor" ON ("ecommerce...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 719, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/sites.py", line 246, in inner
+    return view(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 2163, in changelist_view
+    "selection_note": _("0 of %(cnt)s selected") % {"cnt": len(cl.result_list)},
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1949, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.ProgrammingError: column ecommerce_product.vendor_id does not exist
+LINE 1: ...ory"."id") LEFT OUTER JOIN "ecommerce_vendor" ON ("ecommerce...
+                                                             ^
+
+[2026-01-26 03:36:52,456] ERROR django.request:253 :: Internal Server Error: /admin/ecommerce/productimage/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.UndefinedColumn: column ecommerce_product.vendor_id does not exist
+LINE 1: ...ory"."id") LEFT OUTER JOIN "ecommerce_vendor" ON ("ecommerce...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 719, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/sites.py", line 246, in inner
+    return view(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 2144, in changelist_view
+    media = self.media + formset.media
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/formsets.py", line 521, in media
+    if self.forms:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/formsets.py", line 207, in forms
+    for i in range(self.total_form_count())
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/formsets.py", line 182, in total_form_count
+    initial_forms = self.initial_form_count()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/models.py", line 697, in initial_form_count
+    return len(self.get_queryset())
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1949, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.ProgrammingError: column ecommerce_product.vendor_id does not exist
+LINE 1: ...ory"."id") LEFT OUTER JOIN "ecommerce_vendor" ON ("ecommerce...
+                                                             ^
+
+[2026-01-26 03:36:59,618] ERROR django.request:253 :: Internal Server Error: /admin/ecommerce/productpricing/
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.UndefinedColumn: column ecommerce_product.vendor_id does not exist
+LINE 1: ...product"."id", "ecommerce_product"."category_id", "ecommerce...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 719, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/sites.py", line 246, in inner
+    return view(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/contrib/admin/options.py", line 2144, in changelist_view
+    media = self.media + formset.media
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/formsets.py", line 521, in media
+    if self.forms:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/formsets.py", line 207, in forms
+    for i in range(self.total_form_count())
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/formsets.py", line 182, in total_form_count
+    initial_forms = self.initial_form_count()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/forms/models.py", line 697, in initial_form_count
+    return len(self.get_queryset())
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1949, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/ubuntu/SOGENTIS/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.ProgrammingError: column ecommerce_product.vendor_id does not exist
+LINE 1: ...product"."id", "ecommerce_product"."category_id", "ecommerce...
+                                                             ^
+
