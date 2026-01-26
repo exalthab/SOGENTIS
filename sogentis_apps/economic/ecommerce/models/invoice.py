@@ -14,6 +14,7 @@ from .order import Order
 
 
 D0 = Decimal("0.00")
+Q = models.Q
 
 
 class Invoice(models.Model):
@@ -24,18 +25,19 @@ class Invoice(models.Model):
         verbose_name=_("UUID"),
     )
 
-    # ✅ Numéro facture lisible (compta/support)
+    # ✅ Numéro facture lisible
+    # IMPORTANT PROD:
+    # - nullable pour compat legacy
+    # - unicité via UniqueConstraint conditionnel (évite clash sur "" / NULL)
     invoice_number = models.CharField(
         max_length=24,
+        null=True,
         blank=True,
-        unique=True,
         db_index=True,
         verbose_name=_("Numéro de facture"),
         help_text=_("Auto-généré. Ex: INV-20260124-0001"),
     )
 
-    # ✅ Recommandé en prod: ne pas supprimer une facture par cascade
-    # (si tu veux absolument CASCADE, remets-le, mais PROTECT protège mieux ta compta)
     order = models.OneToOneField(
         Order,
         on_delete=models.PROTECT,
@@ -87,7 +89,7 @@ class Invoice(models.Model):
         max_length=64,
         blank=True,
         verbose_name=_("Checksum"),
-        help_text=_("Optionnel: hash du PDF pour traçabilité."),
+        help_text=_("SHA256 du PDF pour traçabilité."),
     )
 
     issued_at = models.DateTimeField(null=True, blank=True, verbose_name=_("Émise le"))
@@ -106,7 +108,12 @@ class Invoice(models.Model):
             models.Index(fields=["order"]),
         ]
         constraints = [
-            models.CheckConstraint(check=models.Q(amount__gte=0), name="chk_invoice_amount_gte_0"),
+            models.CheckConstraint(condition=Q(amount__gte=0), name="chk_invoice_amount_gte_0"),
+            models.UniqueConstraint(
+                fields=["invoice_number"],
+                condition=Q(invoice_number__isnull=False) & ~Q(invoice_number=""),
+                name="uniq_invoice_number_not_empty",
+            ),
         ]
 
     def __str__(self):
@@ -116,6 +123,13 @@ class Invoice(models.Model):
     # Utils
     # -------------------------
     @staticmethod
+    def _to_dec(val) -> Decimal:
+        try:
+            return Decimal(val)
+        except Exception:
+            return D0
+
+    @staticmethod
     def _q2(val) -> Decimal:
         try:
             return Decimal(val).quantize(Decimal("0.01"))
@@ -123,14 +137,22 @@ class Invoice(models.Model):
             return D0
 
     @staticmethod
+    def _norm_upper(s: str | None) -> str:
+        return (s or "").strip().upper()
+
+    @staticmethod
+    def _norm_str(s: str | None) -> str | None:
+        if s is None:
+            return None
+        s = " ".join(str(s).strip().split())
+        return s if s else None
+
+    @staticmethod
     def _generate_invoice_prefix() -> str:
         today = timezone.now().strftime("%Y%m%d")
         return f"INV-{today}-"
 
     def _compute_checksum_sha256(self) -> str:
-        """
-        Calcule sha256 du fichier PDF (si présent).
-        """
         if not self.file:
             return ""
         try:
@@ -138,14 +160,14 @@ class Invoice(models.Model):
             self.file.open("rb")
             for chunk in self.file.chunks(1024 * 1024):
                 h.update(chunk)
-            self.file.close()
             return h.hexdigest()
         except Exception:
+            return ""
+        finally:
             try:
                 self.file.close()
             except Exception:
                 pass
-            return ""
 
     # -------------------------
     # Validation / normalisation
@@ -153,99 +175,107 @@ class Invoice(models.Model):
     def clean(self):
         super().clean()
 
-        if self.currency:
-            self.currency = self.currency.strip().upper()
+        # normalize
+        self.currency = self._norm_upper(self.currency) or "XOF"
+        self.invoice_number = self._norm_str(self.invoice_number)
+        if self.invoice_number == "":
+            self.invoice_number = None
 
+        # money
         if self.amount is None:
             self.amount = D0
+        self.amount = self._q2(self._to_dec(self.amount))
         if self.amount < 0:
             raise ValidationError({"amount": _("Le montant ne peut pas être négatif.")})
-
-        self.amount = self._q2(self.amount)
 
         # snapshots depuis Order (si dispo)
         if self.order_id:
             try:
-                if (self.amount == D0) and getattr(self.order, "total_amount", None) is not None:
-                    self.amount = self._q2(self.order.total_amount)
+                oc = getattr(self.order, "currency", None)
+                if oc:
+                    self.currency = self._norm_upper(oc) or self.currency
             except Exception:
                 pass
             try:
-                if getattr(self.order, "currency", None):
-                    self.currency = (self.order.currency or "XOF").strip().upper()
+                ot = getattr(self.order, "total_amount", None)
+                if (self.amount == D0) and (ot is not None):
+                    self.amount = self._q2(self._to_dec(ot))
             except Exception:
                 pass
 
         # cohérence status ↔ timestamps
+        now_ts = timezone.now()
         if self.status == self.STATUS_ISSUED:
             if self.issued_at is None:
-                self.issued_at = timezone.now()
+                self.issued_at = now_ts
             self.voided_at = None
         elif self.status == self.STATUS_VOID:
             if self.voided_at is None:
-                self.voided_at = timezone.now()
+                self.voided_at = now_ts
         else:
-            # draft: on ne force rien
-            pass
+            # draft
+            self.issued_at = None
+            self.voided_at = None
 
         if self.checksum:
-            self.checksum = self.checksum.strip()
+            self.checksum = (self.checksum or "").strip()
 
     # -------------------------
-    # Save (anti-collision)
+    # Generation invoice_number (atomic)
     # -------------------------
+    @classmethod
+    def _next_invoice_number(cls) -> str:
+        base = cls._generate_invoice_prefix()
+        last = (
+            cls.objects.select_for_update()
+            .filter(invoice_number__startswith=base)
+            .order_by("-invoice_number")
+            .values_list("invoice_number", flat=True)
+            .first()
+        )
+        last_n = 0
+        if last:
+            try:
+                last_n = int(str(last).split("-")[-1])
+            except Exception:
+                last_n = 0
+        return f"{base}{(last_n + 1):04d}"
+
     def save(self, *args, **kwargs):
-        # normalise vite
-        if self.currency:
-            self.currency = self.currency.strip().upper()
-        self.amount = self._q2(self.amount if self.amount is not None else D0)
+        # normalize quick
+        self.currency = self._norm_upper(self.currency) or "XOF"
+        self.invoice_number = self._norm_str(self.invoice_number)
+        self.amount = self._q2(self._to_dec(self.amount if self.amount is not None else D0))
 
-        # cohérence status timestamps (même hors admin)
+        # status timestamps
+        now_ts = timezone.now()
         if self.status == self.STATUS_ISSUED and self.issued_at is None:
-            self.issued_at = timezone.now()
+            self.issued_at = now_ts
             self.voided_at = None
         if self.status == self.STATUS_VOID and self.voided_at is None:
-            self.voided_at = timezone.now()
+            self.voided_at = now_ts
 
-        # sécurité
+        # validate
         self.full_clean()
 
-        # génération robuste invoice_number (retry sur collisions)
+        # génération robuste invoice_number (retry collisions)
         for _ in range(5):
             try:
                 with transaction.atomic():
                     if not self.invoice_number:
-                        base = self._generate_invoice_prefix()
-
-                        last = (
-                            Invoice.objects.select_for_update()
-                            .filter(invoice_number__startswith=base)
-                            .order_by("-invoice_number")
-                            .values_list("invoice_number", flat=True)
-                            .first()
-                        )
-                        last_n = 0
-                        if last:
-                            try:
-                                last_n = int(last.split("-")[-1])
-                            except Exception:
-                                last_n = 0
-
-                        self.invoice_number = f"{base}{(last_n + 1):04d}"
-
+                        self.invoice_number = self._next_invoice_number()
                     super().save(*args, **kwargs)
                 break
             except IntegrityError:
-                # collision rare (concurrence) → retry
-                self.invoice_number = ""
+                self.invoice_number = None
                 continue
 
         # checksum auto si PDF présent et checksum vide
         if self.file and not self.checksum:
             digest = self._compute_checksum_sha256()
             if digest:
+                type(self).objects.filter(pk=self.pk).update(checksum=digest, updated_at=timezone.now())
                 self.checksum = digest
-                super().save(update_fields=["checksum", "updated_at"])
 
     # -------------------------
     # Helpers métier
@@ -264,6 +294,280 @@ class Invoice(models.Model):
         self.status = self.STATUS_VOID
         self.voided_at = timezone.now()
         self.save(update_fields=["status", "voided_at", "updated_at"])
+
+
+
+
+
+
+
+
+# # economic/ecommerce/models/invoice.py
+# from __future__ import annotations
+
+# import hashlib
+# import uuid
+# from decimal import Decimal
+
+# from django.core.exceptions import ValidationError
+# from django.db import IntegrityError, models, transaction
+# from django.utils import timezone
+# from django.utils.translation import gettext_lazy as _
+
+# from .order import Order
+
+
+# D0 = Decimal("0.00")
+
+
+# class Invoice(models.Model):
+#     uuid = models.UUIDField(
+#         default=uuid.uuid4,
+#         editable=False,
+#         unique=True,
+#         verbose_name=_("UUID"),
+#     )
+
+#     # ✅ Numéro facture lisible (compta/support)
+#     invoice_number = models.CharField(
+#         max_length=24,
+#         blank=True,
+#         unique=True,
+#         db_index=True,
+#         verbose_name=_("Numéro de facture"),
+#         help_text=_("Auto-généré. Ex: INV-20260124-0001"),
+#     )
+
+#     # ✅ Recommandé en prod: ne pas supprimer une facture par cascade
+#     # (si tu veux absolument CASCADE, remets-le, mais PROTECT protège mieux ta compta)
+#     order = models.OneToOneField(
+#         Order,
+#         on_delete=models.PROTECT,
+#         related_name="invoice",
+#         verbose_name=_("Commande"),
+#     )
+
+#     amount = models.DecimalField(
+#         max_digits=12,
+#         decimal_places=2,
+#         default=D0,
+#         verbose_name=_("Montant"),
+#     )
+
+#     currency = models.CharField(
+#         max_length=10,
+#         default="XOF",
+#         db_index=True,
+#         verbose_name=_("Devise"),
+#     )
+
+#     # ✅ Statut facture (prod)
+#     STATUS_DRAFT = "draft"
+#     STATUS_ISSUED = "issued"
+#     STATUS_VOID = "void"
+
+#     STATUS_CHOICES = [
+#         (STATUS_DRAFT, _("Brouillon")),
+#         (STATUS_ISSUED, _("Émise")),
+#         (STATUS_VOID, _("Annulée")),
+#     ]
+
+#     status = models.CharField(
+#         max_length=10,
+#         choices=STATUS_CHOICES,
+#         default=STATUS_DRAFT,
+#         db_index=True,
+#         verbose_name=_("Statut"),
+#     )
+
+#     file = models.FileField(
+#         upload_to="invoices/%Y/%m/",
+#         verbose_name=_("Fichier PDF"),
+#         blank=True,
+#         null=True,
+#     )
+
+#     checksum = models.CharField(
+#         max_length=64,
+#         blank=True,
+#         verbose_name=_("Checksum"),
+#         help_text=_("Optionnel: hash du PDF pour traçabilité."),
+#     )
+
+#     issued_at = models.DateTimeField(null=True, blank=True, verbose_name=_("Émise le"))
+#     voided_at = models.DateTimeField(null=True, blank=True, verbose_name=_("Annulée le"))
+
+#     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Créée le"))
+#     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Mise à jour le"))
+
+#     class Meta:
+#         verbose_name = _("Facture")
+#         verbose_name_plural = _("Factures")
+#         ordering = ["-created_at"]
+#         indexes = [
+#             models.Index(fields=["invoice_number"]),
+#             models.Index(fields=["status", "created_at"]),
+#             models.Index(fields=["order"]),
+#         ]
+#         constraints = [
+#             models.CheckConstraint(check=models.Q(amount__gte=0), name="chk_invoice_amount_gte_0"),
+#         ]
+
+#     def __str__(self):
+#         return self.invoice_number or f"Facture {self.uuid}"
+
+#     # -------------------------
+#     # Utils
+#     # -------------------------
+#     @staticmethod
+#     def _q2(val) -> Decimal:
+#         try:
+#             return Decimal(val).quantize(Decimal("0.01"))
+#         except Exception:
+#             return D0
+
+#     @staticmethod
+#     def _generate_invoice_prefix() -> str:
+#         today = timezone.now().strftime("%Y%m%d")
+#         return f"INV-{today}-"
+
+#     def _compute_checksum_sha256(self) -> str:
+#         """
+#         Calcule sha256 du fichier PDF (si présent).
+#         """
+#         if not self.file:
+#             return ""
+#         try:
+#             h = hashlib.sha256()
+#             self.file.open("rb")
+#             for chunk in self.file.chunks(1024 * 1024):
+#                 h.update(chunk)
+#             self.file.close()
+#             return h.hexdigest()
+#         except Exception:
+#             try:
+#                 self.file.close()
+#             except Exception:
+#                 pass
+#             return ""
+
+#     # -------------------------
+#     # Validation / normalisation
+#     # -------------------------
+#     def clean(self):
+#         super().clean()
+
+#         if self.currency:
+#             self.currency = self.currency.strip().upper()
+
+#         if self.amount is None:
+#             self.amount = D0
+#         if self.amount < 0:
+#             raise ValidationError({"amount": _("Le montant ne peut pas être négatif.")})
+
+#         self.amount = self._q2(self.amount)
+
+#         # snapshots depuis Order (si dispo)
+#         if self.order_id:
+#             try:
+#                 if (self.amount == D0) and getattr(self.order, "total_amount", None) is not None:
+#                     self.amount = self._q2(self.order.total_amount)
+#             except Exception:
+#                 pass
+#             try:
+#                 if getattr(self.order, "currency", None):
+#                     self.currency = (self.order.currency or "XOF").strip().upper()
+#             except Exception:
+#                 pass
+
+#         # cohérence status ↔ timestamps
+#         if self.status == self.STATUS_ISSUED:
+#             if self.issued_at is None:
+#                 self.issued_at = timezone.now()
+#             self.voided_at = None
+#         elif self.status == self.STATUS_VOID:
+#             if self.voided_at is None:
+#                 self.voided_at = timezone.now()
+#         else:
+#             # draft: on ne force rien
+#             pass
+
+#         if self.checksum:
+#             self.checksum = self.checksum.strip()
+
+#     # -------------------------
+#     # Save (anti-collision)
+#     # -------------------------
+#     def save(self, *args, **kwargs):
+#         # normalise vite
+#         if self.currency:
+#             self.currency = self.currency.strip().upper()
+#         self.amount = self._q2(self.amount if self.amount is not None else D0)
+
+#         # cohérence status timestamps (même hors admin)
+#         if self.status == self.STATUS_ISSUED and self.issued_at is None:
+#             self.issued_at = timezone.now()
+#             self.voided_at = None
+#         if self.status == self.STATUS_VOID and self.voided_at is None:
+#             self.voided_at = timezone.now()
+
+#         # sécurité
+#         self.full_clean()
+
+#         # génération robuste invoice_number (retry sur collisions)
+#         for _ in range(5):
+#             try:
+#                 with transaction.atomic():
+#                     if not self.invoice_number:
+#                         base = self._generate_invoice_prefix()
+
+#                         last = (
+#                             Invoice.objects.select_for_update()
+#                             .filter(invoice_number__startswith=base)
+#                             .order_by("-invoice_number")
+#                             .values_list("invoice_number", flat=True)
+#                             .first()
+#                         )
+#                         last_n = 0
+#                         if last:
+#                             try:
+#                                 last_n = int(last.split("-")[-1])
+#                             except Exception:
+#                                 last_n = 0
+
+#                         self.invoice_number = f"{base}{(last_n + 1):04d}"
+
+#                     super().save(*args, **kwargs)
+#                 break
+#             except IntegrityError:
+#                 # collision rare (concurrence) → retry
+#                 self.invoice_number = ""
+#                 continue
+
+#         # checksum auto si PDF présent et checksum vide
+#         if self.file and not self.checksum:
+#             digest = self._compute_checksum_sha256()
+#             if digest:
+#                 self.checksum = digest
+#                 super().save(update_fields=["checksum", "updated_at"])
+
+#     # -------------------------
+#     # Helpers métier
+#     # -------------------------
+#     @property
+#     def is_issued(self) -> bool:
+#         return self.status == self.STATUS_ISSUED
+
+#     def mark_issued(self):
+#         self.status = self.STATUS_ISSUED
+#         self.issued_at = timezone.now()
+#         self.voided_at = None
+#         self.save(update_fields=["status", "issued_at", "voided_at", "updated_at"])
+
+#     def mark_void(self):
+#         self.status = self.STATUS_VOID
+#         self.voided_at = timezone.now()
+#         self.save(update_fields=["status", "voided_at", "updated_at"])
 
 
 
