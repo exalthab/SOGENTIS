@@ -1,0 +1,93 @@
+{# templates/economic/formations/partials/index/_faq.html #}
+{% load static i18n dashboard_tags ecom_money ecom_utils %}
+
+<section id="faq" class="container mt-5 mb-5">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="h5 fw-bold mb-0">{% trans "FAQs" %}</h2>
+    <a class="small text-decoration-none" href="#financing">
+      {% trans "Financements" %} →
+    </a>
+  </div>
+
+  <div class="accordion" id="ftFaq">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="ftFaq1">
+        <button class="accordion-button" type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#ftFaqCol1"
+                aria-expanded="true"
+                aria-controls="ftFaqCol1">
+          {% trans "Comment m’inscrire à une formation ?" %}
+        </button>
+      </h2>
+      <div id="ftFaqCol1"
+           class="accordion-collapse collapse show"
+           aria-labelledby="ftFaq1"
+           data-bs-parent="#ftFaq">
+        <div class="accordion-body">
+          {% trans "Choisissez une formation dans le catalogue, puis cliquez sur s’inscrire. Si vous n’avez pas de compte, créez-en un et revenez sur la formation." %}
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="ftFaq2">
+        <button class="accordion-button collapsed" type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#ftFaqCol2"
+                aria-expanded="false"
+                aria-controls="ftFaqCol2">
+          {% trans "Les formations sont-elles en ligne ou en présentiel ?" %}
+        </button>
+      </h2>
+      <div id="ftFaqCol2"
+           class="accordion-collapse collapse"
+           aria-labelledby="ftFaq2"
+           data-bs-parent="#ftFaq">
+        <div class="accordion-body">
+          {% trans "Nous proposons les deux : en ligne, présentiel, ou hybride selon la session et la cohorte." %}
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="ftFaq3">
+        <button class="accordion-button collapsed" type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#ftFaqCol3"
+                aria-expanded="false"
+                aria-controls="ftFaqCol3">
+          {% trans "Comment obtenir un certificat ?" %}
+        </button>
+      </h2>
+      <div id="ftFaqCol3"
+           class="accordion-collapse collapse"
+           aria-labelledby="ftFaq3"
+           data-bs-parent="#ftFaq">
+        <div class="accordion-body">
+          {% trans "Après complétion du parcours et validation des évaluations. Vos certificats sont accessibles dans votre espace apprenant." %}
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="ftFaq4">
+        <button class="accordion-button collapsed" type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#ftFaqCol4"
+                aria-expanded="false"
+                aria-controls="ftFaqCol4">
+          {% trans "Puis-je payer en plusieurs fois ?" %}
+        </button>
+      </h2>
+      <div id="ftFaqCol4"
+           class="accordion-collapse collapse"
+           aria-labelledby="ftFaq4"
+           data-bs-parent="#ftFaq">
+        <div class="accordion-body">
+          {% trans "Selon la formation et la cohorte, un paiement échelonné peut être proposé. Contactez-nous pour valider l’option." %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

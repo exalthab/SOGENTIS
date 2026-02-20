@@ -1,0 +1,31 @@
+{# templates/economic/formations/partials/index/_financing.html #}
+{% load static i18n dashboard_tags ecom_money ecom_utils %}
+
+<section id="financing" class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="h5 fw-bold mb-0">{% trans "Financements possibles" %}</h2>
+    <a class="small text-decoration-none" href="#recognized">{% trans "Certifications reconnues" %} →</a>
+  </div>
+
+  <div class="row g-3 g-md-4">
+    <div class="col-md-6 col-lg-4">
+      <div class="ft-card h-100">
+        <div class="fw-bold mb-1">{% trans "Auto-financement" %}</div>
+        <div class="small text-muted">{% trans "Paiement direct selon le programme et la formule." %}</div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+      <div class="ft-card h-100">
+        <div class="fw-bold mb-1">{% trans "Entreprise / ONG" %}</div>
+        <div class="small text-muted">{% trans "Sessions de groupe, cohorte, plan de formation, facture." %}</div>
+      </div>
+    </div>
+    <div class="col-md-12 col-lg-4">
+      <div class="ft-card h-100 ft-card-soft">
+        <div class="fw-bold mb-1">{% trans "Bourse / partenariat" %}</div>
+        <div class="small text-muted mb-3">{% trans "Selon programmes et disponibilités." %}</div>
+        <a class="btn btn-sm btn-outline-secondary w-100" href="{{ u_contact|default:'#' }}">{% trans "Demander des infos" %}</a>
+      </div>
+    </div>
+  </div>
+</section>

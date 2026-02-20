@@ -1,0 +1,19 @@
+{# templates/tech/labs/index.html #}
+{% extends "tech/base_tech.html" %}
+{% load i18n %}
+
+{% block tech_title %}{{ page_title|default:_("Labs") }}{% endblock %}
+
+{% block tech_content %}
+<div class="container py-4">
+  <h1 class="h4 mb-1">🧪 {% trans "Labs" %}</h1>
+  <div class="text-muted small mb-3">{% trans "Espace expérimentation isolé (POC) sans polluer les modules métier." %}</div>
+
+  <div class="card">
+    <div class="card-body">
+      <div class="fw-semibold">{% trans "Usage" %}</div>
+      <div class="text-muted small mt-1">{% trans "Tester, valider, puis migrer vers un module stable." %}</div>
+    </div>
+  </div>
+</div>
+{% endblock %}

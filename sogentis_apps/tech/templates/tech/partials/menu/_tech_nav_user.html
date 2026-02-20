@@ -1,0 +1,48 @@
+{# templates/tech/partials/menu/_tech_nav_user.html #}
+{% load i18n dashboard_tags %}
+
+{% safe_url "core:switch_language" as switch_language_url %}
+{% safe_url "accounts_users:web:auth:login" as login_url %}
+{% safe_url "accounts_users:web:auth:logout" as logout_url %}
+{% safe_url "dashboard:hub" as dashboard_url %}
+
+<ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+
+  {% if switch_language_url %}
+    <li class="nav-item dropdown">
+      <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        🌐 {% trans "Langue" %}
+      </a>
+      <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark">
+        <li>
+          <form action="{{ switch_language_url }}" method="post" class="px-3 py-2">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <button class="btn btn-sm btn-outline-light w-100 mb-2" name="language" value="fr" type="submit">FR</button>
+            <button class="btn btn-sm btn-outline-light w-100" name="language" value="en" type="submit">EN</button>
+          </form>
+        </li>
+      </ul>
+    </li>
+  {% endif %}
+
+  {% if request.user.is_authenticated %}
+    {% if dashboard_url %}
+      <li class="nav-item">
+        <a class="nav-link" href="{{ dashboard_url }}">🧑‍💼 {% trans "Dashboard" %}</a>
+      </li>
+    {% endif %}
+    {% if logout_url %}
+      <li class="nav-item">
+        <a class="nav-link" href="{{ logout_url }}">🚪 {% trans "Déconnexion" %}</a>
+      </li>
+    {% endif %}
+  {% else %}
+    {% if login_url %}
+      <li class="nav-item">
+        <a class="nav-link" href="{{ login_url }}">🔐 {% trans "Connexion" %}</a>
+      </li>
+    {% endif %}
+  {% endif %}
+
+</ul>

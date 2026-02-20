@@ -1,0 +1,20 @@
+{% load i18n %}
+<section class="text-center py-5 bg-primary text-white" id="participate">
+  <div class="container">
+    <h2 class="fw-bold display-5 cta-title">{% trans "Rejoignez notre mission" %}</h2>
+    <p class="lead cta-lead">{% trans "Devenez bénévole, partenaire ou mécène en cliquant sur je m'engage." %}</p>
+
+    <div class="d-flex flex-wrap justify-content-center gap-3 mt-4">
+      <a href="{% url 'accounts_users:web:auth:login' %}" class="btn btn-light btn-lg" target="_blank" rel="noopener noreferrer">
+        {% trans "Je m'engage" %}
+      </a>
+      <a href="{% url 'economic:index' %}" class="btn btn-warning btn-lg" target="_blank" rel="noopener noreferrer">
+        {% trans "J'achète pour soutenir" %}
+      </a>
+    </div>
+
+    <p class="mt-3 small cta-footnote">
+      {% trans "Achetez un article pour soutenir nos actions sociales et solidaires en cliquant sur j'achète." %}
+    </p>
+  </div>
+</section>

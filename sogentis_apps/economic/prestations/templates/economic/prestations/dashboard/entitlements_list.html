@@ -1,0 +1,54 @@
+{# templates/economic/prestations/dashboard/entitlements_list.html #}
+{% extends "economic/prestations/base_prestations.html" %}
+{% load i18n dashboard_tags %}
+
+{% block prestations_title %}{% trans "Entitlements" %}{% endblock %}
+
+{% block prestations_content %}
+  <div class="rounded-4 bg-body border p-3 p-lg-4">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+      <div>
+        <h1 class="h5 mb-1">{% trans "Entitlements" %}</h1>
+        <div class="text-muted small">{% trans "Vue interne (staff) — accès après paiement." %}</div>
+      </div>
+    </div>
+
+    {% if entitlements %}
+      <div class="table-responsive">
+        <table class="table align-middle">
+          <thead>
+            <tr class="text-muted small">
+              <th>{% trans "Utilisateur" %}</th>
+              <th>{% trans "Cible" %}</th>
+              <th>{% trans "Statut" %}</th>
+              <th>{% trans "Paiement" %}</th>
+              <th class="text-end">{% trans "Créé" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for e in entitlements %}
+              <tr>
+                <td class="fw-semibold">{{ e.user.email|default:e.user.username }}</td>
+                <td class="small">
+                  {% if e.prestation_plan %}PLAN: {{ e.prestation_plan }}
+                  {% elif e.package_offer %}OFFER: {{ e.package_offer }}
+                  {% elif e.prestation %}PRESTATION: {{ e.prestation }}
+                  {% elif e.package %}PACK: {{ e.package }}
+                  {% else %}—{% endif %}
+                </td>
+                <td><span class="badge text-bg-light border">{{ e.status }}</span></td>
+                <td class="small text-muted">
+                  {% if e.paid_amount %}{{ e.paid_amount }} {{ e.paid_currency }}{% else %}—{% endif %}
+                  {% if e.provider %}<div class="small text-muted">{{ e.provider }}</div>{% endif %}
+                </td>
+                <td class="text-end text-muted small">{{ e.created_at|date:"Y-m-d H:i" }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="text-muted">{% trans "Aucune donnée." %}</div>
+    {% endif %}
+  </div>
+{% endblock %}

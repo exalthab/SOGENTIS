@@ -1,0 +1,232 @@
+{# templates/tech/base_tech.html #}
+{% extends "base_public.html" %}
+{% load static i18n dashboard_tags %}
+
+{# ------------------------------------------------------------------
+   Base "Tech" transverse : UI propre + peut réutiliser tes partials
+   - Ne dépend PAS de economic/base_economic.html
+   - Menu Tech+ optionnel (safe_url)
+   - Hooks CSS/JS : tech_extra_css / tech_extra_js
+------------------------------------------------------------------- #}
+
+{% get_current_language as CUR_LANG %}
+{% get_current_language_bidi as CUR_BIDI %}
+
+<!doctype html>
+<html lang="{{ CUR_LANG|default:'fr' }}" {% if CUR_BIDI %}dir="rtl"{% endif %}>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>{% block tech_title %}{{ seo_title|default:page_title|default:_("Tech+") }}{% endblock %} | {{ PROJECT_NAME|default:"SOGENTIS" }}</title>
+
+  {% block tech_seo %}
+    {% if seo_description %}
+      <meta name="description" content="{{ seo_description }}">
+    {% endif %}
+    {% if seo_robots %}
+      <meta name="robots" content="{{ seo_robots }}">
+    {% endif %}
+  {% endblock %}
+
+  {# Bootstrap / base CSS de ton projet #}
+  {% block tech_base_css %}
+    {# adapte ces chemins à ton projet si besoin #}
+    {% safe_static "core/css/bootstrap.min.css" as bs_css %}
+    {% if bs_css %}<link rel="stylesheet" href="{{ bs_css }}">{% endif %}
+
+    {% safe_static "core/css/app.css" as app_css %}
+    {% if app_css %}<link rel="stylesheet" href="{{ app_css }}">{% endif %}
+  {% endblock %}
+
+  {% block tech_extra_css %}{% endblock %}
+</head>
+
+<body class="{% block body_class %}tech-layout{% endblock %}">
+
+  {# ==============================
+     NAVBAR TECH (compact & robuste)
+     ============================== #}
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom">
+    <div class="container-fluid px-3 px-lg-4">
+
+      {# Brand (fallback texte) #}
+      {% safe_url "economic:index" as economic_home_url %}
+      <a class="navbar-brand d-flex align-items-center gap-2" href="{{ economic_home_url|default:'/' }}">
+        {% safe_static "core/img/logo.svg" as brand_logo %}
+        {% if brand_logo %}
+          <img src="{{ brand_logo }}" alt="{{ PROJECT_NAME|default:'SOGENTIS' }}" height="26">
+        {% endif %}
+        <span class="fw-semibold">{{ PROJECT_NAME|default:"SOGENTIS" }}</span>
+        <span class="opacity-75 small ms-1">/ {% trans "Tech+" %}</span>
+      </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#techNavbar"
+              aria-controls="techNavbar" aria-expanded="false" aria-label="{% trans 'Menu' %}">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="techNavbar">
+
+        {# -------- Primary Tech nav -------- #}
+        {% with rm=request.resolver_match %}
+          {% with ns=rm.namespace|default:'' %}
+
+            {% safe_url "tech:integrations:index" as integrations_index_url %}
+            {% safe_url "tech:analytics:index" as analytics_index_url %}
+            {% safe_url "tech:ai:index" as ai_index_url %}
+            {% safe_url "tech:labs:index" as labs_index_url %}
+
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+              {% if integrations_index_url %}
+                <li class="nav-item">
+                  <a class="nav-link {% if request.resolver_match.namespaces|any_in_csv:'integrations' %}active{% endif %}"
+                     href="{{ integrations_index_url }}">
+                    🔌 {% trans "Intégrations" %}
+                  </a>
+                </li>
+              {% endif %}
+
+              {% if analytics_index_url %}
+                <li class="nav-item">
+                  <a class="nav-link {% if request.resolver_match.namespaces|any_in_csv:'analytics' %}active{% endif %}"
+                     href="{{ analytics_index_url }}">
+                    📈 {% trans "Analytics" %}
+                  </a>
+                </li>
+              {% endif %}
+
+              {% if ai_index_url %}
+                <li class="nav-item">
+                  <a class="nav-link {% if request.resolver_match.namespaces|any_in_csv:'ai' %}active{% endif %}"
+                     href="{{ ai_index_url }}">
+                    🤖 {% trans "AI" %}
+                  </a>
+                </li>
+              {% endif %}
+
+              {% if labs_index_url %}
+                <li class="nav-item">
+                  <a class="nav-link {% if request.resolver_match.namespaces|any_in_csv:'labs' %}active{% endif %}"
+                     href="{{ labs_index_url }}">
+                    🧪 {% trans "Labs" %}
+                  </a>
+                </li>
+              {% endif %}
+
+              {# Dropdown "Retour" vers modules métier si tu veux #}
+              {% safe_url "economic:index" as eco_index_url %}
+              {% safe_url "economic:ecommerce:index" as eco_shop_url %}
+              {% safe_url "economic:prestations:index" as eco_presta_url %}
+              {% safe_url "economic:formations:index" as eco_form_url %}
+
+              {% if eco_index_url or eco_shop_url or eco_presta_url or eco_form_url %}
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    🧭 {% trans "Accès métier" %}
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-dark">
+                    {% if eco_index_url %}<li><a class="dropdown-item" href="{{ eco_index_url }}">🏛️ {% trans "Pôle économique" %}</a></li>{% endif %}
+                    {% if eco_shop_url %}<li><a class="dropdown-item" href="{{ eco_shop_url }}">🛒 {% trans "Boutique" %}</a></li>{% endif %}
+                    {% if eco_presta_url %}<li><a class="dropdown-item" href="{{ eco_presta_url }}">🧰 {% trans "Prestations" %}</a></li>{% endif %}
+                    {% if eco_form_url %}<li><a class="dropdown-item" href="{{ eco_form_url }}">🎓 {% trans "Formations" %}</a></li>{% endif %}
+                  </ul>
+                </li>
+              {% endif %}
+
+            </ul>
+
+          {% endwith %}
+        {% endwith %}
+
+        {# -------- Right actions -------- #}
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+
+          {# Language switch (si dispo) #}
+          {% safe_url "core:switch_language" as switch_language_url %}
+          {% if switch_language_url %}
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                🌐 {% trans "Langue" %}
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark">
+                <li>
+                  <form action="{{ switch_language_url }}" method="post" class="px-3 py-2">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                    <button class="btn btn-sm btn-outline-light w-100 mb-2" name="language" value="fr" type="submit">FR</button>
+                    <button class="btn btn-sm btn-outline-light w-100" name="language" value="en" type="submit">EN</button>
+                  </form>
+                </li>
+              </ul>
+            </li>
+          {% endif %}
+
+          {# Auth (si dispo) #}
+          {% safe_url "accounts_users:web:auth:login" as login_url %}
+          {% safe_url "accounts_users:web:auth:logout" as logout_url %}
+          {% safe_url "dashboard:hub" as dashboard_url %}
+
+          {% if request.user.is_authenticated %}
+            {% if dashboard_url %}
+              <li class="nav-item">
+                <a class="nav-link" href="{{ dashboard_url }}">🧑‍💼 {% trans "Dashboard" %}</a>
+              </li>
+            {% endif %}
+            {% if logout_url %}
+              <li class="nav-item">
+                <a class="nav-link" href="{{ logout_url }}">🚪 {% trans "Déconnexion" %}</a>
+              </li>
+            {% endif %}
+          {% else %}
+            {% if login_url %}
+              <li class="nav-item">
+                <a class="nav-link" href="{{ login_url }}">🔐 {% trans "Connexion" %}</a>
+              </li>
+            {% endif %}
+          {% endif %}
+
+        </ul>
+
+      </div>
+    </div>
+  </nav>
+
+  {# ==============================
+     MAIN
+     ============================== #}
+  <main class="{% block tech_main_class %}py-3 py-lg-4{% endblock %}">
+    {% block tech_messages %}
+      {% if messages %}
+        <div class="container px-3 px-lg-4">
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'info' }} mb-2" role="alert">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endblock %}
+
+    {% block tech_content %}{% endblock %}
+  </main>
+
+  {# ==============================
+     FOOTER
+     ============================== #}
+  <footer class="border-top bg-dark text-light">
+    <div class="container px-3 px-lg-4 py-3 small d-flex flex-wrap gap-2 justify-content-between align-items-center">
+      <span class="opacity-75">© {{ PROJECT_NAME|default:"SOGENTIS" }} — {% trans "Tech+" %}</span>
+      <span class="opacity-75">{% trans "Console technique transverse" %}</span>
+    </div>
+  </footer>
+
+  {% block tech_base_js %}
+    {% safe_static "core/js/bootstrap.bundle.min.js" as bs_js %}
+    {% if bs_js %}<script src="{{ bs_js }}" defer></script>{% endif %}
+  {% endblock %}
+
+  {% block tech_extra_js %}{% endblock %}
+</body>
+</html>

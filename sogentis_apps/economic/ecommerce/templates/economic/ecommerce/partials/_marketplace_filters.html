@@ -7,6 +7,158 @@
     <div class="card-body">
       <h6 class="mk-filter-title">{% trans "Catégories" %}</h6>
 
+      {% with cur_slug=current_category.slug|default_if_none:"" %}
+        <ul class="list-unstyled mb-0 mk-cat-list">
+
+          <li>
+            <a class="{% if not request.GET.category and not cur_slug %}active{% endif %}"
+               href="?{% if request.GET.q %}q={{ request.GET.q|urlencode }}&{% endif %}{% if sort %}sort={{ sort }}&{% endif %}{% if badge %}badge={{ badge }}&{% endif %}{% if request.GET.price_max %}price_max={{ request.GET.price_max }}{% endif %}">
+              {% trans "Toutes" %}
+            </a>
+          </li>
+
+          {% for c in categories %}
+            {% with cslug=c.slug|default:c.pk cname=c.name|default:c.pk %}
+              <li>
+                <a class="{% if request.GET.category == cslug or cur_slug == cslug %}active{% endif %}"
+                   href="?{% if request.GET.q %}q={{ request.GET.q|urlencode }}&{% endif %}category={{ cslug }}{% if sort %}&sort={{ sort }}{% endif %}{% if badge %}&badge={{ badge }}{% endif %}{% if request.GET.price_max %}&price_max={{ request.GET.price_max }}{% endif %}">
+                  {{ cname }}
+                </a>
+              </li>
+            {% endwith %}
+          {% empty %}
+            <li class="text-muted small">{% trans "Aucune catégorie" %}</li>
+          {% endfor %}
+        </ul>
+      {% endwith %}
+    </div>
+  </div>
+
+  <div class="card mk-filter-card mb-3">
+    <div class="card-body">
+      <div class="d-flex align-items-center justify-content-between">
+        <h6 class="mk-filter-title mb-0">{% trans "Prix" %}</h6>
+        <span class="mk-price-badge">
+          ≤ <span data-mk-range-value>{{ request.GET.price_max|default:max_price|default:1000 }}</span>
+        </span>
+      </div>
+
+      <form method="get" class="mt-2">
+        {% if request.GET.q %}<input type="hidden" name="q" value="{{ request.GET.q }}">{% endif %}
+        {% if request.GET.category %}<input type="hidden" name="category" value="{{ request.GET.category }}">{% endif %}
+        {% if sort %}<input type="hidden" name="sort" value="{{ sort }}">{% endif %}
+        {% if badge %}<input type="hidden" name="badge" value="{{ badge }}">{% endif %}
+
+        <input type="range"
+               name="price_max"
+               class="form-range"
+               data-mk-range
+               min="0"
+               max="{{ max_price|default:1000 }}"
+               value="{{ request.GET.price_max|default:max_price|default:1000 }}">
+
+        <button class="btn btn-sm btn-outline-secondary w-100" type="submit">
+          {% trans "Appliquer" %}
+        </button>
+
+        {% if request.GET.price_max %}
+          <a class="btn btn-sm btn-link w-100 mt-1"
+             href="?{% if request.GET.q %}q={{ request.GET.q|urlencode }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}{% if sort %}sort={{ sort }}&{% endif %}{% if badge %}badge={{ badge }}{% endif %}">
+            {% trans "Réinitialiser" %}
+          </a>
+        {% endif %}
+      </form>
+    </div>
+  </div>
+
+</div> 
+
+
+
+
+
+{% comment %} 
+{# templates/economic/ecommerce/partials/_marketplace_filters.html #}
+{% load i18n %}
+
+<div class="mk-filter">
+
+  <div class="card mk-filter-card mb-3">
+    <div class="card-body">
+      <h6 class="mk-filter-title">{% trans "Catégories" %}</h6>
+
+      {% with cur_slug=current_category.slug|default_if_none:"" %}
+        <ul class="list-unstyled mb-0 mk-cat-list">
+
+          <li>
+            <a class="{% if not request.GET.category and not cur_slug %}active{% endif %}"
+               href="?{% if request.GET.q %}q={{ request.GET.q|urlencode }}&{% endif %}{% if sort %}sort={{ sort }}&{% endif %}{% if badge %}badge={{ badge }}&{% endif %}{% if request.GET.price_max %}price_max={{ request.GET.price_max }}{% endif %}">
+              {% trans "Toutes" %}
+            </a>
+          </li>
+
+          {% for c in categories %}
+            {% with cslug=c.slug|default:c.pk cname=c.name|default:c.pk %}
+              <li>
+                <a class="{% if request.GET.category == cslug or cur_slug == cslug %}active{% endif %}"
+                   href="?{% if request.GET.q %}q={{ request.GET.q|urlencode }}&{% endif %}category={{ cslug }}{% if sort %}&sort={{ sort }}{% endif %}{% if badge %}&badge={{ badge }}{% endif %}{% if request.GET.price_max %}&price_max={{ request.GET.price_max }}{% endif %}">
+                  {{ cname }}
+                </a>
+              </li>
+            {% endwith %}
+          {% empty %}
+            <li class="text-muted small">{% trans "Aucune catégorie" %}</li>
+          {% endfor %}
+        </ul>
+      {% endwith %}
+    </div>
+  </div>
+
+  <div class="card mk-filter-card mb-3">
+    <div class="card-body">
+      <div class="d-flex align-items-center justify-content-between">
+        <h6 class="mk-filter-title mb-0">{% trans "Prix" %}</h6>
+        <span class="mk-price-badge">≤ <span data-mk-range-value>{{ request.GET.price_max|default:max_price|default:1000 }}</span></span>
+      </div>
+
+      <form method="get" class="mt-2">
+        {% if request.GET.q %}<input type="hidden" name="q" value="{{ request.GET.q }}">{% endif %}
+        {% if request.GET.category %}<input type="hidden" name="category" value="{{ request.GET.category }}">{% endif %}
+        {% if sort %}<input type="hidden" name="sort" value="{{ sort }}">{% endif %}
+        {% if badge %}<input type="hidden" name="badge" value="{{ badge }}">{% endif %}
+
+        <input type="range" name="price_max" class="form-range" data-mk-range
+               min="0" max="{{ max_price|default:1000 }}"
+               value="{{ request.GET.price_max|default:max_price|default:1000 }}">
+
+        <button class="btn btn-sm btn-outline-secondary w-100" type="submit">{% trans "Appliquer" %}</button>
+
+        {% if request.GET.price_max %}
+          <a class="btn btn-sm btn-link w-100 mt-1"
+             href="?{% if request.GET.q %}q={{ request.GET.q|urlencode }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}{% if sort %}sort={{ sort }}&{% endif %}{% if badge %}badge={{ badge }}{% endif %}">
+            {% trans "Réinitialiser" %}
+          </a>
+        {% endif %}
+      </form>
+    </div>
+  </div>
+
+</div> {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/ecommerce/partials/_marketplace_filters.html #}
+{% load i18n %}
+
+<div class="mk-filter">
+
+  <div class="card mk-filter-card mb-3">
+    <div class="card-body">
+      <h6 class="mk-filter-title">{% trans "Catégories" %}</h6>
+
       <ul class="list-unstyled mb-0 mk-cat-list">
         {% for c in categories %}
           <li>
@@ -59,4 +211,4 @@
     </div>
   </div>
 
-</div>
+</div> {% endcomment %}

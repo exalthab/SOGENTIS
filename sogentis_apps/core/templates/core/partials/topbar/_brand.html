@@ -1,0 +1,26 @@
+{# templates/core/partials/topbar/_brand.html #}
+{% load static i18n %}
+
+<a href="{% url 'core:home' %}"
+   aria-label="{{ PROJECT_NAME|default:'SOGENTIS' }}"
+   class="topbar-brand d-inline-flex align-items-center gap-2 text-decoration-none text-white">
+
+  <span class="topbar-brand-mark" aria-hidden="true"></span>
+
+  {# Texte par défaut (s'affiche si le logo n'existe pas) #}
+  <span class="topbar-brand-name fw-bold">{{ PROJECT_NAME|default:"SOGENTIS" }}</span>
+</a>
+
+
+
+
+
+
+{% comment %} {# templates/core/partials/topbar/_brand.html #}
+{% load static i18n %}
+<a href="{% url 'core:home' %}"
+   aria-label="{{ PROJECT_NAME|default:'SOGENTIS' }}"
+   class="topbar-brand d-inline-flex align-items-center gap-2 text-decoration-none text-white">
+  <span class="topbar-brand-mark" aria-hidden="true"></span>
+  <span class="fw-bold">{{ PROJECT_NAME|default:"SOGENTIS" }}</span>
+</a> {% endcomment %}

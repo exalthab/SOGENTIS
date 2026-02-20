@@ -1,0 +1,733 @@
+{# templates/economic/prestations/tickets.html #}
+{% extends "economic/prestations/base_prestations.html" %}
+{% load i18n static ecom_money dashboard_tags widget_tweaks dashboard_tags %}
+
+{% block prestations_title %}{% trans "Tickets" %}{% endblock %}
+
+{% block prestations_content %}
+  {% safe_url "economic:prestations:index" as u_index %}
+  {% safe_url "economic:prestations:tickets" as u_post %}
+
+  <div class="row g-3">
+
+    {# ================= FORM ================= #}
+    <div class="col-12 col-xl-5">
+      <div class="rounded-4 bg-body border p-3 p-lg-4 h-100">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <h1 class="h6 mb-0">{% trans "Nouveau ticket" %}</h1>
+          <a class="btn btn-sm btn-outline-secondary" href="{{ u_index|default:'#' }}">
+            {% trans "Retour" %}
+          </a>
+        </div>
+
+        <form method="post" action="{{ u_post|default:request.path }}" class="row g-3">
+          {% csrf_token %}
+
+          {% for field in form.visible_fields %}
+            <div class="col-12">
+              <label class="form-label">{{ field.label }}</label>
+              {% if field.field.widget.input_type == "select" %}
+                {{ field|add_class:"form-select" }}
+              {% else %}
+                {{ field|add_class:"form-control" }}
+              {% endif %}
+              {% if field.errors %}
+                <div class="invalid-feedback d-block">{{ field.errors }}</div>
+              {% endif %}
+            </div>
+          {% endfor %}
+
+          {% if form.non_field_errors %}
+            <div class="col-12">
+              <div class="alert alert-danger mb-0">{{ form.non_field_errors }}</div>
+            </div>
+          {% endif %}
+
+          <div class="col-12 d-flex gap-2">
+            <button class="btn btn-primary" type="submit">
+              {% trans "Créer le ticket" %}
+            </button>
+            <a class="btn btn-outline-secondary" href="{{ u_index|default:'#' }}">
+              {% trans "Annuler" %}
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    {# ================= LIST ================= #}
+    <div class="col-12 col-xl-7">
+      <div class="rounded-4 bg-body border p-3 p-lg-4">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <h2 class="h6 mb-0">{% trans "Mes tickets" %}</h2>
+        </div>
+
+        {% if tickets %}
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead>
+                <tr class="text-muted small">
+                  <th>{% trans "Réf." %}</th>
+                  <th>{% trans "Objet" %}</th>
+                  <th>{% trans "Sujet" %}</th>
+                  <th>{% trans "Statut" %}</th>
+                  <th class="text-end">{% trans "Créé" %}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for t in tickets %}
+                  {% firstof t.reference t.id as ref %}
+                  {% firstof t.subject "—" as subject %}
+                  {% firstof t.status "—" as status %}
+
+                  {% if t.prestation and t.prestation.slug %}
+                    {% safe_url "economic:prestations:detail" t.prestation.slug as u_obj %}
+                  {% elif t.package and t.package.slug %}
+                    {% safe_url "economic:prestations:package_detail" t.package.slug as u_obj %}
+                  {% else %}
+                    {% with u_obj="" %}{% endwith %}
+                  {% endif %}
+
+                  <tr>
+                    <td class="fw-semibold">
+                      {{ ref }}
+                    </td>
+
+                    <td class="small">
+                      {% if u_obj %}
+                        <a href="{{ u_obj }}" class="text-decoration-none">
+                          {% if t.prestation %}
+                            {{ t.prestation.title|default:t.prestation.name|default:t.prestation.slug }}
+                          {% elif t.package %}
+                            {{ t.package.title|default:t.package.name|default:t.package.slug }}
+                          {% endif %}
+                        </a>
+                      {% else %}
+                        —
+                      {% endif %}
+                    </td>
+
+                    <td>{{ subject }}</td>
+
+                    <td>
+                      <span class="badge text-bg-light border">
+                        {{ status }}
+                      </span>
+                    </td>
+
+                    <td class="text-end text-muted small">
+                      {% if t.created_at %}
+                        {{ t.created_at|date:"Y-m-d H:i" }}
+                      {% else %}
+                        —
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="text-muted small">{% trans "Aucun ticket." %}</div>
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+{% endblock %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/tickets.html #}
+{% extends "economic/prestations/base_prestations.html" %}
+{% load i18n static dashboard_tags widget_tweaks %}
+
+{% block prestations_title %}{% trans "Tickets" %}{% endblock %}
+
+{% block prestations_content %}
+  {% safe_url "economic:prestations:index" as u_index %}
+  {% safe_url "economic:prestations:tickets" as u_post %}
+
+  <div class="rounded-4 bg-body border p-3 p-lg-4">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+      <div>
+        <h1 class="h5 mb-1">{% trans "Tickets" %}</h1>
+        <div class="text-muted small">{% trans "Suivi des demandes et incidents." %}</div>
+      </div>
+      <a class="btn btn-sm btn-outline-secondary" href="{{ u_index|default:'#' }}">{% trans "Retour" %}</a>
+    </div>
+
+    {# Formulaire (liens/paths actifs) #}
+    {% if form %}
+      <form method="post" action="{{ u_post|default:request.path }}" class="row g-3 mb-4">
+        {% csrf_token %}
+        {% for field in form.visible_fields %}
+          <div class="col-12 {% if field.name == 'prestation' %}col-lg-6{% endif %}">
+            <label class="form-label">{{ field.label }}</label>
+            {% if field.field.widget.input_type == "select" %}
+              {{ field|add_class:"form-select" }}
+            {% else %}
+              {{ field|add_class:"form-control" }}
+            {% endif %}
+            {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+            {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors }}</div>{% endif %}
+          </div>
+        {% endfor %}
+
+        {% if form.non_field_errors %}
+          <div class="col-12"><div class="alert alert-danger mb-0">{{ form.non_field_errors }}</div></div>
+        {% endif %}
+
+        <div class="col-12 d-flex gap-2">
+          <button class="btn btn-primary" type="submit">{% trans "Ouvrir un ticket" %}</button>
+        </div>
+      </form>
+      <hr class="my-3">
+    {% endif %}
+
+    {# Liste tickets + liens vers prestation/pack si dispo #}
+    {% if tickets %}
+      <div class="table-responsive">
+        <table class="table align-middle">
+          <thead>
+            <tr class="text-muted small">
+              <th>{% trans "Référence" %}</th>
+              <th>{% trans "Sujet" %}</th>
+              <th>{% trans "Objet" %}</th>
+              <th>{% trans "Statut" %}</th>
+              <th class="text-end">{% trans "Créée" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for t in tickets %}
+              {% if t.prestation and t.prestation.slug %}
+                {% safe_url "economic:prestations:detail" t.prestation.slug as u_obj %}
+              {% elif t.package and t.package.slug %}
+                {% safe_url "economic:prestations:package_detail" t.package.slug as u_obj %}
+              {% else %}
+                {% with u_obj="" %}{% endwith %}
+              {% endif %}
+
+              <tr>
+                <td class="fw-semibold">{{ t.reference|default:t.id }}</td>
+                <td>{{ t.subject|default:"—" }}</td>
+                <td class="small">
+                  {% if u_obj %}
+                    <a class="text-decoration-none" href="{{ u_obj }}">
+                      {% if t.prestation %}{{ t.prestation.title|default:t.prestation.name|default:t.prestation.slug }}{% endif %}
+                      {% if t.package %}{{ t.package.title|default:t.package.name|default:t.package.slug }}{% endif %}
+                    </a>
+                  {% else %}
+                    —
+                  {% endif %}
+                </td>
+                <td><span class="badge text-bg-light border">{{ t.status|default:"—" }}</span></td>
+                <td class="text-end text-muted small">{{ t.created_at|date:"Y-m-d H:i"|default:"—" }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="text-muted">{% trans "Aucun ticket." %}</div>
+    {% endif %}
+  </div>
+{% endblock %} {% endcomment %}
+
+
+
+
+{% comment %} {# templates/economic/prestations/tickets.html good #}
+{% extends "economic/prestations/base_prestations.html" %}
+{% load i18n static dashboard_tags %}
+
+{% block prestations_title %}
+  {% trans "Tickets" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}
+{% endblock prestations_title %}
+
+{% block prestations_extra_css %}
+  {{ block.super }}
+  {# si tu as un CSS dédié tickets, garde-le. Sinon enlève. #}
+  <link rel="stylesheet" href="{% static 'prestations/css/prestations_tickets.css' %}">
+{% endblock prestations_extra_css %}
+
+{% block prestations_content %}
+<div class="container my-5">
+
+  {% safe_url "economic:prestations:index" as u_prestations_index %}
+  {% safe_url "economic:prestations:detail" as u_prestation_detail %}
+
+  <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
+    <div>
+      <div class="text-muted small mb-1">{% trans "Support" %}</div>
+      <h1 class="h4 fw-bold mb-1">{% trans "Tickets & demandes" %}</h1>
+      <div class="text-muted">{% trans "Ouvrez une demande et suivez vos échanges." %}</div>
+    </div>
+
+    <div>
+      <a class="btn btn-outline-secondary {% if not u_prestations_index %}disabled{% endif %}"
+         href="{% if u_prestations_index %}{{ u_prestations_index }}{% else %}#{% endif %}"
+         {% if not u_prestations_index %}aria-disabled="true" tabindex="-1"{% endif %}>
+        <i class="fa-solid fa-arrow-left me-2"></i>{% trans "Retour aux prestations" %}
+      </a>
+    </div>
+  </div>
+
+  <div class="row g-4">
+
+    
+    <div class="col-lg-5">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+          <h2 class="h6 fw-bold mb-3">{% trans "Nouvelle demande" %}</h2>
+
+          <form method="post" novalidate>
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger">
+                {{ form.non_field_errors }}
+              </div>
+            {% endif %}
+
+            {% for field in form %}
+              <div class="mb-3">
+                <label class="form-label fw-semibold" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+                {% for e in field.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+              </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-primary w-100">
+              <i class="fa-solid fa-paper-plane me-2"></i>{% trans "Envoyer" %}
+            </button>
+          </form>
+
+          <div class="small text-muted mt-3">
+            <i class="fa-regular fa-circle-check me-1"></i>
+            {% trans "Un membre de l’équipe vous répondra dès que possible." %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+   
+    <div class="col-lg-7">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+          <h2 class="h6 fw-bold mb-3">{% trans "Mes tickets" %}</h2>
+
+          {% if tickets %}
+            <div class="list-group list-group-flush">
+
+              {% for t in tickets %}
+                <div class="list-group-item px-0">
+                  <div class="d-flex justify-content-between align-items-start gap-3">
+
+                    <div class="min-w-0">
+                      <div class="fw-semibold text-truncate">
+                        {{ t.subject|default:_("Demande") }}
+
+                        {# ====== Link Prestation / Pack (if any) ====== #}
+                        {% if t.prestation %}
+                          <span class="text-muted">·</span>
+
+                          {% if u_prestation_detail and t.prestation.slug %}
+                            <a class="text-decoration-none"
+                               href="{% url 'economic:prestations:detail' slug=t.prestation.slug %}">
+                              {{ t.prestation.title|default:t.prestation.slug }}
+                            </a>
+                          {% else %}
+                            <span class="text-muted">
+                              {{ t.prestation.title|default:t.prestation.slug }}
+                            </span>
+                          {% endif %}
+                        {% endif %}
+
+                        {% if t.package %}
+                          <span class="text-muted">·</span>
+                          <span class="text-muted">
+                            <i class="fa-solid fa-box-open me-1"></i>
+                            {{ t.package.name|default:t.package.slug }}
+                          </span>
+                        {% endif %}
+                      </div>
+
+                      <div class="text-muted small mt-1">
+                        <i class="fa-regular fa-calendar me-1"></i>{{ t.created_at }}
+                      </div>
+
+                      {% if t.message %}
+                        <div class="small mt-2">
+                          {{ t.message|truncatechars:180 }}
+                        </div>
+                      {% endif %}
+                    </div>
+
+                    <div class="text-end">
+                      <span class="badge text-bg-light border">
+                        {{ t.get_status_display|default:t.status }}
+                      </span>
+                    </div>
+
+                  </div>
+                </div>
+              {% endfor %}
+
+            </div>
+          {% else %}
+            <div class="text-muted">{% trans "Aucun ticket pour le moment." %}</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock prestations_content %}
+
+ {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/tickets.html #}
+{% extends "economic/prestations/base_prestations.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Tickets" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'economic/css/prestations.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+
+  <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
+    <div>
+      <div class="text-muted small mb-1">{% trans "Support" %}</div>
+      <h1 class="h4 fw-bold mb-1">{% trans "Tickets & demandes" %}</h1>
+      <div class="text-muted">{% trans "Ouvrez une demande et suivez vos échanges." %}</div>
+    </div>
+    <div>
+      <a class="btn btn-outline-secondary" href="{% url 'economic:services:index' %}">
+        {% trans "Retour aux services" %}
+      </a>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-5">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+          <h2 class="h6 fw-bold mb-3">{% trans "Nouvelle demande" %}</h2>
+
+          <form method="post" novalidate>
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+            {% endif %}
+
+            {% for field in form %}
+              <div class="mb-3">
+                <label class="form-label fw-semibold" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+                {% for e in field.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+              </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-primary w-100">
+              {% trans "Envoyer" %}
+            </button>
+          </form>
+
+          <div class="small text-muted mt-3">
+            {% trans "Un membre de l’équipe vous répondra dès que possible." %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-7">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+          <h2 class="h6 fw-bold mb-3">{% trans "Mes tickets" %}</h2>
+
+          {% if tickets %}
+            <div class="list-group list-group-flush">
+              {% for t in tickets %}
+                <div class="list-group-item px-0">
+                  <div class="d-flex justify-content-between align-items-start gap-3">
+                    <div>
+                      <div class="fw-semibold">
+                        {{ t.subject|default:_("Demande") }}
+                        {% if t.service %}
+                          <span class="text-muted">·</span>
+                          <a href="{% url 'economic:services:detail' slug=t.service.slug %}" class="text-decoration-none">
+                            {{ t.service.title|default:t.service.slug }}
+                          </a>
+                        {% endif %}
+                      </div>
+
+                      <div class="text-muted small mt-1">
+                        <i class="fa-regular fa-calendar me-1"></i>{{ t.created_at }}
+                      </div>
+
+                      {% if t.message %}
+                        <div class="small mt-2">
+                          {{ t.message|truncatechars:180 }}
+                        </div>
+                      {% endif %}
+                    </div>
+
+                    <div class="text-end">
+                      <span class="badge text-bg-light border">
+                        {{ t.get_status_display|default:t.status }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="text-muted">{% trans "Aucun ticket pour le moment." %}</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %} {% endcomment %}
+
+
+
+
+{% comment %} {% extends "economic/base_economic.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Tickets" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'economic/services/services.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-4 services-shell">
+
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <div>
+      <h1 class="h4 fw-bold mb-1">{% trans "Support & demandes" %}</h1>
+      <p class="text-muted mb-0">{% trans "Ouvrez une demande (ticket) et suivez vos échanges." %}</p>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-lg-5">
+      <div class="card border rounded-4">
+        <div class="card-body">
+          <div class="fw-bold mb-2">{% trans "Nouvelle demande" %}</div>
+          <form method="post" novalidate>
+            {% csrf_token %}
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">{{ form.service.label }}</label>
+              {{ form.service }}
+              {% if form.service.errors %}<div class="text-danger small mt-1">{{ form.service.errors }}</div>{% endif %}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">{{ form.subject.label }}</label>
+              {{ form.subject }}
+              {% if form.subject.errors %}<div class="text-danger small mt-1">{{ form.subject.errors }}</div>{% endif %}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">{{ form.message.label }}</label>
+              {{ form.message }}
+              {% if form.message.errors %}<div class="text-danger small mt-1">{{ form.message.errors }}</div>{% endif %}
+            </div>
+
+            <button class="btn btn-primary w-100" type="submit">
+              <i class="fas fa-paper-plane me-2"></i>{% trans "Envoyer" %}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-7">
+      <div class="card border rounded-4">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <div class="fw-bold">{% trans "Mes demandes" %}</div>
+            <div class="text-muted small">{{ tickets|length }}</div>
+          </div>
+
+          <div class="services-tickets">
+            {% for t in tickets %}
+              <div class="border rounded-4 p-3 mb-2">
+                <div class="d-flex justify-content-between align-items-start gap-2">
+                  <div>
+                    <div class="fw-semibold">{{ t.subject }}</div>
+                    <div class="text-muted small">
+                      {% if t.service %}{{ t.service }}{% else %}{% trans "Demande générale" %}{% endif %}
+                    </div>
+                  </div>
+                  <span class="badge text-bg-light border">{{ t.get_status_display }}</span>
+                </div>
+                <div class="text-muted small mt-2">
+                  {{ t.created_at|date:"d/m/Y H:i" }}
+                </div>
+              </div>
+            {% empty %}
+              <div class="alert alert-secondary border rounded-4 mb-0">
+                {% trans "Aucune demande pour l’instant." %}
+              </div>
+            {% endfor %}
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/services/tickets.html #}
+{% extends "economic/services/base_services.html" %}
+{% load static i18n widget_tweaks %}
+
+{% block title %}{% trans "Mes demandes de services" %} | SOGENTIS{% endblock %}
+
+{% block content %}
+<div class="container py-4 service-request-page">
+
+  <nav class="mb-3 small">
+    <a href="{% url 'economic:services:index' %}" class="text-decoration-none">
+      ← {% trans "Retour au catalogue des services" %}
+    </a>
+  </nav>
+
+  <div class="row g-4">
+    <!-- FORMULAIRE NOUVELLE DEMANDE -->
+    <div class="col-lg-6">
+      <div class="card service-request-card">
+        <div class="card-body">
+          <h1 class="h5 mb-2">
+            {% trans "Ouvrir une nouvelle demande" %}
+          </h1>
+          <p class="text-muted small mb-3">
+            {% trans "Expliquez votre besoin, notre équipe reviendra vers vous avec des précisions ou un devis." %}
+          </p>
+
+          <form method="post" novalidate>
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger">
+                {% for error in form.non_field_errors %}
+                  <div>{{ error }}</div>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            {% for hidden in form.hidden_fields %}
+              {{ hidden }}
+            {% endfor %}
+
+            {% for field in form.visible_fields %}
+              <div class="mb-3">
+                <label for="{{ field.id_for_label }}" class="form-label">
+                  {{ field.label }}
+                  {% if field.field.required %}
+                    <span class="text-danger">*</span>
+                  {% endif %}
+                </label>
+
+                {% if field.errors %}
+                  {% render_field field class="form-control is-invalid" %}
+                  <div class="invalid-feedback">
+                    {% for error in field.errors %}
+                      <div>{{ error }}</div>
+                    {% endfor %}
+                  </div>
+                {% else %}
+                  {% render_field field class="form-control" %}
+                  {% if field.help_text %}
+                    <div class="form-text">{{ field.help_text|safe }}</div>
+                  {% endif %}
+                {% endif %}
+              </div>
+            {% endfor %}
+
+            <div class="d-flex justify-content-end mt-3">
+              <button type="submit" class="btn btn-primary">
+                {% trans "Envoyer la demande" %}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- LISTE DES DEMANDES DE L'UTILISATEUR -->
+    <div class="col-lg-6">
+      <div class="service-info-card">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h2 class="h6 mb-0">
+            {% trans "Mes demandes récentes" %}
+          </h2>
+        </div>
+
+        {% if tickets %}
+          <div class="list-group list-group-flush">
+            {% for ticket in tickets %}
+              <div class="list-group-item px-0">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <div class="fw-semibold small mb-1">
+                      {{ ticket.subject|default:_("Demande sans titre") }}
+                    </div>
+                    <div class="small text-muted">
+                      {% if ticket.service %}
+                        {{ ticket.service }} ·
+                      {% endif %}
+                      {% if ticket.created_at %}
+                        {% trans "Créée le" %} {{ ticket.created_at|date:"d/m/Y H:i" }}
+                      {% endif %}
+                    </div>
+                  </div>
+                  <div class="text-end">
+                    <span class="badge bg-light text-dark border small">
+                      {{ ticket.get_status_display }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="small text-muted mb-0">
+            {% trans "Vous n’avez encore ouvert aucune demande de service." %}
+          </p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %} {% endcomment %}

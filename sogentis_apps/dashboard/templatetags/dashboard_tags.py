@@ -5,6 +5,7 @@ from typing import Any
 
 from django import template
 from django.urls import NoReverseMatch, reverse
+from django.utils.http import urlencode
 
 register = template.Library()
 
@@ -103,15 +104,58 @@ def safe_url(url_name: str, *args, **kwargs) -> str:
     """
     Version SAFE de {% url %} :
     - retourne "" si NoReverseMatch
+    - supporte querystring optionnel: qs={"k":"v"} (dict)
+      {% safe_url "x:y" qs=mydict as u %}
     Usage:
       {% safe_url "dashboard:hub" as url_hub %}
     """
+    qs = kwargs.pop("qs", None)
     try:
-        return reverse(url_name, args=args, kwargs=kwargs)
+        url = reverse(url_name, args=args, kwargs=kwargs)
     except NoReverseMatch:
         return ""
     except Exception:
         return ""
+
+    if isinstance(qs, dict) and qs:
+        try:
+            return f"{url}?{urlencode(qs, doseq=True)}"
+        except Exception:
+            return url
+    return url
+
+
+@register.simple_tag(takes_context=True)
+def active_url(context, url: str, css_class: str = "active") -> str:
+    """
+    Retourne css_class si request.path == url.
+    Usage:
+      <a class="nav-link {% active_url request some_url %}" href="{{ some_url }}">
+    """
+    request = context.get("request")
+    if not request or not url:
+        return ""
+    try:
+        return css_class if (request.path or "") == url else ""
+    except Exception:
+        return ""
+
+
+@register.simple_tag(takes_context=True)
+def is_active_view(context, url_name: str, *args, **kwargs) -> bool:
+    """
+    True si l'URL de url_name correspond à request.path.
+    Usage:
+      {% if is_active_view "dashboard:hub" %}...{% endif %}
+    """
+    request = context.get("request")
+    if not request:
+        return False
+    try:
+        target = reverse(url_name, args=args, kwargs=kwargs)
+        return (request.path or "") == target
+    except Exception:
+        return False
 
 
 @register.simple_tag
@@ -133,6 +177,180 @@ def admin_change_url(obj: Any) -> str:
         return ""
     except Exception:
         return ""
+
+@register.filter
+def in_csv(value: Any, csv: str) -> bool:
+    """
+    Teste si value est dans une liste CSV.
+    Usage:
+      {% if ns|in_csv:"resources,support,ai,integrations,analytics,labs" %}...{% endif %}
+    """
+    try:
+        if value is None:
+            return False
+        items = [s.strip() for s in (csv or "").split(",") if s.strip()]
+        return str(value) in items
+    except Exception:
+        return False
+
+
+@register.filter
+def any_in_csv(value: Any, csv: str) -> bool:
+    """
+    True si value (str ou liste/tuple) intersecte le csv.
+    - si value est un str => in_csv
+    - si value est list/tuple => intersection
+    Usage:
+      {% if request.resolver_match.namespaces|any_in_csv:"support,resources" %}...{% endif %}
+    """
+    try:
+        items = {s.strip() for s in (csv or "").split(",") if s.strip()}
+        if not items:
+            return False
+        if isinstance(value, (list, tuple, set)):
+            return any(str(v) in items for v in value)
+        return str(value) in items
+    except Exception:
+        return False
+
+
+
+
+# # dashboard/templatetags/dashboard_tags.py
+# from __future__ import annotations
+
+# from typing import Any
+
+# from django import template
+# from django.urls import NoReverseMatch, reverse
+
+# register = template.Library()
+
+
+# # -----------------------------
+# # Filters
+# # -----------------------------
+# @register.filter
+# def pluck(data: Any, key: str):
+#     """
+#     Extrait les valeurs associées à la clé 'key' depuis une liste de dict.
+#     {{ data|pluck:"key" }}
+#     """
+#     if not isinstance(data, (list, tuple)):
+#         return []
+#     out = []
+#     for item in data:
+#         if isinstance(item, dict):
+#             out.append(item.get(key))
+#         else:
+#             out.append(None)
+#     return out
+
+
+# @register.filter
+# def dget(d: Any, key: str):
+#     """
+#     Safe dict get.
+#     {{ some_dict|dget:"slug" }} -> "" si absent
+#     """
+#     try:
+#         if isinstance(d, dict):
+#             return d.get(key, "")
+#     except Exception:
+#         pass
+#     return ""
+
+
+# @register.filter
+# def in_namespaces(resolver_match: Any, ns: str) -> bool:
+#     """
+#     Safe: teste si un namespace est dans resolver_match.namespaces.
+#     Usage: {% if request.resolver_match|in_namespaces:"admin" %}
+#     """
+#     try:
+#         nss = getattr(resolver_match, "namespaces", None) or ()
+#         return ns in nss
+#     except Exception:
+#         return False
+
+
+# @register.filter
+# def app_label(obj: Any):
+#     """
+#     Retourne obj._meta.app_label de façon SAFE.
+#     """
+#     try:
+#         meta = getattr(obj, "_meta", None)
+#         return getattr(meta, "app_label", "") or ""
+#     except Exception:
+#         return ""
+
+
+# @register.filter
+# def model_name(obj: Any):
+#     """
+#     Retourne obj._meta.model_name de façon SAFE.
+#     """
+#     try:
+#         meta = getattr(obj, "_meta", None)
+#         return getattr(meta, "model_name", "") or ""
+#     except Exception:
+#         return ""
+
+
+# # -----------------------------
+# # Simple tags
+# # -----------------------------
+# @register.simple_tag
+# def dget_default(mapping: Any, key: str, default: Any = ""):
+#     """
+#     Safe dict get avec default.
+#     Usage:
+#       {% dget_default request.resolver_match.kwargs "slug" "" as current_slug %}
+#     """
+#     try:
+#         if isinstance(mapping, dict):
+#             return mapping.get(key, default)
+#     except Exception:
+#         pass
+#     return default
+
+
+# @register.simple_tag
+# def safe_url(url_name: str, *args, **kwargs) -> str:
+#     """
+#     Version SAFE de {% url %} :
+#     - retourne "" si NoReverseMatch
+#     Usage:
+#       {% safe_url "dashboard:hub" as url_hub %}
+#     """
+#     try:
+#         return reverse(url_name, args=args, kwargs=kwargs)
+#     except NoReverseMatch:
+#         return ""
+#     except Exception:
+#         return ""
+
+
+# @register.simple_tag
+# def admin_change_url(obj: Any) -> str:
+#     """
+#     Retourne l'URL admin change d'un objet (ou "" si impossible).
+#     Usage:
+#       {% admin_change_url u as admin_change_url %}
+#     """
+#     if not obj:
+#         return ""
+#     try:
+#         meta = getattr(obj, "_meta", None)
+#         if not meta:
+#             return ""
+#         viewname = f"admin:{meta.app_label}_{meta.model_name}_change"
+#         return reverse(viewname, args=(obj.pk,))
+#     except NoReverseMatch:
+#         return ""
+#     except Exception:
+#         return ""
 
 
 

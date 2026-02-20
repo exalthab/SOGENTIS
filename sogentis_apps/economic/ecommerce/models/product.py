@@ -2,12 +2,14 @@
 from __future__ import annotations
 
 import re
+from decimal import Decimal
 
 from django.core.exceptions import ValidationError
 from django.db import models, transaction
 from django.db.models.signals import post_save
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
+from django.utils.timezone import now as tz_now
 from parler.models import TranslatableModel, TranslatedFields
 
 from .sku_sequence import SkuSequence
@@ -52,7 +54,23 @@ class Product(TranslatableModel):
     is_new = models.BooleanField(default=False, verbose_name=_("Nouveau"), db_index=True)
 
     price = models.DecimalField(max_digits=12, decimal_places=2, verbose_name=_("Prix"))
+    old_price = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        verbose_name=_("Ancien prix (promo)"),
+        help_text=_("Optionnel. Si renseigné et > prix actuel, affichage prix barré + %."),
+    )
+
     stock = models.PositiveIntegerField(default=0, verbose_name=_("Stock"))
+
+    sold_count = models.PositiveIntegerField(
+        default=0,
+        db_index=True,
+        verbose_name=_("Vendus (compteur)"),
+        help_text=_("Compteur simple pour l'affichage marketplace. Optionnel."),
+    )
 
     is_active = models.BooleanField(default=True, verbose_name=_("Actif"), db_index=True)
     is_featured = models.BooleanField(default=False, verbose_name=_("Mis en avant"), db_index=True)
@@ -109,6 +127,9 @@ class Product(TranslatableModel):
         if self.price is not None and self.price < 0:
             raise ValidationError({"price": _("Le prix ne peut pas être négatif.")})
 
+        if self.old_price is not None and self.old_price < 0:
+            raise ValidationError({"old_price": _("L'ancien prix ne peut pas être négatif.")})
+
         if self.is_featured and not self.is_active:
             raise ValidationError({"is_featured": _("Un produit inactif ne peut pas être mis en avant.")})
 
@@ -153,7 +174,6 @@ class Product(TranslatableModel):
                 return None
         return None
 
-    # ✅ stock respectant track_stock
     @property
     def in_stock(self) -> bool:
         if not self.track_stock:
@@ -167,6 +187,80 @@ class Product(TranslatableModel):
         if not self.track_stock:
             return True
         return self.stock > 0
+
+    # ✅ promo helpers (utilisés par template)
+    @property
+    def has_promo(self) -> bool:
+        try:
+            return bool(self.old_price is not None and self.old_price > self.price)
+        except Exception:
+            return False
+
+    @property
+    def discount_percent(self) -> int:
+        """
+        % entier (ex: 10). 0 si pas de promo.
+        """
+        if not self.has_promo:
+            return 0
+        try:
+            oldp = Decimal(str(self.old_price))
+            newp = Decimal(str(self.price))
+            if oldp <= 0:
+                return 0
+            pct = (oldp - newp) / oldp * Decimal("100")
+            pct_int = int(pct.quantize(Decimal("1")))
+            return max(0, min(pct_int, 95))
+        except Exception:
+            return 0
+
+    # ------------------------------------------------------------
+    # ✅ Pricing sync (ProductPricing -> Product.old_price + price)
+    # ------------------------------------------------------------
+    def _apply_pricing_promo_sync(self):
+        """
+        Si ProductPricing existe et a une promo active:
+        - old_price = base_price
+        - price = promo_price
+        Sinon: ne force rien (tu peux gérer old_price manuellement).
+        """
+        pr = getattr(self, "pricing", None)
+        if not pr:
+            return
+
+        try:
+            if not getattr(pr, "is_active", False):
+                return
+            if pr.promo_price is None:
+                return
+
+            current = tz_now()
+            if pr.promo_start and current < pr.promo_start:
+                return
+            if pr.promo_end and current > pr.promo_end:
+                return
+
+            base_price = getattr(pr, "base_price", None)
+            promo_price = getattr(pr, "promo_price", None)
+            if base_price is None or promo_price is None:
+                return
+            if promo_price >= base_price:
+                return
+
+            # ✅ sync fields
+            changed = False
+            if self.old_price != base_price:
+                self.old_price = base_price
+                changed = True
+            if self.price != promo_price:
+                self.price = promo_price
+                changed = True
+
+            if changed:
+                # pas de super().save ici; on laisse save() gérer.
+                return
+        except Exception:
+            return
 
     def _generate_sku(self) -> str:
         if not self.vendor:
@@ -182,7 +276,6 @@ class Product(TranslatableModel):
 
         prefix = f"{vcode}-{ccode}-"
 
-        # ✅ Prod-safe: séquence lockée
         with transaction.atomic():
             seq, _ = SkuSequence.objects.select_for_update().get_or_create(
                 vendor_code=vcode,
@@ -202,10 +295,14 @@ class Product(TranslatableModel):
         return t[:max_len]
 
     def save(self, *args, **kwargs):
+        # ✅ SKU
         if self.sku:
             self.sku = self.sku.strip().upper()
         else:
             self.sku = self._generate_sku()
+
+        # ✅ Pricing sync (si pricing chargé / existe)
+        self._apply_pricing_promo_sync()
 
         super().save(*args, **kwargs)
         self._ensure_translation_slugs_and_seo()
@@ -255,9 +352,6 @@ class Product(TranslatableModel):
             )
 
 
-# -------------------------------------------------------------------
-# ✅ Signal Parler: connect sur le vrai modèle de traduction
-# -------------------------------------------------------------------
 def _product_translation_autofill(sender, instance, **kwargs):
     master = getattr(instance, "master", None)
     if not master:
@@ -266,7 +360,7 @@ def _product_translation_autofill(sender, instance, **kwargs):
 
 
 try:
-    ProductTranslation = Product._parler_meta.model  # ✅ vrai modèle de traduction
+    ProductTranslation = Product._parler_meta.model
     post_save.connect(
         _product_translation_autofill,
         sender=ProductTranslation,
@@ -275,6 +369,617 @@ try:
     )
 except Exception:
     pass
+
+
+
+
+# # /economic/ecommerce/models/product.py
+# from __future__ import annotations
+
+# import re
+# from decimal import Decimal
+
+# from django.core.exceptions import ValidationError
+# from django.db import models, transaction
+# from django.db.models.signals import post_save
+# from django.utils.text import slugify
+# from django.utils.translation import gettext_lazy as _
+# from parler.models import TranslatableModel, TranslatedFields
+
+# from .sku_sequence import SkuSequence
+
+
+# SKU_RE = re.compile(r"^[A-Z0-9]{3,8}-[A-Z0-9]{3,8}-\d{4}$")
+
+
+# class Product(TranslatableModel):
+#     category = models.ForeignKey(
+#         "Category",
+#         on_delete=models.PROTECT,
+#         related_name="products",
+#         verbose_name=_("Catégorie"),
+#     )
+
+#     vendor = models.ForeignKey(
+#         "Vendor",
+#         on_delete=models.SET_NULL,
+#         null=True,
+#         blank=True,
+#         related_name="products",
+#         verbose_name=_("Vendeur"),
+#     )
+
+#     sku = models.CharField(
+#         max_length=100,
+#         unique=True,
+#         verbose_name=_("SKU"),
+#         blank=True,
+#         help_text=_("Format recommandé : <VENDORCODE>-<CATCODE>-<NNNN> (ex: SOG-TECH-0001)."),
+#         db_index=True,
+#     )
+
+#     fiche_technique = models.TextField(blank=True, verbose_name=_("Fiche technique"))
+#     image = models.ImageField(
+#         upload_to="products/main/%Y/%m/",
+#         blank=True,
+#         null=True,
+#         verbose_name=_("Image principale"),
+#     )
+#     is_new = models.BooleanField(default=False, verbose_name=_("Nouveau"), db_index=True)
+
+#     price = models.DecimalField(max_digits=12, decimal_places=2, verbose_name=_("Prix"))
+#     old_price = models.DecimalField(
+#         max_digits=12,
+#         decimal_places=2,
+#         null=True,
+#         blank=True,
+#         verbose_name=_("Ancien prix (promo)"),
+#         help_text=_("Optionnel. Si renseigné et > prix actuel, affichage prix barré + %."),
+#     )
+
+#     stock = models.PositiveIntegerField(default=0, verbose_name=_("Stock"))
+
+#     # ✅ affichage "vendus" (simple & réel depuis admin)
+#     sold_count = models.PositiveIntegerField(
+#         default=0,
+#         db_index=True,
+#         verbose_name=_("Vendus (compteur)"),
+#         help_text=_("Compteur simple pour l'affichage marketplace. Optionnel."),
+#     )
+
+#     is_active = models.BooleanField(default=True, verbose_name=_("Actif"), db_index=True)
+#     is_featured = models.BooleanField(default=False, verbose_name=_("Mis en avant"), db_index=True)
+
+#     track_stock = models.BooleanField(
+#         default=True,
+#         db_index=True,
+#         verbose_name=_("Suivre le stock"),
+#         help_text=_("Décochez pour services / sur commande (stock illimité)."),
+#     )
+
+#     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Créé le"))
+#     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Mis à jour le"))
+
+#     translations = TranslatedFields(
+#         name=models.CharField(max_length=255, verbose_name=_("Nom")),
+#         slug=models.SlugField(max_length=260, blank=True, db_index=True, verbose_name=_("Slug")),
+#         short_description=models.CharField(max_length=500, blank=True, verbose_name=_("Description courte")),
+#         description=models.TextField(blank=True, verbose_name=_("Description")),
+#         seo_title=models.CharField(max_length=255, blank=True, verbose_name=_("Titre SEO")),
+#         seo_description=models.CharField(max_length=300, blank=True, verbose_name=_("Description SEO")),
+#     )
+
+#     class TranslatedMeta:
+#         unique_together = (("language_code", "slug"),)
+#         indexes = (models.Index(fields=("language_code", "slug")),)
+
+#     class Meta:
+#         verbose_name = _("Produit")
+#         verbose_name_plural = _("Produits")
+#         ordering = ["-created_at"]
+#         indexes = [
+#             models.Index(fields=["is_active", "is_featured", "-created_at"]),
+#             models.Index(fields=["category", "is_active"]),
+#             models.Index(fields=["vendor", "is_active"]),
+#             models.Index(fields=["is_new", "is_active"]),
+#             models.Index(fields=["sku"]),
+#         ]
+
+#     def __str__(self) -> str:
+#         name = self.safe_translation_getter("name", any_language=True)
+#         if name:
+#             return f"{name} ({self.sku})" if self.sku else name
+#         return self.sku or f"Product #{self.pk}"
+
+#     def clean(self):
+#         super().clean()
+
+#         if self.sku:
+#             self.sku = self.sku.strip().upper()
+
+#         if self.price is None:
+#             raise ValidationError({"price": _("Le prix est obligatoire.")})
+#         if self.price is not None and self.price < 0:
+#             raise ValidationError({"price": _("Le prix ne peut pas être négatif.")})
+
+#         if self.old_price is not None and self.old_price < 0:
+#             raise ValidationError({"old_price": _("L'ancien prix ne peut pas être négatif.")})
+
+#         if self.old_price is not None and self.price is not None:
+#             # autoriser old_price <= price (ça n'affichera pas promo), mais éviter incohérences extrêmes
+#             pass
+
+#         if self.is_featured and not self.is_active:
+#             raise ValidationError({"is_featured": _("Un produit inactif ne peut pas être mis en avant.")})
+
+#         if self.sku and not SKU_RE.match(self.sku):
+#             raise ValidationError({"sku": _("Format SKU invalide. Ex: SOG-TECH-0001 (VENDOR-CAT-0001).")})
+
+#         if not self.sku:
+#             if not self.vendor_id:
+#                 raise ValidationError({"vendor": _("Le vendeur est requis pour générer automatiquement le SKU.")})
+
+#             vcode = getattr(self.vendor, "code", None)
+#             ccode = getattr(self.category, "code", None)
+#             if not vcode:
+#                 raise ValidationError({"vendor": _("Le vendeur doit avoir un code (VENDORCODE) pour générer le SKU.")})
+#             if not ccode:
+#                 raise ValidationError({"category": _("La catégorie doit avoir un code (CATCODE) pour générer le SKU.")})
+
+#     @property
+#     def main_image_obj(self):
+#         img = getattr(self, "images", None)
+#         if img is not None:
+#             main = self.images.filter(is_main=True).first()
+#             if main:
+#                 return main
+#             first = self.images.order_by("sort_order", "id").first()
+#             if first:
+#                 return first
+#         return None
+
+#     @property
+#     def main_image_url(self) -> str | None:
+#         obj = self.main_image_obj
+#         if obj and getattr(obj, "image", None):
+#             try:
+#                 return obj.image.url
+#             except Exception:
+#                 return None
+#         if self.image:
+#             try:
+#                 return self.image.url
+#             except Exception:
+#                 return None
+#         return None
+
+#     # ✅ stock respectant track_stock
+#     @property
+#     def in_stock(self) -> bool:
+#         if not self.track_stock:
+#             return True
+#         return self.stock > 0
+
+#     @property
+#     def purchasable(self) -> bool:
+#         if not self.is_active:
+#             return False
+#         if not self.track_stock:
+#             return True
+#         return self.stock > 0
+
+#     # ✅ promo helpers (utilisés par template)
+#     @property
+#     def has_promo(self) -> bool:
+#         try:
+#             return bool(self.old_price is not None and self.old_price > self.price)
+#         except Exception:
+#             return False
+
+#     @property
+#     def discount_percent(self) -> int:
+#         """
+#         % entier (ex: 10). 0 si pas de promo.
+#         """
+#         if not self.has_promo:
+#             return 0
+#         try:
+#             oldp = Decimal(str(self.old_price))
+#             newp = Decimal(str(self.price))
+#             if oldp <= 0:
+#                 return 0
+#             pct = (oldp - newp) / oldp * Decimal("100")
+#             pct_int = int(pct.quantize(Decimal("1")))
+#             return max(0, min(pct_int, 95))
+#         except Exception:
+#             return 0
+
+#     def _generate_sku(self) -> str:
+#         if not self.vendor:
+#             raise ValidationError({"vendor": _("Vendeur requis pour générer le SKU.")})
+
+#         vcode = (getattr(self.vendor, "code", "") or "").strip().upper()
+#         ccode = (getattr(self.category, "code", "") or "").strip().upper()
+
+#         if not vcode:
+#             raise ValidationError({"vendor": _("Le vendeur doit avoir un code (VENDORCODE).")})
+#         if not ccode:
+#             raise ValidationError({"category": _("La catégorie doit avoir un code (CATCODE).")})
+
+#         prefix = f"{vcode}-{ccode}-"
+
+#         with transaction.atomic():
+#             seq, _ = SkuSequence.objects.select_for_update().get_or_create(
+#                 vendor_code=vcode,
+#                 category_code=ccode,
+#                 defaults={"last_number": 0},
+#             )
+#             seq.last_number += 1
+#             seq.save(update_fields=["last_number", "updated_at"])
+#             return f"{prefix}{seq.last_number:04d}"
+
+#     @staticmethod
+#     def _clean_seo_text(text: str, max_len: int) -> str:
+#         t = (text or "").strip()
+#         if not t:
+#             return ""
+#         t = " ".join(t.split())
+#         return t[:max_len]
+
+#     def save(self, *args, **kwargs):
+#         if self.sku:
+#             self.sku = self.sku.strip().upper()
+#         else:
+#             self.sku = self._generate_sku()
+
+#         super().save(*args, **kwargs)
+#         self._ensure_translation_slugs_and_seo()
+
+#     def _ensure_translation_slugs_and_seo(self):
+#         Translation = self.translations.model
+#         qs = Translation.objects.filter(master_id=self.pk)
+
+#         to_update = []
+#         for tr in qs:
+#             changed = False
+
+#             if not tr.slug and tr.name:
+#                 base = slugify(tr.name)[:260] or f"product-{self.pk}"
+#                 slug = base
+#                 n = 2
+#                 while Translation.objects.filter(
+#                     language_code=tr.language_code,
+#                     slug=slug,
+#                 ).exclude(master_id=self.pk).exists():
+#                     suffix = f"-{n}"
+#                     slug = f"{base[: max(1, 260 - len(suffix))]}{suffix}"
+#                     n += 1
+#                 tr.slug = slug
+#                 changed = True
+
+#             if tr.name and not tr.seo_title:
+#                 tr.seo_title = self._clean_seo_text(tr.name, 255)
+#                 changed = True
+
+#             if not tr.short_description and tr.description:
+#                 tr.short_description = self._clean_seo_text(tr.description, 500)
+#                 changed = True
+
+#             if not tr.seo_description:
+#                 src = tr.short_description or tr.description or tr.name or ""
+#                 tr.seo_description = self._clean_seo_text(src, 300)
+#                 changed = True
+
+#             if changed:
+#                 to_update.append(tr)
+
+#         if to_update:
+#             Translation.objects.bulk_update(
+#                 to_update,
+#                 ["slug", "seo_title", "seo_description", "short_description"],
+#             )
+
+
+# def _product_translation_autofill(sender, instance, **kwargs):
+#     master = getattr(instance, "master", None)
+#     if not master:
+#         return
+#     master._ensure_translation_slugs_and_seo()
+
+
+# try:
+#     ProductTranslation = Product._parler_meta.model
+#     post_save.connect(
+#         _product_translation_autofill,
+#         sender=ProductTranslation,
+#         dispatch_uid="ecommerce_product_translation_autofill",
+#         weak=False,
+#     )
+# except Exception:
+#     pass
+
+
+
+
+
+
+# # /economic/ecommerce/models/product.py
+# from __future__ import annotations
+
+# import re
+
+# from django.core.exceptions import ValidationError
+# from django.db import models, transaction
+# from django.db.models.signals import post_save
+# from django.utils.text import slugify
+# from django.utils.translation import gettext_lazy as _
+# from parler.models import TranslatableModel, TranslatedFields
+
+# from .sku_sequence import SkuSequence
+
+
+# SKU_RE = re.compile(r"^[A-Z0-9]{3,8}-[A-Z0-9]{3,8}-\d{4}$")
+
+
+# class Product(TranslatableModel):
+#     category = models.ForeignKey(
+#         "Category",
+#         on_delete=models.PROTECT,
+#         related_name="products",
+#         verbose_name=_("Catégorie"),
+#     )
+
+#     vendor = models.ForeignKey(
+#         "Vendor",
+#         on_delete=models.SET_NULL,
+#         null=True,
+#         blank=True,
+#         related_name="products",
+#         verbose_name=_("Vendeur"),
+#     )
+
+#     sku = models.CharField(
+#         max_length=100,
+#         unique=True,
+#         verbose_name=_("SKU"),
+#         blank=True,
+#         help_text=_("Format recommandé : <VENDORCODE>-<CATCODE>-<NNNN> (ex: SOG-TECH-0001)."),
+#         db_index=True,
+#     )
+
+#     fiche_technique = models.TextField(blank=True, verbose_name=_("Fiche technique"))
+#     image = models.ImageField(
+#         upload_to="products/main/%Y/%m/",
+#         blank=True,
+#         null=True,
+#         verbose_name=_("Image principale"),
+#     )
+#     is_new = models.BooleanField(default=False, verbose_name=_("Nouveau"), db_index=True)
+
+#     price = models.DecimalField(max_digits=12, decimal_places=2, verbose_name=_("Prix"))
+#     stock = models.PositiveIntegerField(default=0, verbose_name=_("Stock"))
+
+#     is_active = models.BooleanField(default=True, verbose_name=_("Actif"), db_index=True)
+#     is_featured = models.BooleanField(default=False, verbose_name=_("Mis en avant"), db_index=True)
+
+#     track_stock = models.BooleanField(
+#         default=True,
+#         db_index=True,
+#         verbose_name=_("Suivre le stock"),
+#         help_text=_("Décochez pour services / sur commande (stock illimité)."),
+#     )
+
+#     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Créé le"))
+#     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Mis à jour le"))
+
+#     translations = TranslatedFields(
+#         name=models.CharField(max_length=255, verbose_name=_("Nom")),
+#         slug=models.SlugField(max_length=260, blank=True, db_index=True, verbose_name=_("Slug")),
+#         short_description=models.CharField(max_length=500, blank=True, verbose_name=_("Description courte")),
+#         description=models.TextField(blank=True, verbose_name=_("Description")),
+#         seo_title=models.CharField(max_length=255, blank=True, verbose_name=_("Titre SEO")),
+#         seo_description=models.CharField(max_length=300, blank=True, verbose_name=_("Description SEO")),
+#     )
+
+#     class TranslatedMeta:
+#         unique_together = (("language_code", "slug"),)
+#         indexes = (models.Index(fields=("language_code", "slug")),)
+
+#     class Meta:
+#         verbose_name = _("Produit")
+#         verbose_name_plural = _("Produits")
+#         ordering = ["-created_at"]
+#         indexes = [
+#             models.Index(fields=["is_active", "is_featured", "-created_at"]),
+#             models.Index(fields=["category", "is_active"]),
+#             models.Index(fields=["vendor", "is_active"]),
+#             models.Index(fields=["is_new", "is_active"]),
+#             models.Index(fields=["sku"]),
+#         ]
+
+#     def __str__(self) -> str:
+#         name = self.safe_translation_getter("name", any_language=True)
+#         if name:
+#             return f"{name} ({self.sku})" if self.sku else name
+#         return self.sku or f"Product #{self.pk}"
+
+#     def clean(self):
+#         super().clean()
+
+#         if self.sku:
+#             self.sku = self.sku.strip().upper()
+
+#         if self.price is None:
+#             raise ValidationError({"price": _("Le prix est obligatoire.")})
+#         if self.price is not None and self.price < 0:
+#             raise ValidationError({"price": _("Le prix ne peut pas être négatif.")})
+
+#         if self.is_featured and not self.is_active:
+#             raise ValidationError({"is_featured": _("Un produit inactif ne peut pas être mis en avant.")})
+
+#         if self.sku and not SKU_RE.match(self.sku):
+#             raise ValidationError({"sku": _("Format SKU invalide. Ex: SOG-TECH-0001 (VENDOR-CAT-0001).")})
+
+#         if not self.sku:
+#             if not self.vendor_id:
+#                 raise ValidationError({"vendor": _("Le vendeur est requis pour générer automatiquement le SKU.")})
+
+#             vcode = getattr(self.vendor, "code", None)
+#             ccode = getattr(self.category, "code", None)
+#             if not vcode:
+#                 raise ValidationError({"vendor": _("Le vendeur doit avoir un code (VENDORCODE) pour générer le SKU.")})
+#             if not ccode:
+#                 raise ValidationError({"category": _("La catégorie doit avoir un code (CATCODE) pour générer le SKU.")})
+
+#     @property
+#     def main_image_obj(self):
+#         img = getattr(self, "images", None)
+#         if img is not None:
+#             main = self.images.filter(is_main=True).first()
+#             if main:
+#                 return main
+#             first = self.images.order_by("sort_order", "id").first()
+#             if first:
+#                 return first
+#         return None
+
+#     @property
+#     def main_image_url(self) -> str | None:
+#         obj = self.main_image_obj
+#         if obj and getattr(obj, "image", None):
+#             try:
+#                 return obj.image.url
+#             except Exception:
+#                 return None
+#         if self.image:
+#             try:
+#                 return self.image.url
+#             except Exception:
+#                 return None
+#         return None
+
+#     # ✅ stock respectant track_stock
+#     @property
+#     def in_stock(self) -> bool:
+#         if not self.track_stock:
+#             return True
+#         return self.stock > 0
+
+#     @property
+#     def purchasable(self) -> bool:
+#         if not self.is_active:
+#             return False
+#         if not self.track_stock:
+#             return True
+#         return self.stock > 0
+
+#     def _generate_sku(self) -> str:
+#         if not self.vendor:
+#             raise ValidationError({"vendor": _("Vendeur requis pour générer le SKU.")})
+
+#         vcode = (getattr(self.vendor, "code", "") or "").strip().upper()
+#         ccode = (getattr(self.category, "code", "") or "").strip().upper()
+
+#         if not vcode:
+#             raise ValidationError({"vendor": _("Le vendeur doit avoir un code (VENDORCODE).")})
+#         if not ccode:
+#             raise ValidationError({"category": _("La catégorie doit avoir un code (CATCODE).")})
+
+#         prefix = f"{vcode}-{ccode}-"
+
+#         # ✅ Prod-safe: séquence lockée
+#         with transaction.atomic():
+#             seq, _ = SkuSequence.objects.select_for_update().get_or_create(
+#                 vendor_code=vcode,
+#                 category_code=ccode,
+#                 defaults={"last_number": 0},
+#             )
+#             seq.last_number += 1
+#             seq.save(update_fields=["last_number", "updated_at"])
+#             return f"{prefix}{seq.last_number:04d}"
+
+#     @staticmethod
+#     def _clean_seo_text(text: str, max_len: int) -> str:
+#         t = (text or "").strip()
+#         if not t:
+#             return ""
+#         t = " ".join(t.split())
+#         return t[:max_len]
+
+#     def save(self, *args, **kwargs):
+#         if self.sku:
+#             self.sku = self.sku.strip().upper()
+#         else:
+#             self.sku = self._generate_sku()
+
+#         super().save(*args, **kwargs)
+#         self._ensure_translation_slugs_and_seo()
+
+#     def _ensure_translation_slugs_and_seo(self):
+#         Translation = self.translations.model
+#         qs = Translation.objects.filter(master_id=self.pk)
+
+#         to_update = []
+#         for tr in qs:
+#             changed = False
+
+#             if not tr.slug and tr.name:
+#                 base = slugify(tr.name)[:260] or f"product-{self.pk}"
+#                 slug = base
+#                 n = 2
+#                 while Translation.objects.filter(
+#                     language_code=tr.language_code,
+#                     slug=slug,
+#                 ).exclude(master_id=self.pk).exists():
+#                     suffix = f"-{n}"
+#                     slug = f"{base[: max(1, 260 - len(suffix))]}{suffix}"
+#                     n += 1
+#                 tr.slug = slug
+#                 changed = True
+
+#             if tr.name and not tr.seo_title:
+#                 tr.seo_title = self._clean_seo_text(tr.name, 255)
+#                 changed = True
+
+#             if not tr.short_description and tr.description:
+#                 tr.short_description = self._clean_seo_text(tr.description, 500)
+#                 changed = True
+
+#             if not tr.seo_description:
+#                 src = tr.short_description or tr.description or tr.name or ""
+#                 tr.seo_description = self._clean_seo_text(src, 300)
+#                 changed = True
+
+#             if changed:
+#                 to_update.append(tr)
+
+#         if to_update:
+#             Translation.objects.bulk_update(
+#                 to_update,
+#                 ["slug", "seo_title", "seo_description", "short_description"],
+#             )
+
+
+# # -------------------------------------------------------------------
+# # ✅ Signal Parler: connect sur le vrai modèle de traduction
+# # -------------------------------------------------------------------
+# def _product_translation_autofill(sender, instance, **kwargs):
+#     master = getattr(instance, "master", None)
+#     if not master:
+#         return
+#     master._ensure_translation_slugs_and_seo()
+
+
+# try:
+#     ProductTranslation = Product._parler_meta.model  # ✅ vrai modèle de traduction
+#     post_save.connect(
+#         _product_translation_autofill,
+#         sender=ProductTranslation,
+#         dispatch_uid="ecommerce_product_translation_autofill",
+#         weak=False,
+#     )
+# except Exception:
+#     pass
 
 
 

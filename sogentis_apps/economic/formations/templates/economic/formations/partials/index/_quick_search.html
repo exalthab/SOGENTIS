@@ -1,0 +1,42 @@
+{# templates/economic/formations/partials/index/_quick_search.html #}
+{% load static i18n dashboard_tags ecom_money ecom_utils %}
+
+<section class="container mt-4">
+  <div class="ft-card">
+    <form method="get" action="{{ u_course_list|default:'#' }}" class="row g-2 align-items-end">
+      <div class="col-lg-5">
+        <label class="form-label small text-muted mb-1" for="ft_q">{% trans "Rechercher une formation" %}</label>
+        <div class="input-group">
+          <span class="input-group-text bg-light"><i class="fa-solid fa-magnifying-glass"></i></span>
+          <input id="ft_q" name="q" type="text" class="form-control" placeholder="{% trans 'IA, Python, Data, Marketing…' %}">
+        </div>
+      </div>
+
+      <div class="col-lg-3">
+        <label class="form-label small text-muted mb-1" for="ft_type">{% trans "Format" %}</label>
+        <select id="ft_type" name="type" class="form-select">
+          <option value="">{% trans "Tous" %}</option>
+          <option value="online">{% trans "En ligne" %}</option>
+          <option value="onsite">{% trans "Présentiel" %}</option>
+          <option value="hybrid">{% trans "Hybride" %}</option>
+        </select>
+      </div>
+
+      <div class="col-lg-3">
+        <label class="form-label small text-muted mb-1" for="ft_level">{% trans "Niveau" %}</label>
+        <select id="ft_level" name="level" class="form-select">
+          <option value="">{% trans "Tous" %}</option>
+          <option value="beginner">{% trans "Débutant" %}</option>
+          <option value="intermediate">{% trans "Intermédiaire" %}</option>
+          <option value="advanced">{% trans "Avancé" %}</option>
+        </select>
+      </div>
+
+      <div class="col-lg-1 d-grid">
+        <button class="btn btn-primary {% if not u_course_list %}disabled{% endif %}" type="submit">
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+    </form>
+  </div>
+</section>

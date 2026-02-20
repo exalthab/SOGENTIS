@@ -2,28 +2,52 @@
 {% extends "economic/base_economic.html" %}
 {% load static i18n %}
 
-{% block title %}
-  {% block formations_page_title %}{% trans "Formations" %}{% endblock %} | {{ PROJECT_NAME|default:"SOGENTIS" }}
-{% endblock %}
+{# ===================== #}
+{# SEO                   #}
+{# ===================== #}
+{% block economic_title %}
+  {% block formations_page_title %}{% trans "Formations" %}{% endblock formations_page_title %}
+{% endblock economic_title %}
 
-{% block extra_css %}
+{% block economic_description %}
+  {% block formations_description %}
+    {% trans "Parcours, certifications et formations professionnelles." %}
+  {% endblock formations_description %}
+{% endblock economic_description %}
+
+{# ===================== #}
+{# CSS                   #}
+{# ===================== #}
+{% block economic_extra_css %}
   {{ block.super }}
   <link rel="stylesheet" href="{% static 'formations/css/formations.css' %}">
+  {# ⚠️ si ce fichier ne contient QUE le menu formations, tu peux le retirer aussi #}
   <link rel="stylesheet" href="{% static 'formations/css/formations_topbar.css' %}">
-{% endblock %}
+  {% block formations_extra_css %}{% endblock formations_extra_css %}
+{% endblock economic_extra_css %}
 
-{# ================================ #}
-{#   ✅ MENU UNIQUE (FORMATIONS)     #}
-{# ================================ #}
-{% block section_menu %}
-  {% include "economic/formations/partials/_topbar_formations.html" %}
-{% endblock %}
+{# ===================== #}
+{# SUBNAV                #}
+{# => PAS DE 2e MENU      #}
+{# ===================== #}
+{% block economic_subnav %}{% endblock economic_subnav %}
 
-{% block content %}
+{# ===================== #}
+{# CONTENT               #}
+{# ===================== #}
+{% block economic_content %}
   <main class="formations-main">
-    {% block formations_content %}{% endblock %}
+    {% block formations_content %}{% endblock formations_content %}
   </main>
-{% endblock %}
+{% endblock economic_content %}
+
+{# ===================== #}
+{# JS                    #}
+{# ===================== #}
+{% block economic_extra_js %}
+  {{ block.super }}
+  {% block formations_extra_js %}{% endblock formations_extra_js %}
+{% endblock economic_extra_js %}
 
 
 

@@ -1,0 +1,19 @@
+{# templates/core/partials/topbar/_social_icons.html #}
+{% if FACEBOOK_URL %}
+  <a class="social-icon d-inline-flex align-items-center text-white"
+     href="{{ FACEBOOK_URL }}" target="_blank" rel="noopener" aria-label="Facebook">
+    {% include "core/partials/icons/facebook.svg" %}
+  </a>
+{% endif %}
+{% if TWITTER_URL %}
+  <a class="social-icon d-inline-flex align-items-center text-white"
+     href="{{ TWITTER_URL }}" target="_blank" rel="noopener" aria-label="Twitter">
+    {% include "core/partials/icons/twitter.svg" %}
+  </a>
+{% endif %}
+{% if YOUTUBE_URL %}
+  <a class="social-icon d-inline-flex align-items-center text-white"
+     href="{{ YOUTUBE_URL }}" target="_blank" rel="noopener" aria-label="YouTube">
+    {% include "core/partials/icons/youtube.svg" %}
+  </a>
+{% endif %}

@@ -1,0 +1,204 @@
+{# templates/economic/partials/index/_eco_index_sections.html #}
+{% load i18n dashboard_tags %}
+
+<section class="eco-sections container my-4 my-lg-5" aria-label="{% trans 'Modules économiques' %}">
+  <div class="row g-3 g-lg-4">
+
+    {% safe_url "accounts_users:web:auth:login" as web_login_url %}
+    {% with next_path=request.get_full_path|urlencode %}
+      {% with is_auth=request.user.is_authenticated %}
+
+        {% if sections %}
+          {% for section in sections %}
+            {% if section.visible %}
+              <div class="col-12 col-md-6 col-lg-4">
+
+                {% if section.locked %}
+                  {% if not is_auth %}
+                    <a href="{% if web_login_url %}{{ web_login_url }}?context=economic&next={{ next_path }}{% else %}#{% endif %}"
+                       class="eco-card h-100 eco-card-locked {% if not web_login_url %}disabled{% endif %}"
+                       aria-label="{{ section.title }} — {% trans 'Accès réservé' %}"
+                       {% if not web_login_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+
+                      <div class="eco-card-header">
+                        <div class="eco-card-icon" aria-hidden="true">
+                          <i class="bi {{ section.icon }}"></i>
+                        </div>
+                      </div>
+
+                      <div class="eco-card-body">
+                        <h3 class="eco-card-title h6 mb-1">{{ section.title }}</h3>
+                        <p class="eco-card-text small mb-0">{{ section.description }}</p>
+                      </div>
+
+                      <div class="eco-card-footer small">
+                        <span class="eco-link">
+                          {% trans "Se connecter" %} <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                        </span>
+                      </div>
+
+                      <div class="eco-card-lock small" aria-hidden="true">🔒 {% trans "Accès réservé" %}</div>
+                    </a>
+
+                  {% else %}
+
+                  <div class="eco-card h-100 eco-card-locked" role="group" aria-label="{{ section.title }} — {% trans 'Accès réservé' %}">
+                      <div class="eco-card-header">
+                        <div class="eco-card-icon" aria-hidden="true">
+                          <i class="bi {{ section.icon }}"></i>
+                        </div>
+                      </div>
+
+                      <div class="eco-card-body">
+                        <h3 class="eco-card-title h6 mb-1">{{ section.title }}</h3>
+                        <p class="eco-card-text small mb-0">{{ section.description }}</p>
+                      </div>
+
+                      <div class="eco-card-footer small">
+                        <span class="eco-link">
+                          {% trans "Accès réservé" %}
+                        </span>
+                      </div>
+
+                      <div class="eco-card-lock small" aria-hidden="true">🔒 {% trans "Accès réservé" %}</div>
+                    </div>
+                  {% endif %}
+
+                {% else %}
+                  {% with url=section.url|default:'' url_lc=section.url|default:''|lower %}
+                    <a href="{{ url|default:'#' }}"
+                       class="eco-card h-100 {% if not url %}disabled{% endif %}"
+                       aria-label="{{ section.title }}"
+                       {% if not url %}aria-disabled="true" tabindex="-1"{% endif %}
+                       {% if url_lc|slice:":4" == "http" %}target="_blank" rel="noopener noreferrer"{% endif %}>
+
+                      <div class="eco-card-header">
+                        <div class="eco-card-icon" aria-hidden="true">
+                          <i class="bi {{ section.icon }}"></i>
+                        </div>
+                      </div>
+
+                      <div class="eco-card-body">
+                        <h3 class="eco-card-title h6 mb-1">{{ section.title }}</h3>
+                        <p class="eco-card-text small mb-0">{{ section.description }}</p>
+                      </div>
+
+                      <div class="eco-card-footer small">
+                        <span class="eco-link">
+                          {% trans "Découvrir" %} <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                        </span>
+                      </div>
+                    </a>
+                  {% endwith %}
+                {% endif %}
+
+              </div>
+            {% endif %}
+          {% endfor %}
+
+        {% else %}
+          <div class="col-12">
+            <div class="alert alert-info mb-0 small">
+              {% trans "Aucune section n’est disponible pour le moment." %}
+            </div>
+          </div>
+        {% endif %}
+
+      {% endwith %}
+    {% endwith %}
+
+  </div>
+</section>
+
+
+
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/partials/index/_eco_index_sections.html #}
+{% load i18n dashboard_tags %}
+
+<section class="eco-sections container my-4 my-lg-5" aria-label="{% trans 'Modules économiques' %}">
+  <div class="row g-3 g-lg-4">
+
+    {% safe_url "accounts_users:web:auth:login" as web_login_url %}
+    {% with next_path=request.get_full_path|urlencode %}
+
+    {% if sections %}
+      {% for section in sections %}
+        {% if section.visible %}
+          <div class="col-12 col-md-6 col-lg-4">
+
+            {% if section.locked %}
+              <a href="{% if web_login_url %}{{ web_login_url }}?context=economic&next={{ next_path }}{% else %}#{% endif %}"
+                 class="eco-card h-100 eco-card-locked {% if not web_login_url %}disabled{% endif %}"
+                 aria-label="{{ section.title }}"
+                 {% if not web_login_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+
+                <div class="eco-card-header">
+                  <div class="eco-card-icon" aria-hidden="true">
+                    <i class="bi {{ section.icon }}"></i>
+                  </div>
+                </div>
+
+                <div class="eco-card-body">
+                  <h3 class="eco-card-title h6 mb-1">{{ section.title }}</h3>
+                  <p class="eco-card-text small mb-0">{{ section.description }}</p>
+                </div>
+
+                <div class="eco-card-footer small">
+                  <span class="eco-link">
+                    {% trans "Découvrir" %} <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                  </span>
+                </div>
+
+                <div class="eco-card-lock small" aria-hidden="true">🔒 {% trans "Accès réservé" %}</div>
+              </a>
+
+            {% else %}
+              {% with url=section.url|default:'#' url_lc=section.url|default:''|lower %}
+                <a href="{{ url }}"
+                   class="eco-card h-100 {% if url == '#' %}disabled{% endif %}"
+                   aria-label="{{ section.title }}"
+                   {% if url == '#' %}aria-disabled="true" tabindex="-1"{% endif %}
+                   {% if url_lc|slice:":4" == "http" %}target="_blank" rel="noopener"{% endif %}>
+
+                  <div class="eco-card-header">
+                    <div class="eco-card-icon" aria-hidden="true">
+                      <i class="bi {{ section.icon }}"></i>
+                    </div>
+                  </div>
+
+                  <div class="eco-card-body">
+                    <h3 class="eco-card-title h6 mb-1">{{ section.title }}</h3>
+                    <p class="eco-card-text small mb-0">{{ section.description }}</p>
+                  </div>
+
+                  <div class="eco-card-footer small">
+                    <span class="eco-link">
+                      {% trans "Découvrir" %} <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                    </span>
+                  </div>
+                </a>
+              {% endwith %}
+            {% endif %}
+
+          </div>
+        {% endif %}
+      {% endfor %}
+    {% else %}
+      <div class="col-12">
+        <div class="alert alert-info mb-0 small">
+          {% trans "Aucune section n’est disponible pour le moment." %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% endwith %}
+
+  </div>
+</section> {% endcomment %}

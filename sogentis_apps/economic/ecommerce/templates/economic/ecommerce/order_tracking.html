@@ -1,0 +1,29 @@
+{# templates/economic/ecommerce/order_tracking.html #}
+{% extends "economic/ecommerce/base_ecommerce.html" %}
+{% load i18n %}
+
+{% block ecommerce_title %}{% trans "Suivi de commande" %} | {{ PROJECT_NAME }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h1 class="h4 mb-3">{% trans "Suivi de commande" %}</h1>
+
+  <form method="post" class="card p-3 mb-3">
+    {% csrf_token %}
+    <label class="form-label" for="track">{% trans "Code / UUID de commande" %}</label>
+    <div class="d-flex gap-2">
+      <input id="track" name="q" class="form-control" value="{{ tracking_query }}" placeholder="{% trans 'Ex: 6f2c...-uuid' %}">
+      <button class="btn btn-primary" type="submit">{% trans "Rechercher" %}</button>
+    </div>
+  </form>
+
+  {% if order %}
+    <div class="card p-3">
+      <div class="fw-bold mb-2">{% trans "Commande trouvée" %}</div>
+      <div><span class="text-muted">{% trans "UUID" %}:</span> {{ order.uuid }}</div>
+      {% if order.status %}<div><span class="text-muted">{% trans "Statut" %}:</span> {{ order.status }}</div>{% endif %}
+      {% if order.created_at %}<div><span class="text-muted">{% trans "Date" %}:</span> {{ order.created_at }}</div>{% endif %}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

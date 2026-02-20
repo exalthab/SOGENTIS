@@ -1,23 +1,65 @@
-# /economic/views.py
+# economic/views.py
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import Any
+
+from django.conf import settings
 from django.shortcuts import render
-from django.urls import reverse
+from django.urls import NoReverseMatch, reverse
 from django.utils.translation import gettext_lazy as _
+
 from dashboard.permissions import is_vendor, is_b2b_user, is_admin
 from economic.permissions import is_verified_vendor, is_b2b_manager
 
 
+def _safe_reverse(name: str, default: str = "#") -> str:
+    try:
+        return reverse(name)
+    except NoReverseMatch:
+        return default
+
+
+@dataclass(frozen=True)
+class _Section:
+    key: str
+    title: Any
+    description: Any
+    url: str
+    icon: str
+    visible: bool = True
+    locked: bool = False
+    coming_soon: bool = False
+
+
+def _mk_section(
+    *,
+    key: str,
+    title: Any,
+    description: Any,
+    url_name: str | None,
+    icon: str,
+    visible: bool = True,
+    locked: bool = False,
+) -> dict[str, Any]:
+    url = _safe_reverse(url_name) if url_name else "#"
+    coming_soon = (url == "#")
+    return _Section(
+        key=key,
+        title=title,
+        description=description,
+        url=url,
+        icon=icon,
+        visible=visible,
+        locked=locked or coming_soon,
+        coming_soon=coming_soon,
+    ).__dict__
+
+
 def economic_home_view(request):
-    """
-    Page d'accueil du pôle économique.
-    Hub public vers E-commerce, B2B, Formations, Services, Ressources et Support.
-    """
-
     user = request.user
-    is_authenticated = user.is_authenticated
+    is_authenticated = bool(getattr(user, "is_authenticated", False))
 
-    # -----------------------------
-    # Détection des rôles
-    # -----------------------------
     roles = {
         "vendor": is_vendor(user) if is_authenticated else False,
         "verified_vendor": is_verified_vendor(user) if is_authenticated else False,
@@ -25,113 +67,563 @@ def economic_home_view(request):
         "b2b_manager": is_b2b_manager(user) if is_authenticated else False,
         "staff": is_admin(user) if is_authenticated else False,
     }
+    can_b2b = roles["b2b"] or roles["b2b_manager"] or roles["staff"]
+    can_vendor = roles["vendor"] or roles["verified_vendor"] or roles["staff"]
 
-    # -----------------------------
-    # Sections économiques
-    # -----------------------------
-    sections = [
-        {
-            "key": "ecommerce",
-            "title": _("E-commerce"),
-            "description": _("Produits, marketplace et commandes en ligne."),
-            "url": reverse("economic:ecommerce:index"),
-            "icon": "bi-cart-check",
-            "visible": True,
-            "locked": False,
-        },
-        {
-            "key": "formations",
-            "title": _("Formations"),
-            "description": _("Formations en ligne, parcours certifiants et apprentissage continu."),
-            "url": reverse("economic:formations:index"),
-            "icon": "bi-mortarboard",
-            "visible": True,
-            "locked": False,
-        },
-        {
-            "key": "resources",
-            "title": _("Ressources"),
-            "description": _("Documents, guides et contenus téléchargeables."),
-            "url": reverse("economic:resources:index"),
-            "icon": "bi-journal-text",
-            "visible": True,
-            "locked": False,
-        },
-        {
-            "key": "services",
-            "title": _("Services"),
-            "description": _("Services numériques, accompagnement et solutions sur mesure."),
-            "url": reverse("economic:services:index"),
-            "icon": "bi-gear-wide-connected",
-            "visible": True,
-            "locked": False,
-        },
-        {
-            "key": "support",
-            "title": _("Support & Assistance"),
-            "description": _("FAQ, assistance client et support technique."),
-            "url": reverse("economic:support:index"),
-            "icon": "bi-life-preserver",
-            "visible": True,
-            "locked": False,
-        },
-        # -----------------------------
-        # ESPACE B2B
-        # -----------------------------
-        {
-            "key": "b2b",
-            "title": _("Espace B2B"),
-            "description": _("Solutions professionnelles, commandes en gros et partenariats."),
-            "url": reverse("economic:b2b:index"),
-            "icon": "bi-building",
-            "visible": roles["b2b"] or roles["b2b_manager"] or roles["staff"],
-            "locked": not (roles["b2b"] or roles["b2b_manager"] or roles["staff"]),
-        },
-        # -----------------------------
-        # ESPACE VENDEUR 
-        # -----------------------------
-        {
-            "key": "vendor",
-            "title": _("Espace Vendeur"),
-            "description": _("Gestion des produits et commandes."),
-            "url": reverse("dashboard:vendor:home"),
-            "icon": "bi-shop",
-            "visible": roles["vendor"] or roles["verified_vendor"] or roles["staff"],
-            "locked": not (roles["vendor"] or roles["verified_vendor"] or roles["staff"]),
-        },
-        
-        
-        {
-            "key": "youtube",
-            "title": _("YouTube (Soutenir)"),
-            "description": _("Abonnez-vous et regardez nos vidéos pour soutenir nos actions sociales."),
-            "url": "https://www.youtube.com/@Sogentis",
-            "icon": "bi-youtube",
-            "visible": True,
-            "locked": False,
-        },
+    # ✅ YouTube : une seule source de vérité (settings > fallback)
+    youtube_handle = getattr(settings, "YOUTUBE_HANDLE", None) or "SOGENTIS"
+    youtube_channel_url = f"https://www.youtube.com/@{youtube_handle}"
+    youtube_videos_url = f"{youtube_channel_url}/videos"
 
+    # ✅ Sections principales (actives)
+    sections: list[dict[str, Any]] = [
+        _mk_section(
+            key="ecommerce",
+            title=_("E-commerce"),
+            description=_("Produits, marketplace et commandes en ligne."),
+            url_name="economic:ecommerce:index",
+            icon="bi-cart-check",
+        ),
+        _mk_section(
+            key="prestations",
+            title=_("Prestations"),
+            description=_("Prestations numériques, accompagnement et solutions sur mesure."),
+            url_name="economic:prestations:index",
+            icon="bi-gear-wide-connected",
+        ),
+        _mk_section(
+            key="formations",
+            title=_("Formations"),
+            description=_("Parcours certifiants, apprentissage et suivi."),
+            url_name="economic:formations:index",
+            icon="bi-mortarboard",
+        ),
+        _mk_section(
+            key="resources",
+            title=_("Ressources"),
+            description=_("Guides, documents et contenus téléchargeables."),
+            url_name="economic:resources:index",
+            icon="bi-journal-text",
+        ),
+        _mk_section(
+            key="support",
+            title=_("Support & Assistance"),
+            description=_("Tickets, FAQ et assistance."),
+            url_name="economic:support:index",
+            icon="bi-life-preserver",
+        ),
+        _mk_section(
+            key="b2b",
+            title=_("Espace B2B"),
+            description=_("Commandes pro, RFQ, factures et partenariats."),
+            url_name="economic:b2b:index",
+            icon="bi-building",
+            locked=not can_b2b,
+        ),
+        _mk_section(
+            key="vendor",
+            title=_("Espace Vendeur"),
+            description=_("Gestion produits, commandes, performance."),
+            url_name="dashboard:vendor:home",
+            icon="bi-shop",
+            locked=not can_vendor,
+        ),
+    ]
+
+    # ✅ Tech+ (2026+) : visibles/actifs dès que les urls existent
+    tech_plus: list[dict[str, Any]] = [
+        _mk_section(
+            key="api",
+            title=_("API"),
+            description=_("Endpoints et intégrations techniques."),
+            url_name="economic:api:index",  # ajoute cette route si tu veux l’activer
+            icon="bi-braces",
+        ),
+        _mk_section(
+            key="integrations",
+            title=_("Intégrations"),
+            description=_("Webhooks, connecteurs, partenaires."),
+            url_name="economic:integrations:index",
+            icon="bi-plug",
+        ),
+        _mk_section(
+            key="analytics",
+            title=_("Analytics"),
+            description=_("KPI, funnels, cohortes, rapports."),
+            url_name="economic:analytics:index",
+            icon="bi-graph-up",
+        ),
+        _mk_section(
+            key="ai",
+            title=_("IA & Automations"),
+            description=_("Recommandations, agents, automatisation."),
+            url_name="economic:ai:index",
+            icon="bi-robot",
+        ),
+        _mk_section(
+            key="labs",
+            title=_("Labs"),
+            description=_("Expérimentations, prototypes, nouveautés."),
+            url_name="economic:labs:index",
+            icon="bi-beaker",
+        ),
+    ]
+
+    # External (YouTube)
+    external: list[dict[str, Any]] = [
+        _Section(
+            key="youtube",
+            title=_("YouTube (Soutenir)"),
+            description=_("Abonnez-vous et regardez nos vidéos pour soutenir nos actions sociales."),
+            url=youtube_channel_url,
+            icon="bi-youtube",
+            visible=True,
+            locked=False,
+            coming_soon=False,
+        ).__dict__
     ]
 
     context = {
         "page_title": _("Pôle Économique"),
         "sections": sections,
+        "tech_plus_sections": tech_plus,
+        "external_sections": external,
 
-        # ✅ AJOUT CRUCIAL
-        # "section_menu": "economic/partials/_economic_menu.html",
-        
-        # -----------------------------
-        "YOUTUBE_CHANNEL_NAME": "SOGENTIS",
-        "YOUTUBE_CHANNEL_URL": "https://www.youtube.com/@SOGENTIS",          # ✅ remplace par ton vrai handle si différent
-        "YOUTUBE_VIDEOS_URL": "https://www.youtube.com/@SOGENTIS/videos",    # ✅ idem
+        # YouTube
+        "YOUTUBE_CHANNEL_NAME": youtube_handle,
+        "YOUTUBE_CHANNEL_URL": youtube_channel_url,
+        "YOUTUBE_VIDEOS_URL": youtube_videos_url,
 
+        # Placeholders (si tu branches plus tard l’API YouTube)
         "YT_SUBSCRIBERS_LABEL": "—",
         "YT_VIEWS_LABEL": "—",
         "YT_VIDEOS_LABEL": "—",
 
+        # Roles (si besoin côté template)
+        "ECONOMIC_ROLES": roles,
+        "ECONOMIC_CAN_B2B": can_b2b,
+        "ECONOMIC_CAN_VENDOR": can_vendor,
     }
 
     return render(request, "economic/index.html", context)
+
+
+
+
+
+
+# # economic/views.py
+# from __future__ import annotations
+
+# from django.shortcuts import render
+# from django.urls import NoReverseMatch, reverse
+# from django.utils.translation import gettext_lazy as _
+
+# from dashboard.permissions import is_vendor, is_b2b_user, is_admin
+# from economic.permissions import is_verified_vendor, is_b2b_manager
+
+
+# def _safe_reverse(name: str, default: str = "#") -> str:
+#     try:
+#         return reverse(name)
+#     except NoReverseMatch:
+#         return default
+
+
+# def economic_home_view(request):
+#     user = request.user
+#     is_authenticated = user.is_authenticated
+
+#     roles = {
+#         "vendor": is_vendor(user) if is_authenticated else False,
+#         "verified_vendor": is_verified_vendor(user) if is_authenticated else False,
+#         "b2b": is_b2b_user(user) if is_authenticated else False,
+#         "b2b_manager": is_b2b_manager(user) if is_authenticated else False,
+#         "staff": is_admin(user) if is_authenticated else False,
+#     }
+
+#     can_b2b = roles["b2b"] or roles["b2b_manager"] or roles["staff"]
+#     can_vendor = roles["vendor"] or roles["verified_vendor"] or roles["staff"]
+
+#     # ✅ une seule source de vérité
+#     youtube_handle = "SOGENTIS"
+#     youtube_channel_url = f"https://www.youtube.com/@{youtube_handle}"
+#     youtube_videos_url = f"{youtube_channel_url}/videos"
+
+#     sections = [
+#         {
+#             "key": "ecommerce",
+#             "title": _("E-commerce"),
+#             "description": _("Produits, marketplace et commandes en ligne."),
+#             "url": _safe_reverse("economic:ecommerce:index"),
+#             "icon": "bi-cart-check",
+#             "visible": True,
+#             "locked": False,
+#         },
+#         {
+#             "key": "formations",
+#             "title": _("Formations"),
+#             "description": _("Formations en ligne, parcours certifiants et apprentissage continu."),
+#             "url": _safe_reverse("economic:formations:index"),
+#             "icon": "bi-mortarboard",
+#             "visible": True,
+#             "locked": False,
+#         },
+#         {
+#             "key": "resources",
+#             "title": _("Ressources"),
+#             "description": _("Documents, guides et contenus téléchargeables."),
+#             "url": _safe_reverse("economic:resources:index"),
+#             "icon": "bi-journal-text",
+#             "visible": True,
+#             "locked": False,
+#         },
+
+#         # ✅ RENOMMÉ: services -> prestations
+#         {
+#             "key": "prestations",
+#             "title": _("Prestations"),
+#             "description": _("Prestations numériques, accompagnement et solutions sur mesure."),
+#             "url": _safe_reverse("economic:prestations:index"),
+#             "icon": "bi-gear-wide-connected",
+#             "visible": True,
+#             "locked": False,
+#         },
+
+#         {
+#             "key": "support",
+#             "title": _("Support & Assistance"),
+#             "description": _("FAQ, assistance client et support technique."),
+#             "url": _safe_reverse("economic:support:index"),
+#             "icon": "bi-life-preserver",
+#             "visible": True,
+#             "locked": False,
+#         },
+
+#         # B2B : visible mais verrouillé si pas accès
+#         {
+#             "key": "b2b",
+#             "title": _("Espace B2B"),
+#             "description": _("Solutions professionnelles, commandes en gros et partenariats."),
+#             "url": _safe_reverse("economic:b2b:index"),
+#             "icon": "bi-building",
+#             "visible": True,
+#             "locked": not can_b2b,
+#         },
+
+#         # Vendeur : visible mais verrouillé si pas accès
+#         {
+#             "key": "vendor",
+#             "title": _("Espace Vendeur"),
+#             "description": _("Gestion des produits et commandes."),
+#             "url": _safe_reverse("dashboard:vendor:home"),
+#             "icon": "bi-shop",
+#             "visible": True,
+#             "locked": not can_vendor,
+#         },
+
+#         {
+#             "key": "youtube",
+#             "title": _("YouTube (Soutenir)"),
+#             "description": _("Abonnez-vous et regardez nos vidéos pour soutenir nos actions sociales."),
+#             "url": youtube_channel_url,
+#             "icon": "bi-youtube",
+#             "visible": True,
+#             "locked": False,
+#         },
+#     ]
+
+#     context = {
+#         "page_title": _("Pôle Économique"),
+#         "sections": sections,
+
+#         # YouTube
+#         "YOUTUBE_CHANNEL_NAME": youtube_handle,
+#         "YOUTUBE_CHANNEL_URL": youtube_channel_url,
+#         "YOUTUBE_VIDEOS_URL": youtube_videos_url,
+
+#         "YT_SUBSCRIBERS_LABEL": "—",
+#         "YT_VIEWS_LABEL": "—",
+#         "YT_VIDEOS_LABEL": "—",
+#     }
+
+#     return render(request, "economic/index.html", context)
+
+
+
+
+
+
+# # economic/views.py
+# from django.shortcuts import render
+# from django.urls import NoReverseMatch, reverse
+# from django.utils.translation import gettext_lazy as _
+
+# from dashboard.permissions import is_vendor, is_b2b_user, is_admin
+# from economic.permissions import is_verified_vendor, is_b2b_manager
+
+
+# def _safe_reverse(name: str, default: str = "#") -> str:
+#     try:
+#         return reverse(name)
+#     except NoReverseMatch:
+#         return default
+
+
+# def economic_home_view(request):
+#     user = request.user
+#     is_authenticated = user.is_authenticated
+
+#     roles = {
+#         "vendor": is_vendor(user) if is_authenticated else False,
+#         "verified_vendor": is_verified_vendor(user) if is_authenticated else False,
+#         "b2b": is_b2b_user(user) if is_authenticated else False,
+#         "b2b_manager": is_b2b_manager(user) if is_authenticated else False,
+#         "staff": is_admin(user) if is_authenticated else False,
+#     }
+
+#     can_b2b = roles["b2b"] or roles["b2b_manager"] or roles["staff"]
+#     can_vendor = roles["vendor"] or roles["verified_vendor"] or roles["staff"]
+
+#     # ✅ une seule source de vérité
+#     youtube_handle = "SOGENTIS"
+#     youtube_channel_url = f"https://www.youtube.com/@{youtube_handle}"
+#     youtube_videos_url = f"{youtube_channel_url}/videos"
+
+#     sections = [
+#         {
+#             "key": "ecommerce",
+#             "title": _("E-commerce"),
+#             "description": _("Produits, marketplace et commandes en ligne."),
+#             "url": _safe_reverse("economic:ecommerce:index"),
+#             "icon": "bi-cart-check",
+#             "visible": True,
+#             "locked": False,
+#         },
+#         {
+#             "key": "formations",
+#             "title": _("Formations"),
+#             "description": _("Formations en ligne, parcours certifiants et apprentissage continu."),
+#             "url": _safe_reverse("economic:formations:index"),
+#             "icon": "bi-mortarboard",
+#             "visible": True,
+#             "locked": False,
+#         },
+#         {
+#             "key": "resources",
+#             "title": _("Ressources"),
+#             "description": _("Documents, guides et contenus téléchargeables."),
+#             "url": _safe_reverse("economic:resources:index"),
+#             "icon": "bi-journal-text",
+#             "visible": True,
+#             "locked": False,
+#         },
+#         {
+#             "key": "services",
+#             "title": _("Services"),
+#             "description": _("Services numériques, accompagnement et solutions sur mesure."),
+#             "url": _safe_reverse("economic:services:index"),
+#             "icon": "bi-gear-wide-connected",
+#             "visible": True,
+#             "locked": False,
+#         },
+#         {
+#             "key": "support",
+#             "title": _("Support & Assistance"),
+#             "description": _("FAQ, assistance client et support technique."),
+#             "url": _safe_reverse("economic:support:index"),
+#             "icon": "bi-life-preserver",
+#             "visible": True,
+#             "locked": False,
+#         },
+
+#         # B2B : visible mais verrouillé si pas accès
+#         {
+#             "key": "b2b",
+#             "title": _("Espace B2B"),
+#             "description": _("Solutions professionnelles, commandes en gros et partenariats."),
+#             "url": _safe_reverse("economic:b2b:index"),
+#             "icon": "bi-building",
+#             "visible": True,
+#             "locked": not can_b2b,
+#         },
+
+#         # Vendeur : visible mais verrouillé si pas accès
+#         {
+#             "key": "vendor",
+#             "title": _("Espace Vendeur"),
+#             "description": _("Gestion des produits et commandes."),
+#             "url": _safe_reverse("dashboard:vendor:home"),
+#             "icon": "bi-shop",
+#             "visible": True,
+#             "locked": not can_vendor,
+#         },
+
+#         {
+#             "key": "youtube",
+#             "title": _("YouTube (Soutenir)"),
+#             "description": _("Abonnez-vous et regardez nos vidéos pour soutenir nos actions sociales."),
+#             "url": youtube_channel_url,
+#             "icon": "bi-youtube",
+#             "visible": True,
+#             "locked": False,
+#         },
+#     ]
+
+#     context = {
+#         "page_title": _("Pôle Économique"),
+#         "sections": sections,
+
+#         # YouTube
+#         "YOUTUBE_CHANNEL_NAME": youtube_handle,
+#         "YOUTUBE_CHANNEL_URL": youtube_channel_url,
+#         "YOUTUBE_VIDEOS_URL": youtube_videos_url,
+
+#         "YT_SUBSCRIBERS_LABEL": "—",
+#         "YT_VIEWS_LABEL": "—",
+#         "YT_VIDEOS_LABEL": "—",
+#     }
+
+#     return render(request, "economic/index.html", context)
+
+
+
+
+
+# # /economic/views.py
+# from django.shortcuts import render
+# from django.urls import reverse
+# from django.utils.translation import gettext_lazy as _
+# from dashboard.permissions import is_vendor, is_b2b_user, is_admin
+# from economic.permissions import is_verified_vendor, is_b2b_manager
+
+
+# def economic_home_view(request):
+#     """
+#     Page d'accueil du pôle économique.
+#     Hub public vers E-commerce, B2B, Formations, Services, Ressources et Support.
+#     """
+
+#     user = request.user
+#     is_authenticated = user.is_authenticated
+
+#     # -----------------------------
+#     # Détection des rôles
+#     # -----------------------------
+#     roles = {
+#         "vendor": is_vendor(user) if is_authenticated else False,
+#         "verified_vendor": is_verified_vendor(user) if is_authenticated else False,
+#         "b2b": is_b2b_user(user) if is_authenticated else False,
+#         "b2b_manager": is_b2b_manager(user) if is_authenticated else False,
+#         "staff": is_admin(user) if is_authenticated else False,
+#     }
+
+#     # -----------------------------
+#     # Sections économiques
+#     # -----------------------------
+#     sections = [
+#         {
+#             "key": "ecommerce",
+#             "title": _("E-commerce"),
+#             "description": _("Produits, marketplace et commandes en ligne."),
+#             "url": reverse("economic:ecommerce:index"),
+#             "icon": "bi-cart-check",
+#             "visible": True,
+#             "locked": False,
+#         },
+#         {
+#             "key": "formations",
+#             "title": _("Formations"),
+#             "description": _("Formations en ligne, parcours certifiants et apprentissage continu."),
+#             "url": reverse("economic:formations:index"),
+#             "icon": "bi-mortarboard",
+#             "visible": True,
+#             "locked": False,
+#         },
+#         {
+#             "key": "resources",
+#             "title": _("Ressources"),
+#             "description": _("Documents, guides et contenus téléchargeables."),
+#             "url": reverse("economic:resources:index"),
+#             "icon": "bi-journal-text",
+#             "visible": True,
+#             "locked": False,
+#         },
+#         {
+#             "key": "services",
+#             "title": _("Services"),
+#             "description": _("Services numériques, accompagnement et solutions sur mesure."),
+#             "url": reverse("economic:services:index"),
+#             "icon": "bi-gear-wide-connected",
+#             "visible": True,
+#             "locked": False,
+#         },
+#         {
+#             "key": "support",
+#             "title": _("Support & Assistance"),
+#             "description": _("FAQ, assistance client et support technique."),
+#             "url": reverse("economic:support:index"),
+#             "icon": "bi-life-preserver",
+#             "visible": True,
+#             "locked": False,
+#         },
+#         # -----------------------------
+#         # ESPACE B2B
+#         # -----------------------------
+#         {
+#             "key": "b2b",
+#             "title": _("Espace B2B"),
+#             "description": _("Solutions professionnelles, commandes en gros et partenariats."),
+#             "url": reverse("economic:b2b:index"),
+#             "icon": "bi-building",
+#             "visible": roles["b2b"] or roles["b2b_manager"] or roles["staff"],
+#             "locked": not (roles["b2b"] or roles["b2b_manager"] or roles["staff"]),
+#         },
+#         # -----------------------------
+#         # ESPACE VENDEUR 
+#         # -----------------------------
+#         {
+#             "key": "vendor",
+#             "title": _("Espace Vendeur"),
+#             "description": _("Gestion des produits et commandes."),
+#             "url": reverse("dashboard:vendor:home"),
+#             "icon": "bi-shop",
+#             "visible": roles["vendor"] or roles["verified_vendor"] or roles["staff"],
+#             "locked": not (roles["vendor"] or roles["verified_vendor"] or roles["staff"]),
+#         },
+        
+        
+#         {
+#             "key": "youtube",
+#             "title": _("YouTube (Soutenir)"),
+#             "description": _("Abonnez-vous et regardez nos vidéos pour soutenir nos actions sociales."),
+#             "url": "https://www.youtube.com/@Sogentis",
+#             "icon": "bi-youtube",
+#             "visible": True,
+#             "locked": False,
+#         },
+
+#     ]
+
+#     context = {
+#         "page_title": _("Pôle Économique"),
+#         "sections": sections,
+
+#         # ✅ AJOUT CRUCIAL
+#         # "section_menu": "economic/partials/_economic_menu.html",
+        
+#         # -----------------------------
+#         "YOUTUBE_CHANNEL_NAME": "SOGENTIS",
+#         "YOUTUBE_CHANNEL_URL": "https://www.youtube.com/@SOGENTIS",          # ✅ remplace par ton vrai handle si différent
+#         "YOUTUBE_VIDEOS_URL": "https://www.youtube.com/@SOGENTIS/videos",    # ✅ idem
+
+#         "YT_SUBSCRIBERS_LABEL": "—",
+#         "YT_VIEWS_LABEL": "—",
+#         "YT_VIDEOS_LABEL": "—",
+
+#     }
+
+#     return render(request, "economic/index.html", context)
 
 
 

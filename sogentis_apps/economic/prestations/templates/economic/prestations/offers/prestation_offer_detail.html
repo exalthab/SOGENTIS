@@ -1,0 +1,243 @@
+{# templates/economic/prestations/offers/prestation_offer_detail.html #}
+{% extends "economic/prestations/base_prestations.html" %}
+{% load i18n static ecom_money dashboard_tags %}
+
+{% block prestations_title %}
+  {{ plan.title|default:plan.slug }} — {{ prestation.title|default:prestation.slug }}
+{% endblock %}
+
+{% block prestations_extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'prestations/css/offers.css' %}">
+{% endblock %}
+
+{% block prestations_content %}
+
+{% safe_url "economic:prestations:index" as u_presta_index %}
+{% safe_url "economic:prestations:detail" slug=prestation.slug as u_presta_detail %}
+{% safe_url "economic:prestations:quote" slug=prestation.slug as u_quote %}
+{% safe_url "economic:prestations:pay_prestation" slug=prestation.slug as u_pay %}
+{% safe_url "economic:prestations:my_downloads" as u_my_downloads %}
+
+<section class="py-2">
+  <nav aria-label="breadcrumb" class="mb-3 small">
+    <ol class="breadcrumb mb-0">
+      <li class="breadcrumb-item">
+        <a class="text-decoration-none" href="{{ u_presta_index|default:'#' }}">{% trans "Prestations" %}</a>
+      </li>
+      <li class="breadcrumb-item">
+        <a class="text-decoration-none" href="{{ u_presta_detail|default:'#' }}">{{ prestation.title|default:prestation.slug }}</a>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">
+        {{ plan.title|default:plan.slug }}
+      </li>
+    </ol>
+  </nav>
+
+  <div class="row g-3 g-lg-4">
+    <div class="col-lg-8">
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-3 p-lg-4">
+
+          <div class="d-flex flex-wrap align-items-start justify-content-between gap-2">
+            <div class="min-w-0">
+              <h1 class="h5 mb-1 text-truncate">{{ plan.title|default:plan.slug }}</h1>
+              <div class="text-muted small">{{ prestation.title|default:prestation.slug }}</div>
+            </div>
+
+            {% if has_access %}
+              <span class="badge text-bg-success">{% trans "Accès actif" %}</span>
+            {% elif is_quote_only %}
+              <span class="badge text-bg-warning">{% trans "Sur devis" %}</span>
+            {% else %}
+              <span class="badge text-bg-light border">{% trans "Offre" %}</span>
+            {% endif %}
+          </div>
+
+          <hr class="my-3">
+
+          <div class="content">
+            {% if plan.description %}
+              {{ plan.description|safe }}
+            {% elif prestation.description %}
+              {{ prestation.description|safe }}
+            {% else %}
+              <p class="text-muted mb-0">{% trans "Détails de l’offre indisponibles pour le moment." %}</p>
+            {% endif %}
+          </div>
+
+          {% if plan.features.exists %}
+            <hr class="my-3">
+            <h2 class="h6 mb-2">{% trans "Ce qui est inclus" %}</h2>
+            <ul class="list-unstyled mb-0">
+              {% for f in plan.features.all %}
+                <li class="d-flex gap-2 mb-1">
+                  <span aria-hidden="true">✅</span>
+                  <span>{{ f.title|default:f.name|default:f }}</span>
+                </li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card shadow-sm border-0 position-sticky" style="top: 90px;">
+        <div class="card-body p-3 p-lg-4">
+
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="text-muted small">{% trans "Prix" %}</div>
+            <div class="fw-bold">
+              {% if plan.price is not None %}
+                {{ plan.price|money:cur }}
+              {% else %}
+                —
+              {% endif %}
+            </div>
+          </div>
+
+          {% if plan.billing_period %}
+            <div class="mt-2 small text-muted">{% trans "Période" %} : {{ plan.billing_period }}</div>
+          {% endif %}
+
+          <hr class="my-3">
+
+          {% if has_access %}
+            <div class="alert alert-success small mb-3">
+              {% trans "Vous avez déjà accès à cette offre." %}
+            </div>
+
+            <div class="d-grid gap-2">
+              <a class="btn btn-success" href="{{ u_my_downloads|default:'#' }}">⬇️ {% trans "Mes téléchargements" %}</a>
+              {% if download_url %}
+                <a class="btn btn-outline-success" href="{{ download_url }}">📥 {% trans "Télécharger maintenant" %}</a>
+              {% endif %}
+              <a class="btn btn-outline-secondary" href="{{ u_presta_detail|default:'#' }}">← {% trans "Retour" %}</a>
+            </div>
+
+          {% elif is_quote_only %}
+            <div class="alert alert-warning small mb-3">
+              {% trans "Cette offre est sur devis. Demandez un devis pour continuer." %}
+            </div>
+
+            <div class="d-grid gap-2">
+              <a class="btn btn-dark" href="{{ u_quote|default:'#' }}">✉️ {% trans "Demander un devis" %}</a>
+              <a class="btn btn-outline-secondary" href="{{ u_presta_detail|default:'#' }}">← {% trans "Retour" %}</a>
+            </div>
+
+          {% else %}
+            <div class="small text-muted mb-3">{% trans "Paiement sécurisé. Accès immédiat après validation." %}</div>
+
+            <div class="d-grid gap-2">
+              <a class="btn btn-dark {% if not can_pay or not u_pay %}disabled{% endif %}"
+                 href="{% if u_pay and can_pay %}{{ u_pay }}?offer={{ plan.slug }}{% else %}#{% endif %}"
+                 {% if not can_pay or not u_pay %}aria-disabled="true"{% endif %}>
+                💳 {% trans "Payer" %}
+              </a>
+              <a class="btn btn-outline-secondary" href="{{ u_presta_detail|default:'#' }}">← {% trans "Retour" %}</a>
+            </div>
+
+            {% if not can_pay %}
+              <div class="mt-2 small text-muted">{% trans "Paiement en ligne indisponible pour cette offre." %}</div>
+            {% endif %}
+          {% endif %}
+
+          <hr class="my-3">
+
+          <div class="d-flex flex-wrap gap-2 small">
+            <a class="text-decoration-none" href="{{ u_presta_detail|default:'#' }}">🧾 {% trans "Voir la prestation" %}</a>
+            <span class="text-muted">•</span>
+            <a class="text-decoration-none" href="{{ u_presta_index|default:'#' }}">🧰 {% trans "Toutes les prestations" %}</a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/offers/prestation_offer_detail.html #}
+{% extends "economic/prestations/base_prestations.html" %}
+{% load i18n static ecom_money dashboard_tags %}
+
+{% trans "Prestation" as t_prestation %}
+{% with p_title=prestation.title|default:prestation.name|default:t_prestation %}
+
+{% block prestations_title %}{{ offer.title|default:p_title }}{% endblock %}
+
+{% block prestations_content %}
+  {% safe_url "economic:prestations:detail" prestation.slug as u_back %}
+  {% safe_url "economic:prestations:quote" prestation.slug as u_quote %}
+
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb small mb-0">
+      <li class="breadcrumb-item">
+        <a class="text-decoration-none" href="{{ u_back|default:'#' }}">{{ p_title }}</a>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">
+        {{ offer.title|default:offer.slug }}
+      </li>
+    </ol>
+  </nav>
+
+  <section class="rounded-4 bg-body border p-3 p-lg-4 mb-3">
+    <div class="d-flex align-items-start justify-content-between gap-2">
+      <div>
+        <h1 class="h4 mb-1">{{ offer.title|default:offer.slug }}</h1>
+        {% if offer.subtitle %}<div class="text-muted">{{ offer.subtitle }}</div>{% endif %}
+      </div>
+      {% if offer.is_featured %}<span class="badge text-bg-primary">{% trans "Recommandé" %}</span>{% endif %}
+    </div>
+
+    {% if offer.short_description %}
+      <p class="text-muted mt-3 mb-0">{{ offer.short_description }}</p>
+    {% endif %}
+
+    {% if offer.preview_url %}
+      <div class="mt-3 d-flex flex-wrap gap-2">
+        <a class="btn btn-sm btn-outline-secondary" href="{{ offer.preview_url }}" target="_blank" rel="noopener">
+          {{ offer.preview_label|default:_("Preview") }}
+        </a>
+      </div>
+    {% endif %}
+
+    <hr class="my-4">
+
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+      <div>
+        {% if offer.price %}
+          <div class="h5 mb-0">{% money offer.price cur %}</div>
+          <div class="small text-muted">{% trans "Paiement en ligne possible selon configuration." %}</div>
+        {% else %}
+          <div class="h5 mb-0">{% trans "Sur devis" %}</div>
+          <div class="small text-muted">{% trans "Option disponible, prix défini après échange." %}</div>
+        {% endif %}
+      </div>
+
+      <div class="d-flex flex-wrap gap-2">
+        {% if offer.price and offer.allow_online_payment %}
+          <a class="btn btn-primary disabled" href="#">{% trans "Payer" %}</a>
+        {% else %}
+          <a class="btn btn-primary" href="{{ u_quote|default:'#' }}">{% trans "Demander un devis" %}</a>
+        {% endif %}
+        <a class="btn btn-outline-secondary" href="{{ u_back|default:'#' }}">{% trans "Retour" %}</a>
+      </div>
+    </div>
+
+    {% if offer.description %}
+      <div class="content mt-4">{{ offer.description|safe }}</div>
+    {% endif %}
+  </section>
+{% endblock %}
+
+{% endwith %} {% endcomment %}

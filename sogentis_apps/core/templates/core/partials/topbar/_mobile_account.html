@@ -1,0 +1,14 @@
+{# templates/core/partials/topbar/_mobile_account.html #}
+{% load i18n %}
+{% if user.is_authenticated %}
+  <a class="btn btn-outline-light btn-sm" href="{% url 'dashboard:hub' %}">📊 {% trans "Tableau de bord" %}</a>
+  <form method="post" action="{% url 'logout' %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-outline-danger btn-sm w-100">⏻ {% trans "Se déconnecter" %}</button>
+  </form>
+{% else %}
+  <a class="btn btn-primary btn-sm"
+     href="{% url 'accounts_users:web:auth:auth_choice' %}?next={{ NEXT|urlencode }}">
+    🔐 {% trans "Se connecter" %}
+  </a>
+{% endif %}

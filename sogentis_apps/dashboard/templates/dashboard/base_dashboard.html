@@ -1,3 +1,22 @@
+{# templates/dashboard/base_dashboard.html #}
+{% extends "main.html" %}
+{% load i18n %}
+ 
+{# Main layout dashboard #}
+{% block main_class %}
+  {% block dashboard_main_class %}p-0 m-0{% endblock %}
+{% endblock %}
+
+{# Dashboard souvent fullwidth (pas container-fluid global) #}
+{% block main_wrapper %}
+  <main id="mainContent" class="flex-fill {% block main_class %}p-0 m-0{% endblock %}">
+    {% block content %}{% endblock %}
+  </main>
+{% endblock %}
+
+
+
+
 {% comment %} {# templates/dashboard/base_dashboard.html #}
 {% load static i18n %}
 

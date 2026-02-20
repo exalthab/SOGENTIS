@@ -6,6 +6,328 @@
 
 {% block ecommerce_extra_css %}
   {{ block.super }}
+  <link rel="stylesheet" href="{% static 'economic/ecommerce/css/favorites_list.css' %}">
+{% endblock %}
+
+{% block content %}
+{% url 'economic:ecommerce:index' as shop_url %}
+
+<section class="container py-4 fav-shell">
+
+  <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
+    <div>
+      <h1 class="h4 fav-title mb-1">❤️ {% trans "Mes favoris" %}</h1>
+      <div class="fav-muted small">
+        {% trans "Retrouvez ici les produits que vous avez enregistrés." %}
+      </div>
+    </div>
+
+    <div class="d-flex gap-2">
+      <a href="{{ shop_url|default:'#' }}" class="btn btn-outline-primary">
+        <i class="bi bi-shop me-2"></i>{% trans "Continuer vos achats" %}
+      </a>
+    </div>
+  </div>
+
+  {% if favorites %}
+    <div class="row g-3 fav-grid">
+
+      {# ✅ On utilise favorite_rows calculé côté Python => URL toujours fiable #}
+      {% for row in favorite_rows %}
+        {% with fav=row.favorite p=row.product p_url=row.product_url %}
+          {% url 'economic:ecommerce:add_to_cart' p.id as add_url %}
+          {% url 'economic:ecommerce:favorite_toggle' p.id as toggle_url %}
+
+          <div class="col-6 col-md-4 col-lg-3">
+            <article class="fav-card" data-product-id="{{ p.id|default:'' }}">
+
+              <div class="fav-img">
+                {% with img=p.images.all.0 %}
+                  <a href="{{ p_url|default:'#' }}" class="d-block">
+                    {% if img %}
+                      <img src="{{ img.image.url }}" alt="{{ img.alt_text|default:p.name }}" loading="lazy">
+                    {% else %}
+                      <img src="{% static 'global/image/product-placeholder.png' %}" alt="{% trans 'Produit' %}" loading="lazy">
+                    {% endif %}
+                  </a>
+                {% endwith %}
+
+                {% if p.is_featured %}
+                  <span class="fav-badge">🔥 {% trans "Promo" %}</span>
+                {% endif %}
+
+                <form method="post"
+                      action="{{ add_url|default:'#' }}"
+                      class="fav-cart-form"
+                      data-stock="{{ p.stock|default:0 }}"
+                      {% if p.stock|default:0|add:0 <= 0 %}aria-disabled="true"{% endif %}>
+                  {% csrf_token %}
+                  <input type="hidden" name="quantity" value="1">
+                  <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                  <button type="submit"
+                          class="fav-cart-fab"
+                          aria-label="{% trans 'Ajouter au panier' %}"
+                          {% if p.stock|default:0|add:0 <= 0 %}disabled{% endif %}>
+                    <i class="bi bi-cart-plus"></i>
+                  </button>
+                </form>
+              </div>
+
+              <div class="fav-body">
+                <h2 class="fav-name h6">
+                  <a href="{{ p_url|default:'#' }}" class="text-decoration-none">
+                    {{ p.name|truncatechars:56 }}
+                  </a>
+                </h2>
+
+                <div class="fav-meta fav-muted d-flex align-items-center justify-content-between">
+                  <span class="fav-stars">
+                    <span class="stars">★★★★★</span>
+                    <strong class="text-body">
+                      {% if p.average_rating %}{{ p.average_rating|floatformat:1 }}{% else %}0.0{% endif %}
+                    </strong>
+                    <span class="small">
+                      ({% if p.reviews_count %}{{ p.reviews_count }}{% else %}0{% endif %})
+                    </span>
+                  </span>
+
+                  {% if p.stock|default:0|add:0 > 0 %}
+                    <span class="badge bg-success">{% trans "En stock" %}</span>
+                  {% else %}
+                    <span class="badge bg-danger">{% trans "Rupture" %}</span>
+                  {% endif %}
+                </div>
+
+                <div class="fav-price">{% money p.price %}</div>
+
+                {% if p.short_description %}
+                  <div class="fav-muted small">
+                    {{ p.short_description|truncatechars:70 }}
+                  </div>
+                {% endif %}
+              </div>
+
+              <div class="fav-actions">
+                {# ✅ plus de disabled basé sur p.slug : on a une vraie URL #}
+                <a href="{{ p_url|default:'#' }}" class="btn btn-outline-primary btn-sm w-50">
+                  {% trans "Voir" %}
+                </a>
+
+                <form method="post" action="{{ toggle_url|default:'#' }}" class="m-0 w-50 text-end">
+                  {% csrf_token %}
+                  <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                  <button type="submit" class="btn btn-outline-danger btn-sm w-100">
+                    <i class="bi bi-heart-fill me-1"></i>{% trans "Retirer" %}
+                  </button>
+                </form>
+              </div>
+
+            </article>
+          </div>
+        {% endwith %}
+      {% endfor %}
+
+    </div>
+
+  {% else %}
+    <div class="fav-empty-card">
+      <div class="text-center py-3">
+        <div class="display-6 mb-2">🤍</div>
+        <h2 class="h5 fw-bold mb-2">{% trans "Aucun favori pour le moment" %}</h2>
+        <p class="fav-muted mb-3">{% trans "Ajoutez des produits à vos favoris pour les retrouver ici." %}</p>
+        <a href="{{ shop_url|default:'#' }}" class="btn btn-primary">
+          <i class="bi bi-shop me-2"></i>{% trans "Découvrir la boutique" %}
+        </a>
+      </div>
+    </div>
+  {% endif %}
+
+</section>
+{% endblock %}
+
+{% block ecommerce_extra_js %}
+  {{ block.super }}
+  <script src="{% static 'economic/ecommerce/js/favorites_list.js' %}" defer></script>
+{% endblock %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/ecommerce/favorites/favorites_list.html #}
+{% extends "economic/ecommerce/base_ecommerce.html" %}
+{% load static i18n ecom_money %}
+
+{% block ecommerce_title %}{% trans "Mes favoris" %} | {{ PROJECT_NAME }}{% endblock %}
+
+{% block ecommerce_extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'economic/ecommerce/css/favorites_list.css' %}">
+{% endblock %}
+
+{% block content %}
+{% url 'economic:ecommerce:index' as shop_url %}
+
+<section class="container py-4 fav-shell">
+
+  <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
+    <div>
+      <h1 class="h4 fav-title mb-1">❤️ {% trans "Mes favoris" %}</h1>
+      <div class="fav-muted small">
+        {% trans "Retrouvez ici les produits que vous avez enregistrés." %}
+      </div>
+    </div>
+
+    <div class="d-flex gap-2">
+      <a href="{{ shop_url|default:'#' }}" class="btn btn-outline-primary">
+        <i class="bi bi-shop me-2"></i>{% trans "Continuer vos achats" %}
+      </a>
+    </div>
+  </div>
+
+  {% if favorites %}
+    <div class="row g-3 fav-grid">
+      {% for fav in favorites %}
+        {% with p=fav.product %}
+
+          {# ✅ Parler-safe: on ne tente PAS d'appeler safe_translation_getter dans le template #}
+          {% with pslug=p.slug|default_if_none:"" %}
+            {% if pslug %}
+              {% url 'economic:ecommerce:product_detail' slug=pslug as p_url %}
+            {% else %}
+              {% with p_url="#" %}{% endwith %}
+            {% endif %}
+          {% endwith %}
+
+          {% url 'economic:ecommerce:add_to_cart' p.id as add_url %}
+          {% url 'economic:ecommerce:favorite_toggle' p.id as toggle_url %}
+
+          <div class="col-6 col-md-4 col-lg-3">
+            <article class="fav-card" data-product-id="{{ p.id|default:'' }}">
+
+              <div class="fav-img">
+                {% with img=p.images.all.0 %}
+                  <a href="{{ p_url|default:'#' }}" class="d-block">
+                    {% if img %}
+                      <img src="{{ img.image.url }}" alt="{{ img.alt_text|default:p.name }}" loading="lazy">
+                    {% else %}
+                      <img src="{% static 'global/image/product-placeholder.png' %}" alt="{% trans 'Produit' %}" loading="lazy">
+                    {% endif %}
+                  </a>
+                {% endwith %}
+
+                {% if p.is_featured %}
+                  <span class="fav-badge">🔥 {% trans "Promo" %}</span>
+                {% endif %}
+
+                <form method="post"
+                      action="{{ add_url|default:'#' }}"
+                      class="fav-cart-form"
+                      data-stock="{{ p.stock|default:0 }}"
+                      {% if p.stock|default:0|add:0 <= 0 %}aria-disabled="true"{% endif %}>
+                  {% csrf_token %}
+                  <input type="hidden" name="quantity" value="1">
+                  <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                  <button type="submit"
+                          class="fav-cart-fab"
+                          aria-label="{% trans 'Ajouter au panier' %}"
+                          {% if p.stock|default:0|add:0 <= 0 %}disabled{% endif %}>
+                    <i class="bi bi-cart-plus"></i>
+                  </button>
+                </form>
+              </div>
+
+              <div class="fav-body">
+                <h2 class="fav-name h6">
+                  <a href="{{ p_url|default:'#' }}" class="text-decoration-none">
+                    {{ p.name|truncatechars:56 }}
+                  </a>
+                </h2>
+
+                <div class="fav-meta fav-muted d-flex align-items-center justify-content-between">
+                  <span class="fav-stars">
+                    <span class="stars">★★★★★</span>
+                    <strong class="text-body">
+                      {% if p.average_rating %}{{ p.average_rating|floatformat:1 }}{% else %}0.0{% endif %}
+                    </strong>
+                    <span class="small">
+                      ({% if p.reviews_count %}{{ p.reviews_count }}{% else %}0{% endif %})
+                    </span>
+                  </span>
+
+                  {% if p.stock|default:0|add:0 > 0 %}
+                    <span class="badge bg-success">{% trans "En stock" %}</span>
+                  {% else %}
+                    <span class="badge bg-danger">{% trans "Rupture" %}</span>
+                  {% endif %}
+                </div>
+
+                <div class="fav-price">{% money p.price %}</div>
+
+                {% if p.short_description %}
+                  <div class="fav-muted small">
+                    {{ p.short_description|truncatechars:70 }}
+                  </div>
+                {% endif %}
+              </div>
+
+              <div class="fav-actions">
+                <a href="{{ p_url|default:'#' }}" class="btn btn-outline-primary btn-sm w-50 {% if not pslug %}disabled{% endif %}">
+                  {% trans "Voir" %}
+                </a>
+
+                <form method="post" action="{{ toggle_url|default:'#' }}" class="m-0 w-50 text-end">
+                  {% csrf_token %}
+                  <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                  <button type="submit" class="btn btn-outline-danger btn-sm w-100">
+                    <i class="bi bi-heart-fill me-1"></i>{% trans "Retirer" %}
+                  </button>
+                </form>
+              </div>
+
+            </article>
+          </div>
+
+        {% endwith %}
+      {% endfor %}
+    </div>
+
+  {% else %}
+    <div class="fav-empty-card">
+      <div class="text-center py-3">
+        <div class="display-6 mb-2">🤍</div>
+        <h2 class="h5 fw-bold mb-2">{% trans "Aucun favori pour le moment" %}</h2>
+        <p class="fav-muted mb-3">{% trans "Ajoutez des produits à vos favoris pour les retrouver ici." %}</p>
+        <a href="{{ shop_url|default:'#' }}" class="btn btn-primary">
+          <i class="bi bi-shop me-2"></i>{% trans "Découvrir la boutique" %}
+        </a>
+      </div>
+    </div>
+  {% endif %}
+
+</section>
+{% endblock %}
+
+{% block ecommerce_extra_js %}
+  {{ block.super }}
+  <script src="{% static 'economic/ecommerce/js/favorites_list.js' %}" defer></script>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/ecommerce/favorites/favorites_list.html #}
+{% extends "economic/ecommerce/base_ecommerce.html" %}
+{% load static i18n ecom_money %}
+
+{% block ecommerce_title %}{% trans "Mes favoris" %} | {{ PROJECT_NAME }}{% endblock %}
+
+{% block ecommerce_extra_css %}
+  {{ block.super }}
   <style>
     /* ==============================
        FAVORITES LIST (responsive grid)
@@ -238,7 +560,7 @@
 
 </section>
 {% endblock %}
-
+ {% endcomment %}
 
 
 

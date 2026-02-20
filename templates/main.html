@@ -50,6 +50,122 @@
     {# ✅ Topbar: pages qui en ont besoin #}
     {% block topbar %}{% endblock %}
 
+    {# ✅ SECTION MENU: fourni par les bases (base_economic, base_social, etc.) #}
+    {% block section_menu %}{% endblock %}
+
+    <main class="flex-fill {% block main_class %}
+      {% if request.resolver_match and request.resolver_match.namespace == 'dashboard' %}
+        p-0 m-0
+      {% else %}
+        container-fluid pt-5 mt-4
+      {% endif %}
+    {% endblock %}">
+      {% block content %}{% endblock %}
+    </main>
+
+    {% include 'core/partials/_footer.html' %}
+  </div>
+
+  {% include 'core/partials/_back_to_top.html' %}
+
+  {# ✅ Toasts Django #}
+  {% if messages %}
+    <div aria-live="polite" aria-atomic="true"
+         class="position-fixed bottom-0 end-0 p-3" style="z-index:1080;">
+      {% for message in messages %}
+        <div class="toast text-bg-{{ message.tags|default:'info' }} border-0 show">
+          <div class="d-flex">
+            <div class="toast-body">{{ message }}</div>
+            <button type="button"
+                    class="btn-close btn-close-white me-2 m-auto"
+                    data-bs-dismiss="toast"
+                    aria-label="{% trans 'Fermer' %}"></button>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {# ✅ Cookies UI GLOBAL (banner + modal) #}
+  {% include "core/partials/_cookie_consent_banner.html" %}
+  {% include "core/partials/_cookie_consent_modal.html" %}
+
+  <script src="{% static 'global/js/vendors/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'global/js/theme.js' %}"></script>
+  <script src="{% static 'global/js/main.js' %}"></script>
+
+  {% block topbar_js %}{% endblock %}
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      document.querySelectorAll(".toast").forEach(el => new bootstrap.Toast(el).show());
+    });
+  </script>
+
+  {# ✅ Cookies consent JS GLOBAL #}
+  <script defer src="{% static 'core/js/cookies_consent.js' %}"></script>
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>
+
+
+
+
+
+
+{% comment %} {# templates/main.html #}
+{% load static i18n %}
+<!DOCTYPE html>
+{% get_current_language as CUR_LANG %}
+{% get_current_language_bidi as CUR_BIDI %}
+<html lang="{{ CUR_LANG|default:'fr' }}" {% if CUR_BIDI %}dir="rtl"{% endif %}>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Cache-Control" content="no-store">
+  <meta http-equiv="Pragma" content="no-cache">
+
+  <title>{% block seo_title %}{{ SEO_TITLE_DEFAULT }}{% endblock %}</title>
+  <meta name="description" content="{% block seo_description %}{{ SEO_DESCRIPTION_DEFAULT }}{% endblock %}">
+
+  {% if request %}
+    <link rel="canonical" href="{{ request.build_absolute_uri }}">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+  {% endif %}
+
+  <meta property="og:type" content="{% block seo_og_type %}website{% endblock %}">
+  <meta property="og:title" content="{% block seo_og_title %}{{ SEO_TITLE_DEFAULT }}{% endblock %}">
+  <meta property="og:description" content="{% block seo_og_description %}{{ SEO_DESCRIPTION_DEFAULT }}{% endblock %}">
+  <meta property="og:locale" content="{{ CUR_LANG|default:'fr' }}">
+  <meta property="og:image" content="{% block seo_og_image %}{{ SEO_OG_IMAGE_DEFAULT }}{% endblock %}">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{% block seo_twitter_title %}{{ SEO_TITLE_DEFAULT }}{% endblock %}">
+  <meta name="twitter:description" content="{% block seo_twitter_description %}{{ SEO_DESCRIPTION_DEFAULT }}{% endblock %}">
+  <meta name="twitter:image" content="{% block seo_twitter_image %}{{ SEO_OG_IMAGE_DEFAULT }}{% endblock %}">
+
+  <link rel="stylesheet" href="{% static 'global/css/vendors/fontawesome/css/all.min.css' %}">
+  <link rel="stylesheet" href="{% static 'global/css/vendors/bootstrap/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'global/css/sogentis/bootstrap/css/main_sogentis.css' %}">
+  <link rel="stylesheet" href="{% static 'global/css/users_menu.css' %}">
+  <link rel="stylesheet" href="{% static 'core/css/_topbar.css' %}">
+  <link rel="stylesheet" href="{% static 'core/css/_mobile.css' %}">
+  <link rel="stylesheet" href="{% static 'core/css/language_custom.css' %}">
+
+  {# ✅ Cookies (banner + modal) GLOBAL #}
+  <link rel="stylesheet" href="{% static 'core/css/cookies_consent.css' %}">
+
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+  <div class="wrapper d-flex flex-column min-vh-100">
+
+    {# ✅ Topbar: pages qui en ont besoin #}
+    {% block topbar %}{% endblock %}
+
     {% block section_menu %}
       {% if section_menu %}
         {% include section_menu %}
@@ -111,7 +227,7 @@
   {% block extra_js %}{% endblock %}
 </body>
 </html>
-
+ {% endcomment %}
 
 
 

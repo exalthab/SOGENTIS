@@ -1,3 +1,4 @@
+# institution/urls.py
 from django.urls import path, include
 
 from institution.views.index import institution_home_view

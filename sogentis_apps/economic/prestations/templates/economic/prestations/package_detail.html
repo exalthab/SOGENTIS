@@ -1,0 +1,1271 @@
+{# templates/economic/prestations/package_detail.html #}
+{% extends "economic/prestations/base_prestations.html" %}
+{% load i18n static dashboard_tags %}
+
+{% block prestations_title %}
+  {{ package.display_title|default:package.slug|default:_("Pack") }}
+{% endblock %}
+
+{% block prestations_content %}
+
+{% safe_url "economic:prestations:index" as u_index %}
+{% safe_url "economic:prestations:package_quote" slug=package.slug as u_quote %}
+{% safe_url "economic:prestations:pay_package" slug=package.slug as u_pay %}
+{% safe_url "accounts_users:web:auth:login" as login_url %}
+
+<div class="svc-detail">
+
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb" class="mb-3 small">
+    <ol class="breadcrumb mb-0">
+      <li class="breadcrumb-item">
+        <a href="{{ u_index|default:'#' }}"
+           class="{% if not u_index %}disabled{% endif %}"
+           {% if not u_index %}aria-disabled="true" tabindex="-1"{% endif %}>
+          {% trans "Prestations" %}
+        </a>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">
+        {{ package.display_title }}
+      </li>
+    </ol>
+  </nav>
+
+  <!-- Main Card -->
+  <div class="card border-0 shadow-sm overflow-hidden mb-3">
+    <div class="row g-0">
+
+      <!-- Image -->
+      <div class="col-12 col-lg-5">
+        {% if package.cover_image %}
+          <img class="w-100 h-100 object-fit-cover"
+               src="{{ package.cover_image.url }}"
+               alt="{{ package.display_title }}"
+               loading="lazy">
+        {% elif package.image %}
+          <img class="w-100 h-100 object-fit-cover"
+               src="{{ package.image.url }}"
+               alt="{{ package.display_title }}"
+               loading="lazy">
+        {% else %}
+          <img class="w-100 h-100 object-fit-cover"
+               src="{% static 'prestations/img/pack_16x9.jpg' %}"
+               alt="{{ package.display_title }}"
+               loading="lazy">
+        {% endif %}
+      </div>
+
+      <!-- Content -->
+      <div class="col-12 col-lg-7">
+        <div class="card-body p-3 p-lg-4">
+
+          <div class="d-flex align-items-start justify-content-between gap-2">
+            <div class="min-w-0">
+              <h1 class="h4 mb-1 text-truncate">
+                {{ package.display_title }}
+              </h1>
+
+              {% if package.display_excerpt %}
+                <p class="text-muted mb-2">
+                  {{ package.display_excerpt }}
+                </p>
+              {% endif %}
+            </div>
+
+            {% if package.is_featured %}
+              <span class="badge text-bg-warning">
+                {% trans "Top" %}
+              </span>
+            {% endif %}
+          </div>
+
+          <!-- Price -->
+          <div class="d-flex flex-wrap gap-2 small mb-3">
+            {% if package.display_price %}
+              <span class="badge text-bg-light border">
+                {% trans "Prix" %} :
+                <span class="fw-semibold">
+                  {{ package.display_price }}
+                </span>
+                {{ cur|default:"XOF" }}
+              </span>
+            {% else %}
+              <span class="badge text-bg-light border">
+                {% trans "Sur devis" %}
+              </span>
+            {% endif %}
+          </div>
+
+          <!-- Actions -->
+          <div class="d-flex flex-wrap gap-2">
+
+            <a class="btn btn-outline-secondary btn-sm {% if not u_quote %}disabled{% endif %}"
+               href="{{ u_quote|default:'#' }}"
+               {% if not u_quote %}aria-disabled="true" tabindex="-1"{% endif %}>
+              🧾 {% trans "Demander un devis" %}
+            </a>
+
+            {% if package.display_price %}
+              {% if request.user.is_authenticated %}
+                <a class="btn btn-dark btn-sm {% if not u_pay %}disabled{% endif %}"
+                   href="{{ u_pay|default:'#' }}"
+                   {% if not u_pay %}aria-disabled="true" tabindex="-1"{% endif %}>
+                  💳 {% trans "Payer" %}
+                </a>
+              {% else %}
+                {% with next_path=request.get_full_path|default:'/'|urlencode %}
+                  <a class="btn btn-dark btn-sm {% if not login_url %}disabled{% endif %}"
+                     href="{% if login_url %}{{ login_url }}?context=economic&next={{ next_path }}{% else %}#{% endif %}"
+                     {% if not login_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+                    🔐 {% trans "Se connecter pour payer" %}
+                  </a>
+                {% endwith %}
+              {% endif %}
+            {% endif %}
+
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="row g-3">
+
+    <!-- Left Column -->
+    <div class="col-12 col-lg-8">
+
+      <!-- Description -->
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-3 p-lg-4">
+          <h2 class="h6 mb-2">{% trans "Détails du pack" %}</h2>
+
+          {% if package.display_body %}
+            <div class="svc-richtext">
+              {{ package.display_body|safe }}
+            </div>
+          {% else %}
+            <div class="text-muted small">
+              {% trans "Aucun détail pour le moment." %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Offers -->
+      {% if package.display_offers %}
+        <div class="card border-0 shadow-sm mt-3">
+          <div class="card-body p-3 p-lg-4">
+            <h2 class="h6 mb-2">{% trans "Offres du pack" %}</h2>
+
+            <div class="row g-2">
+              {% for offer in package.display_offers %}
+                {% if offer.is_active %}
+                  {% safe_url "economic:prestations:package_offer_detail"
+                      slug=package.slug offer_slug=offer.slug as u_offer %}
+
+                  <div class="col-12 col-md-6">
+                    <div class="border rounded p-3 h-100">
+
+                      <div class="d-flex justify-content-between gap-2">
+                        <div class="fw-semibold text-truncate">
+                          {{ offer.title|default:offer.slug }}
+                        </div>
+
+                        {% if offer.price %}
+                          <div class="small">
+                            <span class="fw-semibold">{{ offer.price }}</span>
+                            {{ cur|default:"XOF" }}
+                          </div>
+                        {% else %}
+                          <span class="badge text-bg-light border">
+                            {% trans "Sur devis" %}
+                          </span>
+                        {% endif %}
+                      </div>
+
+                      {% if offer.short_description %}
+                        <div class="small text-muted mt-1">
+                          {{ offer.short_description|truncatechars:140 }}
+                        </div>
+                      {% endif %}
+
+                      <div class="mt-2">
+                        {% if request.user.is_authenticated %}
+                          <a class="btn btn-sm btn-outline-dark {% if not u_offer %}disabled{% endif %}"
+                             href="{{ u_offer|default:'#' }}"
+                             {% if not u_offer %}aria-disabled="true" tabindex="-1"{% endif %}>
+                            {% trans "Voir l’offre" %}
+                          </a>
+                        {% else %}
+                          {% with next_path=request.get_full_path|default:'/'|urlencode %}
+                            <a class="btn btn-sm btn-outline-dark {% if not login_url %}disabled{% endif %}"
+                               href="{% if login_url %}{{ login_url }}?context=economic&next={{ next_path }}{% else %}#{% endif %}"
+                               {% if not login_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+                              🔐 {% trans "Se connecter" %}
+                            </a>
+                          {% endwith %}
+                        {% endif %}
+                      </div>
+
+                    </div>
+                  </div>
+
+                {% endif %}
+              {% endfor %}
+            </div>
+
+          </div>
+        </div>
+      {% endif %}
+
+    </div>
+
+    <!-- Sidebar -->
+    <div class="col-12 col-lg-4">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-3">
+          <h2 class="h6 mb-2">{% trans "Infos" %}</h2>
+          <dl class="row small mb-0">
+            <dt class="col-5 text-muted">{% trans "Référence" %}</dt>
+            <dd class="col-7 mb-2">{{ package.slug|default:"—" }}</dd>
+
+            <dt class="col-5 text-muted">{% trans "Devise" %}</dt>
+            <dd class="col-7 mb-0">{{ cur|default:"XOF" }}</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+{% endblock %}
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/package_detail.html (liens corrigés + payer si prix sinon devis) #}
+{% extends "economic/prestations/base_prestations.html" %}
+{% load i18n static ecom_money dashboard_tags %}
+
+{% trans "Pack" as t_pack %}
+{% firstof package.title package.name package.slug t_pack as title %}
+{% firstof cur request.session.ECOMMERCE_CURRENCY as currency %}
+{% firstof package.total_price package.price package.base_price as pack_price %}
+
+{% block prestations_title %}{{ title }}{% endblock %}
+
+{% block prestations_content %}
+  {% safe_url "economic:prestations:index" as u_index %}
+  {% safe_url "economic:prestations:package_quote" package.slug as u_quote %}
+  {% safe_url "economic:prestations:pay_package" package.slug as u_pay %}
+
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb small mb-0">
+      <li class="breadcrumb-item"><a href="{{ u_index|default:'#' }}" class="text-decoration-none">{% trans "Prestations" %}</a></li>
+      <li class="breadcrumb-item"><a href="{{ u_index|default:'#' }}#packs" class="text-decoration-none">{% trans "Packs" %}</a></li>
+      <li class="breadcrumb-item active" aria-current="page">{{ title }}</li>
+    </ol>
+  </nav>
+
+  <section class="rounded-4 bg-body border p-3 p-lg-4 mb-3">
+    <header class="d-flex justify-content-between gap-2">
+      <div>
+        <h1 class="h4 mb-1">{{ title }}</h1>
+        {% if package.subtitle %}<div class="text-muted">{{ package.subtitle }}</div>{% endif %}
+      </div>
+      {% if package.is_featured %}<span class="badge text-bg-primary">{% trans "Recommandé" %}</span>{% endif %}
+    </header>
+
+    {% if package.description or package.short_description %}
+      <div class="mt-3 {% if package.description %}content{% else %}text-muted{% endif %}">
+        {{ package.description|default:package.short_description|safe }}
+      </div>
+    {% endif %}
+
+    <footer class="mt-4 d-flex flex-wrap align-items-center gap-2">
+      {% if pack_price and u_pay and u_pay != "#" %}
+        <a href="{{ u_pay }}" class="btn btn-primary">{% trans "Payer" %}</a>
+        <a href="{{ u_pay }}" class="btn btn-outline-primary">{% trans "Commencer" %}</a>
+      {% else %}
+        <a href="{{ u_quote|default:'#' }}" class="btn btn-primary">{% trans "Demander un devis pack" %}</a>
+      {% endif %}
+      <a href="{{ u_index|default:'#' }}#packs" class="btn btn-outline-secondary">{% trans "Retour" %}</a>
+
+      <span class="ms-auto small text-muted">
+        {% if pack_price %}
+          {% trans "Prix" %} : <strong>{% money pack_price currency %}</strong>
+        {% else %}
+          {% trans "Prix" %} : <strong>{% trans "Sur devis" %}</strong>
+        {% endif %}
+      </span>
+    </footer>
+  </section>
+{% endblock %}
+ {% endcomment %}
+
+
+
+
+{% comment %} {# templates/economic/prestations/package_detail.html #}
+{% extends "economic/prestations/base_prestations.html" %}
+{% load i18n static ecom_money dashboard_tags %}
+
+{% trans "Pack" as t_pack %}
+{% with title=package.title|default:package.name|default:package.slug|default:t_pack %}
+
+{% block prestations_title %}{{ title }}{% endblock %}
+
+{% block prestations_content %}
+  {% safe_url "economic:prestations:index" as u_index %}
+  {% safe_url "economic:prestations:package_quote" package.slug as u_quote %}
+  {# paiement (si route existe) #}
+  {% safe_url "economic:prestations:pay_package" package.slug as u_pay %}
+
+  {% firstof package.total_price package.price package.base_price as pack_price %}
+
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb small mb-0">
+      <li class="breadcrumb-item">
+        <a href="{{ u_index|default:'#' }}" class="text-decoration-none">
+          {% trans "Prestations" %}
+        </a>
+      </li>
+      <li class="breadcrumb-item">
+        <a href="{{ u_index|default:'#' }}#packs" class="text-decoration-none">
+          {% trans "Packs" %}
+        </a>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">
+        {{ title }}
+      </li>
+    </ol>
+  </nav>
+
+  <section class="rounded-4 bg-body border p-3 p-lg-4 mb-3">
+    <header class="d-flex align-items-start justify-content-between gap-2">
+      <div>
+        <h1 class="h4 mb-1">{{ title }}</h1>
+        {% if package.subtitle %}
+          <div class="text-muted">{{ package.subtitle }}</div>
+        {% endif %}
+      </div>
+      {% if package.is_featured %}
+        <span class="badge text-bg-primary">{% trans "Recommandé" %}</span>
+      {% endif %}
+    </header>
+
+    {% if package.description or package.short_description %}
+      <div class="mt-3 {% if package.description %}content{% else %}text-muted{% endif %}">
+        {{ package.description|default:package.short_description|safe }}
+      </div>
+    {% endif %}
+
+    {% if package.features %}
+      <div class="mt-4">
+        <h2 class="h6 mb-2">{% trans "Inclus" %}</h2>
+        <ul class="small text-muted ps-3 mb-0">
+          {% for f in package.features.all %}
+            <li>{{ f.title|default:f }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    {% if package.prestations %}
+      <div class="mt-4">
+        <h2 class="h6 mb-2">{% trans "Prestations incluses" %}</h2>
+        <ul class="small text-muted ps-3 mb-0">
+          {% for p in package.prestations.all %}
+            {% safe_url "economic:prestations:detail" p.slug as u_p %}
+            <li>
+              {% if u_p and u_p != "#" %}
+                <a class="text-decoration-none" href="{{ u_p }}">
+                  {{ p.title|default:p.name|default:p.slug }}
+                </a>
+              {% else %}
+                {{ p.title|default:p.name|default:p.slug }}
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    <hr class="my-4">
+
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+      <div>
+        {% if pack_price %}
+          <div class="h5 mb-0">{% money pack_price cur %}</div>
+          <div class="small text-muted">
+            {% trans "Paiement en ligne si disponible." %}
+          </div>
+        {% else %}
+          <div class="h5 mb-0">{% trans "Sur devis" %}</div>
+          <div class="small text-muted">
+            {% trans "Nous confirmons le prix selon votre besoin." %}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="d-flex flex-wrap gap-2">
+        {% if pack_price and u_pay and u_pay != "#" %}
+          <a class="btn btn-primary" href="{{ u_pay }}">
+            {% trans "Payer ce pack" %}
+          </a>
+        {% else %}
+          <a class="btn btn-primary" href="{{ u_quote|default:'#' }}">
+            {% trans "Demander un devis pack" %}
+          </a>
+        {% endif %}
+        <a class="btn btn-outline-secondary" href="{{ u_index|default:'#' }}#packs">
+          {% trans "Retour" %}
+        </a>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+
+{% endwith %} {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/package_detail.html #}
+{% extends "economic/prestations/base_prestations.html" %}
+{% load i18n static ecom_money dashboard_tags %}
+
+{% trans "Pack" as t_pack %}
+{% with title=package.title|default:package.name|default:package.slug|default:t_pack %}
+
+{% block prestations_title %}{{ title }}{% endblock %}
+
+{% block prestations_content %}
+  {% safe_url "economic:prestations:index" as u_index %}
+  {% safe_url "economic:prestations:package_quote" package.slug as u_quote %}
+  {% safe_url "economic:prestations:package_checkout" package.slug as u_checkout %}
+  {% safe_url "core:contact" as u_contact %}
+  {% safe_url "dashboard:hub" as u_dashboard %}
+  {% safe_url "economic:prestations:projects_list" as u_projects %}
+  {% safe_url "economic:prestations:project_create" as u_project_create %}
+
+  {% firstof cur request.session.ECOMMERCE_CURRENCY "XOF" as currency %}
+  {% firstof package.total_price package.price package.base_price as base_price %}
+
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb small mb-0">
+      <li class="breadcrumb-item">
+        <a href="{{ u_index|default:'#' }}" class="text-decoration-none">{% trans "Prestations" %}</a>
+      </li>
+      <li class="breadcrumb-item">
+        <a href="{{ u_index|default:'#' }}#packs" class="text-decoration-none">{% trans "Packs" %}</a>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">{{ title }}</li>
+    </ol>
+  </nav>
+
+  <section class="rounded-4 bg-body border overflow-hidden mb-3">
+    <div class="row g-0">
+      <div class="col-lg-5">
+        <div class="ratio ratio-16x9 bg-light">
+          <img
+            src="{% if package.cover %}{{ package.cover.url }}{% elif package.image %}{{ package.image.url }}{% else %}{% static 'economic/prestations/img/pack_16x9.jpg' %}{% endif %}"
+            alt="{{ title }}"
+            class="w-100 h-100"
+            style="object-fit:cover;"
+            loading="lazy">
+        </div>
+      </div>
+
+      <div class="col-lg-7">
+        <div class="p-3 p-lg-4 h-100 d-flex flex-column">
+          <header class="d-flex align-items-start justify-content-between gap-2">
+            <div>
+              <h1 class="h4 mb-1">{{ title }}</h1>
+              {% if package.subtitle %}<div class="text-muted">{{ package.subtitle }}</div>{% endif %}
+            </div>
+            {% if package.is_featured %}<span class="badge text-bg-primary">{% trans "Recommandé" %}</span>{% endif %}
+          </header>
+
+          {% if package.short_description %}
+            <p class="text-muted mt-3 mb-0">{{ package.short_description }}</p>
+          {% elif package.description %}
+            <p class="text-muted mt-3 mb-0">{{ package.description|striptags|truncatechars:220 }}</p>
+          {% endif %}
+
+          <div class="mt-3 d-flex flex-wrap gap-2">
+            <a class="btn btn-primary" href="{{ u_quote|default:'#' }}">{% trans "Demander un devis" %}</a>
+
+            {% if base_price and u_checkout and u_checkout != "#" %}
+              <a class="btn btn-outline-primary" href="{{ u_checkout }}">{% trans "Payer en ligne" %}</a>
+            {% endif %}
+
+            <a class="btn btn-outline-secondary" href="{{ u_index|default:'#' }}#packs">{% trans "Retour" %}</a>
+
+            {% if u_contact and u_contact != "#" %}
+              <a class="btn btn-link" href="{{ u_contact }}">{% trans "Parler à l’équipe" %}</a>
+            {% endif %}
+          </div>
+
+          {% if base_price %}
+            <div class="mt-auto pt-3 small text-muted">
+              {% trans "Prix" %} : <strong>{% money base_price currency %}</strong>
+            </div>
+          {% else %}
+            <div class="mt-auto pt-3 small text-muted">
+              <strong>{% trans "Sur devis" %}</strong> — {% trans "Options et prix selon votre besoin." %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="row g-3">
+    <div class="col-12 col-lg-8">
+
+      {% if package.description %}
+        <section class="rounded-4 bg-body border p-3 p-lg-4 mb-3">
+          <h2 class="h6 mb-2">{% trans "Description" %}</h2>
+          <div class="content">{{ package.description|safe }}</div>
+        </section>
+      {% endif %}
+
+      {% if package.offers.all %}
+        <section class="rounded-4 bg-body border p-3 p-lg-4 mb-3">
+          <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+            <h2 class="h6 mb-0">{% trans "Options & tarifs" %}</h2>
+            <span class="badge text-bg-light border">{{ package.offers.all|length }}</span>
+          </div>
+
+          <div class="row g-3">
+            {% for offer in package.offers.all %}
+              {% trans "Option" as t_opt %}
+              {% firstof offer.title offer.name offer.slug t_opt as o_title %}
+              {% firstof offer.short_description offer.description as o_desc %}
+              {% firstof offer.price offer.total_price offer.base_price as o_price %}
+              {% firstof offer.preview_url offer.demo_url as o_preview %}
+              {% firstof offer.is_online_payable offer.allow_online_payment as o_online %}
+
+              <div class="col-12 col-xl-6">
+                <article class="card h-100 border-0 shadow-sm rounded-4">
+                  <div class="card-body d-flex flex-column">
+                    <div class="d-flex align-items-start justify-content-between gap-2">
+                      <div class="fw-semibold">{{ o_title }}</div>
+                      {% if offer.is_featured %}<span class="badge text-bg-primary">{% trans "Top" %}</span>{% endif %}
+                    </div>
+
+                    {% if o_desc %}
+                      <div class="text-muted small mt-2">{{ o_desc|striptags|truncatechars:170 }}</div>
+                    {% endif %}
+
+                    <div class="mt-3 d-flex align-items-center justify-content-between gap-2">
+                      <div>
+                        {% if o_price %}
+                          <div class="fw-semibold">{% money o_price currency %}</div>
+                          <div class="small text-muted">{% trans "prix indicatif" %}</div>
+                        {% else %}
+                          <div class="fw-semibold">{% trans "Sur devis" %}</div>
+                          <div class="small text-muted">{% trans "selon périmètre" %}</div>
+                        {% endif %}
+                      </div>
+
+                      <div class="d-flex gap-2 flex-wrap">
+                        {% if o_preview %}
+                          <a class="btn btn-sm btn-outline-secondary" href="{{ o_preview }}" target="_blank" rel="noopener">
+                            {% trans "Preview" %}
+                          </a>
+                        {% endif %}
+
+                        {% if o_price and o_online and u_checkout and u_checkout != "#" %}
+                          <a class="btn btn-sm btn-primary" href="{{ u_checkout }}?offer={{ offer.id }}">{% trans "Payer" %}</a>
+                        {% else %}
+                          <a class="btn btn-sm btn-outline-primary" href="{{ u_quote|default:'#' }}">{% trans "Devis" %}</a>
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              </div>
+            {% endfor %}
+          </div>
+        </section>
+      {% endif %}
+
+      {% if package.features %}
+        <section class="rounded-4 bg-body border p-3 p-lg-4 mb-3">
+          <h2 class="h6 mb-2">{% trans "Inclus" %}</h2>
+          <ul class="small text-muted ps-3 mb-0">
+            {% for f in package.features.all|default:package.features %}
+              <li>{{ f.title|default:f }}</li>
+            {% endfor %}
+          </ul>
+        </section>
+      {% endif %}
+
+      {% if package.prestations %}
+        <section class="rounded-4 bg-body border p-3 p-lg-4">
+          <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+            <h2 class="h6 mb-0">{% trans "Prestations incluses" %}</h2>
+            <a class="btn btn-sm btn-outline-secondary" href="{{ u_index|default:'#' }}#catalogue">{% trans "Voir le catalogue" %}</a>
+          </div>
+          <div class="row g-3">
+            {% for p in package.prestations.all|default:package.prestations %}
+              {% include "economic/prestations/partials/_prestation_card.html" with p=p cur=cur only %}
+            {% endfor %}
+          </div>
+        </section>
+      {% endif %}
+
+    </div>
+
+    <div class="col-12 col-lg-4">
+      <aside class="rounded-4 bg-body border p-3 p-lg-4 position-sticky" style="top: 88px;">
+        <div class="d-flex align-items-start justify-content-between gap-2">
+          <div class="fw-semibold">{% trans "Actions" %}</div>
+          {% if package.is_featured %}<span class="badge text-bg-primary">{% trans "Top" %}</span>{% endif %}
+        </div>
+
+        <div class="mt-3 d-grid gap-2">
+          <a class="btn btn-primary" href="{{ u_quote|default:'#' }}">{% trans "Demander un devis" %}</a>
+
+          {% if base_price and u_checkout and u_checkout != "#" %}
+            <a class="btn btn-outline-primary" href="{{ u_checkout }}">{% trans "Payer en ligne" %}</a>
+          {% endif %}
+
+          {% if u_dashboard and u_dashboard != "#" %}
+            <a class="btn btn-outline-secondary" href="{{ u_dashboard }}">{% trans "Mes achats / livrables" %}</a>
+          {% endif %}
+
+          {% if u_projects and u_projects != "#" %}
+            <a class="btn btn-outline-secondary" href="{{ u_projects }}">{% trans "Voir les projets" %}</a>
+          {% endif %}
+          {% if u_project_create and u_project_create != "#" %}
+            <a class="btn btn-outline-secondary" href="{{ u_project_create }}">{% trans "Publier un projet" %}</a>
+          {% endif %}
+
+          {% if u_contact and u_contact != "#" %}
+            <a class="btn btn-outline-secondary" href="{{ u_contact }}">{% trans "Contact" %}</a>
+          {% endif %}
+        </div>
+
+        <div class="mt-3 small text-muted">
+          <div class="d-flex gap-2 align-items-start">
+            <span aria-hidden="true">✓</span>
+            <span>{% trans "Paiement en ligne si option tarifée, sinon devis." %}</span>
+          </div>
+          <div class="d-flex gap-2 align-items-start mt-2">
+            <span aria-hidden="true">✓</span>
+            <span>{% trans "Livrables et téléchargements via dashboard après paiement." %}</span>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+{% endblock %}
+
+{% endwith %} {% endcomment %}
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/package_detail.html #}
+{% extends "economic/prestations/base_prestations.html" %}
+{% load i18n static ecom_money dashboard_tags %}
+
+{% trans "Pack" as t_pack %}
+{% with title=package.title|default:package.name|default:package.slug|default:t_pack %}
+
+{% block prestations_title %}{{ title }}{% endblock %}
+
+{% block prestations_content %}
+  {% safe_url "economic:prestations:index" as u_index %}
+  {% safe_url "economic:prestations:package_quote" package.slug as u_quote %}
+
+  {# ================= BREADCRUMB ================= #}
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb small mb-0">
+      <li class="breadcrumb-item">
+        <a href="{{ u_index|default:'#' }}" class="text-decoration-none">{% trans "Prestations" %}</a>
+      </li>
+      <li class="breadcrumb-item">
+        <a href="{{ u_index|default:'#' }}#packs" class="text-decoration-none">{% trans "Packs" %}</a>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">{{ title }}</li>
+    </ol>
+  </nav>
+
+  {# ================= HERO ================= #}
+  <section class="rounded-4 bg-body border overflow-hidden mb-3">
+    <div class="row g-0">
+
+      <div class="col-lg-5">
+        <div class="ratio ratio-16x9 bg-light">
+          <img
+            src="{% if package.cover %}{{ package.cover.url }}{% else %}{% static 'prestations/img/pack_16x9.jpg' %}{% endif %}"
+            alt="{{ title }}"
+            class="w-100 h-100"
+            style="object-fit:cover"
+            loading="lazy"
+          >
+        </div>
+      </div>
+
+      <div class="col-lg-7">
+        <div class="p-3 p-lg-4 h-100 d-flex flex-column">
+
+          <header class="d-flex justify-content-between gap-2">
+            <div>
+              <h1 class="h4 mb-1">{{ title }}</h1>
+              {% if package.subtitle %}
+                <div class="text-muted">{{ package.subtitle }}</div>
+              {% endif %}
+            </div>
+            {% if package.is_featured %}
+              <span class="badge text-bg-primary">{% trans "Recommandé" %}</span>
+            {% endif %}
+          </header>
+
+          {% if package.short_description %}
+            <p class="text-muted mt-3 mb-0">{{ package.short_description }}</p>
+          {% endif %}
+
+          <div class="mt-3 d-flex flex-wrap gap-2">
+            <a href="{{ u_quote|default:'#' }}" class="btn btn-primary">{% trans "Commencer" %}</a>
+            <a href="{{ u_index|default:'#' }}#packs" class="btn btn-outline-secondary">{% trans "Retour" %}</a>
+          </div>
+
+          {% firstof cur request.session.ECOMMERCE_CURRENCY as currency %}
+          {% firstof package.total_price package.price package.base_price as price %}
+          {% if price %}
+            <div class="mt-auto pt-3 small text-muted">
+              {% trans "Prix" %} : <strong>{% money price currency %}</strong>
+            </div>
+          {% endif %}
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  {# ================= DETAILS ================= #}
+  {% if package.description or package.features %}
+    <section class="rounded-4 bg-body border p-3 p-lg-4 mb-3">
+
+      {% if package.description %}
+        <h2 class="h6 mb-2">{% trans "Description" %}</h2>
+        <div class="content {% if package.features %}mb-3{% endif %}">{{ package.description|safe }}</div>
+      {% endif %}
+
+      {% if package.features %}
+        <h2 class="h6 mb-2">{% trans "Inclus" %}</h2>
+        <ul class="small text-muted ps-3 mb-0">
+          {% for f in package.features.all %}
+            <li>{{ f.title|default:f }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+
+    </section>
+  {% endif %}
+
+  {# ================= PRESTATIONS ================= #}
+  {% if package.prestations.exists %}
+    <section class="rounded-4 bg-body border p-3 p-lg-4">
+      <h2 class="h6 mb-3">{% trans "Prestations incluses" %}</h2>
+      <div class="row g-3">
+        {% for p in package.prestations.all %}
+          {% include "economic/prestations/partials/_prestation_card.html" with p=p cur=cur only %}
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+
+{% endblock %}
+{% endwith %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/package_detail.html #}
+{% extends "economic/prestations/base_prestations.html" %}
+{% load i18n static ecom_money dashboard_tags %}
+
+{% block prestations_title %}{{ package.title|default:package.name|default:_("Pack") }}{% endblock %}
+
+{% block prestations_content %}
+  {% safe_url "prestations:index" as u_index %}
+  {% safe_url "prestations:package_quote" package.slug as u_quote %}
+
+  <div class="mb-3">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb small mb-0">
+        <li class="breadcrumb-item"><a class="text-decoration-none" href="{{ u_index|default:'#' }}">{% trans "Prestations" %}</a></li>
+        <li class="breadcrumb-item"><a class="text-decoration-none" href="{{ u_index|default:'#' }}#packs">{% trans "Packs" %}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ package.title|default:package.name|default:_("Pack") }}</li>
+      </ol>
+    </nav>
+  </div>
+
+  <section class="rounded-4 bg-body border p-3 p-lg-4 mb-3">
+    <div class="d-flex align-items-start justify-content-between gap-2">
+      <div>
+        <h1 class="h4 mb-1">{{ package.title|default:package.name|default:_("Pack") }}</h1>
+        {% if package.subtitle %}<div class="text-muted">{{ package.subtitle }}</div>{% endif %}
+      </div>
+      {% if package.is_featured %}<span class="badge text-bg-primary">{% trans "Recommandé" %}</span>{% endif %}
+    </div>
+
+    {% if package.description %}
+      <div class="mt-3 content">{{ package.description|safe }}</div>
+    {% elif package.short_description %}
+      <p class="mt-3 text-muted">{{ package.short_description }}</p>
+    {% endif %}
+
+    {% if package.features %}
+      <div class="mt-3">
+        <h2 class="h6">{% trans "Inclus" %}</h2>
+        <ul class="text-muted small ps-3 mb-0">
+          {% for f in package.features.all|default:package.features %}
+            <li>{{ f.title|default:f }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    <div class="mt-4 d-flex flex-wrap gap-2">
+      <a class="btn btn-primary" href="{{ u_quote|default:'#' }}">{% trans "Demander un devis pack" %}</a>
+      <a class="btn btn-outline-secondary" href="{{ u_index|default:'#' }}#packs">{% trans "Retour" %}</a>
+    </div>
+
+    {% if package.price %}
+      <div class="mt-3 small text-muted">
+        {% trans "Prix" %} : <strong>{{ package.price }}</strong>
+        {% if request.session.ECOMMERCE_CURRENCY %}{{ request.session.ECOMMERCE_CURRENCY }}{% endif %}
+      </div>
+    {% endif %}
+  </section>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/package_detail.html -good #}
+{% extends "economic/prestations/base_prestations.html" %}
+{% load i18n static ecom_money dashboard_tags %}
+
+{% block prestations_title %}
+  {{ package.name|default:_("Pack") }} — {% trans "Prestations" %}
+{% endblock prestations_title %}
+
+{% block prestations_description %}
+  {% if package.tagline %}{{ package.tagline }}{% else %}
+    {% trans "Détails du pack de prestations, contenu et demande de devis." %}
+  {% endif %}
+{% endblock prestations_description %}
+
+{% block prestations_extra_css %}
+  {{ block.super }}
+  {# <link rel="stylesheet" href="{% static 'prestations/css/prestations_pack_detail.css' %}"> #}
+{% endblock prestations_extra_css %}
+
+{% block prestations_content %}
+
+  {% safe_url "economic:prestations:index" as u_prestations_index %}
+  {% safe_url "economic:prestations:package_quote" package.slug as u_pack_quote %}
+
+  <div class="container my-4 my-lg-5">
+
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
+      <div class="min-w-0">
+        <div class="text-muted small mb-1">
+          {% trans "Pack de prestations" %}
+          {% if package.tier %} · {{ package.get_tier_display|default:package.tier }}{% endif %}
+          {% if package.billing_period %} · {{ package.get_billing_period_display|default:package.billing_period }}{% endif %}
+        </div>
+
+        <h1 class="h3 fw-bold mb-2 text-truncate">
+          {{ package.name|default:_("Pack") }}
+        </h1>
+
+        {% if package.tagline %}
+          <p class="lead text-muted mb-0">{{ package.tagline }}</p>
+        {% endif %}
+      </div>
+
+      <div class="text-end">
+        <div class="h4 fw-bold mb-1">
+          {% if package.billing_period == "custom" %}
+            {% trans "Sur devis" %}
+          {% else %}
+            {% if package.total_price %}
+              {% money package.total_price %}
+            {% else %}
+              {{ package.total_price|default:"0" }} {{ package.currency|default:"EUR" }}
+            {% endif %}
+          {% endif %}
+        </div>
+
+        <div class="text-muted small mb-3">
+          {% if package.billing_period %}{{ package.get_billing_period_display|default:package.billing_period }}{% endif %}
+        </div>
+
+        <a class="btn btn-primary {% if not u_pack_quote %}disabled{% endif %}"
+           href="{% if u_pack_quote %}{{ u_pack_quote }}{% else %}#{% endif %}"
+           {% if not u_pack_quote %}aria-disabled="true" tabindex="-1"{% endif %}>
+          <i class="fa-solid fa-file-signature me-2"></i>
+          {{ package.cta_label|default:_("Demander un devis") }}
+        </a>
+
+        <a class="btn btn-outline-secondary ms-2 {% if not u_prestations_index %}disabled{% endif %}"
+           href="{% if u_prestations_index %}{{ u_prestations_index }}{% else %}#{% endif %}"
+           {% if not u_prestations_index %}aria-disabled="true" tabindex="-1"{% endif %}>
+          <i class="fa-solid fa-arrow-left me-2"></i>{% trans "Retour" %}
+        </a>
+      </div>
+    </div>
+
+    <hr class="my-4">
+
+    <div class="row g-4">
+      <div class="col-lg-8">
+
+        <div class="card shadow-sm border-0 mb-4">
+          <div class="card-body">
+            <h2 class="h5 fw-bold mb-3">{% trans "Description" %}</h2>
+            {% if package.description %}
+              <div class="content-rich">{{ package.description|safe }}</div>
+            {% else %}
+              <p class="text-muted mb-0">{% trans "Aucune description." %}</p>
+            {% endif %}
+          </div>
+        </div>
+
+        {% with feats=package.features.all %}
+          {% if feats %}
+            <div class="card shadow-sm border-0 mb-4">
+              <div class="card-body">
+                <h2 class="h5 fw-bold mb-3">{% trans "Ce qui est inclus" %}</h2>
+                <ul class="list-unstyled mb-0">
+                  {% for f in feats %}
+                    <li class="d-flex gap-2 mb-2">
+                      <span class="{% if f.is_highlight %}text-success{% else %}text-muted{% endif %}">
+                        <i class="fa-solid fa-circle-check"></i>
+                      </span>
+                      <span class="{% if f.is_highlight %}fw-semibold{% endif %}">{{ f.label }}</span>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <div class="card shadow-sm border-0">
+          <div class="card-body">
+            <h2 class="h5 fw-bold mb-3">{% trans "Prestations incluses" %}</h2>
+
+            {% with pres=package.prestations.all %}
+              {% if pres %}
+                <div class="row g-3">
+                  {% for p in pres %}
+                    {% safe_url "economic:prestations:detail" p.slug as u_prestation_detail %}
+                    <div class="col-md-6">
+                      <div class="border rounded-3 p-3 h-100">
+                        <div class="d-flex align-items-start justify-content-between gap-2">
+                          <div class="min-w-0">
+                            <div class="fw-bold text-truncate">{{ p.title|default:_("Prestation") }}</div>
+                            {% if p.short_description %}
+                              <div class="text-muted small mt-1">{{ p.short_description }}</div>
+                            {% endif %}
+                          </div>
+                          <a class="btn btn-sm btn-outline-primary {% if not u_prestation_detail %}disabled{% endif %}"
+                             href="{% if u_prestation_detail %}{{ u_prestation_detail }}{% else %}#{% endif %}"
+                             {% if not u_prestation_detail %}aria-disabled="true" tabindex="-1"{% endif %}>
+                            {% trans "Voir" %}
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
+              {% else %}
+                <p class="text-muted mb-0">{% trans "Aucune prestation associée à ce pack." %}</p>
+              {% endif %}
+            {% endwith %}
+
+          </div>
+        </div>
+
+      </div>
+
+      <div class="col-lg-4">
+        <div class="card shadow-sm border-0">
+          <div class="card-body">
+            <h3 class="h6 fw-bold mb-3">{% trans "Détails" %}</h3>
+
+            {% if package.tier %}
+              <div class="d-flex justify-content-between mb-2">
+                <span class="text-muted">{% trans "Niveau" %}</span>
+                <span class="fw-semibold">{{ package.get_tier_display|default:package.tier }}</span>
+              </div>
+            {% endif %}
+
+            {% if package.support_level %}
+              <div class="d-flex justify-content-between mb-2">
+                <span class="text-muted">{% trans "Support" %}</span>
+                <span class="fw-semibold">{{ package.get_support_level_display|default:package.support_level }}</span>
+              </div>
+            {% endif %}
+
+            <div class="d-flex justify-content-between mb-2">
+              <span class="text-muted">{% trans "SSL" %}</span>
+              <span class="fw-semibold">{% if package.included_ssl %}{% trans "Inclus" %}{% else %}{% trans "Non" %}{% endif %}</span>
+            </div>
+
+            <div class="d-flex justify-content-between mb-2">
+              <span class="text-muted">{% trans "Domaine (1 an)" %}</span>
+              <span class="fw-semibold">{% if package.included_domain_year %}{% trans "Inclus" %}{% else %}{% trans "Non" %}{% endif %}</span>
+            </div>
+
+            <div class="d-flex justify-content-between mb-2">
+              <span class="text-muted">{% trans "E-mails pro" %}</span>
+              <span class="fw-semibold">{{ package.emails_count|default:0 }}</span>
+            </div>
+
+            {% if package.max_pages %}
+              <div class="d-flex justify-content-between mb-2">
+                <span class="text-muted">{% trans "Pages max" %}</span>
+                <span class="fw-semibold">{{ package.max_pages }}</span>
+              </div>
+            {% endif %}
+
+            <hr>
+
+            <a class="btn btn-primary w-100 {% if not u_pack_quote %}disabled{% endif %}"
+               href="{% if u_pack_quote %}{{ u_pack_quote }}{% else %}#{% endif %}"
+               {% if not u_pack_quote %}aria-disabled="true" tabindex="-1"{% endif %}>
+              <i class="fa-solid fa-file-signature me-2"></i>
+              {{ package.cta_label|default:_("Demander un devis") }}
+            </a>
+
+            <div class="small text-muted mt-3">
+              <i class="fa-regular fa-circle-check me-1"></i>
+              {% trans "Un conseiller vous répond rapidement avec une proposition adaptée." %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+{% endblock prestations_content %}
+ {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/package_detail.html #}
+{% extends "economic/prestations/base_prestations.html" %}
+{% load i18n static %}
+
+{% block title %}
+  {{ package.name|default:"Pack" }} | {{ PROJECT_NAME|default:"SOGENTIS" }}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'economic/css/prestations.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+
+  <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
+    <div>
+      <div class="text-muted small mb-1">
+        {% trans "Pack de services" %}
+        {% if package.tier %} · {{ package.get_tier_display }}{% endif %}
+        {% if package.billing_period %} · {{ package.get_billing_period_display }}{% endif %}
+      </div>
+
+      <h1 class="h3 fw-bold mb-2">
+        {{ package.name|default:_("Pack") }}
+      </h1>
+
+      {% if package.tagline %}
+        <p class="lead text-muted mb-3">{{ package.tagline }}</p>
+      {% endif %}
+    </div>
+
+    <div class="text-end">
+      <div class="h4 fw-bold mb-1">
+        {% if package.billing_period == "custom" %}
+          {% trans "Sur devis" %}
+        {% else %}
+          {{ package.total_price }} {{ package.currency }}
+        {% endif %}
+      </div>
+      <div class="text-muted small mb-3">
+        {% if package.billing_period %}{{ package.get_billing_period_display }}{% endif %}
+      </div>
+
+      <a class="btn btn-primary"
+         href="{% url 'economic:services:package_quote' slug=package.slug %}">
+        {{ package.cta_label|default:_("Demander un devis") }}
+      </a>
+
+      <a class="btn btn-outline-secondary ms-2"
+         href="{% url 'economic:services:index' %}">
+        {% trans "Retour" %}
+      </a>
+    </div>
+  </div>
+
+  <hr class="my-4">
+
+  <div class="row g-4">
+    <div class="col-lg-8">
+
+      {# Description #}
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+          <h2 class="h5 fw-bold mb-3">{% trans "Description" %}</h2>
+          {% if package.description %}
+            <div class="content-rich">{{ package.description|safe }}</div>
+          {% else %}
+            <p class="text-muted mb-0">{% trans "Aucune description." %}</p>
+          {% endif %}
+        </div>
+      </div>
+
+      {# Features du pack #}
+      {% if package.features.all %}
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+          <h2 class="h5 fw-bold mb-3">{% trans "Ce qui est inclus" %}</h2>
+          <ul class="list-unstyled mb-0">
+            {% for f in package.features.all %}
+              <li class="d-flex gap-2 mb-2">
+                <span class="{% if f.is_highlight %}text-success{% else %}text-muted{% endif %}">
+                  <i class="fa-solid fa-circle-check"></i>
+                </span>
+                <span class="{% if f.is_highlight %}fw-semibold{% endif %}">{{ f.label }}</span>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      {% endif %}
+
+      {# Services inclus #}
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <h2 class="h5 fw-bold mb-3">{% trans "Services inclus" %}</h2>
+
+          {% if package.services.all %}
+            <div class="row g-3">
+              {% for s in package.services.all %}
+                <div class="col-md-6">
+                  <div class="border rounded-3 p-3 h-100">
+                    <div class="d-flex align-items-start justify-content-between gap-2">
+                      <div>
+                        <div class="fw-bold">
+                          {{ s.title|default:"Service" }}
+                        </div>
+                        {% if s.short_description %}
+                          <div class="text-muted small mt-1">{{ s.short_description }}</div>
+                        {% endif %}
+                      </div>
+                      <a class="btn btn-sm btn-outline-primary"
+                         href="{% url 'economic:services:detail' slug=s.slug %}">
+                        {% trans "Voir" %}
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <p class="text-muted mb-0">{% trans "Aucun service associé à ce pack." %}</p>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <h3 class="h6 fw-bold mb-3">{% trans "Détails" %}</h3>
+
+          {% if package.tier %}
+          <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted">{% trans "Niveau" %}</span>
+            <span class="fw-semibold">{{ package.get_tier_display }}</span>
+          </div>
+          {% endif %}
+
+          {% if package.support_level %}
+          <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted">{% trans "Support" %}</span>
+            <span class="fw-semibold">{{ package.get_support_level_display }}</span>
+          </div>
+          {% endif %}
+
+          <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted">{% trans "SSL" %}</span>
+            <span class="fw-semibold">{% if package.included_ssl %}{% trans "Inclus" %}{% else %}{% trans "Non" %}{% endif %}</span>
+          </div>
+
+          <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted">{% trans "Domaine (1 an)" %}</span>
+            <span class="fw-semibold">{% if package.included_domain_year %}{% trans "Inclus" %}{% else %}{% trans "Non" %}{% endif %}</span>
+          </div>
+
+          <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted">{% trans "E-mails pro" %}</span>
+            <span class="fw-semibold">{{ package.emails_count }}</span>
+          </div>
+
+          {% if package.max_pages %}
+          <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted">{% trans "Pages max" %}</span>
+            <span class="fw-semibold">{{ package.max_pages }}</span>
+          </div>
+          {% endif %}
+
+          <hr>
+
+          <a class="btn btn-primary w-100"
+             href="{% url 'economic:services:package_quote' slug=package.slug %}">
+            {{ package.cta_label|default:_("Demander un devis") }}
+          </a>
+
+          <div class="small text-muted mt-3">
+            {% trans "Un conseiller vous répond rapidement avec une proposition adaptée." %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %} {% endcomment %}

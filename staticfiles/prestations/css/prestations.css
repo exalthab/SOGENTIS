@@ -1,0 +1,84 @@
+/* =========================================================
+   PRESTATIONS – UI SYSTEM
+   ========================================================= */
+
+.svc-grid,
+.svc-packs-grid{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+@media (min-width: 768px){
+  .svc-grid,
+  .svc-packs-grid{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1200px){
+  .svc-grid,
+  .svc-packs-grid{
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.svc-card{
+  border-radius: 16px;
+  overflow: hidden;
+  height: 100%;
+}
+
+.svc-card-body{ padding: 14px; }
+
+.svc-card-title{
+  margin: 0;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  line-height: 1.15;
+}
+
+.svc-card-desc{
+  margin: 10px 0 0;
+  opacity: .9;
+}
+
+.svc-card-footer{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px 14px;
+}
+
+.svc-pagination{
+  margin-top: 18px;
+  display: flex;
+  justify-content: center;
+}
+
+.svc-cta{
+  border-radius: 18px;
+  padding: 18px;
+  margin-top: 22px;
+}
+
+@media (min-width: 992px){
+  .svc-cta{ padding: 22px; }
+}
+
+.svc-cta-inner{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+@media (min-width: 992px){
+  .svc-cta-inner{
+    grid-template-columns: 1.2fr .8fr;
+  }
+}
+
+.svc-muted{ opacity:.75; }
+.svc-nowrap{ white-space:nowrap; }
+.svc-w-100{ width:100%; }

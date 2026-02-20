@@ -1,0 +1,27 @@
+{# templates/tech/partials/menu/_tech_nav_business_dropdown.html #}
+{% load i18n dashboard_tags %}
+
+{% safe_url "economic:index" as eco_index_url %}
+{% safe_url "economic:ecommerce:index" as eco_shop_url %}
+{% safe_url "economic:prestations:index" as eco_presta_url %}
+{% safe_url "economic:formations:index" as eco_form_url %}
+{% safe_url "economic:b2b:index" as eco_b2b_url %}
+
+{% if eco_index_url or eco_shop_url or eco_presta_url or eco_form_url or eco_b2b_url %}
+  <li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle"
+       href="#"
+       role="button"
+       data-bs-toggle="dropdown"
+       aria-expanded="false">
+      🧭 {% trans "Accès métier" %}
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark">
+      {% if eco_index_url %}<li><a class="dropdown-item" href="{{ eco_index_url }}">🏛️ {% trans "Pôle économique" %}</a></li>{% endif %}
+      {% if eco_shop_url %}<li><a class="dropdown-item" href="{{ eco_shop_url }}">🛒 {% trans "Boutique" %}</a></li>{% endif %}
+      {% if eco_presta_url %}<li><a class="dropdown-item" href="{{ eco_presta_url }}">🧰 {% trans "Prestations" %}</a></li>{% endif %}
+      {% if eco_form_url %}<li><a class="dropdown-item" href="{{ eco_form_url }}">🎓 {% trans "Formations" %}</a></li>{% endif %}
+      {% if eco_b2b_url %}<li><a class="dropdown-item" href="{{ eco_b2b_url }}">🏢 {% trans "B2B" %}</a></li>{% endif %}
+    </ul>
+  </li>
+{% endif %}

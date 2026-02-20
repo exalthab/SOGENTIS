@@ -1,0 +1,20 @@
+/* =========================================================
+   PRESTATIONS TOPBAR
+   ========================================================= */
+
+.eco-topbar{
+  position: sticky;
+  top: calc(
+    var(--eco-global-navbar-height) +
+    var(--eco-hub-height)
+  );
+  z-index: var(--z-prestations-topbar);
+  background: #fff;
+  border-bottom: 1px solid var(--eco-border);
+}
+
+.eco-topbar .container-fluid{
+  min-height: var(--eco-prestations-topbar-height);
+  display: flex;
+  align-items: center;
+}

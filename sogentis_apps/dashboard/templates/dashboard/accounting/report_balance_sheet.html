@@ -1,0 +1,321 @@
+{# templates/dashboard/accounting/report_balance_sheet.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n dashboard_tags %}
+
+{% block title %}{% trans "Balance Sheet" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block dashboard_header %}
+  {% safe_url "dashboard:accounting:index" as u_home %}
+  {% safe_url "dashboard:accounting:reports" as u_reports %}
+  {% safe_url "accounting:trial_balance" as u_tb %}
+  {% safe_url "accounting:report_income_statement" as u_pl %}
+  {% safe_url "accounting:report_cash_flow" as u_cf %}
+  {% safe_url "accounting:report_balance_sheet" as u_target %}
+
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div>
+      <h1 class="fw-bold mb-1">🏛 {% trans "Balance Sheet" %}</h1>
+      <p class="text-muted mb-0">{% trans "Redirection vers le rapport statutaire." %}</p>
+    </div>
+
+    <div class="d-flex flex-wrap gap-2">
+      {% if u_home %}<a class="btn btn-sm btn-outline-secondary" href="{{ u_home }}">← {% trans "Accounting" %}</a>{% endif %}
+      {% if u_reports %}<a class="btn btn-sm btn-outline-dark" href="{{ u_reports }}">📈 {% trans "Rapports" %}</a>{% endif %}
+      {% if u_tb %}<a class="btn btn-sm btn-outline-primary" href="{{ u_tb }}">⚖️ {% trans "Trial Balance" %}</a>{% endif %}
+      {% if u_pl %}<a class="btn btn-sm btn-outline-primary" href="{{ u_pl }}">🧮 {% trans "P&L" %}</a>{% endif %}
+      {% if u_cf %}<a class="btn btn-sm btn-outline-primary" href="{{ u_cf }}">💧 {% trans "Cash Flow" %}</a>{% endif %}
+    </div>
+  </div>
+{% endblock %}
+
+{% block dashboard_content %}
+  {% safe_url "accounting:report_balance_sheet" as u_target %}
+
+  <div class="container-fluid px-3 px-lg-4 py-3">
+    <div class="rounded-4 bg-body border p-3 p-lg-4">
+
+      {% if u_target %}
+        <script>
+          (function () {
+            var base = "{{ u_target|escapejs }}";
+            var qs = "{{ request.GET.urlencode|escapejs }}";
+            var url = qs ? (base + "?" + qs) : base;
+            window.location.replace(url);
+          })();
+        </script>
+
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+          <div>
+            <div class="fw-semibold">{% trans "Redirecting…" %}</div>
+            <div class="text-muted small">
+              {% trans "Si la redirection ne se fait pas automatiquement, utilise le bouton." %}
+            </div>
+          </div>
+
+          <a class="btn btn-primary"
+             href="{{ u_target }}{% if request.GET.urlencode %}?{{ request.GET.urlencode }}{% endif %}">
+            {% trans "Open report" %}
+          </a>
+        </div>
+      {% else %}
+        <div class="text-muted">{% trans "Route manquante: accounting:report_balance_sheet" %}</div>
+      {% endif %}
+
+    </div>
+  </div>
+{% endblock %}
+
+
+
+
+
+
+
+{% comment %} {# templates/dashboard/accounting/report_balance_sheet.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n dashboard_tags %}
+
+{% block title %}{% trans "Balance Sheet" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block dashboard_header %}
+  {% safe_url "dashboard:accounting:index" as u_home %}
+  {% safe_url "dashboard:accounting:reports" as u_reports %}
+  {% safe_url "dashboard:accounting:trial_balance" as u_tb %}
+  {% safe_url "dashboard:accounting:profit_loss" as u_pl %}
+  {% safe_url "dashboard:accounting:balance_sheet" as u_self %}
+
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div>
+      <h1 class="fw-bold mb-1">🏛 {% trans "Balance Sheet" %}</h1>
+      <p class="text-muted mb-0">{% trans "Actif, passif et capitaux propres à une date." %}</p>
+    </div>
+
+    <div class="d-flex flex-wrap gap-2">
+      {% if u_home %}<a class="btn btn-sm btn-outline-secondary" href="{{ u_home }}">← {% trans "Accounting" %}</a>{% endif %}
+      {% if u_reports %}<a class="btn btn-sm btn-outline-dark" href="{{ u_reports }}">📈 {% trans "Rapports" %}</a>{% endif %}
+      {% if u_tb %}<a class="btn btn-sm btn-outline-primary" href="{{ u_tb }}">⚖️ {% trans "Trial Balance" %}</a>{% endif %}
+      {% if u_pl %}<a class="btn btn-sm btn-outline-primary" href="{{ u_pl }}">🧮 {% trans "P&L" %}</a>{% endif %}
+    </div>
+  </div>
+{% endblock %}
+
+{% block dashboard_content %}
+  {% safe_url "dashboard:accounting:balance_sheet" as u_self %}
+
+  <div class="container-fluid px-3 px-lg-4 py-3">
+
+    <div class="rounded-4 bg-body border p-3 p-lg-4 mb-3">
+      <div class="d-flex align-items-start justify-content-between flex-wrap gap-2 mb-3">
+        <div>
+          <div class="h5 mb-1">{% trans "Balance Sheet" %}</div>
+          <div class="text-muted small">
+            {% trans "Au" %}: {{ as_of|default:"—" }}
+            {% if currency %} · {{ currency }}{% endif %}
+          </div>
+        </div>
+      </div>
+
+      <form class="row g-2 align-items-end" method="get" action="{{ u_self|default:request.path }}">
+
+        <div class="col-6 col-md-2">
+          <label class="form-label small mb-1">{% trans "Date" %}</label>
+          <input type="date" class="form-control form-control-sm" name="as_of" value="{{ as_of|default:'' }}">
+        </div>
+
+        <div class="col-6 col-md-2">
+          <label class="form-label small mb-1">{% trans "Pôle" %}</label>
+          <select class="form-select form-select-sm" name="pole">
+            <option value="">{% trans "Tous" %}</option>
+            {% for v,l in pole_choices %}
+              <option value="{{ v }}" {% if pole == v %}selected{% endif %}>{{ l }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-6 col-md-3">
+          <label class="form-label small mb-1">{% trans "Entité (company_code)" %}</label>
+          <input class="form-control form-control-sm" name="company" value="{{ company_code|default:'' }}" placeholder="ECONOMIC-SN">
+        </div>
+
+        <div class="col-6 col-md-2">
+          <label class="form-label small mb-1">{% trans "Devise" %}</label>
+          <input class="form-control form-control-sm" name="currency" value="{{ currency|default:'' }}" placeholder="XOF">
+        </div>
+
+        <div class="col-6 col-md-1 d-flex gap-2">
+          <button class="btn btn-sm btn-primary w-100" type="submit">{% trans "OK" %}</button>
+        </div>
+
+        <div class="col-12">
+          <a class="btn btn-sm btn-outline-secondary" href="{{ u_self|default:request.path }}">{% trans "Reset" %}</a>
+        </div>
+      </form>
+    </div>
+
+    <div class="row g-3">
+
+      {# ===================== ASSETS ===================== #}
+      <div class="col-12 col-xl-6">
+        <div class="rounded-4 bg-body border overflow-hidden h-100">
+          <div class="p-3 border-bottom d-flex align-items-center justify-content-between">
+            <div class="fw-bold">{% trans "Assets" %}</div>
+            <div class="text-muted small">{{ totals.assets|default:"0.00" }}{% if currency %} {{ currency }}{% endif %}</div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table align-middle mb-0">
+              <thead>
+                <tr class="text-muted small">
+                  <th style="min-width:120px;">{% trans "Compte" %}</th>
+                  <th>{% trans "Nom" %}</th>
+                  <th class="text-end" style="min-width:140px;">{% trans "Solde" %}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for r in asset_rows %}
+                  <tr>
+                    <td class="fw-semibold">{{ r.code|default:r.account_code|default:"—" }}</td>
+                    <td class="text-muted small">{{ r.name|default:r.account_name|default:"—" }}</td>
+                    <td class="text-end fw-semibold">{{ r.balance|default:r.amount|default:r.total|default:"0.00" }}</td>
+                  </tr>
+                {% empty %}
+                  <tr><td colspan="3" class="text-muted">{% trans "Aucun actif." %}</td></tr>
+                {% endfor %}
+              </tbody>
+              <tfoot>
+                <tr class="border-top">
+                  <th colspan="2" class="text-end">{% trans "Total Assets" %}</th>
+                  <th class="text-end fw-bold">{{ totals.assets|default:"0.00" }}</th>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      {# ===================== LIABILITIES + EQUITY ===================== #}
+      <div class="col-12 col-xl-6">
+        <div class="rounded-4 bg-body border overflow-hidden h-100">
+
+          <div class="p-3 border-bottom d-flex align-items-center justify-content-between">
+            <div class="fw-bold">{% trans "Liabilities & Equity" %}</div>
+            <div class="text-muted small">
+              {{ totals.liabilities_equity|default:totals.liabilities_plus_equity|default:"0.00" }}
+              {% if currency %} {{ currency }}{% endif %}
+            </div>
+          </div>
+
+          <div class="p-3 pb-0">
+            <div class="fw-semibold mb-2">{% trans "Liabilities" %}</div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table align-middle mb-0">
+              <thead>
+                <tr class="text-muted small">
+                  <th style="min-width:120px;">{% trans "Compte" %}</th>
+                  <th>{% trans "Nom" %}</th>
+                  <th class="text-end" style="min-width:140px;">{% trans "Solde" %}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for r in liability_rows %}
+                  <tr>
+                    <td class="fw-semibold">{{ r.code|default:r.account_code|default:"—" }}</td>
+                    <td class="text-muted small">{{ r.name|default:r.account_name|default:"—" }}</td>
+                    <td class="text-end fw-semibold">{{ r.balance|default:r.amount|default:r.total|default:"0.00" }}</td>
+                  </tr>
+                {% empty %}
+                  <tr><td colspan="3" class="text-muted">{% trans "Aucun passif." %}</td></tr>
+                {% endfor %}
+              </tbody>
+              <tfoot>
+                <tr class="border-top">
+                  <th colspan="2" class="text-end">{% trans "Total Liabilities" %}</th>
+                  <th class="text-end fw-bold">{{ totals.liabilities|default:"0.00" }}</th>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          <div class="p-3 pb-0">
+            <div class="fw-semibold mb-2">{% trans "Equity" %}</div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table align-middle mb-0">
+              <thead>
+                <tr class="text-muted small">
+                  <th style="min-width:120px;">{% trans "Compte" %}</th>
+                  <th>{% trans "Nom" %}</th>
+                  <th class="text-end" style="min-width:140px;">{% trans "Solde" %}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for r in equity_rows %}
+                  <tr>
+                    <td class="fw-semibold">{{ r.code|default:r.account_code|default:"—" }}</td>
+                    <td class="text-muted small">{{ r.name|default:r.account_name|default:"—" }}</td>
+                    <td class="text-end fw-semibold">{{ r.balance|default:r.amount|default:r.total|default:"0.00" }}</td>
+                  </tr>
+                {% empty %}
+                  <tr><td colspan="3" class="text-muted">{% trans "Aucun capitaux propres." %}</td></tr>
+                {% endfor %}
+              </tbody>
+              <tfoot>
+                <tr class="border-top">
+                  <th colspan="2" class="text-end">{% trans "Total Equity" %}</th>
+                  <th class="text-end fw-bold">{{ totals.equity|default:"0.00" }}</th>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          <div class="p-3 border-top d-flex align-items-center justify-content-between">
+            <div class="fw-bold">{% trans "Total Liabilities & Equity" %}</div>
+            <div class="fw-bold">
+              {{ totals.liabilities_equity|default:totals.liabilities_plus_equity|default:"0.00" }}
+              {% if currency %}<span class="text-muted small ms-1">{{ currency }}</span>{% endif %}
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <div class="row g-3 mt-1">
+      <div class="col-12 col-xl-6">
+        <div class="card border-0 shadow-sm rounded-4">
+          <div class="card-body">
+            <div class="text-muted small">{% trans "Total Assets" %}</div>
+            <div class="h5 mb-0 fw-bold">{{ totals.assets|default:"0.00" }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-xl-6">
+        <div class="card border-0 shadow-sm rounded-4">
+          <div class="card-body">
+            <div class="text-muted small">{% trans "Total Liabilities & Equity" %}</div>
+            <div class="h5 mb-0 fw-bold">
+              {{ totals.liabilities_equity|default:totals.liabilities_plus_equity|default:"0.00" }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% if totals.assets and totals.liabilities_equity %}
+      {% if totals.assets != totals.liabilities_equity %}
+        <div class="alert alert-warning border mt-3 mb-0">
+          <div class="fw-semibold">{% trans "Attention" %}</div>
+          <div class="small text-muted">
+            {% trans "Le bilan ne balance pas (Assets ≠ Liabilities+Equity). Vérifie tes écritures et ton mapping de comptes." %}
+          </div>
+        </div>
+      {% endif %}
+    {% endif %}
+
+  </div>
+{% endblock %} {% endcomment %}

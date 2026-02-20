@@ -1,0 +1,57 @@
+{% load static i18n dashboard_tags ecom_money ecom_utils %}
+
+<section id="parcours" class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="h5 fw-bold mb-0">{% trans "Parcours" %}</h2>
+    <a class="small text-decoration-none" href="#calendar">{% trans "Calendrier" %} →</a>
+  </div>
+
+  <div class="row g-3 g-md-4">
+    <div class="col-lg-4">
+      <div class="ft-card h-100">
+        <div class="fw-bold mb-1">{% trans "Parcours Débutant" %}</div>
+        <div class="small text-muted mb-2">{% trans "Bases solides + pratique guidée." %}</div>
+        <ul class="small mb-3">
+          <li>{% trans "Cours courts et progressifs" %}</li>
+          <li>{% trans "Exercices corrigés" %}</li>
+          <li>{% trans "Suivi de progression" %}</li>
+        </ul>
+        <a class="btn btn-sm btn-outline-primary w-100"
+           href="{% if u_course_list %}{{ u_course_list }}?q={% trans 'débutant' %}{% else %}#{% endif %}">
+          {% trans "Voir le parcours" %}
+        </a>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="ft-card h-100 ft-card-featured">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <div class="fw-bold mb-1">{% trans "Parcours Professionnel" %}</div>
+            <div class="small text-muted mb-2">{% trans "Compétences métiers & livrables." %}</div>
+          </div>
+          <span class="badge bg-primary">{% trans "Populaire" %}</span>
+        </div>
+        <ul class="small mb-3">
+          <li>{% trans "Cas pratiques" %}</li>
+          <li>{% trans "Quiz / évaluations" %}</li>
+          <li>{% trans "Certificat en fin de parcours" %}</li>
+        </ul>
+        <a class="btn btn-sm btn-primary w-100" href="{{ u_course_list|default:'#' }}">{% trans "Explorer" %}</a>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="ft-card h-100">
+        <div class="fw-bold mb-1">{% trans "Parcours Organisation" %}</div>
+        <div class="small text-muted mb-2">{% trans "Entreprises, ONG, cohortes, sur mesure." %}</div>
+        <ul class="small mb-3">
+          <li>{% trans "Sessions planifiées" %}</li>
+          <li>{% trans "Présentiel / hybride" %}</li>
+          <li>{% trans "Suivi & reporting" %}</li>
+        </ul>
+        <a class="btn btn-sm btn-outline-secondary w-100" href="{{ u_contact|default:'#' }}">{% trans "Demander un devis" %}</a>
+      </div>
+    </div>
+  </div>
+</section>

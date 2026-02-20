@@ -1,0 +1,16 @@
+{% load i18n %}
+<form method="get" class="mk-sort">
+  {% if request.GET.q %}<input type="hidden" name="q" value="{{ request.GET.q }}">{% endif %}
+  {% if request.GET.category %}<input type="hidden" name="category" value="{{ request.GET.category }}">{% endif %}
+  {% if request.GET.badge %}<input type="hidden" name="badge" value="{{ request.GET.badge }}">{% endif %}
+  {% if request.GET.price_max %}<input type="hidden" name="price_max" value="{{ request.GET.price_max }}">{% endif %}
+
+  <select name="sort" class="form-select form-select-sm" onchange="this.form.submit()">
+    <option value="">{% trans "Trier par" %}</option>
+    <option value="deals" {% if sort == "deals" %}selected{% endif %}>🔥 {% trans "Super Deals" %}</option>
+    <option value="new" {% if sort == "new" %}selected{% endif %}>✨ {% trans "Nouveautés" %}</option>
+    <option value="best" {% if sort == "best" %}selected{% endif %}>⭐ {% trans "Meilleures ventes" %}</option>
+    <option value="price_asc" {% if sort == "price_asc" %}selected{% endif %}>{% trans "Prix croissant" %}</option>
+    <option value="price_desc" {% if sort == "price_desc" %}selected{% endif %}>{% trans "Prix décroissant" %}</option>
+  </select>
+</form>

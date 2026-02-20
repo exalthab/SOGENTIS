@@ -1,0 +1,34 @@
+{# templates/tech/analytics/index.html #}
+{% extends "tech/base_tech.html" %}
+{% load i18n %}
+
+{% block tech_title %}{{ page_title|default:_("Analytics") }}{% endblock %}
+
+{% block tech_content %}
+<div class="container py-4">
+  <h1 class="h4 mb-1">📈 {% trans "Analytics" %}</h1>
+  <div class="text-muted small mb-3">{% trans "KPI e-commerce, prestations, formations, support." %}</div>
+
+  <div class="row g-3">
+    <div class="col-12 col-lg-3"><div class="card h-100"><div class="card-body">
+      <div class="fw-semibold">🛒 {% trans "Commerce" %}</div>
+      <div class="text-muted small mt-1">{% trans "CA, conversion, panier moyen." %}</div>
+    </div></div></div>
+
+    <div class="col-12 col-lg-3"><div class="card h-100"><div class="card-body">
+      <div class="fw-semibold">🧰 {% trans "Prestations" %}</div>
+      <div class="text-muted small mt-1">{% trans "Devis → ventes, délais." %}</div>
+    </div></div></div>
+
+    <div class="col-12 col-lg-3"><div class="card h-100"><div class="card-body">
+      <div class="fw-semibold">🎓 {% trans "Formations" %}</div>
+      <div class="text-muted small mt-1">{% trans "Inscriptions, complétion." %}</div>
+    </div></div></div>
+
+    <div class="col-12 col-lg-3"><div class="card h-100"><div class="card-body">
+      <div class="fw-semibold">🛟 {% trans "Support" %}</div>
+      <div class="text-muted small mt-1">{% trans "SLA, temps de réponse." %}</div>
+    </div></div></div>
+  </div>
+</div>
+{% endblock %}

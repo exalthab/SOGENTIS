@@ -1,0 +1,285 @@
+{# templates/dashboard/accounting/index.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n dashboard_tags %}
+
+{% block title %}{% trans "Accounting" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block dashboard_header %}
+  {% safe_url "dashboard:accounting:accounts" as u_accounts %}
+  {% safe_url "dashboard:accounting:journal" as u_journal %}
+  {% safe_url "dashboard:accounting:entries" as u_entries %}
+
+  {% safe_url "accounting:trial_balance" as u_reports %}
+  {% safe_url "accounting:trial_balance" as u_tb %}
+  {% safe_url "accounting:report_income_statement" as u_pl %}
+  {% safe_url "accounting:report_balance_sheet" as u_bs %}
+
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div>
+      <h1 class="fw-bold mb-1">📚 {% trans "Accounting" %}</h1>
+      <p class="text-muted mb-0">{% trans "Plan comptable, journaux, écritures et rapports." %}</p>
+    </div>
+
+    <div class="d-flex flex-wrap gap-2">
+      {% if u_accounts %}<a class="btn btn-sm btn-outline-primary" href="{{ u_accounts }}">🗂 {% trans "Comptes" %}</a>{% endif %}
+      {% if u_entries %}<a class="btn btn-sm btn-outline-dark" href="{{ u_entries }}">🧾 {% trans "Écritures" %}</a>{% endif %}
+      {% if u_reports %}<a class="btn btn-sm btn-outline-secondary" href="{{ u_reports }}">📈 {% trans "Rapports" %}</a>{% endif %}
+    </div>
+  </div>
+{% endblock %}
+
+{% block dashboard_content %}
+  {% safe_url "dashboard:accounting:accounts" as u_accounts %}
+  {% safe_url "dashboard:accounting:journal" as u_journal %}
+  {% safe_url "dashboard:accounting:entries" as u_entries %}
+
+  {% safe_url "accounting:trial_balance" as u_reports %}
+  {% safe_url "accounting:trial_balance" as u_tb %}
+  {% safe_url "accounting:report_income_statement" as u_pl %}
+  {% safe_url "accounting:report_balance_sheet" as u_bs %}
+  {% safe_url "accounting:report_cash_flow" as u_cf %}
+
+  <div class="container-fluid px-3 px-lg-4 py-3">
+    <div class="rounded-4 bg-body border p-3 p-lg-4">
+
+      <div class="row g-3">
+
+        <div class="col-12 col-md-6 col-xl-4">
+          {% if u_accounts %}
+            <a class="card h-100 border-0 shadow-sm rounded-4 text-decoration-none" href="{{ u_accounts }}">
+              <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between">
+                  <div class="fw-semibold">🗂 {% trans "Chart of accounts" %}</div>
+                  <span class="badge text-bg-light border">{% trans "COA" %}</span>
+                </div>
+                <div class="text-muted small mt-1">{% trans "Comptes, sous-comptes, activation, scopes pôle/entité." %}</div>
+              </div>
+            </a>
+          {% else %}
+            <div class="card h-100 border rounded-4">
+              <div class="card-body">
+                <div class="fw-semibold">🗂 {% trans "Chart of accounts" %}</div>
+                <div class="text-muted small mt-1">{% trans "Route manquante: dashboard:accounting:accounts" %}</div>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="col-12 col-md-6 col-xl-4">
+          {% if u_journal %}
+            <a class="card h-100 border-0 shadow-sm rounded-4 text-decoration-none" href="{{ u_journal }}">
+              <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between">
+                  <div class="fw-semibold">📓 {% trans "Journaux" %}</div>
+                  <span class="badge text-bg-light border">{% trans "Books" %}</span>
+                </div>
+                <div class="text-muted small mt-1">{% trans "Liste des journaux (encaissements, ventes, achats…) et accès rapide." %}</div>
+              </div>
+            </a>
+          {% else %}
+            <div class="card h-100 border rounded-4">
+              <div class="card-body">
+                <div class="fw-semibold">📓 {% trans "Journaux" %}</div>
+                <div class="text-muted small mt-1">{% trans "Route manquante: dashboard:accounting:journal" %}</div>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="col-12 col-md-6 col-xl-4">
+          {% if u_entries %}
+            <a class="card h-100 border-0 shadow-sm rounded-4 text-decoration-none" href="{{ u_entries }}">
+              <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between">
+                  <div class="fw-semibold">🧾 {% trans "Écritures" %}</div>
+                  <span class="badge text-bg-light border">{% trans "JE" %}</span>
+                </div>
+                <div class="text-muted small mt-1">{% trans "Écritures, lignes, statuts (draft/posted), source (payments, orders…)." %}</div>
+              </div>
+            </a>
+          {% else %}
+            <div class="card h-100 border rounded-4">
+              <div class="card-body">
+                <div class="fw-semibold">🧾 {% trans "Écritures" %}</div>
+                <div class="text-muted small mt-1">{% trans "Route manquante: dashboard:accounting:entries" %}</div>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="col-12">
+          <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body">
+              <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+                <div class="fw-semibold">📈 {% trans "Rapports" %}</div>
+                {% if u_reports %}
+                  <a class="btn btn-sm btn-outline-secondary" href="{{ u_reports }}">{% trans "Tous les rapports" %}</a>
+                {% endif %}
+              </div>
+
+              <div class="d-flex flex-wrap gap-2">
+                {% if u_tb %}<a class="btn btn-sm btn-outline-dark" href="{{ u_tb }}">⚖️ {% trans "Trial balance" %}</a>{% endif %}
+                {% if u_pl %}<a class="btn btn-sm btn-outline-dark" href="{{ u_pl }}">🧮 {% trans "Profit & loss" %}</a>{% endif %}
+                {% if u_bs %}<a class="btn btn-sm btn-outline-dark" href="{{ u_bs }}">🏛️ {% trans "Balance sheet" %}</a>{% endif %}
+                {% if u_cf %}<a class="btn btn-sm btn-outline-dark" href="{{ u_cf }}">💧 {% trans "Cash flow" %}</a>{% endif %}
+
+                {% if not u_tb and not u_pl and not u_bs and not u_cf %}
+                  <span class="text-muted small">{% trans "Routes rapports non disponibles." %}</span>
+                {% endif %}
+              </div>
+
+              <div class="text-muted small mt-2">
+                {% trans "Objectif: vue QuickBooks (COA, journaux, écritures, états financiers) avec scopes pôle/entité + multi-devises." %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+{% endblock %}
+
+
+
+
+
+
+{% comment %} {# templates/dashboard/accounting/index.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n dashboard_tags %}
+
+{% block title %}{% trans "Accounting" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block dashboard_header %}
+  {% safe_url "dashboard:accounting:accounts" as u_accounts %}
+  {% safe_url "dashboard:accounting:journal" as u_journal %}
+  {% safe_url "dashboard:accounting:entries" as u_entries %}
+  {% safe_url "dashboard:accounting:reports" as u_reports %}
+  {% safe_url "dashboard:accounting:trial_balance" as u_tb %}
+  {% safe_url "dashboard:accounting:profit_loss" as u_pl %}
+  {% safe_url "dashboard:accounting:balance_sheet" as u_bs %}
+
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div>
+      <h1 class="fw-bold mb-1">📚 {% trans "Accounting" %}</h1>
+      <p class="text-muted mb-0">{% trans "Plan comptable, journaux, écritures et rapports." %}</p>
+    </div>
+
+    <div class="d-flex flex-wrap gap-2">
+      {% if u_accounts %}<a class="btn btn-sm btn-outline-primary" href="{{ u_accounts }}">🗂 {% trans "Comptes" %}</a>{% endif %}
+      {% if u_entries %}<a class="btn btn-sm btn-outline-dark" href="{{ u_entries }}">🧾 {% trans "Écritures" %}</a>{% endif %}
+      {% if u_reports %}<a class="btn btn-sm btn-outline-secondary" href="{{ u_reports }}">📈 {% trans "Rapports" %}</a>{% endif %}
+    </div>
+  </div>
+{% endblock %}
+
+{% block dashboard_content %}
+  {% safe_url "dashboard:accounting:accounts" as u_accounts %}
+  {% safe_url "dashboard:accounting:journal" as u_journal %}
+  {% safe_url "dashboard:accounting:entries" as u_entries %}
+  {% safe_url "dashboard:accounting:reports" as u_reports %}
+  {% safe_url "dashboard:accounting:trial_balance" as u_tb %}
+  {% safe_url "dashboard:accounting:profit_loss" as u_pl %}
+  {% safe_url "dashboard:accounting:balance_sheet" as u_bs %}
+
+  <div class="container-fluid px-3 px-lg-4 py-3">
+    <div class="rounded-4 bg-body border p-3 p-lg-4">
+
+      <div class="row g-3">
+
+        <div class="col-12 col-md-6 col-xl-4">
+          {% if u_accounts %}
+            <a class="card h-100 border-0 shadow-sm rounded-4 text-decoration-none" href="{{ u_accounts }}">
+              <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between">
+                  <div class="fw-semibold">🗂 {% trans "Chart of accounts" %}</div>
+                  <span class="badge text-bg-light border">{% trans "COA" %}</span>
+                </div>
+                <div class="text-muted small mt-1">{% trans "Comptes, sous-comptes, activation, scopes pôle/entité." %}</div>
+              </div>
+            </a>
+          {% else %}
+            <div class="card h-100 border rounded-4">
+              <div class="card-body">
+                <div class="fw-semibold">🗂 {% trans "Chart of accounts" %}</div>
+                <div class="text-muted small mt-1">{% trans "Route manquante: dashboard:accounting:accounts" %}</div>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="col-12 col-md-6 col-xl-4">
+          {% if u_journal %}
+            <a class="card h-100 border-0 shadow-sm rounded-4 text-decoration-none" href="{{ u_journal }}">
+              <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between">
+                  <div class="fw-semibold">📓 {% trans "Journaux" %}</div>
+                  <span class="badge text-bg-light border">{% trans "Books" %}</span>
+                </div>
+                <div class="text-muted small mt-1">{% trans "Liste des journaux (encaissements, ventes, achats…) et accès rapide." %}</div>
+              </div>
+            </a>
+          {% else %}
+            <div class="card h-100 border rounded-4">
+              <div class="card-body">
+                <div class="fw-semibold">📓 {% trans "Journaux" %}</div>
+                <div class="text-muted small mt-1">{% trans "Route manquante: dashboard:accounting:journal" %}</div>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="col-12 col-md-6 col-xl-4">
+          {% if u_entries %}
+            <a class="card h-100 border-0 shadow-sm rounded-4 text-decoration-none" href="{{ u_entries }}">
+              <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between">
+                  <div class="fw-semibold">🧾 {% trans "Écritures" %}</div>
+                  <span class="badge text-bg-light border">{% trans "JE" %}</span>
+                </div>
+                <div class="text-muted small mt-1">{% trans "Écritures, lignes, statuts (draft/posted), source (payments, orders…)." %}</div>
+              </div>
+            </a>
+          {% else %}
+            <div class="card h-100 border rounded-4">
+              <div class="card-body">
+                <div class="fw-semibold">🧾 {% trans "Écritures" %}</div>
+                <div class="text-muted small mt-1">{% trans "Route manquante: dashboard:accounting:entries" %}</div>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="col-12">
+          <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body">
+              <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+                <div class="fw-semibold">📈 {% trans "Rapports" %}</div>
+                {% if u_reports %}
+                  <a class="btn btn-sm btn-outline-secondary" href="{{ u_reports }}">{% trans "Tous les rapports" %}</a>
+                {% endif %}
+              </div>
+
+              <div class="d-flex flex-wrap gap-2">
+                {% if u_tb %}<a class="btn btn-sm btn-outline-dark" href="{{ u_tb }}">⚖️ {% trans "Trial balance" %}</a>{% endif %}
+                {% if u_pl %}<a class="btn btn-sm btn-outline-dark" href="{{ u_pl }}">🧮 {% trans "Profit & loss" %}</a>{% endif %}
+                {% if u_bs %}<a class="btn btn-sm btn-outline-dark" href="{{ u_bs }}">🏛️ {% trans "Balance sheet" %}</a>{% endif %}
+                {% if not u_tb and not u_pl and not u_bs %}
+                  <span class="text-muted small">{% trans "Routes rapports non disponibles (trial_balance / profit_loss / balance_sheet)." %}</span>
+                {% endif %}
+              </div>
+
+              <div class="text-muted small mt-2">
+                {% trans "Objectif: vue QuickBooks (COA, journaux, écritures, états financiers) avec scopes pôle/entité + multi-devises." %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+{% endblock %} {% endcomment %}

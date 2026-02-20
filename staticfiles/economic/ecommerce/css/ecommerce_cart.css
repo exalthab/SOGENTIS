@@ -1,0 +1,198 @@
+/* static/economic/ecommerce/css/ecommerce_cart.css */
+
+/* ============================================================
+   Cart — clean / responsive
+   - prix et totaux: lisibles (sans tronquage)
+   - layout mobile: pas de débordements
+   ============================================================ */
+
+.cart-title{
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+.cart-count-badge{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,.12);
+  background: #fff;
+  font-size: .9rem;
+  font-weight: 800;
+}
+
+.cart-card{
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.cart-line{
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  gap: 14px;
+  padding: 16px;
+  border-top: 1px solid rgba(0,0,0,.06);
+  min-width: 0; /* ✅ autorise le contenu à se contracter */
+}
+.cart-line:first-child{ border-top: none; }
+
+.cart-img{
+  width: 92px;
+  height: 92px;
+  object-fit: cover;
+  border-radius: 14px;
+  border: 1px solid rgba(0,0,0,.08);
+  background: #fff;
+}
+
+/* texte produit */
+.cart-prod-title{
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 2px;
+  word-break: break-word;
+}
+
+/* bloc bas: contrôles + totaux */
+.cart-line__bottom{
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: end;
+  margin-top: 10px;
+  min-width: 0;
+}
+
+/* ============================================================
+   PRICE / TOTALS — responsive (✅ important)
+   - pas d’ellipsis sur un prix
+   - wrap propre sur mobile
+   ============================================================ */
+.cart-price,
+.cart-line-total{
+  font-weight: 900;
+  line-height: 1.08;
+  min-width: 0;
+
+  /* taille adaptative (évite “énorme” sur desktop et “trop petit” sur mobile) */
+  font-size: clamp(0.98rem, 2.2vw, 1.12rem);
+
+  /* par défaut: 1 ligne, mais sans tronquage */
+  white-space: nowrap;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+/* si tu as un conteneur totaux à droite */
+.cart-line__totals{
+  text-align: right;
+  min-width: 0;
+}
+
+/* ============================================================
+   QTY controls
+   ============================================================ */
+.cart-qty-controls{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.cart-qty-btn{
+  width: 42px;
+  height: 40px;
+  border-radius: 12px;
+  font-weight: 900;
+}
+
+.cart-qty-input{
+  width: 72px;
+  height: 40px;
+  text-align: center;
+  border-radius: 12px;
+  font-weight: 800;
+}
+
+.cart-update-btn{
+  height: 40px;
+  border-radius: 12px;
+  font-weight: 800;
+}
+
+/* ============================================================
+   Summary
+   ============================================================ */
+.cart-summary{
+  border-radius: 16px;
+  top: 90px;
+}
+
+.cart-grand-total{
+  font-weight: 950;
+  line-height: 1.08;
+  font-size: clamp(1.05rem, 2.6vw, 1.25rem);
+  white-space: nowrap;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (max-width: 992px){
+  .cart-summary{ position: static !important; top:auto; }
+}
+
+@media (max-width: 520px){
+  .cart-line{
+    grid-template-columns: 76px 1fr;
+    padding: 14px;
+    gap: 12px;
+  }
+
+  .cart-img{
+    width: 76px;
+    height: 76px;
+    border-radius: 12px;
+  }
+
+  .cart-line__bottom{
+    grid-template-columns: 1fr; /* ✅ tout passe en colonne */
+    align-items: start;
+  }
+
+  .cart-line__totals{
+    text-align: left !important;
+  }
+
+  /* ✅ sur mobile étroit, autorise retour à la ligne (ex: "150 000,00 FCFA") */
+  .cart-price,
+  .cart-line-total,
+  .cart-grand-total{
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+}
+
+/* ============================================================
+   Flash animation (optionnel)
+   ============================================================ */
+.cart-qty-controls.is-flash{
+  animation: cartFlash .28s ease-in-out;
+}
+
+@keyframes cartFlash{
+  0%{ transform: translateY(0); }
+  50%{ transform: translateY(-1px); }
+  100%{ transform: translateY(0); }
+}

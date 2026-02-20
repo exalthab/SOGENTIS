@@ -1,5 +1,29 @@
 {# templates/economic/b2b/index.html #}
 {% extends "economic/b2b/base_b2b.html" %}
+{% load i18n dashboard_tags %}
+
+{% block b2b_title %}{% trans "Espace B2B" %}{% endblock %}
+
+{% block b2b_content %}
+
+  {% safe_url "economic:b2b:company_create" as company_create_url %}
+  {% include "economic/b2b/index/_header.html" with company_create_url=company_create_url %}
+
+  {% if companies %}
+    {% include "economic/b2b/index/_companies_list.html" with companies=companies %}
+  {% else %}
+    {% include "economic/b2b/index/_empty.html" %}
+  {% endif %}
+
+{% endblock %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/b2b/index.html #}
+{% extends "economic/b2b/base_b2b.html" %}
 {% load i18n %}
 
 {% block b2b_title %}{% trans "Espace B2B" %}{% endblock %}
@@ -44,7 +68,7 @@
   </div>
 {% endif %}
 
-{% endblock %}
+{% endblock %} {% endcomment %}
 
 
 

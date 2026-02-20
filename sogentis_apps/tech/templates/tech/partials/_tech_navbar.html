@@ -1,0 +1,35 @@
+{# templates/tech/partials/_tech_navbar.html #}
+{% load i18n dashboard_tags static %}
+
+{% safe_url "economic:index" as economic_home_url %}
+{% safe_static "core/img/logo.svg" as brand_logo %}
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom">
+  <div class="container-fluid px-3 px-lg-4">
+
+    <a class="navbar-brand d-flex align-items-center gap-2" href="{{ economic_home_url|default:'/' }}">
+      {% if brand_logo %}
+        <img src="{{ brand_logo }}" alt="{{ PROJECT_NAME|default:'SOGENTIS' }}" height="26">
+      {% endif %}
+      <span class="fw-semibold">{{ PROJECT_NAME|default:"SOGENTIS" }}</span>
+      <span class="opacity-75 small ms-1">/ {% trans "Tech+" %}</span>
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#techNavbar"
+            aria-controls="techNavbar" aria-expanded="false" aria-label="{% trans 'Menu' %}">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="techNavbar">
+
+      {% include "tech/partials/menu/_tech_nav_primary.html" %}
+
+      <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+        {% include "tech/partials/menu/_tech_nav_business_dropdown.html" %}
+      </ul>
+
+      {% include "tech/partials/menu/_tech_nav_user.html" %}
+
+    </div>
+  </div>
+</nav>

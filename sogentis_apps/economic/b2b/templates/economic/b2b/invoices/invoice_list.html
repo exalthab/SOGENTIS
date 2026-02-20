@@ -1,0 +1,39 @@
+{# templates/economic/b2b/invoices/invoice_list.html #}
+{% extends "economic/b2b/base_b2b.html" %}
+{% load i18n %}
+
+{% block b2b_title %}{% trans "Factures" %}{% endblock %}
+
+{% block b2b_content %}
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <div>
+      <h1 class="h4 mb-1">🧾 {% trans "Factures" %}</h1>
+      <div class="text-muted small">
+        {{ company.name }} • {% trans "Toutes les factures liées aux commandes." %}
+      </div>
+    </div>
+  </div>
+
+  {% if invoices %}
+    <div class="list-group">
+      {% for inv in invoices %}
+        {% safe_url "economic:b2b:invoice_detail" company.id inv.id as inv_url %}
+        <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+           href="{{ inv_url|default:'#' }}"
+           {% if not inv_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+          <div>
+            <div class="fw-semibold">
+              {% trans "Facture" %} #{{ inv.id }}
+            </div>
+            <div class="small text-muted">
+              {% trans "Commande" %} #{{ inv.bulk_order_id }} • {{ inv.created_at|date:"d/m/Y" }}
+            </div>
+          </div>
+          <span class="badge bg-light text-dark">{% trans "Voir" %}</span>
+        </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="alert alert-info mb-0">{% trans "Aucune facture pour le moment." %}</div>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,191 @@
+{# templates/dashboard/payments/payment_intents_list.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n dashboard_tags %}
+
+{% block title %}{% trans "Payment intents" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block dashboard_header %}
+  {% safe_url "dashboard:payments:index" as u_home %}
+  {% safe_url "dashboard:payments:intents" as u_self %}
+
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div>
+      <h1 class="fw-bold mb-1">🧷 {% trans "Payment intents" %}</h1>
+      <p class="text-muted mb-0">
+        {% if page_obj and page_obj.paginator %}{{ page_obj.paginator.count }}{% else %}0{% endif %}
+        {% trans "élément(s)" %}
+      </p>
+    </div>
+
+    <div class="d-flex flex-wrap gap-2">
+      {% if u_home %}
+        <a class="btn btn-sm btn-outline-secondary" href="{{ u_home }}">← {% trans "Paiements" %}</a>
+      {% endif %}
+      {% if u_self %}
+        <a class="btn btn-sm btn-outline-dark" href="{{ u_self }}">{% trans "Reset" %}</a>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
+
+{% block dashboard_content %}
+  {% safe_url "dashboard:payments:index" as u_home %}
+  {% safe_url "dashboard:payments:intents" as u_self %}
+
+  <div class="container-fluid px-3 px-lg-4 py-3">
+
+    <div class="rounded-4 bg-body border p-3 p-lg-4 mb-3">
+      <form class="row g-2" method="get" action="{{ u_self|default:request.path }}">
+        <div class="col-12 col-md-4">
+          <label class="form-label small mb-1">{% trans "Recherche" %}</label>
+          <input
+            class="form-control form-control-sm"
+            name="q"
+            value="{{ q|default:'' }}"
+            placeholder="PAY-202601-..., email, ref provider…"
+          >
+        </div>
+
+        <div class="col-6 col-md-2">
+          <label class="form-label small mb-1">{% trans "Statut" %}</label>
+          <select class="form-select form-select-sm" name="status">
+            <option value="">{% trans "Tous" %}</option>
+            {% for v,l in status_choices %}
+              <option value="{{ v }}" {% if status == v %}selected{% endif %}>{{ l }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-6 col-md-2">
+          <label class="form-label small mb-1">{% trans "Provider" %}</label>
+          <select class="form-select form-select-sm" name="provider">
+            <option value="">{% trans "Tous" %}</option>
+            {% for v,l in provider_choices %}
+              <option value="{{ v }}" {% if provider == v %}selected{% endif %}>{{ l }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-6 col-md-2">
+          <label class="form-label small mb-1">{% trans "Pôle" %}</label>
+          <select class="form-select form-select-sm" name="pole">
+            <option value="">{% trans "Tous" %}</option>
+            {% for v,l in pole_choices %}
+              <option value="{{ v }}" {% if pole == v %}selected{% endif %}>{{ l }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-6 col-md-2">
+          <label class="form-label small mb-1">{% trans "Purpose" %}</label>
+          <select class="form-select form-select-sm" name="purpose">
+            <option value="">{% trans "Tous" %}</option>
+            {% for v,l in purpose_choices %}
+              <option value="{{ v }}" {% if purpose == v %}selected{% endif %}>{{ l }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-12 d-flex flex-wrap gap-2">
+          <button class="btn btn-sm btn-primary" type="submit">{% trans "Filtrer" %}</button>
+          {% if u_self %}
+            <a class="btn btn-sm btn-outline-secondary" href="{{ u_self }}">{% trans "Reset" %}</a>
+          {% endif %}
+          {% if u_home %}
+            <a class="btn btn-sm btn-outline-dark" href="{{ u_home }}">{% trans "Dashboard paiements" %}</a>
+          {% endif %}
+        </div>
+      </form>
+    </div>
+
+    <div class="rounded-4 bg-body border overflow-hidden">
+      <div class="table-responsive">
+        <table class="table align-middle mb-0">
+          <thead>
+            <tr class="text-muted small">
+              <th>{% trans "Référence" %}</th>
+              <th>{% trans "Utilisateur" %}</th>
+              <th>{% trans "Montant" %}</th>
+              <th>{% trans "Statut" %}</th>
+              <th>{% trans "Provider" %}</th>
+              <th>{% trans "Pôle / Purpose" %}</th>
+              <th class="text-end">{% trans "Créé" %}</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for it in intents %}
+              {% safe_url "dashboard:payments:intent_detail" it.uuid as u_detail %}
+              <tr>
+                <td class="fw-semibold">
+                  {% if u_detail %}
+                    <a class="text-decoration-none" href="{{ u_detail }}">{{ it.reference|default:it.uuid }}</a>
+                  {% else %}
+                    {{ it.reference|default:it.uuid }}
+                  {% endif %}
+                </td>
+
+                <td class="text-muted small">{{ it.user.email|default:"—" }}</td>
+
+                <td class="fw-semibold">
+                  {{ it.amount }} {{ it.currency }}
+                </td>
+
+                <td>
+                  <span class="badge text-bg-light border">{{ it.status }}</span>
+                </td>
+
+                <td class="text-muted small">{{ it.provider|default:"—" }}</td>
+
+                <td class="text-muted small">{{ it.pole|default:"—" }} / {{ it.purpose|default:"—" }}</td>
+
+                <td class="text-end text-muted small">{{ it.created_at|date:"Y-m-d H:i" }}</td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="7" class="text-muted p-3">{% trans "Aucun payment intent." %}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      {% if page_obj and page_obj.paginator and page_obj.paginator.num_pages > 1 %}
+        <div class="p-2">
+          <nav aria-label="{% trans 'Pagination' %}">
+            <ul class="pagination pagination-sm mb-0 flex-wrap">
+
+              {% if page_obj.has_previous %}
+                <li class="page-item">
+                  <a class="page-link"
+                     href="?page={{ page_obj.previous_page_number }}&q={{ q|urlencode }}&status={{ status|urlencode }}&provider={{ provider|urlencode }}&pole={{ pole|urlencode }}&purpose={{ purpose|urlencode }}">
+                    {% trans "Précédent" %}
+                  </a>
+                </li>
+              {% else %}
+                <li class="page-item disabled"><span class="page-link">{% trans "Précédent" %}</span></li>
+              {% endif %}
+
+              <li class="page-item disabled">
+                <span class="page-link">{{ page_obj.number }}/{{ page_obj.paginator.num_pages }}</span>
+              </li>
+
+              {% if page_obj.has_next %}
+                <li class="page-item">
+                  <a class="page-link"
+                     href="?page={{ page_obj.next_page_number }}&q={{ q|urlencode }}&status={{ status|urlencode }}&provider={{ provider|urlencode }}&pole={{ pole|urlencode }}&purpose={{ purpose|urlencode }}">
+                    {% trans "Suivant" %}
+                  </a>
+                </li>
+              {% else %}
+                <li class="page-item disabled"><span class="page-link">{% trans "Suivant" %}</span></li>
+              {% endif %}
+
+            </ul>
+          </nav>
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+{% endblock %}

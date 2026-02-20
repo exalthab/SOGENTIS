@@ -1,0 +1,41 @@
+{% load static i18n %}
+<section class="hero position-relative" id="hero">
+  <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+    <div class="carousel-inner">
+
+      {% for i in "123456"|make_list %}
+      <div class="carousel-item {% if forloop.first %}active{% endif %}">
+        <div class="hero-slide d-flex flex-column justify-content-end text-white text-center"
+             data-bg="{% static 'social/img/hero/slide_'|add:i|add:'.png' %}">
+          <div class="hero-overlay" aria-hidden="true"></div>
+
+          <div class="container position-relative z-2 pb-5">
+            <h1 class="display-4 fw-bold mb-3 hero-title">
+              {% trans "Un futur solidaire commence ici" %}
+            </h1>
+
+            <p class="lead fw-medium mx-auto px-3 py-2 rounded mb-3 hero-lead">
+              {% trans "Votre engagement est notre force. Notre association s’appuie sur une gestion rigoureuse et moderne des ressources et des revenus..." %}
+            </p>
+
+            <a href="#participate" class="btn btn-warning btn-lg shadow-lg">
+              {% trans "Je participe" %}
+            </a>
+          </div>
+
+        </div>
+      </div>
+      {% endfor %}
+
+    </div>
+
+    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev"
+            aria-label="{% trans 'Diapositive précédente' %}">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next"
+            aria-label="{% trans 'Diapositive suivante' %}">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    </button>
+  </div>
+</section>

@@ -1,4 +1,501 @@
 {# templates/economic/base_economic.html #}
+{% extends "base_public.html" %}
+{% load static i18n %}
+
+{# =========================== #}
+{#   SEO                       #}
+{# =========================== #}
+{% block seo_title %}
+  {% block economic_title %}{% trans "Commerce & Prestations" %}{% endblock %}
+  | {{ PROJECT_NAME|default:"SOGENTIS" }}
+{% endblock %}
+
+{% block seo_description %}
+  {% block economic_description %}
+    {% trans "E-commerce, prestations, formations et B2B : un écosystème économique solidaire pour financer l’impact social." %}
+  {% endblock %}
+{% endblock %}
+
+{# =========================== #}
+{#   CSS                       #}
+{# =========================== #}
+{% block extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'economic/css/economic.css' %}">
+  <link rel="stylesheet" href="{% static 'economic/css/eco_hub_menu.css' %}">
+  <link rel="stylesheet" href="{% static 'economic/css/eco_navbar.css' %}">
+  {% block economic_extra_css %}{% endblock %}
+{% endblock %}
+
+{# ================================== #}
+{#   A11y: skip-link vers contenu éco #}
+{# ================================== #}
+{% block before_main %}
+  {{ block.super }}
+  <a class="visually-hidden-focusable" href="#ecoContent">
+    {% trans "Aller au contenu économique" %}
+  </a>
+{% endblock %}
+
+{# ================================== #}
+{#   MENU ECONOMIC (hook main.html)    #}
+{# ================================== #}
+{% block section_menu %}
+  {% include "economic/partials/_economic_menu.html" %}
+{% endblock %}
+
+{# ================================== #}
+{#   CONTENT                           #}
+{# ================================== #}
+{% block content %}
+
+  {% block economic_subnav %}{% endblock %}
+
+  <div id="ecoContent"
+       class="economic-page {% block economic_page_class %}{% endblock %}"
+       aria-label="{% trans 'Contenu du pôle économique' %}">
+
+    <div class="{% block economic_container_class %}container{% endblock %} {% block economic_container_extra_class %}{% endblock %}">
+
+      {% block economic_header %}{% endblock %}
+
+      <section class="{% block economic_spacing_class %}py-3 py-lg-4{% endblock %}">
+        {% block economic_content %}{% endblock %}
+      </section>
+
+    </div>
+  </div>
+
+{% endblock %}
+
+{# =========================== #}
+{#   JS                        #}
+{# =========================== #}
+{% block extra_js %}
+  {{ block.super }}
+  {% block economic_extra_js %}{% endblock %}
+{% endblock %}
+
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/base_economic.html #}
+{% extends "base_public.html" %}
+{% load static i18n %}
+
+{# =========================== #}
+{#   SEO                       #}
+{# =========================== #}
+{% block seo_title %}
+  {% block economic_title %}{% trans "Commerce & Services" %}{% endblock %}
+  | {{ PROJECT_NAME|default:"SOGENTIS" }}
+{% endblock %}
+
+{% block seo_description %}
+  {% block economic_description %}
+    {% trans "E-commerce, services, formations et B2B : un écosystème économique solidaire pour financer l’impact social." %}
+  {% endblock %}
+{% endblock %}
+
+{# =========================== #}
+{#   CSS                       #}
+{# =========================== #}
+{% block extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'economic/css/economic.css' %}">
+  <link rel="stylesheet" href="{% static 'economic/css/eco_hub_menu.css' %}">
+  <link rel="stylesheet" href="{% static 'economic/css/eco_navbar.css' %}">
+  {% block economic_extra_css %}{% endblock %}
+{% endblock %}
+
+{# ================================== #}
+{#   A11y: skip-link vers contenu éco #}
+{# ================================== #}
+{% block before_main %}
+  {{ block.super }}
+  <a class="visually-hidden-focusable" href="#ecoContent">
+    {% trans "Aller au contenu économique" %}
+  </a>
+{% endblock %}
+
+{# ================================== #}
+{#   MENU ECONOMIC (hook main.html)    #}
+{# ================================== #}
+{% block section_menu %}
+  {% include "economic/partials/_economic_menu.html" %}
+{% endblock %}
+
+{# ================================== #}
+{#   CONTENT                           #}
+{# ================================== #}
+{% block content %}
+
+  {% block economic_subnav %}{% endblock %}
+
+  <div id="ecoContent"
+       class="economic-page {% block economic_page_class %}{% endblock %}"
+       aria-label="{% trans 'Contenu du pôle économique' %}">
+
+    <div class="{% block economic_container_class %}container{% endblock %} {% block economic_container_extra_class %}{% endblock %}">
+
+      {% block economic_header %}{% endblock %}
+
+      <section class="{% block economic_spacing_class %}py-3 py-lg-4{% endblock %}">
+        {% block economic_content %}{% endblock %}
+      </section>
+
+    </div>
+  </div>
+
+{% endblock %}
+
+{# =========================== #}
+{#   JS                        #}
+{# =========================== #}
+{% block extra_js %}
+  {{ block.super }}
+  {% block economic_extra_js %}{% endblock %}
+{% endblock %} {% endcomment %}
+
+
+
+{% comment %} {# templates/economic/base_economic.html #}
+{% extends "base_public.html" %}
+{% load static i18n %}
+
+
+{% block seo_title %}
+  {% block economic_title %}{% trans "Commerce & Services" %}{% endblock %}
+  | {{ PROJECT_NAME|default:"SOGENTIS" }}
+{% endblock %}
+
+{% block seo_description %}
+  {% block economic_description %}
+    {% trans "E-commerce, services, formations et B2B : un écosystème économique solidaire pour financer l’impact social." %}
+  {% endblock %}
+{% endblock %}
+
+
+{% block extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'economic/css/economic.css' %}">
+  <link rel="stylesheet" href="{% static 'economic/css/eco_hub_menu.css' %}">
+  <link rel="stylesheet" href="{% static 'economic/css/eco_navbar.css' %}">
+  {% block economic_extra_css %}{% endblock %}
+{% endblock %}
+
+
+{% block before_main %}
+  {{ block.super }}
+  <a class="visually-hidden-focusable" href="#ecoContent">
+    {% trans "Aller au contenu économique" %}
+  </a>
+{% endblock %}
+
+
+{% block content %}
+
+  {% include "economic/partials/_economic_menu.html" %}
+
+  {% block economic_subnav %}{% endblock %}
+
+  <div id="ecoContent"
+       class="economic-page {% block economic_page_class %}{% endblock %}"
+       aria-label="{% trans 'Contenu du pôle économique' %}">
+
+    <div class="{% block economic_container_class %}container{% endblock %} {% block economic_container_extra_class %}{% endblock %}">
+
+      {% block economic_header %}{% endblock %}
+
+      <section class="{% block economic_spacing_class %}py-3 py-lg-4{% endblock %}">
+        {% block economic_content %}{% endblock %}
+      </section>
+
+    </div>
+  </div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+  {{ block.super }}
+  {% block economic_extra_js %}{% endblock %}
+{% endblock %} {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/economic/base_economic.html #}
+{% extends "base_public.html" %}
+{% load static i18n %}
+
+{# ===========================
+   SEO (title/desc + OG/Twitter)
+   =========================== #}
+{% block seo_title %}{% block economic_title %}{% trans "Commerce & Services" %}{% endblock %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+{% block seo_description %}{% block economic_description %}{% trans "E-commerce, services, formations et B2B : un écosystème économique solidaire pour financer l’impact social." %}{% endblock %}{% endblock %}
+
+{% block seo_og_title %}{{ block.super }}{% endblock %}
+{% block seo_og_description %}{{ block.super }}{% endblock %}
+{% block seo_twitter_title %}{{ block.super }}{% endblock %}
+{% block seo_twitter_description %}{{ block.super }}{% endblock %}
+
+{# ===========================
+   CSS
+   =========================== #}
+{% block extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'economic/css/economic.css' %}">
+  <link rel="stylesheet" href="{% static 'economic/css/eco_hub_menu.css' %}">
+  <link rel="stylesheet" href="{% static 'economic/css/eco_navbar.css' %}">
+  {% block economic_extra_css %}{% endblock %}
+{% endblock %}
+
+{# ===========================
+   Menu éco
+   =========================== #}
+{% block section_menu %}{% include "economic/partials/_economic_menu.html" %}{% endblock %}
+
+{# ===========================
+   A11y
+   =========================== #}
+{% block before_main %}
+  {{ block.super }}
+  <a class="visually-hidden-focusable" href="#ecoContent">{% trans "Aller au contenu économique" %}</a>
+{% endblock %}
+
+{# ===========================
+   Layout (pas de <main> imbriqué)
+   =========================== #}
+{% block content %}
+
+  {% block economic_subnav %}{% endblock %}
+
+  <div id="ecoContent"
+       class="economic-page {% block economic_outer_class %}{% endblock %} {% block economic_page_class %}{% endblock %}"
+       aria-label="{% trans 'Contenu du pôle économique' %}">
+
+    <div class="{% block economic_container_class %}container{% endblock %} {% block economic_container_extra_class %}{% endblock %}">
+
+      {% block economic_header %}{% endblock %}
+
+      <section class="{% block economic_spacing_class %}py-3 py-lg-4{% endblock %}">
+        {% block economic_content %}{% endblock %}
+      </section>
+
+    </div>
+  </div>
+
+{% endblock %}
+
+{# ===========================
+   JS
+   =========================== #}
+{% block extra_js %}
+  {{ block.super }}
+  {% block economic_extra_js %}{% endblock %}
+{% endblock %}
+
+ {% endcomment %}
+
+
+
+
+{% comment %} {# templates/economic/base_economic.html #}
+{% extends "base_public.html" %}
+{% load static i18n %}
+
+{# ===========================
+   SEO
+   =========================== #}
+{% block seo_title %}
+  {% block economic_title %}{% trans "Commerce & Services" %}{% endblock %}
+  | {{ PROJECT_NAME|default:"SOGENTIS" }}
+{% endblock %}
+
+{% block seo_description %}
+  {% block economic_description %}
+    {% trans "E-commerce, services, formations et B2B : un écosystème économique solidaire pour financer l’impact social." %}
+  {% endblock %}
+{% endblock %}
+
+{# ===========================
+   CSS
+   =========================== #}
+{% block extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'economic/css/economic.css' %}">
+  <link rel="stylesheet" href="{% static 'economic/css/eco_hub_menu.css' %}">
+  <link rel="stylesheet" href="{% static 'economic/css/eco_navbar.css' %}">
+  {% block economic_extra_css %}{% endblock %}
+{% endblock %}
+
+{# ===========================
+   Menu éco
+   =========================== #}
+{% block section_menu %}
+  {% include "economic/partials/_economic_menu.html" %}
+{% endblock %}
+
+{# ===========================
+   A11y: skip-link vers contenu éco
+   (hook correct = before_main)
+   =========================== #}
+{% block before_main %}
+  {{ block.super }}
+  <a class="visually-hidden-focusable" href="#ecoContent">
+    {% trans "Aller au contenu économique" %}
+  </a>
+{% endblock %}
+
+{# ===========================
+   Layout (pas de <main> imbriqué)
+   - container configurable
+   - spacing configurable
+   - sous-nav par app
+   =========================== #}
+{% block content %}
+
+  {% block economic_subnav %}{% endblock %}
+
+  <div id="ecoContent"
+       class="economic-page {% block economic_page_class %}{% endblock %}"
+       aria-label="{% trans 'Contenu du pôle économique' %}">
+
+    <div class="{% block economic_container_class %}container{% endblock %} {% block economic_container_extra_class %}{% endblock %}">
+
+      {# Header optionnel (breadcrumb, title, filters, etc.) #}
+      {% block economic_header %}{% endblock %}
+
+      <section class="{% block economic_spacing_class %}py-3 py-lg-4{% endblock %}">
+        {% block economic_content %}{% endblock %}
+      </section>
+
+    </div>
+  </div>
+
+{% endblock %}
+
+{# ===========================
+   JS
+   =========================== #}
+{% block extra_js %}
+  {{ block.super }}
+  {% block economic_extra_js %}{% endblock %}
+{% endblock %} {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/economic/base_economic.html #}
+{% extends "main.html" %}
+{% load static i18n dashboard_tags %}
+
+{# ===========================
+   SEO (main.html lit seo_title)
+   =========================== #}
+{% block seo_title %}
+  {% block economic_title %}{% trans "Commerce & Services" %}{% endblock %}
+  | {{ PROJECT_NAME|default:"SOGENTIS" }}
+{% endblock %}
+
+{# Optionnel: SEO desc si ton main.html expose seo_description #}
+{% block seo_description %}
+  {% block economic_description %}
+    {% trans "E-commerce, services, formations et B2B : un écosystème économique solidaire pour financer l’impact social." %}
+  {% endblock %}
+{% endblock %}
+
+{# ===========================
+   CSS (compact + modulaire)
+   =========================== #}
+{% block extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'economic/css/economic.css' %}">
+  <link rel="stylesheet" href="{% static 'economic/css/eco_hub_menu.css' %}">
+  <link rel="stylesheet" href="{% static 'economic/css/eco_navbar.css' %}">
+  {% block economic_extra_css %}{% endblock %}
+{% endblock %}
+
+{# ===========================
+   Accessibilité / Skip link
+   =========================== #}
+{% block before_content %}
+  {{ block.super }}
+  <a class="visually-hidden-focusable" href="#ecoMain">
+    {% trans "Aller au contenu économique" %}
+  </a>
+{% endblock %}
+
+{# ===========================
+   Menu de section (navbar eco)
+   =========================== #}
+{% block section_menu %}
+  {% include "economic/partials/_economic_menu.html" %}
+{% endblock %}
+
+{# ===========================
+   Layout (compact / production)
+   - Pas de double container imposé ici
+   - main id stable pour skip-link
+   - Classes ajustables par page
+   =========================== #}
+{% block content %}
+
+  {# Sous-menu spécifique à l’app (ecommerce/services/formations/b2b...) #}
+  {% block economic_subnav %}{% endblock %}
+
+  {# Permettre de contrôler padding/spacing depuis les pages #}
+  {% block economic_main_class %}py-3 py-lg-4{% endblock %}
+
+  <main id="ecoMain"
+        class="economic-page {% block economic_page_class %}{% endblock %}"
+        aria-label="{% trans 'Contenu du pôle économique' %}">
+
+    <div class="{% block economic_container_class %}container{% endblock %} {% block economic_container_extra_class %}{% endblock %}">
+      {# Flash messages (si tu les utilises et que main.html ne les rend pas déjà) #}
+      {% block economic_messages %}
+        {% if messages %}
+          <div class="pt-2">
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags|default:'info' }} py-2 mb-2 small" role="alert">
+                {{ message }}
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endblock %}
+
+      {# Breadcrumb / header page optionnels #}
+      {% block economic_header %}{% endblock %}
+
+      <section class="{% block economic_main_class_inner %}{{ block.super }}{% endblock %}">
+        {% block economic_content %}{% endblock %}
+      </section>
+    </div>
+  </main>
+
+{% endblock %}
+
+{# ===========================
+   JS (modulaire)
+   =========================== #}
+{% block extra_js %}
+  {{ block.super }}
+  {% block economic_extra_js %}{% endblock %}
+{% endblock %} {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/economic/base_economic.html #}
 {% extends "main.html" %}
 {% load static i18n %}
 
@@ -9,7 +506,7 @@
 
 {% block extra_css %}
   {{ block.super }}
-  {% comment %} <link rel="stylesheet" href="{% static 'economic/css/economic.css' %}"> {% endcomment %}
+  <link rel="stylesheet" href="{% static 'economic/css/economic.css' %}">
   <link rel="stylesheet" href="{% static 'economic/css/eco_hub_menu.css' %}">
   <link rel="stylesheet" href="{% static 'economic/css/eco_navbar.css' %}">
 
@@ -34,7 +531,7 @@
   {% block economic_extra_js %}{% endblock %}
 {% endblock %}
 
-
+ {% endcomment %}
 
 
 

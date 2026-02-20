@@ -1,0 +1,103 @@
+{# templates/base_public.html #}
+{% extends "main.html" %}
+{% load i18n %}
+
+{# Layout public par défaut #}
+{% block main_class %}{% block public_main_class %}container-fluid pt-4 mt-3{% endblock %}{% endblock %}
+
+
+
+
+{% comment %} {# templates/base_public.html #}
+{% extends "main.html" %}
+{% load i18n %}
+
+{# Layout public par défaut (compact) #}
+{% block main_class %}{% block public_main_class %}container-fluid pt-4 mt-3{% endblock %}{% endblock %}
+
+{# Wrapper main public (override possible côté pages/modules) #}
+{% block main_wrapper %}
+  <main id="mainContent" class="flex-fill {{ block.super }}">
+    {% block content %}{% endblock %}
+  </main>
+{% endblock %}
+ {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/base_public.html #}
+{% extends "main.html" %}
+{% load i18n %}
+
+{# Layout public par défaut (override possible par page) #}
+{% block main_class %}{% block public_main_class %}container-fluid pt-4 mt-3{% endblock %}{% endblock %}
+ {% endcomment %}
+
+
+{% comment %} {# templates/base_public.html #}
+{% extends "main.html" %}
+{% load i18n %}
+
+{% block main_class %}{% block public_main_class %}container-fluid pt-4 mt-3{% endblock %}{% endblock %}
+ {% endcomment %}
+
+
+
+
+{% comment %} {# templates/base_public.html #}
+{% extends "main.html" %}
+{% load i18n %}
+
+{# Classe principale de <main> - modifiable par les templates enfants #}
+{% block public_main_class %}container-fluid pt-4 mt-3{% endblock %}
+
+{% block main_class %}
+  {{ block.super }}  {# si tu veux conserver ce qui est défini dans main.html #}
+{% endblock %}
+
+{% block main_wrapper %}
+  <main id="mainContent" class="flex-fill {% block public_main_class %}{% endblock %}">
+    {% block content %}
+    {% endblock %}
+  </main>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/base_public.html #}
+{% extends "main.html" %}
+{% load i18n %}
+
+{# Layout public par défaut (compact) #}
+{% block main_class %}{% block public_main_class %}container-fluid pt-4 mt-3{% endblock %}{% endblock %}
+
+{# Wrapper main public (override possible côté pages/modules) #}
+{% block main_wrapper %}
+  <main id="mainContent" class="flex-fill {{ block.super }}">
+    {% block content %}{% endblock %}
+  </main>
+{% endblock %}
+
+ {% endcomment %}
+
+
+
+{% comment %} {# templates/base_public.html #}
+{% extends "main.html" %}
+{% load i18n %}
+
+{# Layout public par défaut (compact) #}
+{% block main_class %}
+  {% block public_main_class %}container-fluid pt-4 mt-3{% endblock %}
+{% endblock %}
+
+{# Wrapper main public (override possible côté pages/modules) #}
+{% block main_wrapper %}
+  <main id="mainContent" class="flex-fill {% block main_class %}{{ block.super }}{% endblock %}">
+    {% block content %}{% endblock %}
+  </main>
+{% endblock %} {% endcomment %}

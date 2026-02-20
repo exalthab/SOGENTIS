@@ -1,8 +1,11 @@
 # config/urls.py
+from __future__ import annotations
+
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
+
 from django.urls import include, path, reverse_lazy
 from django.views.i18n import JavaScriptCatalog
 from django.conf.urls.i18n import i18n_patterns
@@ -45,8 +48,11 @@ urlpatterns = [
         "accounts/api/",
         include(("accounts_users.api.urls", "api"), namespace="api"),
     ),
-]
+    # ✅ Paiements centralisés (tous pôles)
+    path("payments/", include(("payments.urls", "payments"), namespace="payments")),
+    path("accounting/", include(("accounting.urls", "accounting"), namespace="accounting")),
 
+]
 
 # ===========================================================
 # ROUTES AVEC I18N (préfixées /fr/ /en/ …)
@@ -75,6 +81,9 @@ urlpatterns += i18n_patterns(
     path("dashboard/", include(("dashboard.urls", "dashboard"), namespace="dashboard")),
     path("economic/", include(("economic.urls", "economic"), namespace="economic")),
     path("institution/", include(("institution.urls", "institution"), namespace="institution")),
+
+    path("tech/", include(("tech.urls", "tech"), namespace="tech")),
+    path("api/", include(("platform_api.urls", "api"), namespace="api")),
 
     # ─── Autres ──────────────────────────────────────────────
     path("stakeholders/", include(("stakeholders.urls", "stakeholders"), namespace="stakeholders")),

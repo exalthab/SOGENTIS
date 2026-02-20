@@ -7,9 +7,146 @@
   {% block ecommerce_title %}{% trans "Boutique" %}{% endblock %}
 {% endblock %}
 
+{# ✅ CSS #}
 {% block economic_extra_css %}
   {{ block.super }}
+
+  {# Marketplace CSS (nom unifié) #}
+  <link rel="stylesheet" href="{% static 'economic/ecommerce/css/ecommerce_marketplace.css' %}">
+
+  {# CSS e-commerce globaux #}
   <link rel="stylesheet" href="{% static 'economic/ecommerce/css/ecommerce.css' %}">
+  <link rel="stylesheet" href="{% static 'economic/ecommerce/css/ecommerce_cart.css' %}">
+  <link rel="stylesheet" href="{% static 'economic/ecommerce/css/product_detail.css' %}">
+
+  {% block ecommerce_extra_css %}{% endblock %}
+{% endblock %}
+
+{# ✅ Sous-navbar E-commerce #}
+{% block economic_subnav %}
+  {% include "economic/ecommerce/partials/_ecommerce_navbar.html" %}
+{% endblock %}
+
+{# ✅ Contenu principal #}
+{% block economic_content %}
+  {% block content %}{% endblock %}
+{% endblock %}
+
+{# ✅ JS #}
+{% block economic_extra_js %}
+  {{ block.super }}
+
+  {# JS global e-commerce (galerie produit, favoris ajax, qty +/- etc.) #}
+  <script src="{% static 'economic/ecommerce/js/ecommerce.js' %}" defer></script>
+
+  {% block ecommerce_extra_js %}{% endblock %}
+{% endblock %}
+
+
+
+{% comment %} {# templates/economic/base_economic.html #}
+{% extends "base_public.html" %}
+{% load static i18n %}
+
+{# =========================== #}
+{#   SEO                       #}
+{# =========================== #}
+{% block seo_title %}
+  {% block economic_title %}{% trans "Commerce & Services" %}{% endblock %}
+  | {{ PROJECT_NAME|default:"SOGENTIS" }}
+{% endblock %}
+
+{% block seo_description %}
+  {% block economic_description %}
+    {% trans "E-commerce, services, formations et B2B : un écosystème économique solidaire pour financer l’impact social." %}
+  {% endblock %}
+{% endblock %}
+
+{# =========================== #}
+{#   CSS                       #}
+{# =========================== #}
+{% block extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'economic/css/economic.css' %}">
+  <link rel="stylesheet" href="{% static 'economic/css/eco_hub_menu.css' %}">
+  <link rel="stylesheet" href="{% static 'economic/css/eco_navbar.css' %}">
+  {% block economic_extra_css %}{% endblock %}
+{% endblock %}
+
+{# ================================== #}
+{#   A11y: skip-link vers contenu éco #}
+{# ================================== #}
+{% block before_main %}
+  {{ block.super }}
+  <a class="visually-hidden-focusable" href="#ecoContent">
+    {% trans "Aller au contenu économique" %}
+  </a>
+{% endblock %}
+
+{# ================================== #}
+{#   MENU ECONOMIC (hook main.html)    #}
+{# ================================== #}
+{% block section_menu %}
+  {% include "economic/partials/_economic_menu.html" %}
+{% endblock %}
+
+{# ================================== #}
+{#   CONTENT                           #}
+{# ================================== #}
+{% block content %}
+
+  {% block economic_subnav %}{% endblock %}
+
+  <div id="ecoContent"
+       class="economic-page {% block economic_page_class %}{% endblock %}"
+       aria-label="{% trans 'Contenu du pôle économique' %}">
+
+    <div class="{% block economic_container_class %}container{% endblock %} {% block economic_container_extra_class %}{% endblock %}">
+
+      {% block economic_header %}{% endblock %}
+
+      <section class="{% block economic_spacing_class %}py-3 py-lg-4{% endblock %}">
+        {% block economic_content %}{% endblock %}
+      </section>
+
+    </div>
+  </div>
+
+{% endblock %}
+
+{# =========================== #}
+{#   JS                        #}
+{# =========================== #}
+{% block extra_js %}
+  {{ block.super }}
+  {% block economic_extra_js %}{% endblock %}
+{% endblock %}
+
+
+
+ {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/ecommerce/base_ecommerce.html #}
+{% extends "economic/base_economic.html" %}
+{% load static ecom_money i18n %}
+
+{# ✅ Titre spécifique e-commerce #}
+{% block economic_title %}
+  {% block ecommerce_title %}{% trans "Boutique" %}{% endblock %}
+{% endblock %}
+
+{% block economic_extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'economic/ecommerce/css/ecommerce_market2place.css' %}">
+  <link rel="stylesheet" href="{% static 'economic/ecommerce/css/ecommerce.css' %}">
+  <link rel="stylesheet" href="{% static 'economic/ecommerce/css/ecommerce_cart.css' %}">
+  <link rel="stylesheet" href="{% static 'economic/ecommerce/css/product_detail.css' %}">
+
   {% block ecommerce_extra_css %}{% endblock %}
 {% endblock %}
 
@@ -27,7 +164,7 @@
   {# JS global e-commerce (galerie produit, favoris ajax, qty +/- etc.) #}
   <script src="{% static 'economic/ecommerce/js/ecommerce.js' %}"></script>
   {% block ecommerce_extra_js %}{% endblock %}
-{% endblock %}
+{% endblock %} {% endcomment %}
 
 
 

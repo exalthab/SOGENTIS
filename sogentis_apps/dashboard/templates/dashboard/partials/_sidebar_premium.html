@@ -1,6 +1,510 @@
 {# templates/dashboard/partials/_sidebar_premium.html #}
 {% load i18n dashboard_tags %}
 
+{% with rm=request.resolver_match %}
+  {% if rm %}
+    {% with uname=rm.url_name|default_if_none:"" nss=rm.namespaces|default_if_none:"" %}
+
+      {# ===================== URLS (SAFE) ===================== #}
+      {% safe_url "dashboard:router" as url_router %}
+      {% safe_url "dashboard:hub" as url_hub %}
+
+      {% safe_url "dashboard:profile" as url_profile %}
+      {% safe_url "dashboard:profile_edit" as url_profile_edit %}
+
+      {% safe_url "dashboard:notes_list" as url_notes %}
+      {% safe_url "dashboard:note_create" as url_note_create %}
+
+      {% safe_url "dashboard:stats" as url_stats %}
+      {% safe_url "dashboard:orders" as url_orders %}
+      {% safe_url "dashboard:lists" as url_lists %}
+      {% safe_url "dashboard:engagements_list" as url_engagements %}
+      {% safe_url "dashboard:dons_list" as url_dons %}
+      {% safe_url "dashboard:donations" as url_donations %}
+
+      {% safe_url "dashboard:user:home" as url_user_home %}
+      {% safe_url "dashboard:vendor:home" as url_vendor_home %}
+      {% safe_url "dashboard:b2b:home" as url_b2b_home %}
+      {% safe_url "dashboard:social:index" as url_social_home %}
+      {% safe_url "dashboard:formations:home" as url_formations_home %}
+
+      {# ✅ Payments dashboard (names = index / intents / intent_detail) #}
+      {% safe_url "dashboard:payments:index" as url_payments_home %}
+      {% safe_url "dashboard:payments:intents" as url_payments_intents %}
+
+      {# ✅ Accounting dashboard (names = index / accounts / journal / entries / reports / trial_balance / profit_loss / balance_sheet) #}
+      {% safe_url "dashboard:accounting:index" as url_accounting_home %}
+      {% safe_url "dashboard:accounting:accounts" as url_accounting_accounts %}
+      {% safe_url "dashboard:accounting:journal" as url_accounting_journal %}
+      {% safe_url "dashboard:accounting:entries" as url_accounting_entries %}
+      {% safe_url "dashboard:accounting:reports" as url_accounting_reports %}
+      {% safe_url "dashboard:accounting:trial_balance" as url_accounting_trial_balance %}
+      {% safe_url "dashboard:accounting:profit_loss" as url_accounting_profit_loss %}
+      {% safe_url "dashboard:accounting:balance_sheet" as url_accounting_balance_sheet %}
+
+      {# Admin namespace #}
+      {% safe_url "dashboard:admin:index" as url_admin_home %}
+      {% safe_url "dashboard:admin:moderation" as url_admin_moderation %}
+      {% safe_url "dashboard:admin:reports" as url_admin_reports %}
+      {% safe_url "dashboard:admin:settings" as url_admin_settings %}
+      {% safe_url "dashboard:admin:users" as url_admin_users %}
+      {% safe_url "dashboard:pending_profiles" as url_pending_profiles %}
+
+      {# Logout #}
+      {% safe_url "accounts_users:web:auth:logout" as url_logout %}
+      {% if not url_logout %}
+        {% safe_url "accounts_users:web:logout" as url_logout %}
+      {% endif %}
+
+      <aside class="db-sidebar" aria-label="{% trans 'Menu dashboard' %}" data-db-sidebar>
+
+        <div class="db-sidebar-head d-flex align-items-center justify-content-between">
+          <button class="db-icon-btn d-lg-none ms-auto"
+                  type="button"
+                  data-db-toggle="sidebar"
+                  aria-label="{% trans 'Fermer le menu' %}">
+            ✕
+          </button>
+        </div>
+
+        <nav class="db-nav">
+
+          {# ===================== GENERAL ===================== #}
+          <div class="db-nav-section">
+            <div class="db-nav-title">{% trans "Général" %}</div>
+
+            {% if url_hub or url_router %}
+              <a class="db-link {% if uname == 'hub' or uname == 'router' %}active{% endif %}"
+                 href="{% if url_hub %}{{ url_hub }}{% else %}{{ url_router }}{% endif %}">
+                <span class="db-ico">🏠</span>
+                <span class="db-label">{% trans "Hub" %}</span>
+              </a>
+            {% else %}
+              <a class="db-link disabled opacity-75" href="#" aria-disabled="true" tabindex="-1">
+                <span class="db-ico">🔒</span><span class="db-label">{% trans "Hub" %}</span>
+              </a>
+            {% endif %}
+
+            {% if url_profile %}
+              <a class="db-link {% if uname == 'profile' or uname == 'profile_edit' %}active{% endif %}"
+                 href="{{ url_profile }}">
+                <span class="db-ico">👤</span>
+                <span class="db-label">{% trans "Profil" %}</span>
+              </a>
+            {% else %}
+              <a class="db-link disabled opacity-75" href="#" aria-disabled="true" tabindex="-1">
+                <span class="db-ico">🔒</span><span class="db-label">{% trans "Profil" %}</span>
+              </a>
+            {% endif %}
+
+            {% if url_notes %}
+              <a class="db-link {% if uname == 'notes_list' or uname == 'note_create' or uname == 'note_edit' %}active{% endif %}"
+                 href="{{ url_notes }}">
+                <span class="db-ico">📝</span>
+                <span class="db-label">{% trans "Notes" %}</span>
+              </a>
+            {% else %}
+              <a class="db-link disabled opacity-75" href="#" aria-disabled="true" tabindex="-1">
+                <span class="db-ico">🔒</span><span class="db-label">{% trans "Notes" %}</span>
+              </a>
+            {% endif %}
+          </div>
+
+          {# ===================== MODULES ===================== #}
+          <div class="db-nav-section">
+            <details class="db-nav-details" open>
+              <summary class="db-nav-toggle">
+                <span class="db-nav-title">{% trans "Modules" %}</span>
+                <span class="db-caret" aria-hidden="true">▾</span>
+              </summary>
+
+              <div class="db-nav-group">
+
+                {% if url_stats %}
+                  <a class="db-link {% if uname == 'stats' %}active{% endif %}" href="{{ url_stats }}">
+                    <span class="db-ico">📊</span><span class="db-label">{% trans "Stats" %}</span>
+                  </a>
+                {% endif %}
+
+                {% if url_orders %}
+                  <a class="db-link {% if uname == 'orders' %}active{% endif %}" href="{{ url_orders }}">
+                    <span class="db-ico">🧾</span><span class="db-label">{% trans "Commandes" %}</span>
+                  </a>
+                {% endif %}
+
+                {% if url_lists %}
+                  <a class="db-link {% if uname == 'lists' %}active{% endif %}" href="{{ url_lists }}">
+                    <span class="db-ico">📋</span><span class="db-label">{% trans "Listes" %}</span>
+                  </a>
+                {% endif %}
+
+                {% if url_engagements %}
+                  <a class="db-link {% if uname == 'engagements_list' %}active{% endif %}" href="{{ url_engagements }}">
+                    <span class="db-ico">🤝</span><span class="db-label">{% trans "Engagements" %}</span>
+                  </a>
+                {% endif %}
+
+                {% if url_dons %}
+                  <a class="db-link {% if uname == 'dons_list' %}active{% endif %}" href="{{ url_dons }}">
+                    <span class="db-ico">💝</span><span class="db-label">{% trans "Dons" %}</span>
+                  </a>
+                {% endif %}
+
+                {% if url_donations %}
+                  <a class="db-link {% if uname == 'donations' %}active{% endif %}" href="{{ url_donations }}">
+                    <span class="db-ico">💳</span><span class="db-label">{% trans "Donations" %}</span>
+                  </a>
+                {% endif %}
+
+              </div>
+            </details>
+          </div>
+
+          {# ===================== FINANCE (QB-like) ===================== #}
+          <div class="db-nav-section">
+            <details class="db-nav-details" open>
+              <summary class="db-nav-toggle">
+                <span class="db-nav-title">{% trans "Finance" %}</span>
+                <span class="db-caret" aria-hidden="true">▾</span>
+              </summary>
+
+              <div class="db-nav-group">
+
+                {# -------- Payments -------- #}
+                {% if url_payments_home %}
+                  <a class="db-link {% if 'payments' in nss and uname == 'index' %}active{% endif %}"
+                     href="{{ url_payments_home }}">
+                    <span class="db-ico">💳</span><span class="db-label">{% trans "Paiements" %}</span>
+                  </a>
+
+                  {% if url_payments_intents %}
+                    <a class="db-link {% if 'payments' in nss %}{% if uname == 'intents' or uname == 'intent_detail' %}active{% endif %}{% endif %}"
+                       href="{{ url_payments_intents }}">
+                      <span class="db-ico">🧷</span><span class="db-label">{% trans "Payment intents" %}</span>
+                    </a>
+                  {% endif %}
+                {% else %}
+                  <a class="db-link disabled opacity-75" href="#" aria-disabled="true" tabindex="-1">
+                    <span class="db-ico">🔒</span><span class="db-label">{% trans "Paiements" %}</span>
+                  </a>
+                {% endif %}
+
+                {# -------- Accounting -------- #}
+                {% if url_accounting_home %}
+                  <a class="db-link {% if 'accounting' in nss and uname == 'index' %}active{% endif %}"
+                     href="{{ url_accounting_home }}">
+                    <span class="db-ico">📚</span><span class="db-label">{% trans "Comptabilité" %}</span>
+                  </a>
+
+                  {% if url_accounting_accounts %}
+                    <a class="db-link {% if 'accounting' in nss %}{% if uname == 'accounts' or uname == 'account_detail' %}active{% endif %}{% endif %}"
+                       href="{{ url_accounting_accounts }}">
+                      <span class="db-ico">🗂️</span><span class="db-label">{% trans "Comptes" %}</span>
+                    </a>
+                  {% endif %}
+
+                  {% if url_accounting_journal %}
+                    <a class="db-link {% if 'accounting' in nss %}{% if uname == 'journal' or uname == 'journal_detail' %}active{% endif %}{% endif %}"
+                       href="{{ url_accounting_journal }}">
+                      <span class="db-ico">📓</span><span class="db-label">{% trans "Journaux" %}</span>
+                    </a>
+                  {% endif %}
+
+                  {% if url_accounting_entries %}
+                    <a class="db-link {% if 'accounting' in nss %}{% if uname == 'entries' or uname == 'entry_detail' %}active{% endif %}{% endif %}"
+                       href="{{ url_accounting_entries }}">
+                      <span class="db-ico">🧾</span><span class="db-label">{% trans "Écritures" %}</span>
+                    </a>
+                  {% endif %}
+
+                  {% if url_accounting_reports %}
+                    <a class="db-link {% if 'accounting' in nss and uname == 'reports' %}active{% endif %}"
+                       href="{{ url_accounting_reports }}">
+                      <span class="db-ico">📈</span><span class="db-label">{% trans "Rapports" %}</span>
+                    </a>
+                  {% endif %}
+
+                  {% if url_accounting_trial_balance %}
+                    <a class="db-link {% if 'accounting' in nss and uname == 'trial_balance' %}active{% endif %}"
+                       href="{{ url_accounting_trial_balance }}">
+                      <span class="db-ico">⚖️</span><span class="db-label">{% trans "Balance" %}</span>
+                    </a>
+                  {% endif %}
+
+                  {% if url_accounting_profit_loss %}
+                    <a class="db-link {% if 'accounting' in nss and uname == 'profit_loss' %}active{% endif %}"
+                       href="{{ url_accounting_profit_loss }}">
+                      <span class="db-ico">🧮</span><span class="db-label">{% trans "Compte de résultat" %}</span>
+                    </a>
+                  {% endif %}
+
+                  {% if url_accounting_balance_sheet %}
+                    <a class="db-link {% if 'accounting' in nss and uname == 'balance_sheet' %}active{% endif %}"
+                       href="{{ url_accounting_balance_sheet }}">
+                      <span class="db-ico">🏛️</span><span class="db-label">{% trans "Bilan" %}</span>
+                    </a>
+                  {% endif %}
+
+                {% else %}
+                  <a class="db-link disabled opacity-75" href="#" aria-disabled="true" tabindex="-1">
+                    <span class="db-ico">🔒</span><span class="db-label">{% trans "Comptabilité" %}</span>
+                  </a>
+                {% endif %}
+
+              </div>
+            </details>
+          </div>
+
+          {# ===================== ESPACES ===================== #}
+          <div class="db-nav-section">
+            <details class="db-nav-details" open>
+              <summary class="db-nav-toggle">
+                <span class="db-nav-title">{% trans "Espaces" %}</span>
+                <span class="db-caret" aria-hidden="true">▾</span>
+              </summary>
+
+              <div class="db-nav-group">
+
+                {% if url_user_home %}
+                  <a class="db-link {% if 'user' in nss %}active{% endif %}" href="{{ url_user_home }}">
+                    <span class="db-ico">👤</span><span class="db-label">{% trans "Utilisateur" %}</span>
+                  </a>
+                {% endif %}
+
+                {# -------- VENDOR -------- #}
+                {% if url_vendor_home %}
+                  {% if request.user.is_superuser %}
+                    <a class="db-link {% if 'vendor' in nss %}active{% endif %}" href="{{ url_vendor_home }}">
+                      <span class="db-ico">🏪</span><span class="db-label">{% trans "Vendeur" %}</span>
+                    </a>
+                  {% elif perms.dashboard.access_vendor_space %}
+                    <a class="db-link {% if 'vendor' in nss %}active{% endif %}" href="{{ url_vendor_home }}">
+                      <span class="db-ico">🏪</span><span class="db-label">{% trans "Vendeur" %}</span>
+                    </a>
+                  {% elif can_vendor_space|default:False %}
+                    <a class="db-link {% if 'vendor' in nss %}active{% endif %}" href="{{ url_vendor_home }}">
+                      <span class="db-ico">🏪</span><span class="db-label">{% trans "Vendeur" %}</span>
+                    </a>
+                  {% elif can_vendor|default:False %}
+                    {% if vendor_approved|default:False %}
+                      <a class="db-link {% if 'vendor' in nss %}active{% endif %}" href="{{ url_vendor_home }}">
+                        <span class="db-ico">🏪</span><span class="db-label">{% trans "Vendeur" %}</span>
+                      </a>
+                    {% else %}
+                      <a class="db-link disabled opacity-75" href="#" aria-disabled="true" tabindex="-1">
+                        <span class="db-ico">🔒</span><span class="db-label">{% trans "Vendeur" %}</span>
+                      </a>
+                    {% endif %}
+                  {% else %}
+                    <a class="db-link disabled opacity-75" href="#" aria-disabled="true" tabindex="-1">
+                      <span class="db-ico">🔒</span><span class="db-label">{% trans "Vendeur" %}</span>
+                    </a>
+                  {% endif %}
+                {% else %}
+                  <a class="db-link disabled opacity-75" href="#" aria-disabled="true" tabindex="-1">
+                    <span class="db-ico">🔒</span><span class="db-label">{% trans "Vendeur" %}</span>
+                  </a>
+                {% endif %}
+
+                {# -------- B2B -------- #}
+                {% if url_b2b_home %}
+                  {% if request.user.is_superuser %}
+                    <a class="db-link {% if 'b2b' in nss %}active{% endif %}" href="{{ url_b2b_home }}">
+                      <span class="db-ico">🏢</span><span class="db-label">{% trans "B2B" %}</span>
+                    </a>
+                  {% elif perms.dashboard.access_b2b_space %}
+                    <a class="db-link {% if 'b2b' in nss %}active{% endif %}" href="{{ url_b2b_home }}">
+                      <span class="db-ico">🏢</span><span class="db-label">{% trans "B2B" %}</span>
+                    </a>
+                  {% elif can_b2b_space|default:False %}
+                    <a class="db-link {% if 'b2b' in nss %}active{% endif %}" href="{{ url_b2b_home }}">
+                      <span class="db-ico">🏢</span><span class="db-label">{% trans "B2B" %}</span>
+                    </a>
+                  {% elif can_b2b|default:False %}
+                    {% if b2b_approved|default:False %}
+                      <a class="db-link {% if 'b2b' in nss %}active{% endif %}" href="{{ url_b2b_home }}">
+                        <span class="db-ico">🏢</span><span class="db-label">{% trans "B2B" %}</span>
+                      </a>
+                    {% else %}
+                      <a class="db-link disabled opacity-75" href="#" aria-disabled="true" tabindex="-1">
+                        <span class="db-ico">🔒</span><span class="db-label">{% trans "B2B" %}</span>
+                      </a>
+                    {% endif %}
+                  {% else %}
+                    <a class="db-link disabled opacity-75" href="#" aria-disabled="true" tabindex="-1">
+                      <span class="db-ico">🔒</span><span class="db-label">{% trans "B2B" %}</span>
+                    </a>
+                  {% endif %}
+                {% else %}
+                  <a class="db-link disabled opacity-75" href="#" aria-disabled="true" tabindex="-1">
+                    <span class="db-ico">🔒</span><span class="db-label">{% trans "B2B" %}</span>
+                  </a>
+                {% endif %}
+
+                {# -------- SOCIAL -------- #}
+                {% if url_social_home %}
+                  {% if request.user.is_superuser %}
+                    <a class="db-link {% if 'social' in nss %}active{% endif %}" href="{{ url_social_home }}">
+                      <span class="db-ico">❤️</span><span class="db-label">{% trans "Social" %}</span>
+                    </a>
+                  {% elif perms.dashboard.access_social_space %}
+                    <a class="db-link {% if 'social' in nss %}active{% endif %}" href="{{ url_social_home }}">
+                      <span class="db-ico">❤️</span><span class="db-label">{% trans "Social" %}</span>
+                    </a>
+                  {% elif can_social_space|default:can_social|default:True %}
+                    <a class="db-link {% if 'social' in nss %}active{% endif %}" href="{{ url_social_home }}">
+                      <span class="db-ico">❤️</span><span class="db-label">{% trans "Social" %}</span>
+                    </a>
+                  {% else %}
+                    <a class="db-link disabled opacity-75" href="#" aria-disabled="true" tabindex="-1">
+                      <span class="db-ico">🔒</span><span class="db-label">{% trans "Social" %}</span>
+                    </a>
+                  {% endif %}
+                {% else %}
+                  <a class="db-link disabled opacity-75" href="#" aria-disabled="true" tabindex="-1">
+                    <span class="db-ico">🔒</span><span class="db-label">{% trans "Social" %}</span>
+                  </a>
+                {% endif %}
+
+                {# -------- FORMATIONS -------- #}
+                {% if url_formations_home %}
+                  {% if request.user.is_superuser %}
+                    <a class="db-link {% if 'formations' in nss %}active{% endif %}" href="{{ url_formations_home }}">
+                      <span class="db-ico">🎓</span><span class="db-label">{% trans "Formations" %}</span>
+                    </a>
+                  {% elif perms.dashboard.access_formations_space %}
+                    <a class="db-link {% if 'formations' in nss %}active{% endif %}" href="{{ url_formations_home }}">
+                      <span class="db-ico">🎓</span><span class="db-label">{% trans "Formations" %}</span>
+                    </a>
+                  {% elif can_formations_space|default:True %}
+                    <a class="db-link {% if 'formations' in nss %}active{% endif %}" href="{{ url_formations_home }}">
+                      <span class="db-ico">🎓</span><span class="db-label">{% trans "Formations" %}</span>
+                    </a>
+                  {% else %}
+                    <a class="db-link disabled opacity-75" href="#" aria-disabled="true" tabindex="-1">
+                      <span class="db-ico">🔒</span><span class="db-label">{% trans "Formations" %}</span>
+                    </a>
+                  {% endif %}
+                {% else %}
+                  <a class="db-link disabled opacity-75" href="#" aria-disabled="true" tabindex="-1">
+                    <span class="db-ico">🔒</span><span class="db-label">{% trans "Formations" %}</span>
+                  </a>
+                {% endif %}
+
+              </div>
+            </details>
+          </div>
+
+          {# ===================== ADMIN AREA ===================== #}
+          {% if request.user.is_superuser or perms.dashboard.access_admin_area or perms.dashboard.validate_profiles or can_admin_area|default:False %}
+            <div class="db-nav-section">
+              <details class="db-nav-details" open>
+                <summary class="db-nav-toggle">
+                  <span class="db-nav-title">{% trans "Administration" %}</span>
+                  <span class="db-caret" aria-hidden="true">▾</span>
+                </summary>
+
+                <div class="db-nav-group">
+
+                  {% if url_admin_home %}
+                    <a class="db-link {% if 'admin' in nss and uname == 'index' %}active{% endif %}"
+                       href="{{ url_admin_home }}">
+                      <span class="db-ico">🛡️</span><span class="db-label">{% trans "Admin dashboard" %}</span>
+                    </a>
+                  {% endif %}
+
+                  {% if url_admin_moderation %}
+                    <a class="db-link {% if 'admin' in nss and uname == 'moderation' %}active{% endif %}"
+                       href="{{ url_admin_moderation }}">
+                      <span class="db-ico">🧭</span><span class="db-label">{% trans "Modération" %}</span>
+                    </a>
+                  {% endif %}
+
+                  {% if url_admin_reports %}
+                    <a class="db-link {% if 'admin' in nss and uname == 'reports' %}active{% endif %}"
+                       href="{{ url_admin_reports }}">
+                      <span class="db-ico">📈</span><span class="db-label">{% trans "Rapports" %}</span>
+                    </a>
+                  {% endif %}
+
+                  {% if url_admin_users %}
+                    <a class="db-link {% if 'admin' in nss and uname == 'users' %}active{% endif %}"
+                       href="{{ url_admin_users }}">
+                      <span class="db-ico">👥</span><span class="db-label">{% trans "Utilisateurs" %}</span>
+                    </a>
+                  {% endif %}
+
+                  {% if url_admin_settings %}
+                    <a class="db-link {% if 'admin' in nss and uname == 'settings' %}active{% endif %}"
+                       href="{{ url_admin_settings }}">
+                      <span class="db-ico">⚙️</span><span class="db-label">{% trans "Paramètres" %}</span>
+                    </a>
+                  {% endif %}
+
+                  {% if url_pending_profiles %}
+                    <a class="db-link {% if uname == 'pending_profiles' or uname == 'profile_approve' or uname == 'profile_refuse' %}active{% endif %}"
+                       href="{{ url_pending_profiles }}">
+                      <span class="db-ico">⏳</span><span class="db-label">{% trans "Profils en attente" %}</span>
+                    </a>
+                  {% endif %}
+
+                </div>
+              </details>
+            </div>
+          {% endif %}
+
+        </nav>
+
+        <div class="db-sidebar-foot">
+          {% if url_logout %}
+            <a class="db-link danger" href="{{ url_logout }}">
+              <span class="db-ico">🚪</span>
+              <span class="db-label">{% trans "Déconnexion" %}</span>
+            </a>
+          {% else %}
+            <a class="db-link danger disabled opacity-75" href="#" aria-disabled="true" tabindex="-1">
+              <span class="db-ico">🚪</span>
+              <span class="db-label">{% trans "Déconnexion" %}</span>
+            </a>
+          {% endif %}
+
+          <div class="db-foot-note">
+            {% trans "Connecté en tant que" %} <strong>{{ request.user.username }}</strong>
+          </div>
+        </div>
+
+      </aside>
+    {% endwith %}
+  {% else %}
+    {# fallback safe si resolver_match absent #}
+    <aside class="db-sidebar" aria-label="{% trans 'Menu dashboard' %}" data-db-sidebar>
+      <nav class="db-nav">
+        <div class="db-nav-section">
+          <div class="db-nav-title">{% trans "Général" %}</div>
+          {% safe_url "dashboard:hub" as u_hub %}
+          {% if u_hub %}
+            <a class="db-link" href="{{ u_hub }}">
+              <span class="db-ico">🏠</span><span class="db-label">{% trans "Hub" %}</span>
+            </a>
+          {% else %}
+            <a class="db-link disabled opacity-75" href="#" aria-disabled="true" tabindex="-1">
+              <span class="db-ico">🔒</span><span class="db-label">{% trans "Hub" %}</span>
+            </a>
+          {% endif %}
+        </div>
+      </nav>
+    </aside>
+  {% endif %}
+{% endwith %}
+
+
+
+
+
+
+{% comment %} {# templates/dashboard/partials/_sidebar_premium.html-16-02-2026 #}
+{% load i18n dashboard_tags %}
+
 {# ===================== RESOLVER MATCH (SAFE + SCOPE OK) ===================== #}
 {% with rm=request.resolver_match %}
   {% if rm %}
@@ -333,7 +837,7 @@
     {% endwith %}
   {% endif %}
 {% endwith %}
-
+ {% endcomment %}
 
 
 

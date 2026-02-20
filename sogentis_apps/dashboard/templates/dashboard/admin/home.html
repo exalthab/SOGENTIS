@@ -1,5 +1,219 @@
 {# templates/dashboard/admin/home.html #}
 {% extends "dashboard/base.html" %}
+{% load i18n dashboard_tags %}
+
+{% block title %}{% trans "Administration" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block dashboard_header %}
+  {% with rm=request.resolver_match %}
+    {% with uname=rm.url_name|default_if_none:"" nss=rm.namespaces|default_if_none:tuple %}
+
+      {% safe_url "dashboard:pending_profiles" as u_pending %}
+      {% safe_url "dashboard:stats" as u_stats %}
+      {% safe_url "dashboard:orders" as u_orders %}
+      {% safe_url "dashboard:dons_list" as u_dons %}
+      {% safe_url "dashboard:donations" as u_donations %}
+      {% safe_url "dashboard:lists" as u_lists %}
+      {% safe_url "dashboard:notes_list" as u_notes %}
+
+      {% safe_url "dashboard:admin:users" as u_admin_users %}
+      {% safe_url "dashboard:admin:moderation" as u_admin_moderation %}
+      {% safe_url "dashboard:admin:reports" as u_admin_reports %}
+      {% safe_url "dashboard:admin:settings" as u_admin_settings %}
+
+      {# ✅ aligné avec tes urls: name="index" (pas home) #}
+      {% safe_url "dashboard:accounting:index" as u_acc_home %}
+      {% safe_url "dashboard:payments:index" as u_pay_home %}
+
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+        <div>
+          <h1 class="fw-bold mb-1">🛡 {% trans "Admin dashboard" %}</h1>
+          <p class="text-muted mb-0">{% trans "Supervision, validation et pilotage de la plateforme." %}</p>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2">
+          <a class="btn btn-sm btn-outline-secondary" href="/admin/">{% trans "Admin Django" %}</a>
+
+          {% if u_pending and u_pending != "#" %}
+            <a class="btn btn-sm btn-outline-primary {% if uname == 'pending_profiles' %}active{% endif %}"
+               href="{{ u_pending }}">
+              {% trans "Profils en attente" %}
+            </a>
+          {% endif %}
+
+          {% if u_stats and u_stats != "#" %}
+            <a class="btn btn-sm btn-outline-dark {% if uname == 'stats' %}active{% endif %}"
+               href="{{ u_stats }}">
+              {% trans "Statistiques" %}
+            </a>
+          {% endif %}
+        </div>
+      </div>
+
+    {% endwith %}
+  {% endwith %}
+{% endblock %}
+
+{% block dashboard_content %}
+  {% with rm=request.resolver_match %}
+    {% with uname=rm.url_name|default_if_none:"" nss=rm.namespaces|default_if_none:"" %}
+
+      {% safe_url "dashboard:pending_profiles" as u_pending %}
+      {% safe_url "dashboard:notes_list" as u_notes %}
+      {% safe_url "dashboard:stats" as u_stats %}
+      {% safe_url "dashboard:orders" as u_orders %}
+      {% safe_url "dashboard:dons_list" as u_dons %}
+      {% safe_url "dashboard:donations" as u_donations %}
+      {% safe_url "dashboard:lists" as u_lists %}
+
+      {% safe_url "dashboard:admin:users" as u_admin_users %}
+      {% safe_url "dashboard:admin:moderation" as u_admin_moderation %}
+      {% safe_url "dashboard:admin:reports" as u_admin_reports %}
+      {% safe_url "dashboard:admin:settings" as u_admin_settings %}
+
+      {# ✅ aligné avec tes urls: name="index" (pas home) #}
+      {% safe_url "dashboard:accounting:index" as u_acc_home %}
+      {% safe_url "dashboard:payments:index" as u_pay_home %}
+
+      <div class="row g-3">
+
+        <div class="col-lg-8">
+          <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-body p-3 p-lg-4">
+              <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+                <h2 class="h6 fw-bold mb-0">{% trans "Raccourcis" %}</h2>
+
+                {% if u_pending and u_pending != "#" %}
+                  <a class="btn btn-sm btn-primary {% if uname == 'pending_profiles' %}active{% endif %}"
+                     href="{{ u_pending }}">⏳ {% trans "Validation profils" %}</a>
+                {% endif %}
+              </div>
+
+              <div class="d-flex flex-wrap gap-2">
+
+                {% if u_admin_users and u_admin_users != "#" %}
+                  <a class="btn btn-sm btn-outline-primary {% if 'admin' in nss and uname == 'users' %}active{% endif %}"
+                     href="{{ u_admin_users }}">👥 {% trans "Utilisateurs" %}</a>
+                {% endif %}
+
+                {% if u_admin_moderation and u_admin_moderation != "#" %}
+                  <a class="btn btn-sm btn-outline-warning {% if 'admin' in nss and uname == 'moderation' %}active{% endif %}"
+                     href="{{ u_admin_moderation }}">🛡 {% trans "Modération" %}</a>
+                {% endif %}
+
+                {% if u_admin_reports and u_admin_reports != "#" %}
+                  <a class="btn btn-sm btn-outline-info {% if 'admin' in nss and uname == 'reports' %}active{% endif %}"
+                     href="{{ u_admin_reports }}">📊 {% trans "Rapports" %}</a>
+                {% endif %}
+
+                {% if u_admin_settings and u_admin_settings != "#" %}
+                  <a class="btn btn-sm btn-outline-secondary {% if 'admin' in nss and uname == 'settings' %}active{% endif %}"
+                     href="{{ u_admin_settings }}">⚙️ {% trans "Paramètres" %}</a>
+                {% endif %}
+
+                {% if u_stats and u_stats != "#" %}
+                  <a class="btn btn-sm btn-outline-dark {% if uname == 'stats' %}active{% endif %}"
+                     href="{{ u_stats }}">📈 {% trans "Stats" %}</a>
+                {% endif %}
+
+                {% if u_orders and u_orders != "#" %}
+                  <a class="btn btn-sm btn-outline-dark {% if uname == 'orders' %}active{% endif %}"
+                     href="{{ u_orders }}">🧾 {% trans "Commandes" %}</a>
+                {% endif %}
+
+                {% if u_dons and u_dons != "#" %}
+                  <a class="btn btn-sm btn-outline-dark {% if uname == 'dons_list' %}active{% endif %}"
+                     href="{{ u_dons }}">💝 {% trans "Dons" %}</a>
+                {% endif %}
+
+                {% if u_donations and u_donations != "#" %}
+                  <a class="btn btn-sm btn-outline-dark {% if uname == 'donations' %}active{% endif %}"
+                     href="{{ u_donations }}">📄 {% trans "Donations" %}</a>
+                {% endif %}
+
+                {% if u_lists and u_lists != "#" %}
+                  <a class="btn btn-sm btn-outline-dark {% if uname == 'lists' %}active{% endif %}"
+                     href="{{ u_lists }}">📋 {% trans "Listes" %}</a>
+                {% endif %}
+
+                {% if u_notes and u_notes != "#" %}
+                  <a class="btn btn-sm btn-outline-dark {% if uname == 'notes_list' %}active{% endif %}"
+                     href="{{ u_notes }}">📝 {% trans "Notes" %}</a>
+                {% endif %}
+
+                {% if u_pay_home and u_pay_home != "#" %}
+                  <a class="btn btn-sm btn-outline-primary {% if 'payments' in nss %}active{% endif %}"
+                     href="{{ u_pay_home }}">💳 {% trans "Paiements" %}</a>
+                {% endif %}
+
+                {% if u_acc_home and u_acc_home != "#" %}
+                  <a class="btn btn-sm btn-outline-primary {% if 'accounting' in nss %}active{% endif %}"
+                     href="{{ u_acc_home }}">📚 {% trans "Comptabilité" %}</a>
+                {% endif %}
+
+              </div>
+
+              <p class="text-muted small mb-0 mt-3">
+                {% trans "Centralise ici tes outils staff : validation profils, supervision, rapports, audits, et modules finance." %}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="card shadow-sm border-0 rounded-4 h-100">
+            <div class="card-body p-3 p-lg-4">
+              <h2 class="h6 fw-bold mb-2">{% trans "Validation" %}</h2>
+              <p class="text-muted small mb-3">{% trans "Accès direct aux profils en attente." %}</p>
+
+              {% if u_pending and u_pending != "#" %}
+                <a class="btn btn-sm btn-primary w-100 {% if uname == 'pending_profiles' %}active{% endif %}"
+                   href="{{ u_pending }}">
+                  ⏳ {% trans "Ouvrir la file de validation" %}
+                </a>
+              {% else %}
+                <div class="alert alert-light border mb-0 small">
+                  {% trans "Lien de validation indisponible (route manquante ou namespace différent)." %}
+                </div>
+              {% endif %}
+
+              <hr class="my-3">
+
+              <div class="d-grid gap-2">
+                <a class="btn btn-sm btn-outline-secondary" href="/admin/">{% trans "Admin Django" %}</a>
+
+                {% if u_pay_home and u_pay_home != "#" %}
+                  <a class="btn btn-sm btn-outline-primary {% if 'payments' in nss %}active{% endif %}"
+                     href="{{ u_pay_home }}">💳 {% trans "Centre paiements" %}</a>
+                {% endif %}
+
+                {% if u_acc_home and u_acc_home != "#" %}
+                  <a class="btn btn-sm btn-outline-primary {% if 'accounting' in nss %}active{% endif %}"
+                     href="{{ u_acc_home }}">📚 {% trans "Centre comptable" %}</a>
+                {% endif %}
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="mt-3">
+        {% include "dashboard/admin/_menu.html" %}
+      </div>
+
+    {% endwith %}
+  {% endwith %}
+{% endblock %}
+
+
+
+
+
+
+{% comment %} {# templates/dashboard/admin/home.html-16-02-2026 #}
+{% extends "dashboard/base.html" %}
 {% load i18n %}
 
 {% block title %}{% trans "Administration" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
@@ -59,7 +273,7 @@
 <div class="mt-3">
   {% include "dashboard/admin/_menu.html" %}
 </div>
-{% endblock %}
+{% endblock %} {% endcomment %}
 
 
 

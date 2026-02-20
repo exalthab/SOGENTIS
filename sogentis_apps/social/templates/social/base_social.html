@@ -1,0 +1,76 @@
+{# templates/social/base_social.html #}
+{% extends "base_public.html" %}
+{% load static i18n %}
+
+{# ===========================
+   SEO (social)
+   =========================== #}
+{% block seo_title %}
+  {% block social_title %}{% trans "Pôle social" %}{% endblock %}
+  | {{ PROJECT_NAME|default:"SOGENTIS" }}
+{% endblock %}
+
+{% block seo_description %}
+  {% block social_description %}
+    {% trans "Actions sociales : éducation, santé, aide humanitaire, environnement et soutien aux personnes vulnérables." %}
+  {% endblock %}
+{% endblock %}
+
+{# ===========================
+   CSS (social)
+   =========================== #}
+{% block extra_css %}
+  {{ block.super }}
+  {# Si tes fichiers existent, garde-les; sinon enlève #}
+  <link rel="stylesheet" href="{% static 'social/css/social.css' %}">
+  <link rel="stylesheet" href="{% static 'social/css/social_navbar.css' %}">
+  {% block social_extra_css %}{% endblock %}
+{% endblock %}
+
+{# ===========================
+   Menu social (navbar / menubar)
+   =========================== #}
+{% block section_menu %}
+  {% include "social/partials/_social_menu.html" %}
+{% endblock %}
+
+{# ===========================
+   A11y
+   =========================== #}
+{% block before_main %}
+  {{ block.super }}
+  <a class="visually-hidden-focusable" href="#socialContent">
+    {% trans "Aller au contenu social" %}
+  </a>
+{% endblock %}
+
+{# ===========================
+   Layout social (pas de <main> imbriqué)
+   =========================== #}
+{% block content %}
+
+  {% block social_subnav %}{% endblock %}
+
+  <div id="socialContent"
+       class="social-page {% block social_page_class %}{% endblock %}"
+       aria-label="{% trans 'Contenu du pôle social' %}">
+
+    <div class="{% block social_container_class %}container{% endblock %} {% block social_container_extra_class %}{% endblock %}">
+      {% block social_header %}{% endblock %}
+
+      <section class="{% block social_spacing_class %}py-3 py-lg-4{% endblock %}">
+        {% block social_content %}{% endblock %}
+      </section>
+    </div>
+
+  </div>
+
+{% endblock %}
+
+{# ===========================
+   JS (social)
+   =========================== #}
+{% block extra_js %}
+  {{ block.super }}
+  {% block social_extra_js %}{% endblock %}
+{% endblock %}

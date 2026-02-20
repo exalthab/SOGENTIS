@@ -1,4 +1,86 @@
-{% extends "main.html" %}
+{# templates/institution/base_institution.html #}
+{% extends "base_public.html" %}
+{% load static i18n %}
+
+{# ===========================
+   SEO (institution)
+   =========================== #}
+{% block seo_title %}
+  {% block institution_title %}{% trans "Pôle institution" %}{% endblock %}
+  | {{ PROJECT_NAME|default:"SOGENTIS" }}
+{% endblock %}
+
+{% block seo_description %}
+  {% block institution_description %}
+    {% trans "Pôle institution : programmes d’éducation, santé, structures communautaires et actions d’intérêt public." %}
+  {% endblock %}
+{% endblock %}
+
+{# ===========================
+   CSS (institution)
+   =========================== #}
+{% block extra_css %}
+  {{ block.super }}
+  {# Si tes fichiers existent, garde-les; sinon enlève #}
+  <link rel="stylesheet" href="{% static 'institution/css/institution.css' %}">
+  <link rel="stylesheet" href="{% static 'institution/css/institution_navbar.css' %}">
+  {% block institution_extra_css %}{% endblock %}
+{% endblock %}
+
+{# ===========================
+   Menu institution
+   =========================== #}
+{% block section_menu %}
+  {% include "institution/partials/_institution_menu.html" %}
+{% endblock %}
+
+{# ===========================
+   A11y
+   =========================== #}
+{% block before_main %}
+  {{ block.super }}
+  <a class="visually-hidden-focusable" href="#institutionContent">
+    {% trans "Aller au contenu institution" %}
+  </a>
+{% endblock %}
+
+{# ===========================
+   Layout institution
+   =========================== #}
+{% block content %}
+
+  {% block institution_subnav %}{% endblock %}
+
+  <div id="institutionContent"
+       class="institution-page {% block institution_page_class %}{% endblock %}"
+       aria-label="{% trans 'Contenu du pôle institution' %}">
+
+    <div class="{% block institution_container_class %}container{% endblock %} {% block institution_container_extra_class %}{% endblock %}">
+      {% block institution_header %}{% endblock %}
+
+      <section class="{% block institution_spacing_class %}py-3 py-lg-4{% endblock %}">
+        {% block institution_content %}{% endblock %}
+      </section>
+    </div>
+
+  </div>
+
+{% endblock %}
+
+{# ===========================
+   JS (institution)
+   =========================== #}
+{% block extra_js %}
+  {{ block.super }}
+  {% block institution_extra_js %}{% endblock %}
+{% endblock %}
+
+
+
+
+
+
+{% comment %} {% extends "main.html" %}
 {% load static i18n %}
 
 {% block extra_css %}
@@ -26,4 +108,4 @@
 {% block extra_js %}
   <script src="{% static 'institution/js/institution.js' %}"></script>
   {% block institution_extra_js %}{% endblock %}
-{% endblock %}
+{% endblock %} {% endcomment %}

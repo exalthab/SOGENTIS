@@ -1,0 +1,154 @@
+{# templates/economic/prestations/partials/index/_svc_packs_pagination.html #}
+{% load i18n dashboard_tags %}
+
+{% if page_obj and page_obj.paginator.num_pages > 1 %}
+  <nav class="mt-3" aria-label="{% trans 'Pagination' %}">
+    <ul class="pagination pagination-sm flex-wrap mb-0">
+
+      {% if page_obj.has_previous %}
+        <li class="page-item">
+          <a
+            class="page-link"
+            rel="prev"
+            href="?{{ page_param }}={{ page_obj.previous_page_number }}{% if anchor %}#{{ anchor }}{% endif %}">
+            {% trans "Précédent" %}
+          </a>
+        </li>
+      {% else %}
+        <li class="page-item disabled" aria-disabled="true">
+          <span class="page-link">{% trans "Précédent" %}</span>
+        </li>
+      {% endif %}
+
+      {% for n in page_obj.paginator.page_range %}
+        {% if n == page_obj.number %}
+          <li class="page-item active" aria-current="page">
+            <span class="page-link">{{ n }}</span>
+          </li>
+        {% else %}
+          <li class="page-item">
+            <a
+              class="page-link"
+              href="?{{ page_param }}={{ n }}{% if anchor %}#{{ anchor }}{% endif %}">
+              {{ n }}
+            </a>
+          </li>
+        {% endif %}
+      {% endfor %}
+
+      {% if page_obj.has_next %}
+        <li class="page-item">
+          <a
+            class="page-link"
+            rel="next"
+            href="?{{ page_param }}={{ page_obj.next_page_number }}{% if anchor %}#{{ anchor }}{% endif %}">
+            {% trans "Suivant" %}
+          </a>
+        </li>
+      {% else %}
+        <li class="page-item disabled" aria-disabled="true">
+          <span class="page-link">{% trans "Suivant" %}</span>
+        </li>
+      {% endif %}
+
+    </ul>
+  </nav>
+{% endif %}
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/partials/index/_svc_packs_pagination.html #}
+{% load i18n static ecom_money dashboard_tags %}
+
+{% if page_obj and page_obj.paginator and page_obj.paginator.num_pages > 1 %}
+  <nav class="mt-3" aria-label="{% trans 'Pagination' %}">
+    <ul class="pagination pagination-sm flex-wrap mb-0">
+
+      {% if page_obj.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?{{ page_param }}={{ page_obj.previous_page_number }}{% if anchor %}#{{ anchor }}{% endif %}">
+            {% trans "Précédent" %}
+          </a>
+        </li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">{% trans "Précédent" %}</span></li>
+      {% endif %}
+
+      {% for n in page_obj.paginator.page_range %}
+        {% if n == page_obj.number %}
+          <li class="page-item active" aria-current="page"><span class="page-link">{{ n }}</span></li>
+        {% else %}
+          <li class="page-item">
+            <a class="page-link" href="?{{ page_param }}={{ n }}{% if anchor %}#{{ anchor }}{% endif %}">{{ n }}</a>
+          </li>
+        {% endif %}
+      {% endfor %}
+
+      {% if page_obj.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?{{ page_param }}={{ page_obj.next_page_number }}{% if anchor %}#{{ anchor }}{% endif %}">
+            {% trans "Suivant" %}
+          </a>
+        </li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">{% trans "Suivant" %}</span></li>
+      {% endif %}
+
+    </ul>
+  </nav>
+{% endif %} {% endcomment %}
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/partials/index/_svc_packs_pagination.html -good #}
+{% load i18n %}
+
+{% if packs_is_paginated and packs_page_obj %}
+  <nav class="mt-4" aria-label="{% trans 'Pagination packs' %}">
+    <div class="container">
+      <ul class="pagination justify-content-center flex-wrap gap-1">
+
+        {% if packs_page_obj.has_previous %}
+          <li class="page-item">
+            <a class="page-link"
+               href="?q={{ q|urlencode }}&cat={{ cat|urlencode }}&type={{ type|urlencode }}&per_page={{ per_page }}&page={{ page_obj.number|default:1 }}&packs_per_page={{ packs_per_page }}&packs_page=1#packs">«</a>
+          </li>
+          <li class="page-item">
+            <a class="page-link"
+               href="?q={{ q|urlencode }}&cat={{ cat|urlencode }}&type={{ type|urlencode }}&per_page={{ per_page }}&page={{ page_obj.number|default:1 }}&packs_per_page={{ packs_per_page }}&packs_page={{ packs_page_obj.previous_page_number }}#packs">‹</a>
+          </li>
+        {% else %}
+          <li class="page-item disabled"><span class="page-link">«</span></li>
+          <li class="page-item disabled"><span class="page-link">‹</span></li>
+        {% endif %}
+
+        <li class="page-item disabled">
+          <span class="page-link">{% trans "Page" %} {{ packs_page_obj.number }} / {{ packs_page_obj.paginator.num_pages }}</span>
+        </li>
+
+        {% if packs_page_obj.has_next %}
+          <li class="page-item">
+            <a class="page-link"
+               href="?q={{ q|urlencode }}&cat={{ cat|urlencode }}&type={{ type|urlencode }}&per_page={{ per_page }}&page={{ page_obj.number|default:1 }}&packs_per_page={{ packs_per_page }}&packs_page={{ packs_page_obj.next_page_number }}#packs">›</a>
+          </li>
+          <li class="page-item">
+            <a class="page-link"
+               href="?q={{ q|urlencode }}&cat={{ cat|urlencode }}&type={{ type|urlencode }}&per_page={{ per_page }}&page={{ page_obj.number|default:1 }}&packs_per_page={{ packs_per_page }}&packs_page={{ packs_page_obj.paginator.num_pages }}#packs">»</a>
+          </li>
+        {% else %}
+          <li class="page-item disabled"><span class="page-link">›</span></li>
+          <li class="page-item disabled"><span class="page-link">»</span></li>
+        {% endif %}
+
+      </ul>
+    </div>
+  </nav>
+{% endif %} {% endcomment %}

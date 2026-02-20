@@ -1,0 +1,33 @@
+{# templates/economic/formations/partials/index/_instructors.html #}
+{% load static i18n dashboard_tags ecom_money ecom_utils %}
+
+<section id="instructors" class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="h5 fw-bold mb-0">{% trans "Formateurs" %}</h2>
+    <a class="small text-decoration-none" href="#pricing">{% trans "Tarifs" %} →</a>
+  </div>
+
+  <div class="row g-3 g-md-4">
+    <div class="col-md-6 col-lg-4">
+      <div class="ft-card h-100">
+        <div class="fw-bold mb-1">{% trans "Experts terrain" %}</div>
+        <div class="small text-muted">{% trans "Des praticiens avec expérience projet et déploiement réel." %}</div>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+      <div class="ft-card h-100">
+        <div class="fw-bold mb-1">{% trans "Approche pédagogique" %}</div>
+        <div class="small text-muted">{% trans "Objectifs clairs, exercices, correction, progression." %}</div>
+      </div>
+    </div>
+
+    <div class="col-md-12 col-lg-4">
+      <div class="ft-card h-100 ft-card-soft">
+        <div class="fw-bold mb-1">{% trans "Devenir formateur" %}</div>
+        <div class="small text-muted mb-3">{% trans "Proposer un cours ou animer une cohorte ?" %}</div>
+        <a class="btn btn-sm btn-outline-primary w-100" href="{{ u_contact|default:'#' }}">{% trans "Candidater" %}</a>
+      </div>
+    </div>
+  </div>
+</section>

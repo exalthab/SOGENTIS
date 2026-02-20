@@ -1,0 +1,51 @@
+{# templates/dashboard/payments/index.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n dashboard_tags %}
+
+{% block title %}{% trans "Paiements" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block dashboard_header %}
+  {% safe_url "dashboard:payments:intents" as u_intents %}
+
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div>
+      <h1 class="fw-bold mb-1">💳 {% trans "Paiements" %}</h1>
+      <p class="text-muted mb-0">{% trans "Payment intents centralisés (tous modules)." %}</p>
+    </div>
+
+    <div class="d-flex flex-wrap gap-2">
+      {% if u_intents %}
+        <a class="btn btn-sm btn-primary" href="{{ u_intents }}">🧷 {% trans "Payment intents" %}</a>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
+
+{% block dashboard_content %}
+  {% safe_url "dashboard:payments:intents" as u_intents %}
+
+  <div class="row g-3">
+
+    <div class="col-12 col-md-6 col-xl-4">
+      {% if u_intents %}
+        <a class="card h-100 border-0 shadow-sm rounded-4 text-decoration-none" href="{{ u_intents }}">
+          <div class="card-body p-3 p-lg-4">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <div class="fw-semibold">🧷 {% trans "Payment intents" %}</div>
+              <span class="badge text-bg-light border">{% trans "Central" %}</span>
+            </div>
+            <div class="text-muted small">{% trans "Statuts, provider, pôle, purpose, montants, refs." %}</div>
+          </div>
+        </a>
+      {% else %}
+        <div class="card h-100 border shadow-sm rounded-4 opacity-75">
+          <div class="card-body p-3 p-lg-4">
+            <div class="fw-semibold">🧷 {% trans "Payment intents" %}</div>
+            <div class="text-muted small">{% trans "Route indisponible (URL non résolue)." %}</div>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+{% endblock %}

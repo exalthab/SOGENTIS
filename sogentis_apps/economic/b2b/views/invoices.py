@@ -1,4 +1,6 @@
 # economic/b2b/views/invoices.py
+from __future__ import annotations
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
@@ -6,6 +8,54 @@ from django.shortcuts import get_object_or_404, redirect, render
 from economic.b2b.models import BulkOrder, Invoice
 from economic.b2b.services import company_user_required, create_invoice_for_bulk_order
 
+
+@login_required
+@company_user_required(role="viewer")
+def invoice_list_view(request, company_id: int):
+    """
+    Liste des factures d'une entreprise.
+    Route: companies/<company_id>/invoices/
+    """
+    company = request.company
+
+    invoices = (
+        Invoice.objects.filter(bulk_order__company=company)
+        .select_related("bulk_order", "bulk_order__company")
+        .order_by("-created_at", "-id")
+    )
+
+    return render(
+        request,
+        "economic/b2b/invoices/invoice_list.html",
+        {"company": company, "invoices": invoices},
+    )
+
+
+@login_required
+@company_user_required(role="staff")
+def invoice_create_for_order_view(request, company_id: int, order_id: int):
+    company = request.company
+    order = get_object_or_404(BulkOrder, pk=order_id, company=company)
+
+    inv = create_invoice_for_bulk_order(order, issue=True)
+    order.status = BulkOrder.Status.INVOICED
+    order.save(update_fields=["status", "updated_at"])
+
+    messages.success(request, "Facture créée.")
+    return redirect("economic:b2b:invoice_detail", company_id=company.id, invoice_id=inv.id)
+
+
+@login_required
+@company_user_required(role="viewer")
+def invoice_detail_view(request, company_id: int, invoice_id: int):
+    company = request.company
+    invoice = get_object_or_404(Invoice, pk=invoice_id, bulk_order__company=company)
+    items = invoice.bulk_order.items.select_related("product").order_by("id")
+    return render(
+        request,
+        "economic/b2b/invoices/invoice_detail.html",
+        {"company": company, "invoice": invoice, "items": items},
+    )
 
 @login_required
 @company_user_required(role="staff")

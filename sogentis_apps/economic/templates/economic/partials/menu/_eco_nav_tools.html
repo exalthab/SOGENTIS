@@ -1,0 +1,170 @@
+{# templates/economic/partials/menu/_eco_nav_tools.html #}
+{% load i18n %}
+
+<ul class="navbar-nav eco-nav-tools flex-row flex-nowrap ms-lg-auto align-items-lg-center">
+
+  {% include "economic/partials/menu/_eco_switcher.html" %}
+
+  <li class="nav-item">
+    <a class="nav-link eco-nav-link small position-relative {% if not favorites_url %}disabled{% endif %}"
+       href="{{ favorites_url|default:'#' }}"
+       {% if not favorites_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      ❤️ {% trans "Favoris" %}
+      {% if favorites_count|default:0|add:0 > 0 %}
+        <span class="eco-dot-badge" aria-label="{% trans 'Nombre de favoris' %}">
+          {{ favorites_count }}
+        </span>
+      {% endif %}
+    </a>
+  </li>
+
+  {% include "economic/partials/menu/_eco_account_menu.html" %}
+
+  <li class="nav-item">
+    <a class="nav-link eco-nav-link small position-relative {% if not cart_url %}disabled{% endif %}"
+       href="{{ cart_url|default:'#' }}"
+       {% if not cart_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      🛒 {% trans "Panier" %}
+      {% if cart_items_count|default:0|add:0 > 0 %}
+        <span class="eco-dot-badge" aria-label="{% trans 'Nombre d’articles dans le panier' %}">
+          {{ cart_items_count }}
+        </span>
+      {% endif %}
+    </a>
+  </li>
+
+</ul>
+
+
+
+
+
+
+{% comment %} {# templates/economic/partials/menu/_eco_nav_tools.html #}
+{% load i18n %}
+
+<ul class="navbar-nav eco-nav-tools flex-row flex-nowrap ms-lg-auto align-items-lg-center">
+
+  {% include "economic/partials/menu/_eco_switcher.html" %}
+
+  <li class="nav-item">
+    <a class="nav-link eco-nav-link small position-relative {% if not ecommerce_search_url %}disabled{% endif %}"
+       href="{{ ecommerce_search_url|default:'#' }}"
+       {% if not ecommerce_search_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      🔎 {% trans "Recherche" %}
+    </a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link eco-nav-link small position-relative {% if not favorites_url %}disabled{% endif %}"
+       href="{{ favorites_url|default:'#' }}"
+       {% if not favorites_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      ❤️ {% trans "Favoris" %}
+      {% if favorites_count|default:0|add:0 > 0 %}
+        <span class="eco-dot-badge" aria-label="{% trans 'Nombre de favoris' %}">
+          {{ favorites_count }}
+        </span>
+      {% endif %}
+    </a>
+  </li>
+
+  {% include "economic/partials/menu/_eco_account_menu.html" %}
+
+  <li class="nav-item">
+    <a class="nav-link eco-nav-link small position-relative {% if not cart_url %}disabled{% endif %}"
+       href="{{ cart_url|default:'#' }}"
+       {% if not cart_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      🛒 {% trans "Panier" %}
+      {% if cart_items_count|default:0|add:0 > 0 %}
+        <span class="eco-dot-badge" aria-label="{% trans 'Nombre d’articles dans le panier' %}">
+          {{ cart_items_count }}
+        </span>
+      {% endif %}
+    </a>
+  </li>
+
+</ul> {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/economic/partials/menu/_eco_nav_tools.html #}
+{% load i18n %}
+
+<ul class="navbar-nav eco-nav-tools flex-row flex-nowrap ms-lg-auto align-items-lg-center">
+
+  {% include "economic/partials/menu/_eco_switcher.html" %}
+
+  <li class="nav-item">
+    <a class="nav-link eco-nav-link small position-relative {% if not favorites_url %}disabled{% endif %}"
+       href="{{ favorites_url|default:'#' }}"
+       {% if not favorites_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      ❤️ {% trans "Favoris" %}
+      {% if favorites_count|default:0|add:0 > 0 %}
+        <span class="eco-dot-badge" aria-label="{% trans 'Nombre de favoris' %}">
+          {{ favorites_count }}
+        </span>
+      {% endif %}
+    </a>
+  </li>
+
+  {% include "economic/partials/menu/_eco_account_menu.html" %}
+
+  <li class="nav-item">
+    <a class="nav-link eco-nav-link small position-relative {% if not cart_url %}disabled{% endif %}"
+       href="{{ cart_url|default:'#' }}"
+       {% if not cart_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      🛒 {% trans "Panier" %}
+      {% if cart_items_count|default:0|add:0 > 0 %}
+        <span class="eco-dot-badge" aria-label="{% trans 'Nombre d’articles dans le panier' %}">
+          {{ cart_items_count }}
+        </span>
+      {% endif %}
+    </a>
+  </li>
+
+</ul> {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/partials/menu/_eco_nav_tools.html #}
+{% load i18n %}
+
+<ul class="navbar-nav eco-nav-tools flex-row flex-nowrap ms-lg-auto align-items-lg-center">
+
+
+  {% include "economic/partials/menu/_eco_switcher.html" %}
+
+  <li class="nav-item">
+    <a class="nav-link eco-nav-link small position-relative {% if not favorites_url %}disabled{% endif %}"
+       href="{{ favorites_url|default:'#' }}"
+       {% if not favorites_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      ❤️ {% trans "Favoris" %}
+      {% if favorites_count|default:0|add:0 > 0 %}
+        <span class="eco-dot-badge" aria-label="{% trans 'Nombre de favoris' %}">
+          {{ favorites_count }}
+        </span>
+      {% endif %}
+    </a>
+  </li>
+
+  {% include "economic/partials/menu/_eco_account_menu.html" %}
+
+  <li class="nav-item">
+    <a class="nav-link eco-nav-link small position-relative {% if not cart_url %}disabled{% endif %}"
+       href="{{ cart_url|default:'#' }}"
+       {% if not cart_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      🛒 {% trans "Panier" %}
+      {% if cart_items_count|default:0|add:0 > 0 %}
+        <span class="eco-dot-badge" aria-label="{% trans 'Nombre d’articles dans le panier' %}">
+          {{ cart_items_count }}
+        </span>
+      {% endif %}
+    </a>
+  </li>
+
+</ul> {% endcomment %}

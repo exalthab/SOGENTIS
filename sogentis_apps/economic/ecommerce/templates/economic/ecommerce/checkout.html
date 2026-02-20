@@ -1,5 +1,339 @@
 {# templates/economic/ecommerce/checkout.html #}
 {% extends "economic/ecommerce/base_ecommerce.html" %}
+{% load i18n ecom_money %}
+
+{% block ecommerce_title %}{% trans "Commande" %} | {{ PROJECT_NAME }}{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+  <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-4">
+    <div>
+      <h1 class="mb-1">📦 {% trans "Finaliser la commande" %}</h1>
+      <div class="text-muted">
+        {% trans "Après validation, une proforma sera disponible avant paiement. La facture sera disponible après paiement." %}
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-12 col-lg-7">
+      <div class="card">
+        <div class="card-body">
+          <form method="post" novalidate>
+            {% csrf_token %}
+
+            <div class="row g-3">
+              <div class="col-12">
+                <label class="form-label">{% trans "Nom / Prénom" %}</label>
+                <input class="form-control" name="billing_name" value="{{ initial.billing_name|default:'' }}" required>
+              </div>
+
+              <div class="col-12 col-md-6">
+                <label class="form-label">{% trans "Email" %}</label>
+                <input class="form-control" type="email" name="email" value="{{ initial.email|default:'' }}" required>
+              </div>
+
+              <div class="col-12 col-md-6">
+                <label class="form-label">{% trans "Téléphone" %}</label>
+                <input class="form-control" name="billing_phone" value="{{ initial.billing_phone|default:'' }}">
+              </div>
+
+              <div class="col-12">
+                <label class="form-label">{% trans "Adresse" %}</label>
+                <textarea class="form-control" name="billing_address" rows="2" required>{{ initial.billing_address|default:'' }}</textarea>
+              </div>
+
+              <div class="col-12 col-md-4">
+                <label class="form-label">{% trans "Code postal" %}</label>
+                <input class="form-control" name="billing_zip" value="{{ initial.billing_zip|default:'' }}">
+              </div>
+
+              <div class="col-12 col-md-4">
+                <label class="form-label">{% trans "Ville" %}</label>
+                <input class="form-control" name="billing_city" value="{{ initial.billing_city|default:'' }}" required>
+              </div>
+
+              <div class="col-12 col-md-4">
+                <label class="form-label">{% trans "Pays" %}</label>
+                <input class="form-control" name="billing_country" value="{{ initial.billing_country|default:'' }}" required>
+              </div>
+
+              <div class="col-12">
+                <label class="form-label">{% trans "Note (optionnel)" %}</label>
+                <textarea class="form-control" name="customer_note" rows="2">{{ initial.customer_note|default:'' }}</textarea>
+              </div>
+            </div>
+
+            <div class="d-grid mt-3">
+              <button class="btn btn-primary" type="submit">
+                {% trans "Créer la commande & générer la proforma" %}
+              </button>
+              <small class="text-muted mt-2">
+                {% trans "Vous pourrez ensuite payer via votre prestataire (Wave, Orange Money, Stripe, PayPal...)." %}
+              </small>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-5">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="h6">{% trans "Récapitulatif" %}</h2>
+
+          <ul class="list-unstyled mb-3">
+            {% for item in cart_items %}
+              <li class="d-flex justify-content-between">
+                <span>{{ item.product.name }} × {{ item.quantity }}</span>
+                <span>{% money item.line_total %}</span>
+              </li>
+            {% endfor %}
+          </ul>
+
+          <div class="d-flex justify-content-between fw-bold">
+            <span>{% trans "Total" %}</span>
+            <span>{% money cart_total %}</span>
+          </div>
+
+          <hr class="my-3">
+
+          <div class="small text-muted">
+            <div class="mb-1">✅ {% trans "Proforma : disponible après création de la commande (avant paiement)." %}</div>
+            <div>✅ {% trans "Facture : disponible uniquement après paiement confirmé." %}</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+
+
+
+{% comment %} {# templates/economic/ecommerce/checkout.html #}
+{% extends "economic/ecommerce/base_ecommerce.html" %}
+{% load i18n ecom_money %}
+
+{% block ecommerce_title %}{% trans "Commande" %} | {{ PROJECT_NAME }}{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+  <h1 class="mb-4">📦 {% trans "Finaliser la commande" %}</h1>
+
+  <div class="row g-4">
+    <div class="col-12 col-lg-7">
+      <div class="card">
+        <div class="card-body">
+          <form method="post">
+            {% csrf_token %}
+
+            <div class="row g-3">
+              <div class="col-12">
+                <label class="form-label">{% trans "Nom / Prénom" %}</label>
+                <input class="form-control" name="billing_name" value="{{ initial.billing_name|default:'' }}" required>
+              </div>
+
+              <div class="col-12 col-md-6">
+                <label class="form-label">{% trans "Email" %}</label>
+                <input class="form-control" type="email" name="email" value="{{ initial.email|default:'' }}" required>
+              </div>
+
+              <div class="col-12 col-md-6">
+                <label class="form-label">{% trans "Téléphone" %}</label>
+                <input class="form-control" name="billing_phone" value="{{ initial.billing_phone|default:'' }}">
+              </div>
+
+              <div class="col-12">
+                <label class="form-label">{% trans "Adresse" %}</label>
+                <textarea class="form-control" name="billing_address" rows="2" required>{{ initial.billing_address|default:'' }}</textarea>
+              </div>
+
+              <div class="col-12 col-md-4">
+                <label class="form-label">{% trans "Code postal" %}</label>
+                <input class="form-control" name="billing_zip" value="{{ initial.billing_zip|default:'' }}">
+              </div>
+
+              <div class="col-12 col-md-4">
+                <label class="form-label">{% trans "Ville" %}</label>
+                <input class="form-control" name="billing_city" value="{{ initial.billing_city|default:'' }}" required>
+              </div>
+
+              <div class="col-12 col-md-4">
+                <label class="form-label">{% trans "Pays" %}</label>
+                <input class="form-control" name="billing_country" value="{{ initial.billing_country|default:'' }}" required>
+              </div>
+
+              <div class="col-12">
+                <label class="form-label">{% trans "Note (optionnel)" %}</label>
+                <textarea class="form-control" name="customer_note" rows="2">{{ initial.customer_note|default:'' }}</textarea>
+              </div>
+            </div>
+
+            <div class="d-grid mt-3">
+              <button class="btn btn-primary" type="submit">
+                {% trans "Continuer vers le paiement" %}
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-5">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="h6">{% trans "Récapitulatif" %}</h2>
+
+          <ul class="list-unstyled mb-3">
+            {% for item in cart_items %}
+              <li class="d-flex justify-content-between">
+                <span>{{ item.product.name }} × {{ item.quantity }}</span>
+                <span>{% money item.line_total %}</span>
+              </li>
+            {% endfor %}
+          </ul>
+
+          <div class="d-flex justify-content-between fw-bold">
+            <span>{% trans "Total" %}</span>
+            <span>{% money cart_total %}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/ecommerce/checkout.html #}
+{% extends "economic/ecommerce/base_ecommerce.html" %}
+{% load i18n ecom_money %}
+
+{% block ecommerce_title %}
+  {% trans "Commande" %} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+  <h1 class="mb-4">📦 {% trans "Finaliser la commande" %}</h1>
+
+  <div class="row g-4">
+    {# ========================= #}
+    {#   FORM (sans Django Form) #}
+    {#   ========================= #}
+    <div class="col-12 col-lg-7">
+      <div class="card">
+        <div class="card-body">
+          <form method="post" novalidate>
+            {% csrf_token %}
+
+            <div class="mb-3">
+              <label class="form-label" for="id_billing_name">
+                {% trans "Nom / Prénom" %}
+              </label>
+              <input
+                id="id_billing_name"
+                name="billing_name"
+                class="form-control"
+                type="text"
+                autocomplete="name"
+                required
+                value="{{ initial.billing_name|default:'' }}"
+              >
+              <div class="form-text">
+                {% trans "Ce nom sera utilisé pour la proforma / facture." %}
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label" for="id_email">
+                {% trans "Email" %}
+              </label>
+              <input
+                id="id_email"
+                name="email"
+                class="form-control"
+                type="email"
+                autocomplete="email"
+                required
+                value="{{ initial.email|default:'' }}"
+              >
+              <div class="form-text">
+                {% trans "Nous utilisons cet email pour le suivi de commande." %}
+              </div>
+            </div>
+
+            {# IMPORTANT: #}
+            {#   Ton modèle Order n'a PAS billing_address / zip / city / country. #}
+            {#   Donc on ne les collecte pas ici pour éviter les erreurs et incohérences. #}
+
+            <div class="d-grid mt-3">
+              <button class="btn btn-primary" type="submit">
+                {% trans "Créer la commande" %}
+              </button>
+            </div>
+
+            <p class="text-muted small mt-3 mb-0">
+              {% trans "Après création, vous choisirez votre moyen de paiement." %}
+            </p>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    {# =========================#}
+  {#     SUMMARY #}
+  {#     ========================= #}
+    <div class="col-12 col-lg-5">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="h6 mb-3">{% trans "Récapitulatif" %}</h2>
+
+          <ul class="list-unstyled mb-3">
+            {% for item in cart_items %}
+              <li class="d-flex justify-content-between gap-2 mb-2">
+                <span class="text-truncate">
+                  {{ item.product.name|default:item.product }} × {{ item.quantity }}
+                </span>
+                <span class="fw-semibold">{% money item.line_total %}</span>
+              </li>
+            {% endfor %}
+          </ul>
+
+          <div class="d-flex justify-content-between fw-bold border-top pt-3">
+            <span>{% trans "Total" %}</span>
+            <span>{% money cart_total %}</span>
+          </div>
+
+          <div class="alert alert-light mt-3 mb-0">
+            <div class="small text-muted">
+              {% trans "La proforma est disponible avant paiement. La facture est disponible après paiement." %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+ {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/ecommerce/checkout.html #}
+{% extends "economic/ecommerce/base_ecommerce.html" %}
 {% load i18n ecom_money widget_tweaks %}
 
 {% block ecommerce_title %}
@@ -63,7 +397,7 @@
     </div>
   </div>
 </section>
-{% endblock %}
+{% endblock %} {% endcomment %}
 
 
 

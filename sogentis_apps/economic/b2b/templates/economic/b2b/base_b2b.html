@@ -1,5 +1,82 @@
 {# templates/economic/b2b/base_b2b.html #}
 {% extends "economic/base_economic.html" %}
+{% load i18n static %}
+
+{# SEO title hook (economic/base_economic.html -> seo_title) #}
+{% block economic_title %}
+  {% block b2b_title %}{% trans "Espace B2B" %}{% endblock b2b_title %}
+{% endblock economic_title %}
+
+{# Optional SEO desc #}
+{% block economic_description %}
+  {% block b2b_description %}{% trans "Espace entreprises : commandes en gros, factures, RFQ et offres." %}{% endblock b2b_description %}
+{% endblock economic_description %}
+
+{# CSS B2B (si tu as un fichier) #}
+{% block economic_extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'economic/b2b/css/b2b.css' %}">
+{% endblock economic_extra_css %}
+
+{# ✅ Sous-menu B2B uniquement (le menu HUB est déjà dans base_economic via section_menu) #}
+{% block economic_subnav %}
+  {% include "economic/b2b/partials/_b2b_navbar.html" %}
+{% endblock economic_subnav %}
+
+{# ✅ Evite double container: on utilise les hooks du base_economic #}
+{% block economic_page_class %}b2b-page{% endblock %}
+{% block economic_container_class %}container{% endblock %}
+{% block economic_spacing_class %}py-3 py-lg-4{% endblock %}
+
+{% block economic_content %}
+  {% block b2b_content %}{% endblock b2b_content %}
+{% endblock economic_content %}
+
+{% block economic_extra_js %}
+  {{ block.super }}
+  <script src="{% static 'economic/b2b/js/b2b.js' %}" defer></script>
+{% endblock economic_extra_js %}
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/b2b/base_b2b.html #}
+{% extends "economic/base_economic.html" %}
+{% load i18n %}
+
+{# ✅ Titre SEO/onglet : respecte la convention economic_title #}
+{% block economic_title %}
+  {% block b2b_title %}{% trans "Espace B2B" %}{% endblock %} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{# ✅ Menu haut économique (hub) #}
+{% block section_menu %}
+  {% include "economic/partials/_economic_menu.html" %}
+{% endblock %}
+
+{# ✅ Sous-menu B2B #}
+{% block economic_subnav %}
+  {% include "economic/b2b/partials/_b2b_navbar.html" %}
+{% endblock %}
+
+{# ✅ Contenu pages B2B #}
+{% block economic_content %}
+  <div class="container py-4" id="ecoMain">
+    {% block b2b_content %}{% endblock %}
+  </div>
+{% endblock %}
+ {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/b2b/base_b2b.html #}
+{% extends "economic/base_economic.html" %}
 {% load i18n %}
 
 {# Titre SEO #}
@@ -23,7 +100,7 @@
   </div>
 
 {% endblock %}
-
+ {% endcomment %}
 
 
 

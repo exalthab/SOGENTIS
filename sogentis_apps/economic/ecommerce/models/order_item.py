@@ -143,6 +143,10 @@ class OrderItem(models.Model):
         except Exception:
             return D0
 
+    @property
+    def line_total(self) -> Decimal:
+        # Compat template: order_detail.html utilise item.line_total
+        return self.total_price
 
 
 # # /economic/ecommerce/models/order_item.py

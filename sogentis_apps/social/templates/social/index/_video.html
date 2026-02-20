@@ -1,0 +1,12 @@
+{% load static i18n %}
+<section id="video" class="video-section mb-5 fade-in-up">
+  <h2 class="text-center mb-3">{% trans "Notre vision en images" %}</h2>
+  <p class="text-center mb-4">{% trans "Découvrez ce qui nous anime : solidarité, dignité humaine et transformation sociale." %}</p>
+
+  <div class="ratio ratio-16x9 mx-auto video-shell">
+    <video controls preload="metadata" controlslist="nodownload">
+      <source src="{% static 'social/videos/sogentis_video_intro.mp4' %}" type="video/mp4">
+      {% trans "Votre navigateur ne supporte pas la lecture de vidéos HTML5." %}
+    </video>
+  </div>
+</section>

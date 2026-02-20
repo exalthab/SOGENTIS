@@ -1,5 +1,3819 @@
 {# templates/economic/ecommerce/articles/product_detail.html #}
 {% extends "economic/ecommerce/base_ecommerce.html" %}
+{% load static i18n ecom_money ecom_utils parler_tags %}
+
+{% block ecommerce_title %}
+  {{ product.name }} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block ecommerce_extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'economic/ecommerce/css/product_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+
+{% url 'economic:ecommerce:index' as shop_url %}
+{% url 'economic:ecommerce:add_to_cart' product.id as add_to_cart_url %}
+{% url 'economic:ecommerce:request_quote' product.id as request_quote_url %}
+{% url 'economic:ecommerce:favorite_toggle' product.id as fav_toggle_url %}
+{% url 'economic:ecommerce:like_toggle' product.id as like_toggle_url %}
+
+{% url 'economic:ecommerce:checkout' as checkout_url %}
+
+{% if product.category %}
+  {% url 'economic:ecommerce:category' product.category.slug as category_url %}
+{% endif %}
+
+<section class="container py-4 pd-shell">
+
+  <div class="mb-3 d-flex flex-wrap align-items-center gap-2 small">
+    <a class="text-decoration-none" href="{{ shop_url }}">← {% trans "Retour à la boutique" %}</a>
+    <span class="pd-muted">|</span>
+    <div class="d-flex flex-wrap align-items-center gap-2 pd-muted">
+      <a class="text-decoration-none" href="{{ shop_url }}">{% trans "Boutique" %}</a>
+      {% if product.category %}
+        <span>›</span><a class="text-decoration-none" href="{{ category_url }}">{{ product.category }}</a>
+      {% endif %}
+      <span>›</span><span class="text-body">{{ product.name }}</span>
+    </div>
+  </div>
+
+  <div class="row g-4 align-items-start">
+
+    {# ========================= #}
+    {#    GALERIE                #}
+    {# ========================= #}
+    <div class="col-12 col-lg-7">
+      <div class="pd-card p-3">
+        <div class="pd-gallery">
+
+          <div class="pd-thumbs" aria-label="{% trans 'Galerie' %}">
+            {% if product_images %}
+              {% for img in product_images %}
+                <button type="button"
+                        class="pd-thumb-btn {% if main_image and img.id == main_image.id %}is-active{% endif %}"
+                        data-src="{{ img.image.url }}"
+                        aria-label="{% trans 'Aperçu image' %}">
+                  <img src="{{ img.image.url }}" alt="{{ img.alt_text|default:product.name }}" loading="lazy">
+                </button>
+              {% endfor %}
+            {% else %}
+              <button type="button" class="pd-thumb-btn is-active" data-src="{% static 'global/image/product-placeholder.png' %}">
+                <img src="{% static 'global/image/product-placeholder.png' %}" alt="{% trans 'Produit' %}">
+              </button>
+            {% endif %}
+          </div>
+
+          <div class="pd-main">
+            {% if main_image %}
+              <img id="pdMainImage"
+                   src="{{ main_image.image.url }}"
+                   alt="{{ main_image.alt_text|default:product.name }}"
+                   loading="eager">
+            {% else %}
+              <img id="pdMainImage"
+                   src="{% static 'global/image/product-placeholder.png' %}"
+                   alt="{% trans 'Produit' %}"
+                   loading="eager">
+            {% endif %}
+
+            <a class="pd-zoom text-decoration-none"
+               href="{% if main_image %}{{ main_image.image.url }}{% else %}{% static 'global/image/product-placeholder.png' %}{% endif %}"
+               target="_blank" rel="noopener"
+               aria-label="{% trans 'Ouvrir en grand' %}">
+              <i class="bi bi-zoom-in"></i>
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    {# ========================= #}
+    {#    BUY BOX                #}
+    {# ========================= #}
+    <div class="col-12 col-lg-5">
+      <div class="pd-card p-3 pd-buybox"
+           data-stock="{{ product.stock|default:0 }}"
+           data-product-id="{{ product.id }}"
+           data-product-name="{{ product.name|default:''|escape }}"
+           data-product-url="{% if request %}{{ request.build_absolute_uri }}{% endif %}"
+           data-checkout-url="{{ checkout_url }}">
+
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+          <div class="small pd-muted">
+            {% if product.vendor %}
+              {% trans "Vendu par" %} <strong class="text-body">{{ product.vendor }}</strong>
+            {% else %}
+              <strong class="text-body">{{ PROJECT_NAME }}</strong>
+            {% endif %}
+          </div>
+
+          {% if product.is_featured %}
+            <span class="pd-chip">🔥 {% trans "Promo" %}</span>
+          {% endif %}
+        </div>
+
+        <h1 class="h5 pd-title mb-2">{{ product.name }}</h1>
+
+        <div class="d-flex flex-wrap align-items-center gap-2 small mb-3">
+          <span class="text-warning">★★★★★</span>
+          <span class="fw-bold">
+            {% if product.average_rating %}{{ product.average_rating|floatformat:1 }}{% else %}0.0{% endif %}
+          </span>
+          <span class="pd-muted">·</span>
+          <span class="pd-muted">
+            {% if product.reviews_count %}{{ product.reviews_count }}{% else %}0{% endif %} {% trans "avis" %}
+          </span>
+          {% if product.sold_count %}
+            <span class="pd-muted">·</span>
+            <span class="pd-muted">{{ product.sold_count }}+ {% trans "vendus" %}</span>
+          {% endif %}
+        </div>
+
+        {# ===== PRIX ===== #}
+        <div class="pd-deal mb-3">
+          <div class="pd-deal-head">
+            <span>🎁 {% trans "Offre du jour" %}</span>
+            {% if product.track_stock and product.stock %}
+              <span class="small opacity-75">{% trans "Stock limité" %}</span>
+            {% else %}
+              <span class="small opacity-75">{% trans "Paiement sécurisé" %}</span>
+            {% endif %}
+          </div>
+
+          <div class="p-3">
+            <div class="d-flex flex-wrap align-items-end justify-content-between gap-2">
+              <div class="pd-price">{% money product.price %}</div>
+
+              <div class="text-end">
+                {% if product.has_promo and product.discount_percent %}
+                  <div class="pd-savings">-{% trans "Économisez" %} {{ product.discount_percent }}%</div>
+                {% endif %}
+                {% if product.has_promo and product.old_price %}
+                  <div class="pd-old small">{% money product.old_price %}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="small pd-muted mt-2">
+              {% trans "Prix indicatif (hors taxes) — paiement sécurisé." %}
+            </div>
+          </div>
+        </div>
+
+        {# ===== STOCK ===== #}
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <span class="pd-muted">{% trans "Disponibilité" %}</span>
+          {% if product.stock > 0 %}
+            <span class="badge bg-success">{% blocktrans %}En stock ({{ product.stock }}){% endblocktrans %}</span>
+          {% else %}
+            <span class="badge bg-danger">{% trans "Rupture de stock" %}</span>
+          {% endif %}
+        </div>
+
+        {# ===== SERVICE COMMITMENT ===== #}
+        <div class="pd-commit mb-3" aria-label="{% trans 'Engagement de service' %}">
+          <div class="pd-commit-head">
+            <div class="pd-commit-title">{% trans "Service commitment" %}</div>
+
+            <div class="pd-commit-shipto">
+              <span class="pd-muted">{% trans "Ship to" %}</span>
+              <span class="pd-shipto-pill">
+                <i class="bi bi-geo-alt"></i>
+                {{ request.session.ECOMMERCE_COUNTRY|default:"SN" }}
+              </span>
+            </div>
+          </div>
+
+          <div class="pd-commit-list">
+            <a class="pd-commit-item" href="#pdDeliveryModal" data-bs-toggle="modal" role="button">
+              <span class="pd-commit-ico"><i class="bi bi-truck"></i></span>
+              <span class="pd-commit-main">
+                <span class="pd-commit-strong">
+                  {% trans "Shipping" %}:
+                  {% if shipping_cost %}
+                    {% money shipping_cost %}
+                  {% else %}
+                    <span class="pd-muted">{% trans "Calculé à la caisse" %}</span>
+                  {% endif %}
+                </span>
+                <span class="pd-muted">{% trans "Delivery" %}: <span id="pdDeliverySummary">{% trans "Selon zone" %}</span></span>
+              </span>
+              <span class="pd-commit-arrow">›</span>
+            </a>
+
+            <a class="pd-commit-item" href="#pdReturnModal" data-bs-toggle="modal" role="button">
+              <span class="pd-commit-ico"><i class="bi bi-arrow-counterclockwise"></i></span>
+              <span class="pd-commit-main">
+                <span class="pd-commit-strong">{% trans "Return&refund policy" %}</span>
+                <span class="pd-muted">{% trans "Retour possible selon conditions" %}</span>
+              </span>
+              <span class="pd-commit-arrow">›</span>
+            </a>
+
+            <a class="pd-commit-item" href="#pdSecurityModal" data-bs-toggle="modal" role="button">
+              <span class="pd-commit-ico"><i class="bi bi-shield-lock"></i></span>
+              <span class="pd-commit-main">
+                <span class="pd-commit-strong">{% trans "Security & Privacy" %}</span>
+                <span class="pd-muted">{% trans "Paiements sûrs — données protégées" %}</span>
+              </span>
+              <span class="pd-commit-arrow">›</span>
+            </a>
+          </div>
+        </div>
+
+        {# ===== QUANTITÉ + FAVORIS ===== #}
+        <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-3">
+          <div>
+            <div class="fw-bold mb-1">{% trans "Quantité" %}</div>
+            <div class="pd-qty" data-max="{{ product.stock|default:0 }}">
+              <button type="button" id="pdQtyMinus" aria-label="{% trans 'Réduire' %}">−</button>
+              <input type="text" id="pdQtyInput" value="1" inputmode="numeric" autocomplete="off">
+              <button type="button" id="pdQtyPlus" aria-label="{% trans 'Augmenter' %}">+</button>
+            </div>
+            <div class="pd-muted small mt-1">
+              {% trans "Max." %} <span id="pdQtyMaxText">{% if product.stock %}{{ product.stock }}{% else %}0{% endif %}</span> {% trans "pcs/shopper" %}
+            </div>
+
+            {% if product.stock > 0 and product.stock <= 5 %}
+              <div class="small text-danger mt-1">
+                {% blocktrans %}Seulement {{ product.stock }} restants{% endblocktrans %}
+              </div>
+            {% endif %}
+          </div>
+
+          <form method="post" action="{{ fav_toggle_url }}" class="m-0" id="pdFavForm">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <button type="submit" class="btn btn-light" id="pdFavBtn">
+              <i class="bi {% if is_favorited %}bi-heart-fill text-danger{% else %}bi-heart{% endif %} me-2"></i>
+              <span class="pdFavText">
+                {% if is_favorited %}{% trans "Retirer des favoris" %}{% else %}{% trans "Ajouter aux favoris" %}{% endif %}
+              </span>
+            </button>
+          </form>
+        </div>
+
+        {# ===== ACTIONS (qty sync) ===== #}
+        <div class="pd-buy-actions d-grid gap-2">
+
+          {% if commerce_mode == "B2B" and request_quote_url %}
+            <a href="{{ request_quote_url }}" class="btn btn-danger w-100">
+              <i class="bi bi-file-earmark-text me-2"></i>{% trans "Demander un devis" %}
+            </a>
+          {% else %}
+
+            {# ✅ ACHETER MAINTENANT -> checkout direct avec qty (mise à jour par JS) #}
+            <a href="{{ checkout_url }}?buy_now=1&product_id={{ product.id }}&qty=1"
+               class="btn btn-danger w-100 {% if product.stock <= 0 %}disabled{% endif %}"
+               id="pdBuyNowBtn"
+               {% if product.stock <= 0 %}aria-disabled="true"{% endif %}>
+              <i class="bi bi-lightning-charge me-2"></i>{% trans "Acheter maintenant" %}
+            </a>
+
+            {# ✅ AJOUTER AU PANIER -> POST add_to_cart #}
+            <form method="post" action="{{ add_to_cart_url }}" class="m-0" id="pdAddToCartForm">
+              {% csrf_token %}
+              <input type="hidden" name="quantity" id="pdQtyHidden" value="1">
+              <input type="hidden" name="next" value="{{ request.get_full_path }}">
+              <button type="submit"
+                      class="btn btn-outline-dark w-100"
+                      id="pdAddToCartBtn"
+                      {% if product.stock <= 0 %}disabled{% endif %}>
+                <i class="bi bi-cart-plus me-2"></i>{% trans "Ajouter au panier" %}
+              </button>
+            </form>
+
+          {% endif %}
+        </div>
+
+        <div class="d-flex gap-2 mt-3">
+          <div class="dropup w-100">
+            <button type="button" class="btn btn-light w-100 dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-share me-2"></i>{% trans "Partager" %}
+            </button>
+            <ul class="dropdown-menu w-100">
+              <li><a class="dropdown-item" id="pdShareWhatsApp" href="#" target="_blank" rel="noopener">📲 WhatsApp</a></li>
+              <li><a class="dropdown-item" id="pdShareFacebook" href="#" target="_blank" rel="noopener">📘 Facebook</a></li>
+              <li><a class="dropdown-item" id="pdShareX" href="#" target="_blank" rel="noopener">𝕏 X</a></li>
+              <li><a class="dropdown-item" id="pdShareTelegram" href="#" target="_blank" rel="noopener">✈️ Telegram</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><button type="button" class="dropdown-item" id="pdCopyLink">🔗 {% trans "Copier le lien" %}</button></li>
+            </ul>
+          </div>
+
+          <form method="post" action="{{ like_toggle_url }}" class="m-0 w-100" id="pdLikeForm">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <button type="submit" class="btn btn-light w-100" id="pdLikeBtn">
+              <i class="bi {% if is_liked %}bi-hand-thumbs-up-fill{% else %}bi-hand-thumbs-up{% endif %} me-2"></i>
+              <span class="pdLikeText">{% trans "J'aime" %}</span>
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  {# ========================= #}
+  {# TABS + RELATED            #}
+  {# ========================= #}
+  <div class="row g-4 mt-2">
+    <div class="col-12 col-lg-8">
+      <div class="pd-card p-3">
+        <ul class="nav nav-pills pd-tabs gap-2 mb-3" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#pdDesc" type="button" role="tab">{% trans "Description" %}</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pdSpecs" type="button" role="tab">{% trans "Détails" %}</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pdShip" type="button" role="tab">{% trans "Livraison & retours" %}</button>
+          </li>
+        </ul>
+
+        <div class="tab-content">
+          <div class="tab-pane fade show active" id="pdDesc" role="tabpanel">
+            {% if product.short_description %}
+              <p class="pd-muted mb-3">{{ product.short_description }}</p>
+            {% endif %}
+
+            {% if product.description %}
+              <div class="product-description">{{ product.description|linebreaks }}</div>
+            {% else %}
+              <p class="pd-muted mb-0">{% trans "Aucune description détaillée pour ce produit." %}</p>
+            {% endif %}
+          </div>
+
+          <div class="tab-pane fade" id="pdSpecs" role="tabpanel">
+            <div class="row g-2 small">
+              <div class="col-6">
+                <div class="pd-chip w-100 justify-content-between"><span>{% trans "SKU" %}</span><strong class="text-body">{{ product.sku }}</strong></div>
+              </div>
+              <div class="col-6">
+                <div class="pd-chip w-100 justify-content-between"><span>{% trans "Catégorie" %}</span><strong class="text-body">{{ product.category }}</strong></div>
+              </div>
+              <div class="col-6">
+                <div class="pd-chip w-100 justify-content-between"><span>{% trans "Stock" %}</span><strong class="text-body">{{ product.stock }}</strong></div>
+              </div>
+              <div class="col-6">
+                <div class="pd-chip w-100 justify-content-between"><span>{% trans "Créé le" %}</span><strong class="text-body">{{ product.created_at|date:"d/m/Y" }}</strong></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="pdShip" role="tabpanel">
+            <div class="small">
+              <p class="mb-2"><strong>{% trans "Livraison" %}:</strong> <span class="pd-muted">{% trans "Les délais varient selon la zone. Livraison rapide disponible sur certains articles." %}</span></p>
+              <p class="mb-2"><strong>{% trans "Retours" %}:</strong> <span class="pd-muted">{% trans "Retour possible selon nos conditions. Contactez le support en cas de problème." %}</span></p>
+              <p class="mb-0"><strong>{% trans "Paiement" %}:</strong> <span class="pd-muted">{% trans "Paiement sécurisé, informations personnelles protégées." %}</span></p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+      <div class="pd-card p-3">
+        <h3 class="h6 fw-bold mb-3">{% trans "Pourquoi acheter ici ?" %}</h3>
+        <div class="d-grid gap-2 small">
+          <div class="d-flex gap-2">
+            <span class="text-success"><i class="bi bi-shield-check"></i></span>
+            <div><strong>{% trans "Protection acheteur" %}</strong><br><span class="pd-muted">{% trans "Remboursement si non livré / non conforme (selon conditions)." %}</span></div>
+          </div>
+          <div class="d-flex gap-2">
+            <span class="text-success"><i class="bi bi-truck"></i></span>
+            <div><strong>{% trans "Livraison optimisée" %}</strong><br><span class="pd-muted">{% trans "Options rapides et suivi dès expédition." %}</span></div>
+          </div>
+          <div class="d-flex gap-2">
+            <span class="text-success"><i class="bi bi-lock"></i></span>
+            <div><strong>{% trans "Paiement sécurisé" %}</strong><br><span class="pd-muted">{% trans "Vos données sont protégées." %}</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if related_products %}
+    <div class="mt-5">
+      <h2 class="h5 fw-bold mb-3">{% trans "Articles similaires" %}</h2>
+      <div class="row g-3 pd-related">
+        {% for rp in related_products %}
+
+          {# ✅ Parler: slug/nom dispo car queryset .translated(language) #}
+          {% url 'economic:ecommerce:product_detail' rp.slug as rp_url %}
+
+          <div class="col-6 col-md-4 col-lg-3">
+            <article class="card h-100">
+              {% with rp_img=rp.images.first %}
+                <a href="{{ rp_url }}" class="text-decoration-none">
+                  {% if rp_img %}
+                    <img src="{{ rp_img.image.url }}" class="w-100" style="height:180px;object-fit:cover;" alt="{{ rp_img.alt_text|default:rp.name }}" loading="lazy">
+                  {% else %}
+                    <img src="{% static 'global/image/product-placeholder.png' %}" class="w-100" style="height:180px;object-fit:cover;" alt="{% trans 'Produit' %}" loading="lazy">
+                  {% endif %}
+                </a>
+              {% endwith %}
+              <div class="card-body">
+                <h3 class="h6 mb-2" style="min-height: 40px;">
+                  <a href="{{ rp_url }}" class="text-decoration-none">{{ rp.name|truncatechars:52 }}</a>
+                </h3>
+                <div class="fw-bold">{% money rp.price %}</div>
+                <div class="small pd-muted">
+                  ★★★★★
+                  {% if rp.average_rating %}{{ rp.average_rating|floatformat:1 }}{% else %}0.0{% endif %}
+                  · {% if rp.reviews_count %}{{ rp.reviews_count }}{% else %}0{% endif %} {% trans "avis" %}
+                </div>
+                <a href="{{ rp_url }}" class="btn btn-sm btn-outline-primary w-100 mt-2">{% trans "Voir" %}</a>
+              </div>
+            </article>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+</section>
+
+{# ========================= #}
+{# MODALS                   #}
+{# ========================= #}
+<div class="modal fade" id="pdDeliveryModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{% trans "Livraison" %}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Fermer' %}"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-2 fw-bold">{% trans "Choisissez une zone au Sénégal" %}</div>
+
+        <select class="form-select" id="pdZoneSelect" aria-label="{% trans 'Zone de livraison' %}">
+          <option value="">{% trans "Sélectionner une zone" %}</option>
+          <option value="dakar">{% trans "Dakar" %}</option>
+          <option value="pikine">{% trans "Pikine / Guédiawaye" %}</option>
+          <option value="rufisque">{% trans "Rufisque" %}</option>
+          <option value="thies">{% trans "Thiès" %}</option>
+          <option value="mbour">{% trans "Mbour / Saly" %}</option>
+          <option value="saint_louis">{% trans "Saint-Louis" %}</option>
+          <option value="touba">{% trans "Touba" %}</option>
+          <option value="kaolack">{% trans "Kaolack" %}</option>
+          <option value="ziguinchor">{% trans "Ziguinchor" %}</option>
+        </select>
+
+        <div class="mt-3 pd-delivery-box">
+          <div class="d-flex justify-content-between">
+            <span class="pd-muted">{% trans "Distance estimée" %}</span>
+            <strong id="pdDist">—</strong>
+          </div>
+          <div class="d-flex justify-content-between">
+            <span class="pd-muted">{% trans "Temps estimé" %}</span>
+            <strong id="pdEta">—</strong>
+          </div>
+          <div class="d-flex justify-content-between">
+            <span class="pd-muted">{% trans "Fenêtre de livraison" %}</span>
+            <strong id="pdEtaWindow">—</strong>
+          </div>
+          <div class="small pd-muted mt-2">
+            {% trans "Estimation indicative (modèle Jumia). La distance réelle dépend du point de départ/arrivée." %}
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{% trans "Fermer" %}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="pdReturnModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{% trans "Retours & remboursements" %}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Fermer' %}"></button>
+      </div>
+      <div class="modal-body">
+        <ul class="mb-0">
+          <li>{% trans "Retour accepté sous 7 jours si produit non utilisé." %}</li>
+          <li>{% trans "Remboursement après vérification (selon conditions)." %}</li>
+          <li>{% trans "Contact support pour assistance." %}</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{% trans "Fermer" %}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="pdSecurityModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{% trans "Sécurité & confidentialité" %}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Fermer' %}"></button>
+      </div>
+      <div class="modal-body">
+        <ul class="mb-0">
+          <li>{% trans "Paiements sécurisés (chiffrement SSL)." %}</li>
+          <li>{% trans "Données personnelles protégées." %}</li>
+          <li>{% trans "Historique et commandes privés." %}</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{% trans "Fermer" %}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block ecommerce_extra_js %}
+  {{ block.super }}
+  <script src="{% static 'economic/ecommerce/js/product_detail.js' %}" defer></script>
+{% endblock %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/ecommerce/articles/product_detail.html #}
+{% extends "economic/ecommerce/base_ecommerce.html" %}
+{% load static i18n ecom_money ecom_utils parler_tags %}
+
+{% block ecommerce_title %}
+  {{ product.name }} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block ecommerce_extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'economic/ecommerce/css/product_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+
+{% url 'economic:ecommerce:index' as shop_url %}
+{% url 'economic:ecommerce:add_to_cart' product.id as add_to_cart_url %}
+{% url 'economic:ecommerce:request_quote' product.id as request_quote_url %}
+{% url 'economic:ecommerce:favorite_toggle' product.id as fav_toggle_url %}
+{% url 'economic:ecommerce:like_toggle' product.id as like_toggle_url %}
+
+{% if product.category %}
+  {% url 'economic:ecommerce:category' product.category.slug as category_url %}
+{% endif %}
+
+<section class="container py-4 pd-shell">
+
+  <div class="mb-3 d-flex flex-wrap align-items-center gap-2 small">
+    <a class="text-decoration-none" href="{{ shop_url }}">← {% trans "Retour à la boutique" %}</a>
+    <span class="pd-muted">|</span>
+    <div class="d-flex flex-wrap align-items-center gap-2 pd-muted">
+      <a class="text-decoration-none" href="{{ shop_url }}">{% trans "Boutique" %}</a>
+      {% if product.category %}
+        <span>›</span><a class="text-decoration-none" href="{{ category_url }}">{{ product.category }}</a>
+      {% endif %}
+      <span>›</span><span class="text-body">{{ product.name }}</span>
+    </div>
+  </div>
+
+  <div class="row g-4 align-items-start">
+
+    {# ========================= #}
+    {#    GALERIE                #}
+    {# ========================= #}
+    <div class="col-12 col-lg-7">
+      <div class="pd-card p-3">
+        <div class="pd-gallery">
+
+          <div class="pd-thumbs" aria-label="{% trans 'Galerie' %}">
+            {% if product_images %}
+              {% for img in product_images %}
+                <button type="button"
+                        class="pd-thumb-btn {% if main_image and img.id == main_image.id %}is-active{% endif %}"
+                        data-src="{{ img.image.url }}"
+                        aria-label="{% trans 'Aperçu image' %}">
+                  <img src="{{ img.image.url }}" alt="{{ img.alt_text|default:product.name }}" loading="lazy">
+                </button>
+              {% endfor %}
+            {% else %}
+              <button type="button" class="pd-thumb-btn is-active" data-src="{% static 'global/image/product-placeholder.png' %}">
+                <img src="{% static 'global/image/product-placeholder.png' %}" alt="{% trans 'Produit' %}">
+              </button>
+            {% endif %}
+          </div>
+
+          <div class="pd-main">
+            {% if main_image %}
+              <img id="pdMainImage"
+                   src="{{ main_image.image.url }}"
+                   alt="{{ main_image.alt_text|default:product.name }}"
+                   loading="eager">
+            {% else %}
+              <img id="pdMainImage"
+                   src="{% static 'global/image/product-placeholder.png' %}"
+                   alt="{% trans 'Produit' %}"
+                   loading="eager">
+            {% endif %}
+
+            <a class="pd-zoom text-decoration-none"
+               href="{% if main_image %}{{ main_image.image.url }}{% else %}{% static 'global/image/product-placeholder.png' %}{% endif %}"
+               target="_blank" rel="noopener"
+               aria-label="{% trans 'Ouvrir en grand' %}">
+              <i class="bi bi-zoom-in"></i>
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    {# ========================= #}
+    {#    BUY BOX                #}
+    {# ========================= #}
+    <div class="col-12 col-lg-5">
+      <div class="pd-card p-3 pd-buybox"
+           data-stock="{{ product.stock|default:0 }}"
+           data-product-name="{{ product.name|default:''|escape }}"
+           data-product-url="{% if request %}{{ request.build_absolute_uri }}{% endif %}">
+
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+          <div class="small pd-muted">
+            {% if product.vendor %}
+              {% trans "Vendu par" %} <strong class="text-body">{{ product.vendor }}</strong>
+            {% else %}
+              <strong class="text-body">{{ PROJECT_NAME }}</strong>
+            {% endif %}
+          </div>
+
+          {% if product.is_featured %}
+            <span class="pd-chip">🔥 {% trans "Promo" %}</span>
+          {% endif %}
+        </div>
+
+        <h1 class="h5 pd-title mb-2">{{ product.name }}</h1>
+
+        <div class="d-flex flex-wrap align-items-center gap-2 small mb-3">
+          <span class="text-warning">★★★★★</span>
+          <span class="fw-bold">
+            {% if product.average_rating %}{{ product.average_rating|floatformat:1 }}{% else %}0.0{% endif %}
+          </span>
+          <span class="pd-muted">·</span>
+          <span class="pd-muted">
+            {% if product.reviews_count %}{{ product.reviews_count }}{% else %}0{% endif %} {% trans "avis" %}
+          </span>
+          {% if product.sold_count %}
+            <span class="pd-muted">·</span>
+            <span class="pd-muted">{{ product.sold_count }}+ {% trans "vendus" %}</span>
+          {% endif %}
+        </div>
+
+        {# ===== PRIX ===== #}
+        <div class="pd-deal mb-3">
+          <div class="pd-deal-head">
+            <span>🎁 {% trans "Offre du jour" %}</span>
+            {% if product.track_stock and product.stock %}
+              <span class="small opacity-75">{% trans "Stock limité" %}</span>
+            {% else %}
+              <span class="small opacity-75">{% trans "Paiement sécurisé" %}</span>
+            {% endif %}
+          </div>
+
+          <div class="p-3">
+            <div class="d-flex flex-wrap align-items-end justify-content-between gap-2">
+              <div class="pd-price">{% money product.price %}</div>
+
+              <div class="text-end">
+                {% if product.has_promo and product.discount_percent %}
+                  <div class="pd-savings">-{% trans "Économisez" %} {{ product.discount_percent }}%</div>
+                {% endif %}
+                {% if product.has_promo and product.old_price %}
+                  <div class="pd-old small">{% money product.old_price %}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="small pd-muted mt-2">
+              {% trans "Prix indicatif (hors taxes) — paiement sécurisé." %}
+            </div>
+          </div>
+        </div>
+
+        {# ===== STOCK ===== #}
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <span class="pd-muted">{% trans "Disponibilité" %}</span>
+          {% if product.stock > 0 %}
+            <span class="badge bg-success">{% blocktrans %}En stock ({{ product.stock }}){% endblocktrans %}</span>
+          {% else %}
+            <span class="badge bg-danger">{% trans "Rupture de stock" %}</span>
+          {% endif %}
+        </div>
+
+        {# ===== SERVICE COMMITMENT ===== #}
+        <div class="pd-commit mb-3" aria-label="{% trans 'Engagement de service' %}">
+          <div class="pd-commit-head">
+            <div class="pd-commit-title">{% trans "Service commitment" %}</div>
+
+            <div class="pd-commit-shipto">
+              <span class="pd-muted">{% trans "Ship to" %}</span>
+              <span class="pd-shipto-pill">
+                <i class="bi bi-geo-alt"></i>
+                {{ request.session.ECOMMERCE_COUNTRY|default:"SN" }}
+              </span>
+            </div>
+          </div>
+
+          <div class="pd-commit-list">
+            <a class="pd-commit-item" href="#pdDeliveryModal" data-bs-toggle="modal" role="button">
+              <span class="pd-commit-ico"><i class="bi bi-truck"></i></span>
+              <span class="pd-commit-main">
+                <span class="pd-commit-strong">
+                  {% trans "Shipping" %}:
+                  {% if shipping_cost %}
+                    {% money shipping_cost %}
+                  {% else %}
+                    <span class="pd-muted">{% trans "Calculé à la caisse" %}</span>
+                  {% endif %}
+                </span>
+                <span class="pd-muted">{% trans "Delivery" %}: <span id="pdDeliverySummary">{% trans "Selon zone" %}</span></span>
+              </span>
+              <span class="pd-commit-arrow">›</span>
+            </a>
+
+            <a class="pd-commit-item" href="#pdReturnModal" data-bs-toggle="modal" role="button">
+              <span class="pd-commit-ico"><i class="bi bi-arrow-counterclockwise"></i></span>
+              <span class="pd-commit-main">
+                <span class="pd-commit-strong">{% trans "Return&refund policy" %}</span>
+                <span class="pd-muted">{% trans "Retour possible selon conditions" %}</span>
+              </span>
+              <span class="pd-commit-arrow">›</span>
+            </a>
+
+            <a class="pd-commit-item" href="#pdSecurityModal" data-bs-toggle="modal" role="button">
+              <span class="pd-commit-ico"><i class="bi bi-shield-lock"></i></span>
+              <span class="pd-commit-main">
+                <span class="pd-commit-strong">{% trans "Security & Privacy" %}</span>
+                <span class="pd-muted">{% trans "Paiements sûrs — données protégées" %}</span>
+              </span>
+              <span class="pd-commit-arrow">›</span>
+            </a>
+          </div>
+        </div>
+
+        {# ===== QUANTITÉ + FAVORIS ===== #}
+        <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-3">
+          <div>
+            <div class="fw-bold mb-1">{% trans "Quantité" %}</div>
+            <div class="pd-qty" data-max="{{ product.stock|default:0 }}">
+              <button type="button" id="pdQtyMinus" aria-label="{% trans 'Réduire' %}">−</button>
+              <input type="text" id="pdQtyInput" value="1" inputmode="numeric" autocomplete="off">
+              <button type="button" id="pdQtyPlus" aria-label="{% trans 'Augmenter' %}">+</button>
+            </div>
+            <div class="pd-muted small mt-1">
+              {% trans "Max." %} <span id="pdQtyMaxText">{% if product.stock %}{{ product.stock }}{% else %}0{% endif %}</span> {% trans "pcs/shopper" %}
+            </div>
+
+            {% if product.stock > 0 and product.stock <= 5 %}
+              <div class="small text-danger mt-1">
+                {% blocktrans %}Seulement {{ product.stock }} restants{% endblocktrans %}
+              </div>
+            {% endif %}
+          </div>
+
+          <form method="post" action="{{ fav_toggle_url }}" class="m-0" id="pdFavForm">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <button type="submit" class="btn btn-light" id="pdFavBtn">
+              <i class="bi {% if is_favorited %}bi-heart-fill text-danger{% else %}bi-heart{% endif %} me-2"></i>
+              <span class="pdFavText">
+                {% if is_favorited %}{% trans "Retirer des favoris" %}{% else %}{% trans "Ajouter aux favoris" %}{% endif %}
+              </span>
+            </button>
+          </form>
+        </div>
+
+        {# ===== ACTIONS (qty sync) ===== #}
+        <div class="pd-buy-actions d-grid gap-2">
+
+          {% if commerce_mode == "B2B" and request_quote_url %}
+            <a href="{{ request_quote_url }}" class="btn btn-danger w-100">
+              <i class="bi bi-file-earmark-text me-2"></i>{% trans "Demander un devis" %}
+            </a>
+          {% else %}
+
+            {# ✅ ACHETER MAINTENANT -> checkout direct (GET) avec qty #}
+            {% url 'economic:ecommerce:checkout' as checkout_url %}
+            <a href="{{ checkout_url }}?buy_now=1&product_id={{ product.id }}&qty=1"
+              class="btn btn-danger w-100 {% if product.stock <= 0 %}disabled{% endif %}"
+              id="pdBuyNowBtn"
+              {% if product.stock <= 0 %}aria-disabled="true"{% endif %}>
+              <i class="bi bi-lightning-charge me-2"></i>{% trans "Acheter maintenant" %}
+            </a>
+
+            {# ✅ AJOUTER AU PANIER -> POST add_to_cart #}
+            <form method="post" action="{{ add_to_cart_url }}" class="m-0" id="pdAddToCartForm">
+              {% csrf_token %}
+              <input type="hidden" name="quantity" id="pdQtyHidden" value="1">
+              <input type="hidden" name="next" value="{{ request.get_full_path }}">
+              <button type="submit"
+                      class="btn btn-outline-dark w-100"
+                      id="pdAddToCartBtn"
+                      {% if product.stock <= 0 %}disabled{% endif %}>
+                <i class="bi bi-cart-plus me-2"></i>{% trans "Ajouter au panier" %}
+              </button>
+            </form>
+
+          {% endif %}
+        </div>
+        <div class="d-flex gap-2 mt-3">
+          <div class="dropup w-100">
+            <button type="button" class="btn btn-light w-100 dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-share me-2"></i>{% trans "Partager" %}
+            </button>
+            <ul class="dropdown-menu w-100">
+              <li><a class="dropdown-item" id="pdShareWhatsApp" href="#" target="_blank" rel="noopener">📲 WhatsApp</a></li>
+              <li><a class="dropdown-item" id="pdShareFacebook" href="#" target="_blank" rel="noopener">📘 Facebook</a></li>
+              <li><a class="dropdown-item" id="pdShareX" href="#" target="_blank" rel="noopener">𝕏 X</a></li>
+              <li><a class="dropdown-item" id="pdShareTelegram" href="#" target="_blank" rel="noopener">✈️ Telegram</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><button type="button" class="dropdown-item" id="pdCopyLink">🔗 {% trans "Copier le lien" %}</button></li>
+            </ul>
+          </div>
+
+          <form method="post" action="{{ like_toggle_url }}" class="m-0 w-100" id="pdLikeForm">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <button type="submit" class="btn btn-light w-100" id="pdLikeBtn">
+              <i class="bi {% if is_liked %}bi-hand-thumbs-up-fill{% else %}bi-hand-thumbs-up{% endif %} me-2"></i>
+              <span class="pdLikeText">{% trans "J'aime" %}</span>
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  {# ========================= #}
+  {# TABS + RELATED            #}
+  {# ========================= #}
+  <div class="row g-4 mt-2">
+    <div class="col-12 col-lg-8">
+      <div class="pd-card p-3">
+        <ul class="nav nav-pills pd-tabs gap-2 mb-3" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#pdDesc" type="button" role="tab">{% trans "Description" %}</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pdSpecs" type="button" role="tab">{% trans "Détails" %}</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pdShip" type="button" role="tab">{% trans "Livraison & retours" %}</button>
+          </li>
+        </ul>
+
+        <div class="tab-content">
+          <div class="tab-pane fade show active" id="pdDesc" role="tabpanel">
+            {% if product.short_description %}
+              <p class="pd-muted mb-3">{{ product.short_description }}</p>
+            {% endif %}
+
+            {% if product.description %}
+              <div class="product-description">{{ product.description|linebreaks }}</div>
+            {% else %}
+              <p class="pd-muted mb-0">{% trans "Aucune description détaillée pour ce produit." %}</p>
+            {% endif %}
+          </div>
+
+          <div class="tab-pane fade" id="pdSpecs" role="tabpanel">
+            <div class="row g-2 small">
+              <div class="col-6">
+                <div class="pd-chip w-100 justify-content-between"><span>{% trans "SKU" %}</span><strong class="text-body">{{ product.sku }}</strong></div>
+              </div>
+              <div class="col-6">
+                <div class="pd-chip w-100 justify-content-between"><span>{% trans "Catégorie" %}</span><strong class="text-body">{{ product.category }}</strong></div>
+              </div>
+              <div class="col-6">
+                <div class="pd-chip w-100 justify-content-between"><span>{% trans "Stock" %}</span><strong class="text-body">{{ product.stock }}</strong></div>
+              </div>
+              <div class="col-6">
+                <div class="pd-chip w-100 justify-content-between"><span>{% trans "Créé le" %}</span><strong class="text-body">{{ product.created_at|date:"d/m/Y" }}</strong></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="pdShip" role="tabpanel">
+            <div class="small">
+              <p class="mb-2"><strong>{% trans "Livraison" %}:</strong> <span class="pd-muted">{% trans "Les délais varient selon la zone. Livraison rapide disponible sur certains articles." %}</span></p>
+              <p class="mb-2"><strong>{% trans "Retours" %}:</strong> <span class="pd-muted">{% trans "Retour possible selon nos conditions. Contactez le support en cas de problème." %}</span></p>
+              <p class="mb-0"><strong>{% trans "Paiement" %}:</strong> <span class="pd-muted">{% trans "Paiement sécurisé, informations personnelles protégées." %}</span></p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+      <div class="pd-card p-3">
+        <h3 class="h6 fw-bold mb-3">{% trans "Pourquoi acheter ici ?" %}</h3>
+        <div class="d-grid gap-2 small">
+          <div class="d-flex gap-2">
+            <span class="text-success"><i class="bi bi-shield-check"></i></span>
+            <div><strong>{% trans "Protection acheteur" %}</strong><br><span class="pd-muted">{% trans "Remboursement si non livré / non conforme (selon conditions)." %}</span></div>
+          </div>
+          <div class="d-flex gap-2">
+            <span class="text-success"><i class="bi bi-truck"></i></span>
+            <div><strong>{% trans "Livraison optimisée" %}</strong><br><span class="pd-muted">{% trans "Options rapides et suivi dès expédition." %}</span></div>
+          </div>
+          <div class="d-flex gap-2">
+            <span class="text-success"><i class="bi bi-lock"></i></span>
+            <div><strong>{% trans "Paiement sécurisé" %}</strong><br><span class="pd-muted">{% trans "Vos données sont protégées." %}</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if related_products %}
+    <div class="mt-5">
+      <h2 class="h5 fw-bold mb-3">{% trans "Articles similaires" %}</h2>
+      <div class="row g-3 pd-related">
+        {% for rp in related_products %}
+
+          {# ✅ parler: slug sûr sans tag custom #}
+          {% with rp_slug=rp.safe_translation_getter|default_if_none:"" %}
+          {% endwith %}
+
+          {# On ne peut pas appeler une méthode avec arg dans template => on utilise rp.slug si dispo #}
+          {% if rp.slug %}
+            {% url 'economic:ecommerce:product_detail' rp.slug as rp_url %}
+          {% else %}
+            {% url 'economic:ecommerce:index' as rp_url %}
+          {% endif %}
+
+          <div class="col-6 col-md-4 col-lg-3">
+            <article class="card h-100">
+              {% with rp_img=rp.images.first %}
+                <a href="{{ rp_url }}" class="text-decoration-none">
+                  {% if rp_img %}
+                    <img src="{{ rp_img.image.url }}" class="w-100" style="height:180px;object-fit:cover;" alt="{{ rp_img.alt_text|default:rp.name }}" loading="lazy">
+                  {% else %}
+                    <img src="{% static 'global/image/product-placeholder.png' %}" class="w-100" style="height:180px;object-fit:cover;" alt="{% trans 'Produit' %}" loading="lazy">
+                  {% endif %}
+                </a>
+              {% endwith %}
+              <div class="card-body">
+                <h3 class="h6 mb-2" style="min-height: 40px;">
+                  <a href="{{ rp_url }}" class="text-decoration-none">{{ rp.name|truncatechars:52 }}</a>
+                </h3>
+                <div class="fw-bold">{% money rp.price %}</div>
+                <div class="small pd-muted">
+                  ★★★★★
+                  {% if rp.average_rating %}{{ rp.average_rating|floatformat:1 }}{% else %}0.0{% endif %}
+                  · {% if rp.reviews_count %}{{ rp.reviews_count }}{% else %}0{% endif %} {% trans "avis" %}
+                </div>
+                <a href="{{ rp_url }}" class="btn btn-sm btn-outline-primary w-100 mt-2">{% trans "Voir" %}</a>
+              </div>
+            </article>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+</section>
+
+{# ========================= #}
+{# MODALS                   #}
+{# ========================= #}
+<div class="modal fade" id="pdDeliveryModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{% trans "Livraison" %}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Fermer' %}"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-2 fw-bold">{% trans "Choisissez une zone au Sénégal" %}</div>
+
+        <select class="form-select" id="pdZoneSelect" aria-label="{% trans 'Zone de livraison' %}">
+          <option value="">{% trans "Sélectionner une zone" %}</option>
+          <option value="dakar">{% trans "Dakar" %}</option>
+          <option value="pikine">{% trans "Pikine / Guédiawaye" %}</option>
+          <option value="rufisque">{% trans "Rufisque" %}</option>
+          <option value="thies">{% trans "Thiès" %}</option>
+          <option value="mbour">{% trans "Mbour / Saly" %}</option>
+          <option value="saint_louis">{% trans "Saint-Louis" %}</option>
+          <option value="touba">{% trans "Touba" %}</option>
+          <option value="kaolack">{% trans "Kaolack" %}</option>
+          <option value="ziguinchor">{% trans "Ziguinchor" %}</option>
+        </select>
+
+        <div class="mt-3 pd-delivery-box">
+          <div class="d-flex justify-content-between">
+            <span class="pd-muted">{% trans "Distance estimée" %}</span>
+            <strong id="pdDist">—</strong>
+          </div>
+          <div class="d-flex justify-content-between">
+            <span class="pd-muted">{% trans "Temps estimé" %}</span>
+            <strong id="pdEta">—</strong>
+          </div>
+          <div class="d-flex justify-content-between">
+            <span class="pd-muted">{% trans "Fenêtre de livraison" %}</span>
+            <strong id="pdEtaWindow">—</strong>
+          </div>
+          <div class="small pd-muted mt-2">
+            {% trans "Estimation indicative (modèle Jumia). La distance réelle dépend du point de départ/arrivée." %}
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{% trans "Fermer" %}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="pdReturnModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{% trans "Retours & remboursements" %}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Fermer' %}"></button>
+      </div>
+      <div class="modal-body">
+        <ul class="mb-0">
+          <li>{% trans "Retour accepté sous 7 jours si produit non utilisé." %}</li>
+          <li>{% trans "Remboursement après vérification (selon conditions)." %}</li>
+          <li>{% trans "Contact support pour assistance." %}</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{% trans "Fermer" %}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="pdSecurityModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{% trans "Sécurité & confidentialité" %}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Fermer' %}"></button>
+      </div>
+      <div class="modal-body">
+        <ul class="mb-0">
+          <li>{% trans "Paiements sécurisés (chiffrement SSL)." %}</li>
+          <li>{% trans "Données personnelles protégées." %}</li>
+          <li>{% trans "Historique et commandes privés." %}</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{% trans "Fermer" %}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block ecommerce_extra_js %}
+  {{ block.super }}
+  <script src="{% static 'economic/ecommerce/js/product_detail.js' %}" defer></script>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/ecommerce/articles/product_detail.html #}
+{% extends "economic/ecommerce/base_ecommerce.html" %}
+{% load static i18n ecom_money ecom_utils parler_tags %}
+
+{% block ecommerce_title %}
+  {{ product.name }} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block ecommerce_extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'economic/ecommerce/css/product_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+
+{% url 'economic:ecommerce:index' as shop_url %}
+{% url 'economic:ecommerce:add_to_cart' product.id as add_to_cart_url %}
+{% url 'economic:ecommerce:request_quote' product.id as request_quote_url %}
+{% url 'economic:ecommerce:favorite_toggle' product.id as fav_toggle_url %}
+{% url 'economic:ecommerce:like_toggle' product.id as like_toggle_url %}
+
+{% if product.category %}
+  {% url 'economic:ecommerce:category' product.category.slug as category_url %}
+{% endif %}
+
+<section class="container py-4 pd-shell">
+
+  <div class="mb-3 d-flex flex-wrap align-items-center gap-2 small">
+    <a class="text-decoration-none" href="{{ shop_url }}">← {% trans "Retour à la boutique" %}</a>
+    <span class="pd-muted">|</span>
+    <div class="d-flex flex-wrap align-items-center gap-2 pd-muted">
+      <a class="text-decoration-none" href="{{ shop_url }}">{% trans "Boutique" %}</a>
+      {% if product.category %}
+        <span>›</span><a class="text-decoration-none" href="{{ category_url }}">{{ product.category }}</a>
+      {% endif %}
+      <span>›</span><span class="text-body">{{ product.name }}</span>
+    </div>
+  </div>
+
+  <div class="row g-4 align-items-start">
+
+    {# ========================= #}
+    {#    GALERIE                #}
+    {# ========================= #}
+    <div class="col-12 col-lg-7">
+      <div class="pd-card p-3">
+        <div class="pd-gallery">
+
+          <div class="pd-thumbs" aria-label="{% trans 'Galerie' %}">
+            {% if product_images %}
+              {% for img in product_images %}
+                <button type="button"
+                        class="pd-thumb-btn {% if main_image and img.id == main_image.id %}is-active{% endif %}"
+                        data-src="{{ img.image.url }}"
+                        aria-label="{% trans 'Aperçu image' %}">
+                  <img src="{{ img.image.url }}" alt="{{ img.alt_text|default:product.name }}" loading="lazy">
+                </button>
+              {% endfor %}
+            {% else %}
+              <button type="button" class="pd-thumb-btn is-active" data-src="{% static 'global/image/product-placeholder.png' %}">
+                <img src="{% static 'global/image/product-placeholder.png' %}" alt="{% trans 'Produit' %}">
+              </button>
+            {% endif %}
+          </div>
+
+          <div class="pd-main">
+            {% if main_image %}
+              <img id="pdMainImage"
+                   src="{{ main_image.image.url }}"
+                   alt="{{ main_image.alt_text|default:product.name }}"
+                   loading="eager">
+            {% else %}
+              <img id="pdMainImage"
+                   src="{% static 'global/image/product-placeholder.png' %}"
+                   alt="{% trans 'Produit' %}"
+                   loading="eager">
+            {% endif %}
+
+            <a class="pd-zoom text-decoration-none"
+               href="{% if main_image %}{{ main_image.image.url }}{% else %}{% static 'global/image/product-placeholder.png' %}{% endif %}"
+               target="_blank" rel="noopener"
+               aria-label="{% trans 'Ouvrir en grand' %}">
+              <i class="bi bi-zoom-in"></i>
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    {# ========================= #}
+    {#    BUY BOX                #}
+    {# ========================= #}
+    <div class="col-12 col-lg-5">
+      <div class="pd-card p-3 pd-buybox"
+           data-stock="{{ product.stock|default:0 }}"
+           data-product-name="{{ product.name|default:''|escape }}"
+           data-product-url="{% if request %}{{ request.build_absolute_uri }}{% endif %}">
+
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+          <div class="small pd-muted">
+            {% if product.vendor %}
+              {% trans "Vendu par" %} <strong class="text-body">{{ product.vendor }}</strong>
+            {% else %}
+              <strong class="text-body">{{ PROJECT_NAME }}</strong>
+            {% endif %}
+          </div>
+
+          {% if product.is_featured %}
+            <span class="pd-chip">🔥 {% trans "Promo" %}</span>
+          {% endif %}
+        </div>
+
+        <h1 class="h5 pd-title mb-2">{{ product.name }}</h1>
+
+        <div class="d-flex flex-wrap align-items-center gap-2 small mb-3">
+          <span class="text-warning">★★★★★</span>
+          <span class="fw-bold">
+            {% if product.average_rating %}{{ product.average_rating|floatformat:1 }}{% else %}0.0{% endif %}
+          </span>
+          <span class="pd-muted">·</span>
+          <span class="pd-muted">
+            {% if product.reviews_count %}{{ product.reviews_count }}{% else %}0{% endif %} {% trans "avis" %}
+          </span>
+          {% if product.sold_count %}
+            <span class="pd-muted">·</span>
+            <span class="pd-muted">{{ product.sold_count }}+ {% trans "vendus" %}</span>
+          {% endif %}
+        </div>
+
+        {# ===== PRIX ===== #}
+        <div class="pd-deal mb-3">
+          <div class="pd-deal-head">
+            <span>🎁 {% trans "Offre du jour" %}</span>
+            {% if product.track_stock and product.stock %}
+              <span class="small opacity-75">{% trans "Stock limité" %}</span>
+            {% else %}
+              <span class="small opacity-75">{% trans "Paiement sécurisé" %}</span>
+            {% endif %}
+          </div>
+
+          <div class="p-3">
+            <div class="d-flex flex-wrap align-items-end justify-content-between gap-2">
+              <div class="pd-price">{% money product.price %}</div>
+
+              <div class="text-end">
+                {% if product.has_promo and product.discount_percent %}
+                  <div class="pd-savings">-{% trans "Économisez" %} {{ product.discount_percent }}%</div>
+                {% endif %}
+                {% if product.has_promo and product.old_price %}
+                  <div class="pd-old small">{% money product.old_price %}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="small pd-muted mt-2">
+              {% trans "Prix indicatif (hors taxes) — paiement sécurisé." %}
+            </div>
+          </div>
+        </div>
+
+        {# ===== STOCK ===== #}
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <span class="pd-muted">{% trans "Disponibilité" %}</span>
+          {% if product.stock > 0 %}
+            <span class="badge bg-success">{% blocktrans %}En stock ({{ product.stock }}){% endblocktrans %}</span>
+          {% else %}
+            <span class="badge bg-danger">{% trans "Rupture de stock" %}</span>
+          {% endif %}
+        </div>
+
+        {# ===== SERVICE COMMITMENT ===== #}
+        <div class="pd-commit mb-3" aria-label="{% trans 'Engagement de service' %}">
+          <div class="pd-commit-head">
+            <div class="pd-commit-title">{% trans "Service commitment" %}</div>
+
+            <div class="pd-commit-shipto">
+              <span class="pd-muted">{% trans "Ship to" %}</span>
+              <span class="pd-shipto-pill">
+                <i class="bi bi-geo-alt"></i>
+                {{ request.session.ECOMMERCE_COUNTRY|default:"SN" }}
+              </span>
+            </div>
+          </div>
+
+          <div class="pd-commit-list">
+            <a class="pd-commit-item" href="#pdDeliveryModal" data-bs-toggle="modal" role="button">
+              <span class="pd-commit-ico"><i class="bi bi-truck"></i></span>
+              <span class="pd-commit-main">
+                <span class="pd-commit-strong">
+                  {% trans "Shipping" %}:
+                  {% if shipping_cost %}
+                    {% money shipping_cost %}
+                  {% else %}
+                    <span class="pd-muted">{% trans "Calculé à la caisse" %}</span>
+                  {% endif %}
+                </span>
+                <span class="pd-muted">{% trans "Delivery" %}: <span id="pdDeliverySummary">{% trans "Selon zone" %}</span></span>
+              </span>
+              <span class="pd-commit-arrow">›</span>
+            </a>
+
+            <a class="pd-commit-item" href="#pdReturnModal" data-bs-toggle="modal" role="button">
+              <span class="pd-commit-ico"><i class="bi bi-arrow-counterclockwise"></i></span>
+              <span class="pd-commit-main">
+                <span class="pd-commit-strong">{% trans "Return&refund policy" %}</span>
+                <span class="pd-muted">{% trans "Retour possible selon conditions" %}</span>
+              </span>
+              <span class="pd-commit-arrow">›</span>
+            </a>
+
+            <a class="pd-commit-item" href="#pdSecurityModal" data-bs-toggle="modal" role="button">
+              <span class="pd-commit-ico"><i class="bi bi-shield-lock"></i></span>
+              <span class="pd-commit-main">
+                <span class="pd-commit-strong">{% trans "Security & Privacy" %}</span>
+                <span class="pd-muted">{% trans "Paiements sûrs — données protégées" %}</span>
+              </span>
+              <span class="pd-commit-arrow">›</span>
+            </a>
+          </div>
+        </div>
+
+        {# ===== QUANTITÉ + FAVORIS ===== #}
+        <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-3">
+          <div>
+            <div class="fw-bold mb-1">{% trans "Quantité" %}</div>
+            <div class="pd-qty" data-max="{{ product.stock|default:0 }}">
+              <button type="button" id="pdQtyMinus" aria-label="{% trans 'Réduire' %}">−</button>
+              <input type="text" id="pdQtyInput" value="1" inputmode="numeric" autocomplete="off">
+              <button type="button" id="pdQtyPlus" aria-label="{% trans 'Augmenter' %}">+</button>
+            </div>
+            <div class="pd-muted small mt-1">
+              {% trans "Max." %} <span id="pdQtyMaxText">{% if product.stock %}{{ product.stock }}{% else %}0{% endif %}</span> {% trans "pcs/shopper" %}
+            </div>
+
+            {% if product.stock > 0 and product.stock <= 5 %}
+              <div class="small text-danger mt-1">
+                {% blocktrans %}Seulement {{ product.stock }} restants{% endblocktrans %}
+              </div>
+            {% endif %}
+          </div>
+
+          <form method="post" action="{{ fav_toggle_url }}" class="m-0" id="pdFavForm">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <button type="submit" class="btn btn-light" id="pdFavBtn">
+              <i class="bi {% if is_favorited %}bi-heart-fill text-danger{% else %}bi-heart{% endif %} me-2"></i>
+              <span class="pdFavText">
+                {% if is_favorited %}{% trans "Retirer des favoris" %}{% else %}{% trans "Ajouter aux favoris" %}{% endif %}
+              </span>
+            </button>
+          </form>
+        </div>
+
+        {# ===== ACTIONS (qty sync) ===== #}
+        <div class="pd-buy-actions d-grid gap-2">
+          {% if commerce_mode == "B2B" %}
+            <a href="{{ request_quote_url }}" class="btn btn-danger w-100">
+              <i class="bi bi-file-earmark-text me-2"></i>{% trans "Demander un devis" %}
+            </a>
+          {% else %}
+            <button type="button" class="btn btn-danger w-100" id="pdBuyNowBtn" {% if product.stock <= 0 %}disabled{% endif %}>
+              <i class="bi bi-lightning-charge me-2"></i>{% trans "Acheter maintenant" %}
+            </button>
+
+            <form method="post" action="{{ add_to_cart_url }}" class="m-0" id="pdAddToCartForm">
+              {% csrf_token %}
+              <input type="hidden" name="quantity" id="pdQtyHidden" value="1">
+              <input type="hidden" name="next" value="{{ request.get_full_path }}">
+              <button type="submit"
+                      class="btn btn-outline-dark w-100"
+                      id="pdAddToCartBtn"
+                      {% if product.stock <= 0 %}disabled{% endif %}>
+                <i class="bi bi-cart-plus me-2"></i>{% trans "Ajouter au panier" %}
+              </button>
+            </form>
+          {% endif %}
+        </div>
+
+        <div class="d-flex gap-2 mt-3">
+          <div class="dropup w-100">
+            <button type="button" class="btn btn-light w-100 dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-share me-2"></i>{% trans "Partager" %}
+            </button>
+            <ul class="dropdown-menu w-100">
+              <li><a class="dropdown-item" id="pdShareWhatsApp" href="#" target="_blank" rel="noopener">📲 WhatsApp</a></li>
+              <li><a class="dropdown-item" id="pdShareFacebook" href="#" target="_blank" rel="noopener">📘 Facebook</a></li>
+              <li><a class="dropdown-item" id="pdShareX" href="#" target="_blank" rel="noopener">𝕏 X</a></li>
+              <li><a class="dropdown-item" id="pdShareTelegram" href="#" target="_blank" rel="noopener">✈️ Telegram</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><button type="button" class="dropdown-item" id="pdCopyLink">🔗 {% trans "Copier le lien" %}</button></li>
+            </ul>
+          </div>
+
+          <form method="post" action="{{ like_toggle_url }}" class="m-0 w-100" id="pdLikeForm">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <button type="submit" class="btn btn-light w-100" id="pdLikeBtn">
+              <i class="bi {% if is_liked %}bi-hand-thumbs-up-fill{% else %}bi-hand-thumbs-up{% endif %} me-2"></i>
+              <span class="pdLikeText">{% trans "J'aime" %}</span>
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  {# ========================= #}
+  {# TABS + RELATED            #}
+  {# ========================= #}
+  <div class="row g-4 mt-2">
+    <div class="col-12 col-lg-8">
+      <div class="pd-card p-3">
+        <ul class="nav nav-pills pd-tabs gap-2 mb-3" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#pdDesc" type="button" role="tab">{% trans "Description" %}</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pdSpecs" type="button" role="tab">{% trans "Détails" %}</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pdShip" type="button" role="tab">{% trans "Livraison & retours" %}</button>
+          </li>
+        </ul>
+
+        <div class="tab-content">
+          <div class="tab-pane fade show active" id="pdDesc" role="tabpanel">
+            {% if product.short_description %}
+              <p class="pd-muted mb-3">{{ product.short_description }}</p>
+            {% endif %}
+
+            {% if product.description %}
+              <div class="product-description">{{ product.description|linebreaks }}</div>
+            {% else %}
+              <p class="pd-muted mb-0">{% trans "Aucune description détaillée pour ce produit." %}</p>
+            {% endif %}
+          </div>
+
+          <div class="tab-pane fade" id="pdSpecs" role="tabpanel">
+            <div class="row g-2 small">
+              <div class="col-6">
+                <div class="pd-chip w-100 justify-content-between"><span>{% trans "SKU" %}</span><strong class="text-body">{{ product.sku }}</strong></div>
+              </div>
+              <div class="col-6">
+                <div class="pd-chip w-100 justify-content-between"><span>{% trans "Catégorie" %}</span><strong class="text-body">{{ product.category }}</strong></div>
+              </div>
+              <div class="col-6">
+                <div class="pd-chip w-100 justify-content-between"><span>{% trans "Stock" %}</span><strong class="text-body">{{ product.stock }}</strong></div>
+              </div>
+              <div class="col-6">
+                <div class="pd-chip w-100 justify-content-between"><span>{% trans "Créé le" %}</span><strong class="text-body">{{ product.created_at|date:"d/m/Y" }}</strong></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="pdShip" role="tabpanel">
+            <div class="small">
+              <p class="mb-2"><strong>{% trans "Livraison" %}:</strong> <span class="pd-muted">{% trans "Les délais varient selon la zone. Livraison rapide disponible sur certains articles." %}</span></p>
+              <p class="mb-2"><strong>{% trans "Retours" %}:</strong> <span class="pd-muted">{% trans "Retour possible selon nos conditions. Contactez le support en cas de problème." %}</span></p>
+              <p class="mb-0"><strong>{% trans "Paiement" %}:</strong> <span class="pd-muted">{% trans "Paiement sécurisé, informations personnelles protégées." %}</span></p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+      <div class="pd-card p-3">
+        <h3 class="h6 fw-bold mb-3">{% trans "Pourquoi acheter ici ?" %}</h3>
+        <div class="d-grid gap-2 small">
+          <div class="d-flex gap-2">
+            <span class="text-success"><i class="bi bi-shield-check"></i></span>
+            <div><strong>{% trans "Protection acheteur" %}</strong><br><span class="pd-muted">{% trans "Remboursement si non livré / non conforme (selon conditions)." %}</span></div>
+          </div>
+          <div class="d-flex gap-2">
+            <span class="text-success"><i class="bi bi-truck"></i></span>
+            <div><strong>{% trans "Livraison optimisée" %}</strong><br><span class="pd-muted">{% trans "Options rapides et suivi dès expédition." %}</span></div>
+          </div>
+          <div class="d-flex gap-2">
+            <span class="text-success"><i class="bi bi-lock"></i></span>
+            <div><strong>{% trans "Paiement sécurisé" %}</strong><br><span class="pd-muted">{% trans "Vos données sont protégées." %}</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if related_products %}
+    <div class="mt-5">
+      <h2 class="h5 fw-bold mb-3">{% trans "Articles similaires" %}</h2>
+      <div class="row g-3 pd-related">
+        {% for rp in related_products %}
+
+          {% get_translated_field rp "slug" as rp_slug %}
+          {% if rp_slug %}
+            {% url 'economic:ecommerce:product_detail' rp_slug as rp_url %}
+          {% else %}
+            {% url 'economic:ecommerce:index' as rp_url %}
+          {% endif %}
+
+          <div class="col-6 col-md-4 col-lg-3">
+            <article class="card h-100">
+              {% with rp_img=rp.images.first %}
+                <a href="{{ rp_url }}" class="text-decoration-none">
+                  {% if rp_img %}
+                    <img src="{{ rp_img.image.url }}" class="w-100" style="height:180px;object-fit:cover;" alt="{{ rp_img.alt_text|default:rp.name }}" loading="lazy">
+                  {% else %}
+                    <img src="{% static 'global/image/product-placeholder.png' %}" class="w-100" style="height:180px;object-fit:cover;" alt="{% trans 'Produit' %}" loading="lazy">
+                  {% endif %}
+                </a>
+              {% endwith %}
+              <div class="card-body">
+                <h3 class="h6 mb-2" style="min-height: 40px;">
+                  <a href="{{ rp_url }}" class="text-decoration-none">{{ rp.name|truncatechars:52 }}</a>
+                </h3>
+                <div class="fw-bold">{% money rp.price %}</div>
+                <div class="small pd-muted">
+                  ★★★★★
+                  {% if rp.average_rating %}{{ rp.average_rating|floatformat:1 }}{% else %}0.0{% endif %}
+                  · {% if rp.reviews_count %}{{ rp.reviews_count }}{% else %}0{% endif %} {% trans "avis" %}
+                </div>
+                <a href="{{ rp_url }}" class="btn btn-sm btn-outline-primary w-100 mt-2">{% trans "Voir" %}</a>
+              </div>
+            </article>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+</section>
+
+{# ========================= #}
+{# MODALS                   #}
+{# ========================= #}
+<div class="modal fade" id="pdDeliveryModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{% trans "Livraison" %}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Fermer' %}"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-2 fw-bold">{% trans "Choisissez une zone au Sénégal" %}</div>
+
+        <select class="form-select" id="pdZoneSelect" aria-label="{% trans 'Zone de livraison' %}">
+          <option value="">{% trans "Sélectionner une zone" %}</option>
+          <option value="dakar">{% trans "Dakar" %}</option>
+          <option value="pikine">{% trans "Pikine / Guédiawaye" %}</option>
+          <option value="rufisque">{% trans "Rufisque" %}</option>
+          <option value="thies">{% trans "Thiès" %}</option>
+          <option value="mbour">{% trans "Mbour / Saly" %}</option>
+          <option value="saint_louis">{% trans "Saint-Louis" %}</option>
+          <option value="touba">{% trans "Touba" %}</option>
+          <option value="kaolack">{% trans "Kaolack" %}</option>
+          <option value="ziguinchor">{% trans "Ziguinchor" %}</option>
+        </select>
+
+        <div class="mt-3 pd-delivery-box">
+          <div class="d-flex justify-content-between">
+            <span class="pd-muted">{% trans "Distance estimée" %}</span>
+            <strong id="pdDist">—</strong>
+          </div>
+          <div class="d-flex justify-content-between">
+            <span class="pd-muted">{% trans "Temps estimé" %}</span>
+            <strong id="pdEta">—</strong>
+          </div>
+          <div class="d-flex justify-content-between">
+            <span class="pd-muted">{% trans "Fenêtre de livraison" %}</span>
+            <strong id="pdEtaWindow">—</strong>
+          </div>
+          <div class="small pd-muted mt-2">
+            {% trans "Estimation indicative (modèle Jumia). La distance réelle dépend du point de départ/arrivée." %}
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{% trans "Fermer" %}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="pdReturnModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{% trans "Retours & remboursements" %}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Fermer' %}"></button>
+      </div>
+      <div class="modal-body">
+        <ul class="mb-0">
+          <li>{% trans "Retour accepté sous 7 jours si produit non utilisé." %}</li>
+          <li>{% trans "Remboursement après vérification (selon conditions)." %}</li>
+          <li>{% trans "Contact support pour assistance." %}</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{% trans "Fermer" %}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="pdSecurityModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{% trans "Sécurité & confidentialité" %}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Fermer' %}"></button>
+      </div>
+      <div class="modal-body">
+        <ul class="mb-0">
+          <li>{% trans "Paiements sécurisés (chiffrement SSL)." %}</li>
+          <li>{% trans "Données personnelles protégées." %}</li>
+          <li>{% trans "Historique et commandes privés." %}</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{% trans "Fermer" %}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block ecommerce_extra_js %}
+  {{ block.super }}
+  <script src="{% static 'economic/ecommerce/js/product_detail.js' %}" defer></script>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/ecommerce/articles/product_detail.html #}
+{% extends "economic/ecommerce/base_ecommerce.html" %}
+{% load static i18n ecom_money ecom_utils parler_tags %}
+
+{% block ecommerce_title %}
+  {{ product.name }} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block ecommerce_extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'economic/ecommerce/css/product_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+{% url 'economic:ecommerce:index' as shop_url %}
+{% url 'economic:ecommerce:add_to_cart' product.id as add_to_cart_url %}
+{% url 'economic:ecommerce:request_quote' as request_quote_url %}
+{% url 'economic:ecommerce:favorite_toggle' product.id as fav_toggle_url %}
+{% url 'economic:ecommerce:like_toggle' product.id as like_toggle_url %}
+
+<section class="container py-4 pd-shell">
+
+  <div class="mb-3 d-flex flex-wrap align-items-center gap-2 small">
+    <a class="text-decoration-none" href="{{ shop_url|default:'#' }}">← {% trans "Retour à la boutique" %}</a>
+    <span class="pd-muted">|</span>
+    <div class="d-flex flex-wrap align-items-center gap-2 pd-muted">
+      <a class="text-decoration-none" href="{{ shop_url|default:'#' }}">{% trans "Boutique" %}</a>
+      {% if product.category %}
+        <span>›</span><span>{{ product.category }}</span>
+      {% endif %}
+      <span>›</span><span class="text-body">{{ product.name }}</span>
+    </div>
+  </div>
+
+  <div class="row g-4 align-items-start">
+
+    {# ========================= #}
+    {#    GALERIE                #}
+    {# ========================= #}
+    <div class="col-12 col-lg-7">
+      <div class="pd-card p-3">
+        <div class="pd-gallery">
+
+          <div class="pd-thumbs" aria-label="{% trans 'Galerie' %}">
+            {% if product_images %}
+              {% for img in product_images %}
+                <button type="button"
+                        class="pd-thumb-btn {% if main_image and img.id == main_image.id %}is-active{% endif %}"
+                        data-src="{{ img.image.url }}"
+                        aria-label="{% trans 'Aperçu image' %}">
+                  <img src="{{ img.image.url }}" alt="{{ img.alt_text|default:product.name }}" loading="lazy">
+                </button>
+              {% endfor %}
+            {% else %}
+              <button type="button" class="pd-thumb-btn is-active" data-src="{% static 'global/image/product-placeholder.png' %}">
+                <img src="{% static 'global/image/product-placeholder.png' %}" alt="{% trans 'Produit' %}">
+              </button>
+            {% endif %}
+          </div>
+
+          <div class="pd-main">
+            {% if main_image %}
+              <img id="pdMainImage"
+                   src="{{ main_image.image.url }}"
+                   alt="{{ main_image.alt_text|default:product.name }}"
+                   loading="eager">
+            {% else %}
+              <img id="pdMainImage"
+                   src="{% static 'global/image/product-placeholder.png' %}"
+                   alt="{% trans 'Produit' %}"
+                   loading="eager">
+            {% endif %}
+
+            <a class="pd-zoom text-decoration-none"
+               href="{% if main_image %}{{ main_image.image.url }}{% else %}{% static 'global/image/product-placeholder.png' %}{% endif %}"
+               target="_blank" rel="noopener"
+               aria-label="{% trans 'Ouvrir en grand' %}">
+              <i class="bi bi-zoom-in"></i>
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    {# ========================= #}
+    {#    BUY BOX                #}
+    {# ========================= #}
+    <div class="col-12 col-lg-5">
+      <div class="pd-card p-3 pd-buybox"
+           data-stock="{{ product.stock|default:0 }}"
+           data-product-name="{{ product.name|default:''|escape }}"
+           data-product-url="{% if request %}{{ request.build_absolute_uri }}{% endif %}">
+
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+          <div class="small pd-muted">
+            {% if product.vendor %}
+              {% trans "Vendu par" %} <strong class="text-body">{{ product.vendor }}</strong>
+            {% else %}
+              <strong class="text-body">{{ PROJECT_NAME }}</strong>
+            {% endif %}
+          </div>
+
+          {% if product.is_featured %}
+            <span class="pd-chip">🔥 {% trans "Promo" %}</span>
+          {% endif %}
+        </div>
+
+        <h1 class="h5 pd-title mb-2">{{ product.name }}</h1>
+
+        {# ======= STATS RÉELLES ======= #}
+        <div class="d-flex flex-wrap align-items-center gap-2 small mb-3">
+          <span class="text-warning">★★★★★</span>
+          <span class="fw-bold">
+            {% if product.average_rating %}{{ product.average_rating|floatformat:1 }}{% else %}0.0{% endif %}
+          </span>
+          <span class="pd-muted">·</span>
+          <span class="pd-muted">
+            {% if product.reviews_count %}{{ product.reviews_count }}{% else %}0{% endif %} {% trans "avis" %}
+          </span>
+          {% if product.sold_count %}
+            <span class="pd-muted">·</span>
+            <span class="pd-muted">{{ product.sold_count }}+ {% trans "vendus" %}</span>
+          {% endif %}
+        </div>
+
+        {# ===== PRIX ===== #}
+        <div class="pd-deal mb-3">
+          <div class="pd-deal-head">
+            <span>🎁 {% trans "Offre du jour" %}</span>
+            {% if product.track_stock and product.stock %}
+              <span class="small opacity-75">{% trans "Stock limité" %}</span>
+            {% else %}
+              <span class="small opacity-75">{% trans "Paiement sécurisé" %}</span>
+            {% endif %}
+          </div>
+
+          <div class="p-3">
+            <div class="d-flex flex-wrap align-items-end justify-content-between gap-2">
+              <div class="pd-price">{% money product.price %}</div>
+
+              <div class="text-end">
+                {% if product.has_promo and product.discount_percent %}
+                  <div class="pd-savings">-{% trans "Économisez" %} {{ product.discount_percent }}%</div>
+                {% endif %}
+                {% if product.has_promo and product.old_price %}
+                  <div class="pd-old small">{% money product.old_price %}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="small pd-muted mt-2">
+              {% trans "Prix indicatif (hors taxes) — paiement sécurisé." %}
+            </div>
+          </div>
+        </div>
+
+        {# ===== STOCK ===== #}
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <span class="pd-muted">{% trans "Disponibilité" %}</span>
+          {% if product.stock > 0 %}
+            <span class="badge bg-success">{% blocktrans %}En stock ({{ product.stock }}){% endblocktrans %}</span>
+          {% else %}
+            <span class="badge bg-danger">{% trans "Rupture de stock" %}</span>
+          {% endif %}
+        </div>
+
+        {# ===== SERVICE COMMITMENT (liens) ===== #}
+        <div class="pd-commit mb-3" aria-label="{% trans 'Engagement de service' %}">
+          <div class="pd-commit-head">
+            <div class="pd-commit-title">{% trans "Service commitment" %}</div>
+
+            <div class="pd-commit-shipto">
+              <span class="pd-muted">{% trans "Ship to" %}</span>
+              <span class="pd-shipto-pill">
+                <i class="bi bi-geo-alt"></i>
+                {{ request.session.ECOMMERCE_COUNTRY|default:"SN" }}
+              </span>
+            </div>
+          </div>
+
+          <div class="pd-commit-list">
+            <a class="pd-commit-item" href="#pdDeliveryModal" data-bs-toggle="modal" role="button">
+              <span class="pd-commit-ico"><i class="bi bi-truck"></i></span>
+              <span class="pd-commit-main">
+                <span class="pd-commit-strong">
+                  {% trans "Shipping" %}:
+                  {% if shipping_cost %}
+                    {% money shipping_cost %}
+                  {% else %}
+                    <span class="pd-muted">{% trans "Calculé à la caisse" %}</span>
+                  {% endif %}
+                </span>
+                <span class="pd-muted">{% trans "Delivery" %}: <span id="pdDeliverySummary">{% trans "Selon zone" %}</span></span>
+              </span>
+              <span class="pd-commit-arrow">›</span>
+            </a>
+
+            <a class="pd-commit-item" href="#pdReturnModal" data-bs-toggle="modal" role="button">
+              <span class="pd-commit-ico"><i class="bi bi-arrow-counterclockwise"></i></span>
+              <span class="pd-commit-main">
+                <span class="pd-commit-strong">{% trans "Return&refund policy" %}</span>
+                <span class="pd-muted">{% trans "Retour possible selon conditions" %}</span>
+              </span>
+              <span class="pd-commit-arrow">›</span>
+            </a>
+
+            <a class="pd-commit-item" href="#pdSecurityModal" data-bs-toggle="modal" role="button">
+              <span class="pd-commit-ico"><i class="bi bi-shield-lock"></i></span>
+              <span class="pd-commit-main">
+                <span class="pd-commit-strong">{% trans "Security & Privacy" %}</span>
+                <span class="pd-muted">{% trans "Paiements sûrs — données protégées" %}</span>
+              </span>
+              <span class="pd-commit-arrow">›</span>
+            </a>
+          </div>
+        </div>
+
+        {# ===== QUANTITÉ + FAVORIS ===== #}
+        <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-3">
+          <div>
+            <div class="fw-bold mb-1">{% trans "Quantité" %}</div>
+            <div class="pd-qty" data-max="{{ product.stock|default:0 }}">
+              <button type="button" id="pdQtyMinus" aria-label="{% trans 'Réduire' %}">−</button>
+              <input type="text" id="pdQtyInput" value="1" inputmode="numeric" autocomplete="off">
+              <button type="button" id="pdQtyPlus" aria-label="{% trans 'Augmenter' %}">+</button>
+            </div>
+            <div class="pd-muted small mt-1">
+              {% trans "Max." %} <span id="pdQtyMaxText">{% if product.stock %}{{ product.stock }}{% else %}0{% endif %}</span> {% trans "pcs/shopper" %}
+            </div>
+
+            {% if product.stock > 0 and product.stock <= 5 %}
+              <div class="small text-danger mt-1">
+                {% blocktrans %}Seulement {{ product.stock }} restants{% endblocktrans %}
+              </div>
+            {% endif %}
+          </div>
+
+          <form method="post" action="{{ fav_toggle_url|default:'#' }}" class="m-0" id="pdFavForm">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <button type="submit" class="btn btn-light" id="pdFavBtn" {% if not fav_toggle_url %}disabled{% endif %}>
+              <i class="bi {% if is_favorited %}bi-heart-fill text-danger{% else %}bi-heart{% endif %} me-2"></i>
+              <span class="pdFavText">
+                {% if is_favorited %}{% trans "Retirer des favoris" %}{% else %}{% trans "Ajouter aux favoris" %}{% endif %}
+              </span>
+            </button>
+          </form>
+        </div>
+
+        {# ===== ACTIONS (qty sync) ===== #}
+        <div class="pd-buy-actions d-grid gap-2">
+          {% if commerce_mode == "B2B" %}
+            <a href="{{ request_quote_url|default:'#' }}" class="btn btn-danger w-100">
+              <i class="bi bi-file-earmark-text me-2"></i>{% trans "Demander un devis" %}
+            </a>
+          {% else %}
+            <button type="button" class="btn btn-danger w-100" id="pdBuyNowBtn" {% if product.stock <= 0 %}disabled{% endif %}>
+              <i class="bi bi-lightning-charge me-2"></i>{% trans "Acheter maintenant" %}
+            </button>
+
+            <form method="post" action="{{ add_to_cart_url|default:'#' }}" class="m-0" id="pdAddToCartForm">
+              {% csrf_token %}
+              <input type="hidden" name="quantity" id="pdQtyHidden" value="1">
+              <input type="hidden" name="next" value="{{ request.get_full_path }}">
+              <button type="submit"
+                      class="btn btn-outline-dark w-100"
+                      id="pdAddToCartBtn"
+                      {% if not add_to_cart_url or product.stock <= 0 %}disabled{% endif %}>
+                <i class="bi bi-cart-plus me-2"></i>{% trans "Ajouter au panier" %}
+              </button>
+            </form>
+          {% endif %}
+        </div>
+
+        <div class="d-flex gap-2 mt-3">
+          <div class="dropup w-100">
+            <button type="button" class="btn btn-light w-100 dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-share me-2"></i>{% trans "Partager" %}
+            </button>
+            <ul class="dropdown-menu w-100">
+              <li><a class="dropdown-item" id="pdShareWhatsApp" href="#" target="_blank" rel="noopener">📲 WhatsApp</a></li>
+              <li><a class="dropdown-item" id="pdShareFacebook" href="#" target="_blank" rel="noopener">📘 Facebook</a></li>
+              <li><a class="dropdown-item" id="pdShareX" href="#" target="_blank" rel="noopener">𝕏 X</a></li>
+              <li><a class="dropdown-item" id="pdShareTelegram" href="#" target="_blank" rel="noopener">✈️ Telegram</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><button type="button" class="dropdown-item" id="pdCopyLink">🔗 {% trans "Copier le lien" %}</button></li>
+            </ul>
+          </div>
+
+          <form method="post" action="{{ like_toggle_url|default:'#' }}" class="m-0 w-100" id="pdLikeForm">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <button type="submit" class="btn btn-light w-100" id="pdLikeBtn" {% if not like_toggle_url %}disabled{% endif %}>
+              <i class="bi {% if is_liked %}bi-hand-thumbs-up-fill{% else %}bi-hand-thumbs-up{% endif %} me-2"></i>
+              <span class="pdLikeText">{% trans "J'aime" %}</span>
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  {# ========================= #}
+  {# TABS + RELATED            #}
+  {# ========================= #}
+  <div class="row g-4 mt-2">
+    <div class="col-12 col-lg-8">
+      <div class="pd-card p-3">
+        <ul class="nav nav-pills pd-tabs gap-2 mb-3" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#pdDesc" type="button" role="tab">{% trans "Description" %}</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pdSpecs" type="button" role="tab">{% trans "Détails" %}</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pdShip" type="button" role="tab">{% trans "Livraison & retours" %}</button>
+          </li>
+        </ul>
+
+        <div class="tab-content">
+          <div class="tab-pane fade show active" id="pdDesc" role="tabpanel">
+            {% if product.short_description %}
+              <p class="pd-muted mb-3">{{ product.short_description }}</p>
+            {% endif %}
+
+            {% if product.description %}
+              <div class="product-description">{{ product.description|linebreaks }}</div>
+            {% else %}
+              <p class="pd-muted mb-0">{% trans "Aucune description détaillée pour ce produit." %}</p>
+            {% endif %}
+          </div>
+
+          <div class="tab-pane fade" id="pdSpecs" role="tabpanel">
+            <div class="row g-2 small">
+              <div class="col-6">
+                <div class="pd-chip w-100 justify-content-between"><span>{% trans "SKU" %}</span><strong class="text-body">{{ product.sku }}</strong></div>
+              </div>
+              <div class="col-6">
+                <div class="pd-chip w-100 justify-content-between"><span>{% trans "Catégorie" %}</span><strong class="text-body">{{ product.category }}</strong></div>
+              </div>
+              <div class="col-6">
+                <div class="pd-chip w-100 justify-content-between"><span>{% trans "Stock" %}</span><strong class="text-body">{{ product.stock }}</strong></div>
+              </div>
+              <div class="col-6">
+                <div class="pd-chip w-100 justify-content-between"><span>{% trans "Créé le" %}</span><strong class="text-body">{{ product.created_at|date:"d/m/Y" }}</strong></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="pdShip" role="tabpanel">
+            <div class="small">
+              <p class="mb-2"><strong>{% trans "Livraison" %}:</strong> <span class="pd-muted">{% trans "Les délais varient selon la zone. Livraison rapide disponible sur certains articles." %}</span></p>
+              <p class="mb-2"><strong>{% trans "Retours" %}:</strong> <span class="pd-muted">{% trans "Retour possible selon nos conditions. Contactez le support en cas de problème." %}</span></p>
+              <p class="mb-0"><strong>{% trans "Paiement" %}:</strong> <span class="pd-muted">{% trans "Paiement sécurisé, informations personnelles protégées." %}</span></p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+      <div class="pd-card p-3">
+        <h3 class="h6 fw-bold mb-3">{% trans "Pourquoi acheter ici ?" %}</h3>
+        <div class="d-grid gap-2 small">
+          <div class="d-flex gap-2">
+            <span class="text-success"><i class="bi bi-shield-check"></i></span>
+            <div><strong>{% trans "Protection acheteur" %}</strong><br><span class="pd-muted">{% trans "Remboursement si non livré / non conforme (selon conditions)." %}</span></div>
+          </div>
+          <div class="d-flex gap-2">
+            <span class="text-success"><i class="bi bi-truck"></i></span>
+            <div><strong>{% trans "Livraison optimisée" %}</strong><br><span class="pd-muted">{% trans "Options rapides et suivi dès expédition." %}</span></div>
+          </div>
+          <div class="d-flex gap-2">
+            <span class="text-success"><i class="bi bi-lock"></i></span>
+            <div><strong>{% trans "Paiement sécurisé" %}</strong><br><span class="pd-muted">{% trans "Vos données sont protégées." %}</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if related_products %}
+    <div class="mt-5">
+      <h2 class="h5 fw-bold mb-3">{% trans "Articles similaires" %}</h2>
+      <div class="row g-3 pd-related">
+        {% for rp in related_products %}
+          {% url 'economic:ecommerce:product_detail' rp.slug as rp_url %}
+          <div class="col-6 col-md-4 col-lg-3">
+            <article class="card h-100">
+              {% with rp_img=rp.images.all.0 %}
+                <a href="{{ rp_url|default:'#' }}" class="text-decoration-none">
+                  {% if rp_img %}
+                    <img src="{{ rp_img.image.url }}" class="w-100" style="height:180px;object-fit:cover;" alt="{{ rp_img.alt_text|default:rp.name }}" loading="lazy">
+                  {% else %}
+                    <img src="{% static 'global/image/product-placeholder.png' %}" class="w-100" style="height:180px;object-fit:cover;" alt="{% trans 'Produit' %}" loading="lazy">
+                  {% endif %}
+                </a>
+              {% endwith %}
+              <div class="card-body">
+                <h3 class="h6 mb-2" style="min-height: 40px;">
+                  <a href="{{ rp_url|default:'#' }}" class="text-decoration-none">{{ rp.name|truncatechars:52 }}</a>
+                </h3>
+                <div class="fw-bold">{% money rp.price %}</div>
+                <div class="small pd-muted">
+                  ★★★★★
+                  {% if rp.average_rating %}{{ rp.average_rating|floatformat:1 }}{% else %}0.0{% endif %}
+                  · {% if rp.reviews_count %}{{ rp.reviews_count }}{% else %}0{% endif %} {% trans "avis" %}
+                </div>
+                <a href="{{ rp_url|default:'#' }}" class="btn btn-sm btn-outline-primary w-100 mt-2 {% if not rp_url %}disabled{% endif %}">{% trans "Voir" %}</a>
+              </div>
+            </article>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+</section>
+
+{# ========================= #}
+{# MODALS                   #}
+{# ========================= #}
+<div class="modal fade" id="pdDeliveryModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{% trans "Livraison" %}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Fermer' %}"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-2 fw-bold">{% trans "Choisissez une zone au Sénégal" %}</div>
+
+        <select class="form-select" id="pdZoneSelect" aria-label="{% trans 'Zone de livraison' %}">
+          <option value="">{% trans "Sélectionner une zone" %}</option>
+          <option value="dakar">{% trans "Dakar" %}</option>
+          <option value="pikine">{% trans "Pikine / Guédiawaye" %}</option>
+          <option value="rufisque">{% trans "Rufisque" %}</option>
+          <option value="thies">{% trans "Thiès" %}</option>
+          <option value="mbour">{% trans "Mbour / Saly" %}</option>
+          <option value="saint_louis">{% trans "Saint-Louis" %}</option>
+          <option value="touba">{% trans "Touba" %}</option>
+          <option value="kaolack">{% trans "Kaolack" %}</option>
+          <option value="ziguinchor">{% trans "Ziguinchor" %}</option>
+        </select>
+
+        <div class="mt-3 pd-delivery-box">
+          <div class="d-flex justify-content-between">
+            <span class="pd-muted">{% trans "Distance estimée" %}</span>
+            <strong id="pdDist">—</strong>
+          </div>
+          <div class="d-flex justify-content-between">
+            <span class="pd-muted">{% trans "Temps estimé" %}</span>
+            <strong id="pdEta">—</strong>
+          </div>
+          <div class="d-flex justify-content-between">
+            <span class="pd-muted">{% trans "Fenêtre de livraison" %}</span>
+            <strong id="pdEtaWindow">—</strong>
+          </div>
+          <div class="small pd-muted mt-2">
+            {% trans "Estimation indicative (modèle Jumia). La distance réelle dépend du point de départ/arrivée." %}
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{% trans "Fermer" %}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="pdReturnModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{% trans "Retours & remboursements" %}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Fermer' %}"></button>
+      </div>
+      <div class="modal-body">
+        <ul class="mb-0">
+          <li>{% trans "Retour accepté sous 7 jours si produit non utilisé." %}</li>
+          <li>{% trans "Remboursement après vérification (selon conditions)." %}</li>
+          <li>{% trans "Contact support pour assistance." %}</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{% trans "Fermer" %}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="pdSecurityModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{% trans "Sécurité & confidentialité" %}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Fermer' %}"></button>
+      </div>
+      <div class="modal-body">
+        <ul class="mb-0">
+          <li>{% trans "Paiements sécurisés (chiffrement SSL)." %}</li>
+          <li>{% trans "Données personnelles protégées." %}</li>
+          <li>{% trans "Historique et commandes privés." %}</li>
+        </ul>
+      </div>
+      <div class="modal-footer">g
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{% trans "Fermer" %}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block ecommerce_extra_js %}
+  {{ block.super }}
+  <script src="{% static 'economic/ecommerce/js/product_detail.js' %}" defer></script>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+
+
+{% comment %} 
+{# templates/economic/ecommerce/articles/product_detail.html #}
+{% extends "economic/ecommerce/base_ecommerce.html" %}
+{% load static i18n ecom_money ecom_utils %}
+
+{% block ecommerce_title %}
+  {{ product.name }} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block ecommerce_extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'economic/ecommerce/css/product_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+{% url 'economic:ecommerce:index' as shop_url %}
+{% url 'economic:ecommerce:add_to_cart' product.id as add_to_cart_url %}
+{% url 'economic:ecommerce:request_quote' as request_quote_url %}
+{% url 'economic:ecommerce:favorite_toggle' product.id as fav_toggle_url %}
+{% url 'economic:ecommerce:like_toggle' product.id as like_toggle_url %}
+
+<section class="container py-4 pd-shell">
+
+  <div class="mb-3 d-flex flex-wrap align-items-center gap-2 small">
+    <a class="text-decoration-none" href="{{ shop_url|default:'#' }}">← {% trans "Retour à la boutique" %}</a>
+    <span class="pd-muted">|</span>
+    <div class="d-flex flex-wrap align-items-center gap-2 pd-muted">
+      <a class="text-decoration-none" href="{{ shop_url|default:'#' }}">{% trans "Boutique" %}</a>
+      {% if product.category %}
+        <span>›</span><span>{{ product.category }}</span>
+      {% endif %}
+      <span>›</span><span class="text-body">{{ product.name }}</span>
+    </div>
+  </div>
+
+  <div class="row g-4 align-items-start">
+
+    {# ========================= #}
+    {#    GALERIE                #}
+    {# ========================= #}
+    <div class="col-12 col-lg-7">
+      <div class="pd-card p-3">
+        <div class="pd-gallery">
+
+          <div class="pd-thumbs" aria-label="{% trans 'Galerie' %}">
+            {% if product_images %}
+              {% for img in product_images %}
+                <button type="button"
+                        class="pd-thumb-btn {% if main_image and img.id == main_image.id %}is-active{% endif %}"
+                        data-src="{{ img.image.url }}"
+                        aria-label="{% trans 'Aperçu image' %}">
+                  <img src="{{ img.image.url }}" alt="{{ img.alt_text|default:product.name }}" loading="lazy">
+                </button>
+              {% endfor %}
+            {% else %}
+              <button type="button" class="pd-thumb-btn is-active" data-src="{% static 'global/image/product-placeholder.png' %}">
+                <img src="{% static 'global/image/product-placeholder.png' %}" alt="{% trans 'Produit' %}">
+              </button>
+            {% endif %}
+          </div>
+
+          <div class="pd-main">
+            {% if main_image %}
+              <img id="pdMainImage"
+                   src="{{ main_image.image.url }}"
+                   alt="{{ main_image.alt_text|default:product.name }}"
+                   loading="eager">
+            {% else %}
+              <img id="pdMainImage"
+                   src="{% static 'global/image/product-placeholder.png' %}"
+                   alt="{% trans 'Produit' %}"
+                   loading="eager">
+            {% endif %}
+
+            <a class="pd-zoom text-decoration-none"
+               href="{% if main_image %}{{ main_image.image.url }}{% else %}{% static 'global/image/product-placeholder.png' %}{% endif %}"
+               target="_blank" rel="noopener"
+               aria-label="{% trans 'Ouvrir en grand' %}">
+              <i class="bi bi-zoom-in"></i>
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    {# ========================= #}
+    {#    BUY BOX                #}
+    {# ========================= #}
+    <div class="col-12 col-lg-5">
+      <div class="pd-card p-3 pd-buybox"
+           data-stock="{{ product.stock|default:0 }}"
+           data-product-name="{{ product.name|default:''|escape }}"
+           data-product-url="{% if request %}{{ request.build_absolute_uri }}{% endif %}">
+
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+          <div class="small pd-muted">
+            {% if product.vendor %}
+              {% trans "Vendu par" %} <strong class="text-body">{{ product.vendor }}</strong>
+            {% else %}
+              <strong class="text-body">{{ PROJECT_NAME }}</strong>
+            {% endif %}
+          </div>
+
+          {% if product.is_featured %}
+            <span class="pd-chip">🔥 {% trans "Promo" %}</span>
+          {% endif %}
+        </div>
+
+        <h1 class="h5 pd-title mb-2">{{ product.name }}</h1>
+
+        {# ======= STATS RÉELLES ======= #}
+        <div class="d-flex flex-wrap align-items-center gap-2 small mb-3">
+          <span class="text-warning">★★★★★</span>
+          <span class="fw-bold">
+            {% if product.average_rating %}{{ product.average_rating|floatformat:1 }}{% else %}0.0{% endif %}
+          </span>
+          <span class="pd-muted">·</span>
+          <span class="pd-muted">
+            {% if product.reviews_count %}{{ product.reviews_count }}{% else %}0{% endif %} {% trans "avis" %}
+          </span>
+          {% if product.sold_count %}
+            <span class="pd-muted">·</span>
+            <span class="pd-muted">{{ product.sold_count }}+ {% trans "vendus" %}</span>
+          {% endif %}
+        </div>
+
+        {# ===== PRIX ===== #}
+        <div class="pd-deal mb-3">
+          <div class="pd-deal-head">
+            <span>🎁 {% trans "Offre du jour" %}</span>
+            {% if product.track_stock and product.stock %}
+              <span class="small opacity-75">{% trans "Stock limité" %}</span>
+            {% else %}
+              <span class="small opacity-75">{% trans "Paiement sécurisé" %}</span>
+            {% endif %}
+          </div>
+
+          <div class="p-3">
+            <div class="d-flex flex-wrap align-items-end justify-content-between gap-2">
+              <div class="pd-price">{% money product.price %}</div>
+
+              <div class="text-end">
+                {% if product.has_promo and product.discount_percent %}
+                  <div class="pd-savings">-{% trans "Économisez" %} {{ product.discount_percent }}%</div>
+                {% endif %}
+                {% if product.has_promo and product.old_price %}
+                  <div class="pd-old small">{% money product.old_price %}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="small pd-muted mt-2">
+              {% trans "Prix indicatif (hors taxes) — paiement sécurisé." %}
+            </div>
+          </div>
+        </div>
+
+        {# ===== STOCK ===== #}
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <span class="pd-muted">{% trans "Disponibilité" %}</span>
+          {% if product.stock > 0 %}
+            <span class="badge bg-success">{% blocktrans %}En stock ({{ product.stock }}){% endblocktrans %}</span>
+          {% else %}
+            <span class="badge bg-danger">{% trans "Rupture de stock" %}</span>
+          {% endif %}
+        </div>
+
+        {# ===== SERVICE COMMITMENT (liens) ===== #}
+        <div class="pd-commit mb-3" aria-label="{% trans 'Engagement de service' %}">
+          <div class="pd-commit-head">
+            <div class="pd-commit-title">{% trans "Service commitment" %}</div>
+
+            <div class="pd-commit-shipto">
+              <span class="pd-muted">{% trans "Ship to" %}</span>
+              <span class="pd-shipto-pill">
+                <i class="bi bi-geo-alt"></i>
+                {{ request.session.ECOMMERCE_COUNTRY|default:"SN" }}
+              </span>
+            </div>
+          </div>
+
+          <div class="pd-commit-list">
+            <a class="pd-commit-item" href="#pdDeliveryModal" data-bs-toggle="modal" role="button">
+              <span class="pd-commit-ico"><i class="bi bi-truck"></i></span>
+              <span class="pd-commit-main">
+                <span class="pd-commit-strong">
+                  {% trans "Shipping" %}:
+                  {% if shipping_cost %}
+                    {% money shipping_cost %}
+                  {% else %}
+                    <span class="pd-muted">{% trans "Calculé à la caisse" %}</span>
+                  {% endif %}
+                </span>
+                <span class="pd-muted">{% trans "Delivery" %}: <span id="pdDeliverySummary">{% trans "Selon zone" %}</span></span>
+              </span>
+              <span class="pd-commit-arrow">›</span>
+            </a>
+
+            <a class="pd-commit-item" href="#pdReturnModal" data-bs-toggle="modal" role="button">
+              <span class="pd-commit-ico"><i class="bi bi-arrow-counterclockwise"></i></span>
+              <span class="pd-commit-main">
+                <span class="pd-commit-strong">{% trans "Return&refund policy" %}</span>
+                <span class="pd-muted">{% trans "Retour possible selon conditions" %}</span>
+              </span>
+              <span class="pd-commit-arrow">›</span>
+            </a>
+
+            <a class="pd-commit-item" href="#pdSecurityModal" data-bs-toggle="modal" role="button">
+              <span class="pd-commit-ico"><i class="bi bi-shield-lock"></i></span>
+              <span class="pd-commit-main">
+                <span class="pd-commit-strong">{% trans "Security & Privacy" %}</span>
+                <span class="pd-muted">{% trans "Paiements sûrs — données protégées" %}</span>
+              </span>
+              <span class="pd-commit-arrow">›</span>
+            </a>
+          </div>
+        </div>
+
+        {# ===== QUANTITÉ + FAVORIS ===== #}
+        <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-3">
+          <div>
+            <div class="fw-bold mb-1">{% trans "Quantité" %}</div>
+            <div class="pd-qty" data-max="{{ product.stock|default:0 }}">
+              <button type="button" id="pdQtyMinus" aria-label="{% trans 'Réduire' %}">−</button>
+              <input type="text" id="pdQtyInput" value="1" inputmode="numeric" autocomplete="off">
+              <button type="button" id="pdQtyPlus" aria-label="{% trans 'Augmenter' %}">+</button>
+            </div>
+            <div class="pd-muted small mt-1">
+              {% trans "Max." %} <span id="pdQtyMaxText">{% if product.stock %}{{ product.stock }}{% else %}0{% endif %}</span> {% trans "pcs/shopper" %}
+            </div>
+
+            {% if product.stock > 0 and product.stock <= 5 %}
+              <div class="small text-danger mt-1">
+                {% blocktrans %}Seulement {{ product.stock }} restants{% endblocktrans %}
+              </div>
+            {% endif %}
+          </div>
+
+          <form method="post" action="{{ fav_toggle_url|default:'#' }}" class="m-0" id="pdFavForm">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <button type="submit" class="btn btn-light" id="pdFavBtn" {% if not fav_toggle_url %}disabled{% endif %}>
+              <i class="bi {% if is_favorited %}bi-heart-fill text-danger{% else %}bi-heart{% endif %} me-2"></i>
+              <span class="pdFavText">
+                {% if is_favorited %}{% trans "Retirer des favoris" %}{% else %}{% trans "Ajouter aux favoris" %}{% endif %}
+              </span>
+            </button>
+          </form>
+        </div>
+
+        {# ===== ACTIONS (qty sync) ===== #}
+        <div class="pd-buy-actions d-grid gap-2">
+          {% if commerce_mode == "B2B" %}
+            <a href="{{ request_quote_url|default:'#' }}" class="btn btn-danger w-100">
+              <i class="bi bi-file-earmark-text me-2"></i>{% trans "Demander un devis" %}
+            </a>
+          {% else %}
+            <button type="button" class="btn btn-danger w-100" {% if product.stock <= 0 %}disabled{% endif %}>
+              <i class="bi bi-lightning-charge me-2"></i>{% trans "Acheter maintenant" %}
+            </button>
+
+            <form method="post" action="{{ add_to_cart_url|default:'#' }}" class="m-0" id="pdAddToCartForm">
+              {% csrf_token %}
+              <input type="hidden" name="quantity" id="pdQtyHidden" value="1">
+              <input type="hidden" name="next" value="{{ request.get_full_path }}">
+              <button type="submit"
+                      class="btn btn-outline-dark w-100"
+                      id="pdAddToCartBtn"
+                      {% if not add_to_cart_url or product.stock <= 0 %}disabled{% endif %}>
+                <i class="bi bi-cart-plus me-2"></i>{% trans "Ajouter au panier" %}
+              </button>
+            </form>
+          {% endif %}
+        </div>
+
+        <div class="d-flex gap-2 mt-3">
+          <div class="dropup w-100">
+            <button type="button" class="btn btn-light w-100 dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-share me-2"></i>{% trans "Partager" %}
+            </button>
+            <ul class="dropdown-menu w-100">
+              <li><a class="dropdown-item" id="pdShareWhatsApp" href="#" target="_blank" rel="noopener">📲 WhatsApp</a></li>
+              <li><a class="dropdown-item" id="pdShareFacebook" href="#" target="_blank" rel="noopener">📘 Facebook</a></li>
+              <li><a class="dropdown-item" id="pdShareX" href="#" target="_blank" rel="noopener">𝕏 X</a></li>
+              <li><a class="dropdown-item" id="pdShareTelegram" href="#" target="_blank" rel="noopener">✈️ Telegram</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><button type="button" class="dropdown-item" id="pdCopyLink">🔗 {% trans "Copier le lien" %}</button></li>
+            </ul>
+          </div>
+
+          <form method="post" action="{{ like_toggle_url|default:'#' }}" class="m-0 w-100" id="pdLikeForm">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <button type="submit" class="btn btn-light w-100" id="pdLikeBtn" {% if not like_toggle_url %}disabled{% endif %}>
+              <i class="bi {% if is_liked %}bi-hand-thumbs-up-fill{% else %}bi-hand-thumbs-up{% endif %} me-2"></i>
+              <span class="pdLikeText">{% trans "J'aime" %}</span>
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  {# ========================= #}
+  {# TABS + RELATED (inchangé) #}
+  {# ========================= #}
+  <div class="row g-4 mt-2">
+    <div class="col-12 col-lg-8">
+      <div class="pd-card p-3">
+        <ul class="nav nav-pills pd-tabs gap-2 mb-3" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#pdDesc" type="button" role="tab">{% trans "Description" %}</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pdSpecs" type="button" role="tab">{% trans "Détails" %}</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pdShip" type="button" role="tab">{% trans "Livraison & retours" %}</button>
+          </li>
+        </ul>
+
+        <div class="tab-content">
+          <div class="tab-pane fade show active" id="pdDesc" role="tabpanel">
+            {% if product.short_description %}
+              <p class="pd-muted mb-3">{{ product.short_description }}</p>
+            {% endif %}
+
+            {% if product.description %}
+              <div class="product-description">{{ product.description|linebreaks }}</div>
+            {% else %}
+              <p class="pd-muted mb-0">{% trans "Aucune description détaillée pour ce produit." %}</p>
+            {% endif %}
+          </div>
+
+          <div class="tab-pane fade" id="pdSpecs" role="tabpanel">
+            <div class="row g-2 small">
+              <div class="col-6">
+                <div class="pd-chip w-100 justify-content-between"><span>{% trans "SKU" %}</span><strong class="text-body">{{ product.sku }}</strong></div>
+              </div>
+              <div class="col-6">
+                <div class="pd-chip w-100 justify-content-between"><span>{% trans "Catégorie" %}</span><strong class="text-body">{{ product.category }}</strong></div>
+              </div>
+              <div class="col-6">
+                <div class="pd-chip w-100 justify-content-between"><span>{% trans "Stock" %}</span><strong class="text-body">{{ product.stock }}</strong></div>
+              </div>
+              <div class="col-6">
+                <div class="pd-chip w-100 justify-content-between"><span>{% trans "Créé le" %}</span><strong class="text-body">{{ product.created_at|date:"d/m/Y" }}</strong></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="pdShip" role="tabpanel">
+            <div class="small">
+              <p class="mb-2"><strong>{% trans "Livraison" %}:</strong> <span class="pd-muted">{% trans "Les délais varient selon la zone. Livraison rapide disponible sur certains articles." %}</span></p>
+              <p class="mb-2"><strong>{% trans "Retours" %}:</strong> <span class="pd-muted">{% trans "Retour possible selon nos conditions. Contactez le support en cas de problème." %}</span></p>
+              <p class="mb-0"><strong>{% trans "Paiement" %}:</strong> <span class="pd-muted">{% trans "Paiement sécurisé, informations personnelles protégées." %}</span></p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+      <div class="pd-card p-3">
+        <h3 class="h6 fw-bold mb-3">{% trans "Pourquoi acheter ici ?" %}</h3>
+        <div class="d-grid gap-2 small">
+          <div class="d-flex gap-2">
+            <span class="text-success"><i class="bi bi-shield-check"></i></span>
+            <div><strong>{% trans "Protection acheteur" %}</strong><br><span class="pd-muted">{% trans "Remboursement si non livré / non conforme (selon conditions)." %}</span></div>
+          </div>
+          <div class="d-flex gap-2">
+            <span class="text-success"><i class="bi bi-truck"></i></span>
+            <div><strong>{% trans "Livraison optimisée" %}</strong><br><span class="pd-muted">{% trans "Options rapides et suivi dès expédition." %}</span></div>
+          </div>
+          <div class="d-flex gap-2">
+            <span class="text-success"><i class="bi bi-lock"></i></span>
+            <div><strong>{% trans "Paiement sécurisé" %}</strong><br><span class="pd-muted">{% trans "Vos données sont protégées." %}</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if related_products %}
+    <div class="mt-5">
+      <h2 class="h5 fw-bold mb-3">{% trans "Articles similaires" %}</h2>
+      <div class="row g-3 pd-related">
+        {% for rp in related_products %}
+          {% url 'economic:ecommerce:product_detail' rp.slug as rp_url %}
+          <div class="col-6 col-md-4 col-lg-3">
+            <article class="card h-100">
+              {% with rp_img=rp.images.all.0 %}
+                <a href="{{ rp_url|default:'#' }}" class="text-decoration-none">
+                  {% if rp_img %}
+                    <img src="{{ rp_img.image.url }}" class="w-100" style="height:180px;object-fit:cover;" alt="{{ rp_img.alt_text|default:rp.name }}" loading="lazy">
+                  {% else %}
+                    <img src="{% static 'global/image/product-placeholder.png' %}" class="w-100" style="height:180px;object-fit:cover;" alt="{% trans 'Produit' %}" loading="lazy">
+                  {% endif %}
+                </a>
+              {% endwith %}
+              <div class="card-body">
+                <h3 class="h6 mb-2" style="min-height: 40px;">
+                  <a href="{{ rp_url|default:'#' }}" class="text-decoration-none">{{ rp.name|truncatechars:52 }}</a>
+                </h3>
+                <div class="fw-bold">{% money rp.price %}</div>
+                <div class="small pd-muted">
+                  ★★★★★
+                  {% if rp.average_rating %}{{ rp.average_rating|floatformat:1 }}{% else %}0.0{% endif %}
+                  · {% if rp.reviews_count %}{{ rp.reviews_count }}{% else %}0{% endif %} {% trans "avis" %}
+                </div>
+                <a href="{{ rp_url|default:'#' }}" class="btn btn-sm btn-outline-primary w-100 mt-2 {% if not rp_url %}disabled{% endif %}">{% trans "Voir" %}</a>
+              </div>
+            </article>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+</section>
+
+{# ========================= #}
+{# MODALS                   #}
+{# ========================= #}
+<div class="modal fade" id="pdDeliveryModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{% trans "Livraison" %}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Fermer' %}"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-2 fw-bold">{% trans "Choisissez une zone au Sénégal" %}</div>
+
+        <select class="form-select" id="pdZoneSelect" aria-label="{% trans 'Zone de livraison' %}">
+          <option value="">{% trans "Sélectionner une zone" %}</option>
+          <option value="dakar">{% trans "Dakar" %}</option>
+          <option value="pikine">{% trans "Pikine / Guédiawaye" %}</option>
+          <option value="rufisque">{% trans "Rufisque" %}</option>
+          <option value="thiès">{% trans "Thiès" %}</option>
+          <option value="mbour">{% trans "Mbour / Saly" %}</option>
+          <option value="saint_louis">{% trans "Saint-Louis" %}</option>
+          <option value="touba">{% trans "Touba" %}</option>
+          <option value="kaolack">{% trans "Kaolack" %}</option>
+          <option value="ziguinchor">{% trans "Ziguinchor" %}</option>
+        </select>
+
+        <div class="mt-3 pd-delivery-box">
+          <div class="d-flex justify-content-between">
+            <span class="pd-muted">{% trans "Distance estimée" %}</span>
+            <strong id="pdDist">—</strong>
+          </div>
+          <div class="d-flex justify-content-between">
+            <span class="pd-muted">{% trans "Temps estimé" %}</span>
+            <strong id="pdEta">—</strong>
+          </div>
+          <div class="d-flex justify-content-between">
+            <span class="pd-muted">{% trans "Fenêtre de livraison" %}</span>
+            <strong id="pdEtaWindow">—</strong>
+          </div>
+          <div class="small pd-muted mt-2">
+            {% trans "Estimation indicative (modèle Jumia). La distance réelle dépend du point de départ/arrivée." %}
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{% trans "Fermer" %}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="pdReturnModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{% trans "Retours & remboursements" %}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Fermer' %}"></button>
+      </div>
+      <div class="modal-body">
+        <ul class="mb-0">
+          <li>{% trans "Retour accepté sous 7 jours si produit non utilisé." %}</li>
+          <li>{% trans "Remboursement après vérification (selon conditions)." %}</li>
+          <li>{% trans "Contact support pour assistance." %}</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{% trans "Fermer" %}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="pdSecurityModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{% trans "Sécurité & confidentialité" %}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Fermer' %}"></button>
+      </div>
+      <div class="modal-body">
+        <ul class="mb-0">
+          <li>{% trans "Paiements sécurisés (chiffrement SSL)." %}</li>
+          <li>{% trans "Données personnelles protégées." %}</li>
+          <li>{% trans "Historique et commandes privés." %}</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{% trans "Fermer" %}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block ecommerce_extra_js %}
+  {{ block.super }}
+  <script src="{% static 'economic/ecommerce/js/product_detail.js' %}" defer></script>
+{% endblock %}
+ {% endcomment %}
+
+
+
+
+
+
+{% comment %} 
+
+{# templates/economic/ecommerce/articles/product_detail.html #}
+{% extends "economic/ecommerce/base_ecommerce.html" %}
+{% load static i18n ecom_money %}
+
+{% block ecommerce_title %}
+  {{ product.name }} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block ecommerce_extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'economic/ecommerce/css/product_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+{% url 'economic:ecommerce:index' as shop_url %}
+{% url 'economic:ecommerce:add_to_cart' product.id as add_to_cart_url %}
+{% url 'economic:ecommerce:request_quote' as request_quote_url %}
+{% url 'economic:ecommerce:favorite_toggle' product.id as fav_toggle_url %}
+
+<section class="container py-4 pd-shell">
+
+  <div class="mb-3 d-flex flex-wrap align-items-center gap-2 small">
+    <a class="text-decoration-none" href="{{ shop_url|default:'#' }}">← {% trans "Retour à la boutique" %}</a>
+    <span class="pd-muted">|</span>
+    <div class="d-flex flex-wrap align-items-center gap-2 pd-muted">
+      <a class="text-decoration-none" href="{{ shop_url|default:'#' }}">{% trans "Boutique" %}</a>
+      {% if product.category %}
+        <span>›</span><span>{{ product.category }}</span>
+      {% endif %}
+      <span>›</span><span class="text-body">{{ product.name }}</span>
+    </div>
+  </div>
+
+  <div class="row g-4 align-items-start">
+
+    {# ========================= #}
+    {#    GALERIE  #}
+    {#    ========================= #}
+    <div class="col-12 col-lg-7">
+      <div class="pd-card p-3">
+        <div class="pd-gallery">
+
+          <div class="pd-thumbs" aria-label="{% trans 'Galerie' %}">
+            {% if product_images %}
+              {% for img in product_images %}
+                <button type="button"
+                        class="pd-thumb-btn {% if main_image and img.id == main_image.id %}is-active{% endif %}"
+                        data-src="{{ img.image.url }}"
+                        aria-label="{% trans 'Aperçu image' %}">
+                  <img src="{{ img.image.url }}" alt="{{ img.alt_text|default:product.name }}" loading="lazy">
+                </button>
+              {% endfor %}
+            {% else %}
+              <button type="button" class="pd-thumb-btn is-active" data-src="{% static 'global/image/product-placeholder.png' %}">
+                <img src="{% static 'global/image/product-placeholder.png' %}" alt="{% trans 'Produit' %}">
+              </button>
+            {% endif %}
+          </div>
+
+          <div class="pd-main">
+            {% if main_image %}
+              <img id="pdMainImage"
+                   src="{{ main_image.image.url }}"
+                   alt="{{ main_image.alt_text|default:product.name }}"
+                   loading="eager">
+            {% else %}
+              <img id="pdMainImage"
+                   src="{% static 'global/image/product-placeholder.png' %}"
+                   alt="{% trans 'Produit' %}"
+                   loading="eager">
+            {% endif %}
+
+            <a class="pd-zoom text-decoration-none"
+               href="{% if main_image %}{{ main_image.image.url }}{% else %}{% static 'global/image/product-placeholder.png' %}{% endif %}"
+               target="_blank" rel="noopener"
+               aria-label="{% trans 'Ouvrir en grand' %}">
+              <i class="bi bi-zoom-in"></i>
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    {# =========================  #}
+    {#     BUY BOX  #}
+      {#  ========================= #}
+    <div class="col-12 col-lg-5">
+      <div class="pd-card p-3 pd-buybox">
+
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+          <div class="small pd-muted">
+            {% if product.vendor %}
+              {% trans "Vendu par" %} <strong class="text-body">{{ product.vendor }}</strong>
+            {% else %}
+              <strong class="text-body">{{ PROJECT_NAME }}</strong>
+            {% endif %}
+          </div>
+
+          {% if product.is_featured %}
+            <span class="pd-chip">🔥 {% trans "Promo" %}</span>
+          {% endif %}
+        </div>
+
+        <h1 class="h5 pd-title mb-2">{{ product.name }}</h1>
+
+        {# ======= STATS RÉELLES ======= #}
+        <div class="d-flex flex-wrap align-items-center gap-2 small mb-3">
+          <span class="text-warning">★★★★★</span>
+          <span class="fw-bold">
+            {% if product.average_rating %}{{ product.average_rating|floatformat:1 }}{% else %}0.0{% endif %}
+          </span>
+          <span class="pd-muted">·</span>
+          <span class="pd-muted">
+            {% if product.reviews_count %}{{ product.reviews_count }}{% else %}0{% endif %} {% trans "avis" %}
+          </span>
+          {% if product.sold_count %}
+            <span class="pd-muted">·</span>
+            <span class="pd-muted">{{ product.sold_count }}+ {% trans "vendus" %}</span>
+          {% endif %}
+        </div>
+
+        {# ===== PRIX ===== #}
+        <div class="pd-deal mb-3">
+          <div class="pd-deal-head">
+            <span>🎁 {% trans "Offre du jour" %}</span>
+            {% if product.track_stock and product.stock %}
+              <span class="small opacity-75">{% trans "Stock limité" %}</span>
+            {% else %}
+              <span class="small opacity-75">{% trans "Paiement sécurisé" %}</span>
+            {% endif %}
+          </div>
+
+          <div class="p-3">
+            <div class="d-flex flex-wrap align-items-end justify-content-between gap-2">
+              <div class="pd-price">{% money product.price %}</div>
+
+              <div class="text-end">
+                {% if product.has_promo and product.discount_percent %}
+                  <div class="pd-savings">-{% trans "Économisez" %} {{ product.discount_percent }}%</div>
+                {% endif %}
+                {% if product.has_promo and product.old_price %}
+                  <div class="pd-old small">{% money product.old_price %}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="small pd-muted mt-2">
+              {% trans "Prix indicatif (hors taxes) — paiement sécurisé." %}
+            </div>
+          </div>
+        </div>
+
+        {# ===== STOCK ===== #}
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <span class="pd-muted">{% trans "Disponibilité" %}</span>
+          {% if product.stock > 0 %}
+            <span class="badge bg-success">{% blocktrans %}En stock ({{ product.stock }}){% endblocktrans %}</span>
+          {% else %}
+            <span class="badge bg-danger">{% trans "Rupture de stock" %}</span>
+          {% endif %}
+        </div>
+
+        {# ===== SERVICE COMMITMENT (référence image) ===== #}
+        <div class="pd-commit mb-3" aria-label="{% trans 'Engagement de service' %}">
+          <div class="pd-commit-head">
+            <div class="pd-commit-title">{% trans "Service commitment" %}</div>
+
+            <div class="pd-commit-shipto">
+              <span class="pd-muted">{% trans "Ship to" %}</span>
+              <span class="pd-shipto-pill">
+                <i class="bi bi-geo-alt"></i>
+                {{ request.session.ECOMMERCE_COUNTRY|default:"SN" }}
+              </span>
+            </div>
+          </div>
+
+          <div class="pd-commit-list">
+            <a class="pd-commit-item" href="javascript:void(0)">
+              <span class="pd-commit-ico"><i class="bi bi-truck"></i></span>
+              <span class="pd-commit-main">
+                <span class="pd-commit-strong">
+                  {% trans "Shipping" %}:
+                  {% if shipping_cost %}
+                    {% money shipping_cost %}
+                  {% else %}
+                    <span class="pd-muted">{% trans "Calculé à la caisse" %}</span>
+                  {% endif %}
+                </span>
+                <span class="pd-muted">
+                  {% trans "Delivery" %}:
+                  {% if delivery_date %}
+                    {{ delivery_date }}
+                  {% else %}
+                    {% trans "Selon zone" %}
+                  {% endif %}
+                </span>
+              </span>
+              <span class="pd-commit-arrow">›</span>
+            </a>
+
+            <a class="pd-commit-item" href="javascript:void(0)">
+              <span class="pd-commit-ico"><i class="bi bi-arrow-counterclockwise"></i></span>
+              <span class="pd-commit-main">
+                <span class="pd-commit-strong">{% trans "Return&refund policy" %}</span>
+                <span class="pd-muted">{% trans "Retour possible selon conditions" %}</span>
+              </span>
+              <span class="pd-commit-arrow">›</span>
+            </a>
+
+            <a class="pd-commit-item" href="javascript:void(0)">
+              <span class="pd-commit-ico"><i class="bi bi-shield-lock"></i></span>
+              <span class="pd-commit-main">
+                <span class="pd-commit-strong">{% trans "Security & Privacy" %}</span>
+                <span class="pd-muted">{% trans "Paiements sûrs — données protégées" %}</span>
+              </span>
+              <span class="pd-commit-arrow">›</span>
+            </a>
+          </div>
+        </div>
+
+        {# ===== QUANTITÉ + FAVORIS ===== #}
+        <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-3">
+          <div>
+            <div class="fw-bold mb-1">{% trans "Quantité" %}</div>
+            <div class="pd-qty">
+              <button type="button" id="pdQtyMinus" aria-label="{% trans 'Réduire' %}">−</button>
+              <input type="text" id="pdQtyInput" value="1" inputmode="numeric">
+              <button type="button" id="pdQtyPlus" aria-label="{% trans 'Augmenter' %}">+</button>
+            </div>
+            <div class="pd-muted small mt-1">{% trans "Max. 1 pcs/shopper" %}</div>
+
+            {% if product.stock > 0 and product.stock <= 5 %}
+              <div class="small text-danger mt-1">
+                {% blocktrans %}Seulement {{ product.stock }} restants{% endblocktrans %}
+              </div>
+            {% endif %}
+          </div>
+
+          <form method="post" action="{{ fav_toggle_url|default:'#' }}" class="m-0" id="pdFavForm">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <button type="submit" class="btn btn-light" id="pdFavBtn" {% if not fav_toggle_url %}disabled{% endif %}>
+              <i class="bi {% if is_favorited %}bi-heart-fill text-danger{% else %}bi-heart{% endif %} me-2"></i>
+              <span class="pdFavText">
+                {% if is_favorited %}{% trans "Retirer des favoris" %}{% else %}{% trans "Ajouter aux favoris" %}{% endif %}
+              </span>
+            </button>
+          </form>
+        </div>
+
+        {# ===== ACTIONS (qty sync) ===== #}
+        <div class="pd-buy-actions d-grid gap-2">
+          {% if commerce_mode == "B2B" %}
+            <a href="{{ request_quote_url|default:'#' }}" class="btn btn-danger w-100">
+              <i class="bi bi-file-earmark-text me-2"></i>{% trans "Demander un devis" %}
+            </a>
+          {% else %}
+            <button type="button" class="btn btn-danger w-100" {% if product.stock <= 0 %}disabled{% endif %}>
+              <i class="bi bi-lightning-charge me-2"></i>{% trans "Acheter maintenant" %}
+            </button>
+
+            <form method="post"
+                  action="{{ add_to_cart_url|default:'#' }}"
+                  class="m-0">
+              {% csrf_token %}
+              <input type="hidden" name="quantity" id="pdQtyHidden" value="1">
+              <input type="hidden" name="next" value="{{ request.get_full_path }}">
+              <button type="submit"
+                      class="btn btn-outline-dark w-100 {% if not add_to_cart_url or product.stock <= 0 %}disabled{% endif %}"
+                      {% if not add_to_cart_url or product.stock <= 0 %}disabled{% endif %}>
+                <i class="bi bi-cart-plus me-2"></i>{% trans "Ajouter au panier" %}
+              </button>
+            </form>
+          {% endif %}
+        </div>
+
+        <div class="d-flex gap-2 mt-3">
+          <button type="button" class="btn btn-light w-100"><i class="bi bi-share me-2"></i>{% trans "Partager" %}</button>
+          <button type="button" class="btn btn-light w-100"><i class="bi bi-heart me-2"></i>{% trans "J'aime" %}</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  {# ========================= #}
+   {#   TABS + RELATED #}
+   {#   ========================= #}
+  <div class="row g-4 mt-2">
+    <div class="col-12 col-lg-8">
+      <div class="pd-card p-3">
+        <ul class="nav nav-pills pd-tabs gap-2 mb-3" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#pdDesc" type="button" role="tab">{% trans "Description" %}</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pdSpecs" type="button" role="tab">{% trans "Détails" %}</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pdShip" type="button" role="tab">{% trans "Livraison & retours" %}</button>
+          </li>
+        </ul>
+
+        <div class="tab-content">
+          <div class="tab-pane fade show active" id="pdDesc" role="tabpanel">
+            {% if product.short_description %}
+              <p class="pd-muted mb-3">{{ product.short_description }}</p>
+            {% endif %}
+
+            {% if product.description %}
+              <div class="product-description">{{ product.description|linebreaks }}</div>
+            {% else %}
+              <p class="pd-muted mb-0">{% trans "Aucune description détaillée pour ce produit." %}</p>
+            {% endif %}
+          </div>
+
+          <div class="tab-pane fade" id="pdSpecs" role="tabpanel">
+            <div class="row g-2 small">
+              <div class="col-6">
+                <div class="pd-chip w-100 justify-content-between"><span>{% trans "SKU" %}</span><strong class="text-body">{{ product.sku }}</strong></div>
+              </div>
+              <div class="col-6">
+                <div class="pd-chip w-100 justify-content-between"><span>{% trans "Catégorie" %}</span><strong class="text-body">{{ product.category }}</strong></div>
+              </div>
+              <div class="col-6">
+                <div class="pd-chip w-100 justify-content-between"><span>{% trans "Stock" %}</span><strong class="text-body">{{ product.stock }}</strong></div>
+              </div>
+              <div class="col-6">
+                <div class="pd-chip w-100 justify-content-between"><span>{% trans "Créé le" %}</span><strong class="text-body">{{ product.created_at|date:"d/m/Y" }}</strong></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="pdShip" role="tabpanel">
+            <div class="small">
+              <p class="mb-2"><strong>{% trans "Livraison" %}:</strong> <span class="pd-muted">{% trans "Les délais varient selon la zone. Livraison rapide disponible sur certains articles." %}</span></p>
+              <p class="mb-2"><strong>{% trans "Retours" %}:</strong> <span class="pd-muted">{% trans "Retour possible selon nos conditions. Contactez le support en cas de problème." %}</span></p>
+              <p class="mb-0"><strong>{% trans "Paiement" %}:</strong> <span class="pd-muted">{% trans "Paiement sécurisé, informations personnelles protégées." %}</span></p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+      <div class="pd-card p-3">
+        <h3 class="h6 fw-bold mb-3">{% trans "Pourquoi acheter ici ?" %}</h3>
+        <div class="d-grid gap-2 small">
+          <div class="d-flex gap-2">
+            <span class="text-success"><i class="bi bi-shield-check"></i></span>
+            <div><strong>{% trans "Protection acheteur" %}</strong><br><span class="pd-muted">{% trans "Remboursement si non livré / non conforme (selon conditions)." %}</span></div>
+          </div>
+          <div class="d-flex gap-2">
+            <span class="text-success"><i class="bi bi-truck"></i></span>
+            <div><strong>{% trans "Livraison optimisée" %}</strong><br><span class="pd-muted">{% trans "Options rapides et suivi dès expédition." %}</span></div>
+          </div>
+          <div class="d-flex gap-2">
+            <span class="text-success"><i class="bi bi-lock"></i></span>
+            <div><strong>{% trans "Paiement sécurisé" %}</strong><br><span class="pd-muted">{% trans "Vos données sont protégées." %}</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if related_products %}
+    <div class="mt-5">
+      <h2 class="h5 fw-bold mb-3">{% trans "Articles similaires" %}</h2>
+      <div class="row g-3 pd-related">
+        {% for rp in related_products %}
+          {% url 'economic:ecommerce:product_detail' rp.slug as rp_url %}
+          <div class="col-6 col-md-4 col-lg-3">
+            <article class="card h-100">
+              {% with rp_img=rp.images.all.0 %}
+                <a href="{{ rp_url|default:'#' }}" class="text-decoration-none">
+                  {% if rp_img %}
+                    <img src="{{ rp_img.image.url }}" class="w-100" style="height:180px;object-fit:cover;" alt="{{ rp_img.alt_text|default:rp.name }}" loading="lazy">
+                  {% else %}
+                    <img src="{% static 'global/image/product-placeholder.png' %}" class="w-100" style="height:180px;object-fit:cover;" alt="{% trans 'Produit' %}" loading="lazy">
+                  {% endif %}
+                </a>
+              {% endwith %}
+              <div class="card-body">
+                <h3 class="h6 mb-2" style="min-height: 40px;">
+                  <a href="{{ rp_url|default:'#' }}" class="text-decoration-none">{{ rp.name|truncatechars:52 }}</a>
+                </h3>
+                <div class="fw-bold">{% money rp.price %}</div>
+                <div class="small pd-muted">
+                  ★★★★★
+                  {% if rp.average_rating %}{{ rp.average_rating|floatformat:1 }}{% else %}0.0{% endif %}
+                  · {% if rp.reviews_count %}{{ rp.reviews_count }}{% else %}0{% endif %} {% trans "avis" %}
+                </div>
+                <a href="{{ rp_url|default:'#' }}" class="btn btn-sm btn-outline-primary w-100 mt-2 {% if not rp_url %}disabled{% endif %}">{% trans "Voir" %}</a>
+              </div>
+            </article>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+</section>
+{% endblock %}
+
+{% block ecommerce_extra_js %}
+  {{ block.super }}
+  <script src="{% static 'economic/ecommerce/js/product_detail.js' %}" defer></script>
+{% endblock %}
+ {% endcomment %}
+
+
+
+
+{% comment %} 
+{# templates/economic/ecommerce/articles/product_detail.html #}
+{% extends "economic/ecommerce/base_ecommerce.html" %}
+{% load static i18n ecom_money %}
+
+{% block ecommerce_title %}
+  {{ product.name }} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block ecommerce_extra_css %}
+  {{ block.super }}
+  <style>
+    .pd-shell{ --pd-gap: 18px; }
+    .pd-title{ font-weight: 800; letter-spacing: -.2px; }
+    .pd-muted{ color: rgba(0,0,0,.62); }
+    .pd-card{ border-radius: 16px; border: 1px solid rgba(0,0,0,.08); }
+    .pd-chip{
+      display:inline-flex;align-items:center;gap:.4rem;
+      padding:.25rem .6rem;border-radius:999px;
+      background: rgba(0,0,0,.06);
+      font-size:.82rem;
+    }
+    .pd-deal{
+      border: 1px solid rgba(220,53,69,.35);
+      background: rgba(220,53,69,.06);
+      border-radius: 14px;
+      overflow:hidden;
+    }
+    .pd-deal .pd-deal-head{
+      background: #dc3545;
+      color:#fff;
+      padding: .55rem .9rem;
+      font-weight: 800;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:.75rem;
+      flex-wrap:wrap;
+    }
+    .pd-price{
+      font-size: 2.05rem;
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -.3px;
+    }
+    .pd-old{ text-decoration: line-through; opacity:.55; }
+    .pd-savings{
+      color:#dc3545; font-weight: 800; background: rgba(220,53,69,.10);
+      padding:.25rem .5rem;border-radius: 10px;
+    }
+
+    .pd-gallery{
+      display:grid;
+      grid-template-columns: 84px 1fr;
+      gap: var(--pd-gap);
+      align-items:start;
+    }
+    .pd-thumbs{
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+      max-height: 520px;
+      overflow:auto;
+      padding-right: 6px;
+    }
+    .pd-thumb-btn{
+      width: 78px; height: 78px;
+      border-radius: 12px;
+      border: 1px solid rgba(0,0,0,.10);
+      background:#fff;
+      padding:0;
+      overflow:hidden;
+      position:relative;
+      transition: transform .12s ease, border-color .12s ease;
+    }
+    .pd-thumb-btn:hover{ transform: translateY(-1px); border-color: rgba(13,110,253,.35); }
+    .pd-thumb-btn.is-active{ border: 2px solid #0d6efd; }
+    .pd-thumb-btn img{ width:100%; height:100%; object-fit:cover; display:block; }
+    .pd-main{
+      border-radius: 18px;
+      border: 1px solid rgba(0,0,0,.08);
+      background: #fff;
+      overflow:hidden;
+      position:relative;
+      min-height: 320px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .pd-main img{ width:100%; height:auto; display:block; }
+    .pd-main .pd-zoom{
+      position:absolute; right: 12px; bottom: 12px;
+      width: 42px; height: 42px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,.12);
+      background: rgba(255,255,255,.92);
+      display:flex; align-items:center; justify-content:center;
+    }
+
+    .pd-buybox{ position: sticky; top: 92px; }
+    .pd-buybox .pd-buy-actions .btn{
+      border-radius: 14px;
+      font-weight: 800;
+      padding: .85rem 1rem;
+    }
+
+    .pd-qty{
+      display:flex; align-items:center; gap:.5rem;
+      border: 1px solid rgba(0,0,0,.12);
+      border-radius: 14px;
+      padding: .35rem .45rem;
+      width: max-content;
+      background:#fff;
+    }
+    .pd-qty button{
+      width: 34px; height: 34px;
+      border-radius: 10px;
+      border: 0;
+      background: rgba(0,0,0,.06);
+      font-weight: 900;
+    }
+    .pd-qty input{
+      width: 46px;
+      border: 0;
+      text-align:center;
+      font-weight: 800;
+      outline:none;
+      background: transparent;
+    }
+
+    .pd-tabs .nav-link{ border-radius: 999px; font-weight: 800; }
+
+    .pd-related .card{
+      border-radius: 16px;
+      border: 1px solid rgba(0,0,0,.08);
+      overflow:hidden;
+      transition: transform .14s ease;
+    }
+    .pd-related .card:hover{ transform: translateY(-2px); }
+
+    @media (max-width: 992px){
+      .pd-gallery{ grid-template-columns: 1fr; }
+      .pd-thumbs{
+        flex-direction: row;
+        max-height: none;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding-right: 0;
+        padding-bottom: 6px;
+      }
+      .pd-thumb-btn{ width: 74px; height: 74px; }
+      .pd-buybox{ position: static; top:auto; }
+    }
+
+    [data-bs-theme="dark"] .pd-card,
+    [data-bs-theme="dark"] .pd-main,
+    [data-bs-theme="dark"] .pd-thumb-btn{
+      background: rgba(20,20,22,.92);
+      border-color: rgba(255,255,255,.12);
+    }
+    [data-bs-theme="dark"] .pd-muted{ color: rgba(255,255,255,.68); }
+    [data-bs-theme="dark"] .pd-chip{ background: rgba(255,255,255,.08); }
+    [data-bs-theme="dark"] .pd-qty{ background: rgba(20,20,22,.92); border-color: rgba(255,255,255,.12); }
+    [data-bs-theme="dark"] .pd-qty button{ background: rgba(255,255,255,.10); color: rgba(255,255,255,.92); }
+    [data-bs-theme="dark"] .pd-zoom{ background: rgba(20,20,22,.92); border-color: rgba(255,255,255,.12); }
+  </style>
+{% endblock %}
+
+{% block content %}
+{% url 'economic:ecommerce:index' as shop_url %}
+{% url 'economic:ecommerce:add_to_cart' product.id as add_to_cart_url %}
+{% url 'economic:ecommerce:request_quote' as request_quote_url %}
+{% url 'economic:ecommerce:favorite_toggle' product.id as fav_toggle_url %}
+
+<section class="container py-4 pd-shell">
+
+  <div class="mb-3 d-flex flex-wrap align-items-center gap-2 small">
+    <a class="text-decoration-none" href="{{ shop_url|default:'#' }}">← {% trans "Retour à la boutique" %}</a>
+    <span class="pd-muted">|</span>
+    <div class="d-flex flex-wrap align-items-center gap-2 pd-muted">
+      <a class="text-decoration-none" href="{{ shop_url|default:'#' }}">{% trans "Boutique" %}</a>
+      {% if product.category %}
+        <span>›</span><span>{{ product.category }}</span>
+      {% endif %}
+      <span>›</span><span class="text-body">{{ product.name }}</span>
+    </div>
+  </div>
+
+  <div class="row g-4 align-items-start">
+
+    <div class="col-12 col-lg-7">
+      <div class="pd-card p-3">
+        <div class="pd-gallery">
+
+          <div class="pd-thumbs" aria-label="{% trans 'Galerie' %}">
+            {% if product_images %}
+              {% for img in product_images %}
+                <button type="button"
+                        class="pd-thumb-btn {% if main_image and img.id == main_image.id %}is-active{% endif %}"
+                        data-src="{{ img.image.url }}"
+                        aria-label="{% trans 'Aperçu image' %}">
+                  <img src="{{ img.image.url }}" alt="{{ img.alt_text|default:product.name }}" loading="lazy">
+                </button>
+              {% endfor %}
+            {% else %}
+              <button type="button" class="pd-thumb-btn is-active" data-src="{% static 'global/image/product-placeholder.png' %}">
+                <img src="{% static 'global/image/product-placeholder.png' %}" alt="{% trans 'Produit' %}">
+              </button>
+            {% endif %}
+          </div>
+
+          <div class="pd-main">
+            {% if main_image %}
+              <img id="pdMainImage" src="{{ main_image.image.url }}" alt="{{ main_image.alt_text|default:product.name }}" loading="eager">
+            {% else %}
+              <img id="pdMainImage" src="{% static 'global/image/product-placeholder.png' %}" alt="{% trans 'Produit' %}" loading="eager">
+            {% endif %}
+
+            {% if main_image %}
+              <a class="pd-zoom text-decoration-none" href="{{ main_image.image.url }}" target="_blank" rel="noopener" aria-label="{% trans 'Ouvrir en grand' %}">
+                <i class="bi bi-zoom-in"></i>
+              </a>
+            {% endif %}
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-5">
+      <div class="pd-card p-3 pd-buybox">
+
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+          <div class="small pd-muted">
+            {% if product.vendor %}
+              {% trans "Vendu par" %} <strong class="text-body">{{ product.vendor }}</strong>
+            {% else %}
+              <strong class="text-body">{{ PROJECT_NAME }}</strong>
+            {% endif %}
+          </div>
+
+          {% if product.is_featured %}
+            <span class="pd-chip">🔥 {% trans "Promo" %}</span>
+          {% endif %}
+        </div>
+
+        <h1 class="h5 pd-title mb-2">{{ product.name }}</h1>
+
+        {# ======= STATS RÉELLES (pas statiques) ======= #}
+        <div class="d-flex flex-wrap align-items-center gap-2 small mb-3">
+          <span class="text-warning">★★★★★</span>
+
+          <span class="fw-bold">
+            {% if product.average_rating %}{{ product.average_rating|floatformat:1 }}{% else %}0.0{% endif %}
+          </span>
+
+          <span class="pd-muted">·</span>
+
+          <span class="pd-muted">
+            {% if product.reviews_count %}{{ product.reviews_count }}{% else %}0{% endif %} {% trans "avis" %}
+          </span>
+
+          {% if product.sold_count %}
+            <span class="pd-muted">·</span>
+            <span class="pd-muted">{{ product.sold_count }}+ {% trans "vendus" %}</span>
+          {% endif %}
+        </div>
+
+        <div class="pd-deal mb-3">
+          <div class="pd-deal-head">
+            <span>🎁 {% trans "Offre du jour" %}</span>
+            {% if product.track_stock and product.stock %}
+              <span class="small opacity-75">{% trans "Stock limité" %}</span>
+            {% else %}
+              <span class="small opacity-75">{% trans "Paiement sécurisé" %}</span>
+            {% endif %}
+          </div>
+
+          <div class="p-3">
+            <div class="d-flex flex-wrap align-items-end justify-content-between gap-2">
+              <div class="pd-price">{% money product.price %}</div>
+
+              <div class="text-end">
+                {% if product.has_promo and product.discount_percent %}
+                  <div class="pd-savings">-{% trans "Économisez" %} {{ product.discount_percent }}%</div>
+                {% endif %}
+                {% if product.has_promo and product.old_price %}
+                  <div class="pd-old small">{% money product.old_price %}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="small pd-muted mt-2">
+              {% trans "Prix indicatif (hors taxes) — paiement sécurisé." %}
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <span class="pd-muted">{% trans "Disponibilité" %}</span>
+          {% if product.stock > 0 %}
+            <span class="badge bg-success">{% blocktrans %}En stock ({{ product.stock }}){% endblocktrans %}</span>
+          {% else %}
+            <span class="badge bg-danger">{% trans "Rupture de stock" %}</span>
+          {% endif %}
+        </div>
+
+        <div class="pd-card p-3 mb-3" style="border-radius:14px;">
+          <div class="d-flex align-items-center justify-content-between gap-2">
+            <div class="fw-bold">{% trans "Livré vers" %}</div>
+            <div class="pd-muted"><i class="bi bi-geo-alt"></i> {{ request.session.ECOMMERCE_COUNTRY|default:"SN" }}</div>
+          </div>
+
+          <div class="mt-2 d-grid gap-2 small">
+            <div class="d-flex align-items-center gap-2">
+              <span class="text-success"><i class="bi bi-truck"></i></span>
+              <div><strong>{% trans "Livraison" %}:</strong> <span class="pd-muted">{% trans "Gratuite / selon zone" %}</span></div>
+            </div>
+
+            <div class="d-flex align-items-center gap-2">
+              <span class="text-success"><i class="bi bi-shield-check"></i></span>
+              <div><strong>{% trans "Protection" %}:</strong> <span class="pd-muted">{% trans "Retour & remboursement" %}</span></div>
+            </div>
+
+            <div class="d-flex align-items-center gap-2">
+              <span class="text-success"><i class="bi bi-lock"></i></span>
+              <div><strong>{% trans "Sécurité" %}:</strong> <span class="pd-muted">{% trans "Paiement sécurisé" %}</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+          <div>
+            <div class="fw-bold mb-1">{% trans "Quantité" %}</div>
+            <div class="pd-qty">
+              <button type="button" id="pdQtyMinus" aria-label="{% trans 'Réduire' %}">−</button>
+              <input type="text" id="pdQtyInput" value="1" inputmode="numeric">
+              <button type="button" id="pdQtyPlus" aria-label="{% trans 'Augmenter' %}">+</button>
+            </div>
+            {% if product.stock > 0 and product.stock <= 5 %}
+              <div class="small text-danger mt-1">{% blocktrans %}Seulement {{ product.stock }} restants{% endblocktrans %}</div>
+            {% endif %}
+          </div>
+
+          <form method="post" action="{{ fav_toggle_url|default:'#' }}" class="m-0" id="pdFavForm">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <button type="submit" class="btn btn-light" id="pdFavBtn" {% if not fav_toggle_url %}disabled{% endif %}>
+              <i class="bi {% if is_favorited %}bi-heart-fill text-danger{% else %}bi-heart{% endif %} me-2"></i>
+              <span class="pdFavText">
+                {% if is_favorited %}{% trans "Retirer des favoris" %}{% else %}{% trans "Ajouter aux favoris" %}{% endif %}
+              </span>
+            </button>
+          </form>
+        </div>
+
+        <div class="pd-buy-actions d-grid gap-2">
+          {% if commerce_mode == "B2B" %}
+            <a href="{{ request_quote_url|default:'#' }}" class="btn btn-danger w-100">
+              <i class="bi bi-file-earmark-text me-2"></i>{% trans "Demander un devis" %}
+            </a>
+          {% else %}
+            <button type="button" class="btn btn-danger w-100" {% if product.stock <= 0 %}disabled{% endif %}>
+              <i class="bi bi-lightning-charge me-2"></i>{% trans "Acheter maintenant" %}
+            </button>
+
+            <a href="{{ add_to_cart_url|default:'#' }}"
+               class="btn btn-outline-dark w-100 {% if not add_to_cart_url or product.stock <= 0 %}disabled{% endif %}">
+              <i class="bi bi-cart-plus me-2"></i>{% trans "Ajouter au panier" %}
+            </a>
+          {% endif %}
+        </div>
+
+        <div class="d-flex gap-2 mt-3">
+          <button type="button" class="btn btn-light w-100"><i class="bi bi-share me-2"></i>{% trans "Partager" %}</button>
+          <button type="button" class="btn btn-light w-100"><i class="bi bi-heart me-2"></i>{% trans "J'aime" %}</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4 mt-2">
+    <div class="col-12 col-lg-8">
+      <div class="pd-card p-3">
+        <ul class="nav nav-pills pd-tabs gap-2 mb-3" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#pdDesc" type="button" role="tab">{% trans "Description" %}</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pdSpecs" type="button" role="tab">{% trans "Détails" %}</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pdShip" type="button" role="tab">{% trans "Livraison & retours" %}</button>
+          </li>
+        </ul>
+
+        <div class="tab-content">
+          <div class="tab-pane fade show active" id="pdDesc" role="tabpanel">
+            {% if product.short_description %}
+              <p class="pd-muted mb-3">{{ product.short_description }}</p>
+            {% endif %}
+
+            {% if product.description %}
+              <div class="product-description">{{ product.description|linebreaks }}</div>
+            {% else %}
+              <p class="pd-muted mb-0">{% trans "Aucune description détaillée pour ce produit." %}</p>
+            {% endif %}
+          </div>
+
+          <div class="tab-pane fade" id="pdSpecs" role="tabpanel">
+            <div class="row g-2 small">
+              <div class="col-6">
+                <div class="pd-chip w-100 justify-content-between"><span>{% trans "SKU" %}</span><strong class="text-body">{{ product.sku }}</strong></div>
+              </div>
+              <div class="col-6">
+                <div class="pd-chip w-100 justify-content-between"><span>{% trans "Catégorie" %}</span><strong class="text-body">{{ product.category }}</strong></div>
+              </div>
+              <div class="col-6">
+                <div class="pd-chip w-100 justify-content-between"><span>{% trans "Stock" %}</span><strong class="text-body">{{ product.stock }}</strong></div>
+              </div>
+              <div class="col-6">
+                <div class="pd-chip w-100 justify-content-between"><span>{% trans "Créé le" %}</span><strong class="text-body">{{ product.created_at|date:"d/m/Y" }}</strong></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="pdShip" role="tabpanel">
+            <div class="small">
+              <p class="mb-2"><strong>{% trans "Livraison" %}:</strong> <span class="pd-muted">{% trans "Les délais varient selon la zone. Livraison rapide disponible sur certains articles." %}</span></p>
+              <p class="mb-2"><strong>{% trans "Retours" %}:</strong> <span class="pd-muted">{% trans "Retour possible selon nos conditions. Contactez le support en cas de problème." %}</span></p>
+              <p class="mb-0"><strong>{% trans "Paiement" %}:</strong> <span class="pd-muted">{% trans "Paiement sécurisé, informations personnelles protégées." %}</span></p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+      <div class="pd-card p-3">
+        <h3 class="h6 fw-bold mb-3">{% trans "Pourquoi acheter ici ?" %}</h3>
+        <div class="d-grid gap-2 small">
+          <div class="d-flex gap-2">
+            <span class="text-success"><i class="bi bi-shield-check"></i></span>
+            <div><strong>{% trans "Protection acheteur" %}</strong><br><span class="pd-muted">{% trans "Remboursement si non livré / non conforme (selon conditions)." %}</span></div>
+          </div>
+          <div class="d-flex gap-2">
+            <span class="text-success"><i class="bi bi-truck"></i></span>
+            <div><strong>{% trans "Livraison optimisée" %}</strong><br><span class="pd-muted">{% trans "Options rapides et suivi dès expédition." %}</span></div>
+          </div>
+          <div class="d-flex gap-2">
+            <span class="text-success"><i class="bi bi-lock"></i></span>
+            <div><strong>{% trans "Paiement sécurisé" %}</strong><br><span class="pd-muted">{% trans "Vos données sont protégées." %}</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if related_products %}
+    <div class="mt-5">
+      <h2 class="h5 fw-bold mb-3">{% trans "Articles similaires" %}</h2>
+      <div class="row g-3 pd-related">
+        {% for rp in related_products %}
+          {% url 'economic:ecommerce:product_detail' rp.slug as rp_url %}
+          <div class="col-6 col-md-4 col-lg-3">
+            <article class="card h-100">
+              {% with rp_img=rp.images.all.0 %}
+                <a href="{{ rp_url|default:'#' }}" class="text-decoration-none">
+                  {% if rp_img %}
+                    <img src="{{ rp_img.image.url }}" class="w-100" style="height:180px;object-fit:cover;" alt="{{ rp_img.alt_text|default:rp.name }}" loading="lazy">
+                  {% else %}
+                    <img src="{% static 'global/image/product-placeholder.png' %}" class="w-100" style="height:180px;object-fit:cover;" alt="{% trans 'Produit' %}" loading="lazy">
+                  {% endif %}
+                </a>
+              {% endwith %}
+              <div class="card-body">
+                <h3 class="h6 mb-2" style="min-height: 40px;">
+                  <a href="{{ rp_url|default:'#' }}" class="text-decoration-none">{{ rp.name|truncatechars:52 }}</a>
+                </h3>
+                <div class="fw-bold">{% money rp.price %}</div>
+                <div class="small pd-muted">
+                  ★★★★★
+                  {% if rp.average_rating %}{{ rp.average_rating|floatformat:1 }}{% else %}0.0{% endif %}
+                  · {% if rp.reviews_count %}{{ rp.reviews_count }}{% else %}0{% endif %} {% trans "avis" %}
+                </div>
+                <a href="{{ rp_url|default:'#' }}" class="btn btn-sm btn-outline-primary w-100 mt-2 {% if not rp_url %}disabled{% endif %}">{% trans "Voir" %}</a>
+              </div>
+            </article>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+</section>
+{% endblock %}
+
+{% block ecommerce_extra_js %}
+  {{ block.super }}
+  <script>
+    (function(){
+      const main = document.getElementById("pdMainImage");
+      if(!main) return;
+
+      document.querySelectorAll(".pd-thumb-btn[data-src]").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          const src = btn.getAttribute("data-src");
+          if(!src) return;
+
+          main.src = src;
+
+          document.querySelectorAll(".pd-thumb-btn").forEach(b=>b.classList.remove("is-active"));
+          btn.classList.add("is-active");
+
+          const zoom = document.querySelector(".pd-zoom");
+          if(zoom) zoom.href = src;
+        });
+      });
+
+      const minus = document.getElementById("pdQtyMinus");
+      const plus  = document.getElementById("pdQtyPlus");
+      const input = document.getElementById("pdQtyInput");
+
+      function getVal(){
+        const v = parseInt((input && input.value) ? input.value : "1", 10);
+        return Number.isFinite(v) && v > 0 ? v : 1;
+      }
+      function setVal(v){
+        if(!input) return;
+        input.value = String(v);
+      }
+      if(minus && input) minus.addEventListener("click", ()=> setVal(Math.max(1, getVal()-1)));
+      if(plus && input) plus.addEventListener("click", ()=> setVal(getVal()+1));
+    })();
+  </script>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/economic/ecommerce/articles/product_detail.html-NOT GOOD #}
+{% extends "economic/ecommerce/base_ecommerce.html" %}
+{% load static i18n ecom_money %}
+
+{% block ecommerce_title %}
+  {{ product.name }} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block content %}
+{% url 'economic:ecommerce:index' as shop_url %}
+{% url 'economic:ecommerce:add_to_cart' product.id as add_to_cart_url %}
+{% url 'economic:ecommerce:favorite_toggle' product.id as fav_toggle_url %}
+
+<section class="container py-4">
+
+  <!-- Breadcrumb -->
+  <div class="mb-3 small">
+    <a href="{{ shop_url }}" class="text-decoration-none">
+      ← {% trans "Retour à la boutique" %}
+    </a>
+    {% if product.category %}
+      <span class="mx-1">›</span>
+      <span class="text-muted">{{ product.category }}</span>
+    {% endif %}
+  </div>
+
+  <div class="row g-4">
+
+    <!-- ===================== -->
+    <!-- GALERIE -->
+    <!-- ===================== -->
+    <div class="col-12 col-lg-7">
+      <div class="card p-3">
+        {% if main_image %}
+          <img src="{{ main_image.image.url }}"
+               class="img-fluid rounded"
+               alt="{{ main_image.alt_text|default:product.name }}">
+        {% else %}
+          <img src="{% static 'global/image/product-placeholder.png' %}"
+               class="img-fluid rounded"
+               alt="{% trans 'Produit' %}">
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- ===================== -->
+    <!-- BUY BOX -->
+    <!-- ===================== -->
+    <div class="col-12 col-lg-5">
+      <div class="card p-3">
+
+        <div class="small text-muted mb-1">
+          {% if product.vendor %}
+            {% trans "Vendu par" %} <strong>{{ product.vendor }}</strong>
+          {% else %}
+            <strong>{{ PROJECT_NAME }}</strong>
+          {% endif %}
+        </div>
+
+        <h1 class="h5 fw-bold mb-3">{{ product.name }}</h1>
+
+        <!-- ===== PRIX ===== -->
+        <div class="border rounded p-3 mb-3 bg-light">
+
+          <div class="d-flex align-items-end justify-content-between gap-2">
+            <div class="fs-2 fw-bold text-danger">
+              {% money current_price %}
+            </div>
+
+            {% if has_promo %}
+              <div class="text-end">
+                <div class="badge bg-danger mb-1">
+                  -{{ discount_percent }}%
+                </div>
+                <div class="text-muted text-decoration-line-through">
+                  {% money base_price %}
+                </div>
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="small text-muted mt-2">
+            {% trans "Prix indicatif (hors taxes) — paiement sécurisé." %}
+          </div>
+        </div>
+
+        <!-- ===== STOCK ===== -->
+        <div class="d-flex justify-content-between mb-3">
+          <span class="text-muted">{% trans "Disponibilité" %}</span>
+          {% if product.in_stock %}
+            <span class="badge bg-success">
+              {% blocktrans %}En stock ({{ product.stock }}){% endblocktrans %}
+            </span>
+          {% else %}
+            <span class="badge bg-danger">
+              {% trans "Rupture de stock" %}
+            </span>
+          {% endif %}
+        </div>
+
+        <!-- ===== ACTIONS ===== -->
+        <div class="d-grid gap-2 mb-3">
+          <a href="{{ add_to_cart_url }}"
+             class="btn btn-danger {% if not product.purchasable %}disabled{% endif %}">
+            <i class="bi bi-cart-plus me-2"></i>
+            {% trans "Ajouter au panier" %}
+          </a>
+        </div>
+
+        <!-- ===== FAVORIS ===== -->
+        <form method="post" action="{{ fav_toggle_url }}">
+          {% csrf_token %}
+          <button class="btn btn-outline-secondary w-100">
+            <i class="bi {% if is_favorited %}bi-heart-fill text-danger{% else %}bi-heart{% endif %} me-2"></i>
+            {% if is_favorited %}
+              {% trans "Retirer des favoris" %}
+            {% else %}
+              {% trans "Ajouter aux favoris" %}
+            {% endif %}
+          </button>
+        </form>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===================== -->
+  <!-- DESCRIPTION -->
+  <!-- ===================== -->
+  <div class="card p-3 mt-4">
+    <h2 class="h6 fw-bold mb-2">{% trans "Description" %}</h2>
+
+    {% if product.description %}
+      {{ product.description|linebreaks }}
+    {% else %}
+      <p class="text-muted">
+        {% trans "Aucune description disponible." %}
+      </p>
+    {% endif %}
+  </div>
+
+</section>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+
+
+{% comment %} 
+{# templates/economic/ecommerce/articles/product_detail.html - GOOD #}
+{% extends "economic/ecommerce/base_ecommerce.html" %}
 {% load static i18n ecom_money %}
 
 {% block ecommerce_title %}
@@ -589,7 +4403,7 @@
   <script src="{% static 'economic/ecommerce/js/ecommerce.js' %}"></script>
 {% endblock %}
 
-
+ {% endcomment %}
 
 
 

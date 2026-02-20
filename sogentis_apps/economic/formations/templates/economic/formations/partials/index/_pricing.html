@@ -1,0 +1,67 @@
+{% load static i18n dashboard_tags ecom_money ecom_utils %}
+
+<section id="pricing" class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="h5 fw-bold mb-0">{% trans "Tarifs" %}</h2>
+    {% if request and request.user.is_authenticated and u_my_dashboard %}
+      <a class="small text-decoration-none" href="{{ u_my_dashboard }}">{% trans "Mon espace" %} →</a>
+    {% endif %}
+  </div>
+
+  <div class="row g-3 g-md-4">
+    <div class="col-md-4">
+      <div class="ft-card h-100">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <div class="fw-bold">{% trans "Gratuit" %}</div>
+          <span class="badge bg-success">{% money 0 %}</span>
+        </div>
+        <div class="small text-muted mb-3">{% trans "Pour découvrir et accéder à des contenus d’introduction." %}</div>
+        <ul class="small mb-3">
+          <li>{% trans "Modules gratuits" %}</li>
+          <li>{% trans "Ressources de base" %}</li>
+          <li>{% trans "Suivi de progression" %}</li>
+        </ul>
+        <a class="btn btn-sm btn-outline-primary w-100"
+           href="{% if u_course_list %}{{ u_course_list }}?price=free{% else %}#{% endif %}">
+          {% trans "Voir les gratuits" %}
+        </a>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="ft-card h-100 ft-card-featured position-relative">
+        <span class="badge bg-primary position-absolute top-0 end-0 m-3">{% trans "Le plus demandé" %}</span>
+        <div class="fw-bold mb-2">{% trans "Standard" %}</div>
+        <div class="h4 mb-2">
+          {% trans "À partir de" %} <span class="fw-bold">{% money price_from|default:15000 %}</span>
+        </div>
+        <div class="small text-muted mb-3">{% trans "Formations complètes, exercices et accompagnement léger." %}</div>
+        <ul class="small mb-3">
+          <li>{% trans "Accès complet" %}</li>
+          <li>{% trans "Quiz / exercices" %}</li>
+          <li>{% trans "Certificat si complété" %}</li>
+        </ul>
+        <a class="btn btn-sm btn-primary w-100" href="{{ u_course_list|default:'#' }}">{% trans "Explorer" %}</a>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="ft-card h-100">
+        <div class="fw-bold mb-2">{% trans "Pro / Cohorte" %}</div>
+        <div class="h4 mb-2">{% trans "Sur devis" %}</div>
+        <div class="small text-muted mb-3">{% trans "Entreprises, ONG, groupes : sessions, coaching, présentiel, suivi dédié." %}</div>
+        <ul class="small mb-3">
+          <li>{% trans "Sessions planifiées (présentiel / hybride)" %}</li>
+          <li>{% trans "Coaching & évaluation" %}</li>
+          <li>{% trans "Attestations / certificats" %}</li>
+        </ul>
+        <a class="btn btn-sm btn-outline-secondary w-100" href="{{ u_contact|default:'#' }}">{% trans "Demander un devis" %}</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-3 small text-muted">
+    <i class="fa-regular fa-circle-check me-1"></i>
+    {% trans "Les prix varient selon le niveau, la durée, le format et l’accompagnement." %}
+  </div>
+</section>

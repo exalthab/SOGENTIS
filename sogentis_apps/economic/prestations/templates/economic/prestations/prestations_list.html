@@ -1,0 +1,639 @@
+{# templates/economic/prestations/prestations_list.html #}
+{% extends "economic/prestations/base_prestations.html" %}
+{% load static i18n ecom_money dashboard_tags %}
+
+{% block prestations_title %}{% trans "Prestations" %}{% endblock %}
+
+{% block prestations_content %}
+  {% safe_url "economic:prestations:index" as u_index %}
+  {% safe_url "core:contact" as u_contact %}
+
+  <div class="rounded-4 bg-body border p-3 p-lg-4">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+      <div>
+        <h1 class="h5 mb-0">{% trans "Liste des prestations" %}</h1>
+        <div class="text-muted small">
+          {% if page_obj and page_obj.paginator %}{{ page_obj.paginator.count }}{% elif prestations %}{{ prestations|length }}{% else %}0{% endif %}
+          {% trans "résultat(s)" %}
+        </div>
+      </div>
+      <a class="btn btn-sm btn-outline-secondary" href="{{ u_index|default:'#' }}">{% trans "Retour au catalogue" %}</a>
+    </div>
+
+    {% if prestations %}
+      <div class="list-group list-group-flush">
+        {% for p in prestations %}
+          {% safe_url "economic:prestations:detail" p.slug as u_detail %}
+          {% safe_url "economic:prestations:quote" p.slug as u_quote %}
+          {% safe_url "economic:prestations:pay_prestation" p.slug as u_pay %}
+
+          {% firstof p.title p.name p.slug _("Prestation") as title %}
+          {% firstof p.short_description p.description as desc %}
+          {% firstof cur request.session.ECOMMERCE_CURRENCY as currency %}
+          {% firstof p.display_price p.min_price p.price p.base_price as price %}
+
+          <div class="list-group-item px-0 py-3">
+            <div class="d-flex align-items-start justify-content-between gap-3">
+              <div class="flex-grow-1">
+                <div class="fw-semibold">
+                  {% if u_detail and u_detail != "#" %}
+                    <a class="text-decoration-none" href="{{ u_detail }}">{{ title }}</a>
+                  {% else %}
+                    {{ title }}
+                  {% endif %}
+                  {% if p.is_featured %}<span class="badge text-bg-primary ms-2">{% trans "Top" %}</span>{% endif %}
+                </div>
+
+                {% if desc %}
+                  <div class="text-muted small mt-1">{{ desc|striptags|truncatechars:180 }}</div>
+                {% endif %}
+
+                <div class="d-flex flex-wrap gap-2 mt-2 small text-muted">
+                  {% if p.prestation_type %}
+                    <span class="badge text-bg-light border">{{ p.get_prestation_type_display|default:p.prestation_type }}</span>
+                  {% endif %}
+                  {% if p.category %}
+                    <span class="badge text-bg-light border">
+                      {{ p.category.title|default:p.category.name|default:p.category.slug }}
+                    </span>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="d-flex flex-column align-items-end gap-2">
+                <div class="small text-muted text-end">
+                  {% if price %}
+                    {% trans "À partir de" %}
+                    <div class="fw-semibold">{% money price currency %}</div>
+                  {% else %}
+                    <div class="fw-semibold">{% trans "Sur devis" %}</div>
+                  {% endif %}
+                </div>
+
+                <div class="d-flex gap-2">
+                  {% if u_detail and u_detail != "#" %}
+                    <a class="btn btn-sm btn-outline-primary" href="{{ u_detail }}">{% trans "Détails" %}</a>
+                  {% endif %}
+
+                  {# ✅ si prix -> paiement ; sinon -> devis ; fallback contact #}
+                  {% if price and u_pay and u_pay != "#" %}
+                    <a class="btn btn-sm btn-primary" href="{{ u_pay }}">{% trans "Payer" %}</a>
+                  {% else %}
+                    {% if u_quote and u_quote != "#" %}
+                      <a class="btn btn-sm btn-primary" href="{{ u_quote }}">{% trans "Devis" %}</a>
+                    {% elif u_contact and u_contact != "#" %}
+                      <a class="btn btn-sm btn-primary" href="{{ u_contact }}">{% trans "Contacter" %}</a>
+                    {% endif %}
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      {% if is_paginated and page_obj and page_obj.paginator and page_obj.paginator.num_pages > 1 %}
+        <nav class="mt-3" aria-label="{% trans 'Pagination' %}">
+          <ul class="pagination pagination-sm flex-wrap mb-0">
+            {% if page_obj.has_previous %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">{% trans "Précédent" %}</a>
+              </li>
+            {% else %}
+              <li class="page-item disabled"><span class="page-link">{% trans "Précédent" %}</span></li>
+            {% endif %}
+
+            {% for n in page_obj.paginator.page_range %}
+              {% if n == page_obj.number %}
+                <li class="page-item active" aria-current="page"><span class="page-link">{{ n }}</span></li>
+              {% else %}
+                <li class="page-item"><a class="page-link" href="?page={{ n }}">{{ n }}</a></li>
+              {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">{% trans "Suivant" %}</a>
+              </li>
+            {% else %}
+              <li class="page-item disabled"><span class="page-link">{% trans "Suivant" %}</span></li>
+            {% endif %}
+          </ul>
+        </nav>
+      {% endif %}
+    {% else %}
+      <div class="text-muted">{% trans "Aucune prestation." %}</div>
+    {% endif %}
+  </div>
+{% endblock %}
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/prestations_list.html #}
+{% extends "economic/prestations/base_prestations.html" %}
+{% load static i18n ecom_money dashboard_tags %}
+
+{% block prestations_title %}{% trans "Prestations" %}{% endblock %}
+
+{% block prestations_content %}
+  {% safe_url "economic:prestations:index" as u_index %}
+
+  <div class="rounded-4 bg-body border p-3 p-lg-4">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+      <div>
+        <h1 class="h5 mb-0">{% trans "Liste des prestations" %}</h1>
+        <div class="text-muted small">
+          {% if page_obj and page_obj.paginator %}{{ page_obj.paginator.count }}{% elif prestations %}{{ prestations|length }}{% else %}0{% endif %}
+          {% trans "résultat(s)" %}
+        </div>
+      </div>
+      <a class="btn btn-sm btn-outline-secondary" href="{{ u_index|default:'#' }}">{% trans "Retour au catalogue" %}</a>
+    </div>
+
+    {% if prestations %}
+      <div class="list-group list-group-flush">
+        {% for p in prestations %}
+          {% safe_url "economic:prestations:detail" p.slug as u_detail %}
+          {% safe_url "economic:prestations:quote" p.slug as u_quote %}
+
+          {% firstof p.title p.name p.slug _("Prestation") as title %}
+          {% firstof p.short_description p.description as desc %}
+
+          <div class="list-group-item px-0 py-3">
+            <div class="d-flex align-items-start justify-content-between gap-3">
+              <div class="flex-grow-1">
+                <div class="fw-semibold">
+                  {% if u_detail and u_detail != "#" %}
+                    <a class="text-decoration-none" href="{{ u_detail }}">{{ title }}</a>
+                  {% else %}
+                    {{ title }}
+                  {% endif %}
+                  {% if p.is_featured %}<span class="badge text-bg-primary ms-2">{% trans "Top" %}</span>{% endif %}
+                </div>
+
+                {% if desc %}
+                  <div class="text-muted small mt-1">{{ desc|striptags|truncatechars:180 }}</div>
+                {% endif %}
+
+                <div class="d-flex flex-wrap gap-2 mt-2 small text-muted">
+                  {% if p.prestation_type %}
+                    <span class="badge text-bg-light border">{{ p.get_prestation_type_display|default:p.prestation_type }}</span>
+                  {% endif %}
+                  {% if p.category %}
+                    <span class="badge text-bg-light border">{{ p.category.title|default:p.category.name|default:p.category.slug }}</span>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="d-flex flex-column align-items-end gap-2">
+                {% firstof cur request.session.ECOMMERCE_CURRENCY as currency %}
+                {% firstof p.display_price p.min_price p.price p.base_price as price %}
+
+                {% if price %}
+                  <div class="small text-muted text-end">
+                    {% trans "À partir de" %}
+                    <div class="fw-semibold">{% money price currency %}</div>
+                  </div>
+                {% else %}
+                  <div class="small text-muted text-end">
+                    <div class="fw-semibold">{% trans "Sur devis" %}</div>
+                  </div>
+                {% endif %}
+
+                <div class="d-flex gap-2">
+                  {% if u_detail and u_detail != "#" %}
+                    <a class="btn btn-sm btn-outline-primary" href="{{ u_detail }}">{% trans "Détails" %}</a>
+                  {% endif %}
+                  {% if u_quote and u_quote != "#" %}
+                    <a class="btn btn-sm btn-primary" href="{{ u_quote }}">{% trans "Devis" %}</a>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      {# Pagination si page_obj existe #}
+      {% if is_paginated and page_obj and page_obj.paginator and page_obj.paginator.num_pages > 1 %}
+        <nav class="mt-3" aria-label="{% trans 'Pagination' %}">
+          <ul class="pagination pagination-sm flex-wrap mb-0">
+            {% if page_obj.has_previous %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">{% trans "Précédent" %}</a>
+              </li>
+            {% else %}
+              <li class="page-item disabled"><span class="page-link">{% trans "Précédent" %}</span></li>
+            {% endif %}
+
+            {% for n in page_obj.paginator.page_range %}
+              {% if n == page_obj.number %}
+                <li class="page-item active" aria-current="page"><span class="page-link">{{ n }}</span></li>
+              {% else %}
+                <li class="page-item"><a class="page-link" href="?page={{ n }}">{{ n }}</a></li>
+              {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">{% trans "Suivant" %}</a>
+              </li>
+            {% else %}
+              <li class="page-item disabled"><span class="page-link">{% trans "Suivant" %}</span></li>
+            {% endif %}
+          </ul>
+        </nav>
+      {% endif %}
+
+    {% else %}
+      <div class="text-muted">{% trans "Aucune prestation." %}</div>
+    {% endif %}
+  </div>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/prestations_list.html #}
+{% extends "economic/prestations/base_prestations.html" %}
+{% load static i18n dashboard_tags %}
+
+{% trans "Prestation" as t_prestation %}
+
+{% block prestations_title %}{% trans "Prestations" %}{% endblock %}
+
+{% block prestations_content %}
+  <div class="rounded-4 bg-body border p-3 p-lg-4">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+      <h1 class="h5 mb-0">{% trans "Liste" %}</h1>
+      <div class="text-muted small">
+        {% if page_obj %}{{ page_obj.paginator.count }}{% elif prestations %}{{ prestations|length }}{% else %}0{% endif %}
+        {% trans "résultat(s)" %}
+      </div>
+    </div>
+
+    {% if prestations %}
+      <div class="list-group list-group-flush">
+        {% for p in prestations %}
+          {% safe_url "economic:prestations:detail" p.slug as u_detail %}
+          {% safe_url "economic:prestations:quote" p.slug as u_quote %}
+          {% with p_title=p.title|default:p.name|default:p.slug|default:t_prestation %}
+            <div class="list-group-item px-0">
+              <div class="d-flex align-items-start justify-content-between gap-2">
+                <div>
+                  <div class="fw-semibold">
+                    <a class="text-decoration-none" href="{{ u_detail|default:'#' }}">{{ p_title }}</a>
+                  </div>
+                  <div class="text-muted small">
+                    {% if p.short_description %}{{ p.short_description|truncatechars:160 }}
+                    {% elif p.description %}{{ p.description|striptags|truncatechars:160 }}{% endif %}
+                  </div>
+                </div>
+                <div class="d-flex gap-2">
+                  <a class="btn btn-sm btn-outline-primary" href="{{ u_detail|default:'#' }}">{% trans "Détails" %}</a>
+                  <a class="btn btn-sm btn-primary" href="{{ u_quote|default:'#' }}">{% trans "Devis" %}</a>
+                </div>
+              </div>
+            </div>
+          {% endwith %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="text-muted">{% trans "Aucun résultat." %}</div>
+    {% endif %}
+  </div>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/prestations_list.html - good #}
+{% extends "economic/prestations/base_prestations.html" %}
+{% load static i18n ecom_money dashboard_tags %}
+
+{% block prestations_title %}
+  {% trans "Catalogue de prestations" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}
+{% endblock prestations_title %}
+
+{% block prestations_content %}
+<div class="container py-4">
+
+  {# HERO #}
+  <section class="svc-hero mb-4">
+    <div class="row align-items-center g-3">
+      <div class="col-lg-7">
+        <h1 class="svc-hero-title">
+          {% trans "Découvrez nos prestations numériques" %}
+        </h1>
+        <p class="svc-hero-subtitle">
+          {% trans "Accompagnement, développement, hébergement, automatisation, maintenance et plus encore pour soutenir vos projets." %}
+        </p>
+
+        {% safe_url "economic:prestations:tickets" as u_tickets %}
+        {% safe_url "economic:prestations:index" as u_index %}
+
+        <div class="d-flex flex-wrap gap-2 mt-2">
+          <a href="{% if u_tickets %}{{ u_tickets }}{% else %}#{% endif %}"
+             class="btn btn-primary {% if not u_tickets %}disabled{% endif %}"
+             {% if not u_tickets %}aria-disabled="true" tabindex="-1"{% endif %}>
+            <i class="fa-solid fa-ticket me-2"></i>{% trans "Ouvrir un ticket" %}
+          </a>
+
+          <a href="#prestations-list" class="btn btn-outline-secondary">
+            <i class="fa-solid fa-layer-group me-2"></i>{% trans "Voir toutes les prestations" %}
+          </a>
+        </div>
+      </div>
+
+      <div class="col-lg-5">
+        <div class="svc-hero-card border rounded-4 p-3 p-md-4 bg-light">
+          <h5 class="mb-2">{% trans "Pourquoi choisir SOGENTIS ?" %}</h5>
+          <ul class="mb-0">
+            <li>{% trans "Équipe expérimentée et engagée" %}</li>
+            <li>{% trans "Solutions adaptées à votre contexte" %}</li>
+            <li>{% trans "Suivi et support continu" %}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {# FILTRES PAR CATÉGORIE (optionnel) #}
+  {% if categories %}
+    <section class="svc-categories mb-4">
+      <div class="d-flex flex-wrap align-items-center gap-2">
+        <span class="fw-semibold small text-muted">{% trans "Catégories :" %}</span>
+
+        <a href="{% if u_index %}{{ u_index }}{% else %}#{% endif %}"
+           class="badge rounded-pill bg-dark text-decoration-none {% if not u_index %}disabled{% endif %}"
+           {% if not u_index %}aria-disabled="true" tabindex="-1"{% endif %}>
+          {% trans "Toutes" %}
+        </a>
+
+        {% for category in categories %}
+          <a href="{% if u_index %}{{ u_index }}?cat={{ category.slug|urlencode }}{% else %}#{% endif %}"
+             class="badge rounded-pill bg-light text-dark border text-decoration-none {% if not u_index %}disabled{% endif %}"
+             {% if not u_index %}aria-disabled="true" tabindex="-1"{% endif %}>
+            {{ category.name|default:category.slug }}
+          </a>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+
+  {# LISTE DES PRESTATIONS #}
+  <section id="prestations-list">
+    {% if prestations %}
+      <div class="row g-3 g-md-4">
+        {% for prestation in prestations %}
+          <div class="col-md-6 col-lg-4">
+            <article class="card border-0 shadow-sm h-100 svc-card">
+              <div class="card-body d-flex flex-column p-3 p-md-4">
+
+                <div class="d-flex align-items-start justify-content-between gap-2">
+                  <div class="min-w-0">
+                    {% if prestation.category %}
+                      <div class="small text-muted mb-1">
+                        <i class="fa-regular fa-folder-open me-1"></i>
+                        {{ prestation.category.name|default:prestation.category.slug }}
+                      </div>
+                    {% endif %}
+
+                    <h3 class="h6 fw-bold mb-1 text-truncate">
+                      {% safe_url "economic:prestations:detail" prestation.slug as u_detail %}
+                      <a class="text-decoration-none {% if not u_detail %}disabled{% endif %}"
+                         href="{% if u_detail %}{{ u_detail }}{% else %}#{% endif %}"
+                         {% if not u_detail %}aria-disabled="true" tabindex="-1"{% endif %}>
+                        {{ prestation.title|default:_("Prestation") }}
+                      </a>
+                    </h3>
+
+                    {% if prestation.short_description %}
+                      <p class="text-muted small mb-0">
+                        {{ prestation.short_description }}
+                      </p>
+                    {% endif %}
+                  </div>
+
+                  <div class="text-end">
+                    {% if prestation.is_featured %}
+                      <span class="badge text-bg-warning">{% trans "Recommandé" %}</span>
+                    {% endif %}
+
+                    {% if prestation.turnaround_days %}
+                      <div class="mt-2">
+                        <span class="badge text-bg-light border">
+                          <i class="fa-regular fa-clock me-1"></i>{{ prestation.turnaround_days }}{% trans "j" %}
+                        </span>
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="mt-3 d-flex flex-wrap gap-2">
+                  <span class="badge text-bg-light border">
+                    <i class="fa-solid fa-tag me-1"></i>
+                    {{ prestation.get_prestation_type_display|default:prestation.prestation_type }}
+                  </span>
+                  <span class="badge text-bg-light border">
+                    <i class="fa-solid fa-cube me-1"></i>
+                    {{ prestation.get_deliverable_display|default:prestation.deliverable }}
+                  </span>
+                </div>
+
+                <div class="mt-3 pt-3 border-top d-flex align-items-center justify-content-between gap-2">
+                  <div class="fw-bold">
+                    {% if prestation.base_price and prestation.base_price > 0 %}
+                      {% money prestation.base_price %}
+                      <span class="text-muted fw-normal small">{% trans "à partir de" %}</span>
+                    {% else %}
+                      <span class="text-muted fw-semibold">{% trans "Sur devis" %}</span>
+                    {% endif %}
+                  </div>
+
+                  <div class="d-flex gap-2">
+                    <a href="{% if u_detail %}{{ u_detail }}{% else %}#{% endif %}"
+                       class="btn btn-sm btn-outline-primary {% if not u_detail %}disabled{% endif %}"
+                       {% if not u_detail %}aria-disabled="true" tabindex="-1"{% endif %}>
+                      <i class="fa-regular fa-eye me-1"></i>{% trans "Détail" %}
+                    </a>
+
+                    {% safe_url "economic:prestations:quote" prestation.slug as u_quote %}
+                    <a href="{% if u_quote %}{{ u_quote }}{% else %}#{% endif %}"
+                       class="btn btn-sm btn-primary {% if not u_quote %}disabled{% endif %}"
+                       {% if not u_quote %}aria-disabled="true" tabindex="-1"{% endif %}>
+                      <i class="fa-solid fa-file-signature me-1"></i>{% trans "Devis" %}
+                    </a>
+                  </div>
+                </div>
+
+              </div>
+            </article>
+          </div>
+        {% endfor %}
+      </div>
+
+    {% else %}
+      <div class="text-center py-5 text-muted">
+        <p class="mb-1">{% trans "Aucune prestation n’est disponible pour le moment." %}</p>
+        <p class="small">{% trans "Contactez-nous pour définir ensemble une offre adaptée." %}</p>
+
+        {% if u_tickets %}
+          <a class="btn btn-primary mt-2" href="{{ u_tickets }}">
+            <i class="fa-solid fa-ticket me-2"></i>{% trans "Ouvrir un ticket" %}
+          </a>
+        {% endif %}
+      </div>
+    {% endif %}
+  </section>
+
+</div>
+{% endblock prestations_content %} {% endcomment %}
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/prestations_list.html #}
+{% extends "economic/prestations/base_prestations.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Catalogue de prestations" %} | SOGENTIS{% endblock %}
+{% block content %}
+<div class="container py-4">
+
+  {# HERO #}
+  <section class="services-hero mb-4">
+    <div class="row align-items-center g-3">
+      <div class="col-lg-7">
+        <h1 class="services-hero-title">
+          {% trans "Découvrez nos services numériques" %}
+        </h1>
+        <p class="services-hero-subtitle">
+          {% trans "Accompagnement, développement, hébergement, formation et plus encore pour soutenir vos projets." %}
+        </p>
+        <div class="d-flex flex-wrap gap-2 mt-2">
+          <a href="{% url 'economic:services:service_request' %}" class="btn btn-primary">
+            {% trans "Demander un devis" %}
+          </a>
+          <a href="#services-list" class="btn btn-outline-secondary">
+            {% trans "Voir tous les services" %}
+          </a>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <div class="services-hero-card">
+          <h5 class="mb-2">{% trans "Pourquoi choisir SOGENTIS ?" %}</h5>
+          <ul class="services-hero-list">
+            <li>{% trans "Équipe expérimentée et engagée" %}</li>
+            <li>{% trans "Solutions adaptées à votre contexte" %}</li>
+            <li>{% trans "Suivi et support continu" %}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {# FILTRES PAR CATÉGORIE (optionnel) #}
+  {% if categories %}
+    <section class="services-categories mb-4">
+      <div class="d-flex flex-wrap align-items-center gap-2">
+        <span class="fw-semibold small text-muted">{% trans "Catégories :" %}</span>
+        <a href="{% url 'economic:services:service_list' %}"
+           class="badge rounded-pill bg-dark text-decoration-none">
+          {% trans "Tous" %}
+        </a>
+        {% for category in categories %}
+          <a href="{% url 'economic:services:service_list' %}?category={{ category.slug }}"
+             class="badge rounded-pill bg-light text-dark border text-decoration-none">
+            {{ category.name }}
+          </a>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+
+  {# LISTE DES SERVICES #}
+  <section id="services-list">
+    {% if services %}
+      <div class="row g-3 g-md-4">
+        {% for service in services %}
+          <div class="col-md-6 col-lg-4">
+            <article class="service-card h-100">
+              <div class="service-card-body">
+                <div class="service-card-header">
+                  {% if service.category %}
+                    <span class="service-category-badge">
+                      {{ service.category }}
+                    </span>
+                  {% endif %}
+                  {% if service.base_price %}
+                    <span class="service-price">
+                      {{ service.base_price }} {{ DEFAULT_CURRENCY|default:"XOF" }}
+                    </span>
+                  {% endif %}
+                </div>
+
+                <h3 class="service-title">
+                  <a href="{% url 'economic:services:service_detail' slug=service.slug %}">
+                    {{ service.name }}
+                  </a>
+                </h3>
+
+                {% if service.short_description %}
+                  <p class="service-excerpt">
+                    {{ service.short_description }}
+                  </p>
+                {% endif %}
+
+                <div class="service-meta">
+                  {% if service.is_featured %}
+                    <span class="badge bg-warning text-dark me-1">
+                      ⭐ {% trans "Recommandé" %}
+                    </span>
+                  {% endif %}
+                  {% if service.delivery_time_label %}
+                    <span class="badge bg-light text-muted border">
+                      ⏱ {{ service.delivery_time_label }}
+                    </span>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="service-card-footer">
+                <a href="{% url 'economic:services:service_detail' slug=service.slug %}"
+                   class="btn btn-sm btn-outline-primary">
+                  {% trans "Voir le détail" %}
+                </a>
+                <a href="{% url 'economic:services:service_request' %}?service={{ service.slug }}"
+                   class="btn btn-sm btn-primary ms-2">
+                  {% trans "Je suis intéressé(e)" %}
+                </a>
+              </div>
+            </article>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="text-center py-5 text-muted">
+        <p class="mb-1">
+          {% trans "Aucun service n’est disponible pour le moment." %}
+        </p>
+        <p class="small">
+          {% trans "Contactez-nous pour définir ensemble une offre adaptée." %}
+        </p>
+      </div>
+    {% endif %}
+  </section>
+
+</div>
+{% endblock %} {% endcomment %}

@@ -21,6 +21,63 @@
       </p>
 
       {% if instructions %}
+        <div class="alert alert-info">
+          {{ instructions|linebreaks }}
+        </div>
+      {% else %}
+        <p class="mb-3">
+          {% trans "Vous allez être redirigé vers la page de paiement du prestataire." %}
+        </p>
+      {% endif %}
+
+      {% if redirect_url %}
+        <a href="{{ redirect_url }}" class="btn btn-primary">
+          {% trans "Continuer vers le paiement" %}
+        </a>
+      {% else %}
+        <div class="alert alert-warning mb-0">
+          {% trans "Ce moyen de paiement n'est pas encore configuré. Veuillez en choisir un autre." %}
+        </div>
+      {% endif %}
+
+      <div class="mt-3">
+        <a href="{% url 'economic:ecommerce:choose_payment' order.uuid %}" class="btn btn-link px-0">
+          {% trans "Changer de moyen de paiement" %}
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+
+
+
+
+{% comment %} {# templates/economic/ecommerce/payments/checkout_provider.html #}
+{% extends "economic/ecommerce/base_ecommerce.html" %}
+{% load i18n ecom_money %}
+
+{% block ecommerce_title %}
+  {% trans "Redirection paiement" %} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+  <h1 class="mb-3">
+    {% block provider_title %}{{ provider_display_name|default:"Paiement" }}{% endblock %}
+  </h1>
+
+  <div class="card">
+    <div class="card-body">
+
+      <p class="mb-3">
+        {% trans "Commande" %} : <strong>{{ order.uuid }}</strong><br>
+        {% trans "Montant" %} : <strong>{% money order.total_amount %}</strong>
+      </p>
+
+      {% if instructions %}
         <p class="mb-3">{{ instructions|linebreaks }}</p>
       {% else %}
         <p class="mb-3">
@@ -43,7 +100,7 @@
   </div>
 </section>
 {% endblock %}
-
+ {% endcomment %}
 
 
 

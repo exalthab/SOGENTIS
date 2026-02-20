@@ -1,0 +1,1188 @@
+{# templates/economic/prestations/partials/index/_svc_packs.html #}
+{% load i18n static ecom_money dashboard_tags %}
+
+<section id="packs" class="rounded-4 bg-body border p-3 p-lg-4 mt-4">
+
+  {# =============================== #}
+  {# Header                         #}
+  {# =============================== #}
+
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <div>
+      <h2 class="h5 mb-0">{% trans "Packs" %}</h2>
+
+      {% if packs_page_obj and packs_page_obj.paginator %}
+        <div class="small text-muted">
+          {{ packs_page_obj.paginator.count }} {% trans "pack(s)" %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  {# =============================== #}
+  {# Packs List                     #}
+  {# =============================== #}
+
+  {% if packages %}
+    <div class="row g-3">
+
+      {% for pack in packages %}
+
+        {% safe_url "economic:prestations:package_detail" slug=pack.slug as u_detail %}
+        {% safe_url "economic:prestations:package_quote" slug=pack.slug as u_quote %}
+        {% safe_url "economic:prestations:pay_package" slug=pack.slug as u_pay %}
+
+        <div class="col-12 col-md-6 col-xl-4">
+          <article class="card h-100 shadow-sm border-0 rounded-4">
+
+            {# =============================== #}
+            {# Image                          #}
+            {# =============================== #}
+
+            {% if pack.cover_image %}
+              <a href="{{ u_detail|default:'#' }}" class="text-decoration-none">
+                <img src="{{ pack.cover_image.url }}"
+                     class="card-img-top rounded-top-4"
+                     alt="{{ pack.display_title|default:'-' }}"
+                     loading="lazy">
+              </a>
+            {% elif pack.image %}
+              <a href="{{ u_detail|default:'#' }}" class="text-decoration-none">
+                <img src="{{ pack.image.url }}"
+                     class="card-img-top rounded-top-4"
+                     alt="{{ pack.display_title|default:'-' }}"
+                     loading="lazy">
+              </a>
+            {% else %}
+              <a href="{{ u_detail|default:'#' }}" class="text-decoration-none">
+                <img src="{% static 'prestations/img/sogentis_pack.jpg' %}"
+                     class="card-img-top rounded-top-4"
+                     alt="{{ pack.display_title|default:'-' }}"
+                     loading="lazy">
+              </a>
+            {% endif %}
+
+            {# =============================== #}
+            {# Body                           #}
+            {# =============================== #}
+
+            <div class="card-body d-flex flex-column gap-2">
+
+              <div class="d-flex align-items-start justify-content-between gap-2">
+
+                <h3 class="h6 mb-0 text-truncate">
+                  {% if u_detail %}
+                    <a href="{{ u_detail }}" class="text-decoration-none">
+                      {{ pack.display_title }}
+                    </a>
+                  {% else %}
+                    {{ pack.display_title }}
+                  {% endif %}
+                </h3>
+
+                {% if pack.is_featured %}
+                  <span class="badge text-bg-warning">
+                    {% trans "Top" %}
+                  </span>
+                {% endif %}
+              </div>
+
+              {% if pack.display_excerpt %}
+                <p class="small text-muted mb-2">
+                  {{ pack.display_excerpt|striptags|truncatechars:140 }}
+                </p>
+              {% endif %}
+
+              {# =============================== #}
+              {# Features (optional)           #}
+              {# =============================== #}
+
+              {% if pack.features %}
+                <ul class="small text-muted ps-3 mb-2">
+                  {% for f in pack.features.all %}
+                    <li>{{ f.title|default:f }}</li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+
+              {# =============================== #}
+              {# Footer / Actions              #}
+              {# =============================== #}
+
+              <div class="mt-auto d-flex flex-wrap align-items-center justify-content-between gap-2 pt-2">
+
+                <div class="small">
+                  {% if pack.display_price %}
+                    <span class="fw-semibold">
+                      {{ pack.display_price }}
+                    </span>
+                    <span class="text-muted">
+                      {{ cur|default:"XOF" }}
+                    </span>
+                  {% else %}
+                    <span class="badge text-bg-light border">
+                      {% trans "Sur devis" %}
+                    </span>
+                  {% endif %}
+                </div>
+
+                <div class="d-flex flex-wrap gap-2">
+
+                  {% if u_detail %}
+                    <a class="btn btn-sm btn-outline-primary"
+                       href="{{ u_detail }}">
+                      {% trans "Voir" %}
+                    </a>
+                  {% endif %}
+
+                  {% if u_quote %}
+                    <a class="btn btn-sm btn-outline-secondary"
+                       href="{{ u_quote }}">
+                      {% trans "Devis" %}
+                    </a>
+                  {% endif %}
+
+                  {% if pack.display_price %}
+                    {% if request.user.is_authenticated %}
+                      {% if u_pay %}
+                        <a class="btn btn-sm btn-primary"
+                           href="{{ u_pay }}">
+                          {% trans "Payer" %}
+                        </a>
+                      {% endif %}
+                    {% else %}
+                      {% safe_url "accounts_users:web:auth:login" as login_url %}
+                      {% if login_url %}
+                        <a class="btn btn-sm btn-primary"
+                           href="{{ login_url }}?next={{ request.get_full_path|urlencode }}">
+                          {% trans "Se connecter" %}
+                        </a>
+                      {% endif %}
+                    {% endif %}
+                  {% endif %}
+
+                </div>
+              </div>
+
+            </div>
+          </article>
+        </div>
+
+      {% endfor %}
+    </div>
+
+    {# =============================== #}
+    {# Pagination                     #}
+    {# =============================== #}
+
+    {% if packs_page_obj and packs_page_obj.has_other_pages %}
+      <nav class="mt-4" aria-label="{% trans 'Pagination packs' %}">
+        <ul class="pagination pagination-sm justify-content-center mb-0">
+
+          <li class="page-item {% if not packs_page_obj.has_previous %}disabled{% endif %}">
+            <a class="page-link"
+               href="{% if packs_page_obj.has_previous %}?packs_page={{ packs_page_obj.previous_page_number }}#packs{% else %}#{% endif %}">
+              {% trans "Préc." %}
+            </a>
+          </li>
+
+          {% for n in packs_page_obj.paginator.page_range %}
+            {% if n == packs_page_obj.number %}
+              <li class="page-item active">
+                <span class="page-link">{{ n }}</span>
+              </li>
+            {% elif n >= packs_page_obj.number|add:-2 and n <= packs_page_obj.number|add:2 %}
+              <li class="page-item">
+                <a class="page-link" href="?packs_page={{ n }}#packs">
+                  {{ n }}
+                </a>
+              </li>
+            {% endif %}
+          {% endfor %}
+
+          <li class="page-item {% if not packs_page_obj.has_next %}disabled{% endif %}">
+            <a class="page-link"
+               href="{% if packs_page_obj.has_next %}?packs_page={{ packs_page_obj.next_page_number }}#packs{% else %}#{% endif %}">
+              {% trans "Suiv." %}
+            </a>
+          </li>
+
+        </ul>
+      </nav>
+    {% endif %}
+
+  {% else %}
+    <div class="alert alert-light border mb-0">
+      <div class="fw-semibold mb-1">{% trans "Aucun pack disponible" %}</div>
+      <div class="small text-muted">
+        {% trans "Aucun pack actif pour le moment." %}
+      </div>
+    </div>
+  {% endif %}
+
+</section>
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/partials/index/_svc_packs.html #}
+{% load i18n static ecom_money dashboard_tags %}
+
+<section id="packs" class="rounded-4 bg-body border p-3 p-lg-4 mb-3">
+  <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+    <div>
+      <h2 class="h5 mb-0">{% trans "Packs" %}</h2>
+      <div class="text-muted small">
+        {% if packs_paginator %}{{ packs_paginator.count }}{% elif packages %}{{ packages|length }}{% else %}0{% endif %}
+        {% trans "pack(s)" %}
+      </div>
+    </div>
+  </div>
+
+  {% if packages %}
+    <div class="row g-3">
+      {% for pack in packages %}
+        {% safe_url "economic:prestations:package_detail" pack.slug as u_pack %}
+        {% safe_url "economic:prestations:package_quote" pack.slug as u_pack_quote %}
+
+        {% firstof pack.title pack.name pack.slug _("Pack") as pack_title %}
+        {% firstof pack.short_description pack.description as pack_desc %}
+        {% firstof cur request.session.ECOMMERCE_CURRENCY as currency %}
+        {% firstof pack.total_price pack.price pack.base_price as pack_price %}
+
+        <div class="col-12 col-lg-6 col-xl-4">
+          <div class="card h-100 shadow-sm border-0 rounded-4">
+            <div class="card-body d-flex flex-column">
+              <div class="d-flex align-items-start justify-content-between gap-2">
+                <h3 class="h6 mb-1">
+                  {% if u_pack and u_pack != "#" %}
+                    <a class="text-decoration-none" href="{{ u_pack }}">{{ pack_title }}</a>
+                  {% else %}
+                    {{ pack_title }}
+                  {% endif %}
+                </h3>
+                {% if pack.is_featured %}
+                  <span class="badge text-bg-primary">{% trans "Recommandé" %}</span>
+                {% endif %}
+              </div>
+
+              {% if pack_desc %}
+                <p class="text-muted small mb-3">{{ pack_desc|striptags|truncatechars:160 }}</p>
+              {% endif %}
+
+              {% if pack.features %}
+                <ul class="small text-muted mb-3 ps-3">
+                  {% for f in pack.features.all %}
+                    <li>{{ f.title|default:f }}</li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+
+              <div class="mt-auto d-flex flex-wrap gap-2">
+                {% if u_pack and u_pack != "#" %}
+                  <a class="btn btn-sm btn-outline-primary" href="{{ u_pack }}">{% trans "Voir" %}</a>
+                {% endif %}
+                {% if u_pack_quote and u_pack_quote != "#" %}
+                  <a class="btn btn-sm btn-primary" href="{{ u_pack_quote }}">{% trans "Commencer" %}</a>
+                {% endif %}
+              </div>
+            </div>
+
+            {% if pack_price %}
+              <div class="card-footer bg-transparent border-0 pt-0 pb-3 px-3">
+                <div class="small text-muted">
+                  {% trans "Prix" %} : <strong>{% money pack_price currency %}</strong>
+                </div>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    {% include "economic/prestations/partials/_svc_packs_pagination.html" with page_obj=packs_page_obj page_param="packs_page" anchor="packs" only %}
+  {% else %}
+    <div class="text-muted">{% trans "Aucun pack disponible pour le moment." %}</div>
+  {% endif %}
+</section> {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/partials/index/_svc_packs.html -good #}
+{% load static i18n ecom_money dashboard_tags %}
+
+<section class="svc-packs" aria-label="{{ packs_title|default:_('Packs & offres') }}">
+
+  <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
+    <div>
+      <div class="d-flex align-items-center gap-2">
+        <span class="svc-dot" aria-hidden="true"></span>
+        <h2 class="h5 m-0">{{ packs_title|default:_("Packs & offres") }}</h2>
+        {% if packs %}
+          <span class="badge text-bg-light border">{{ packs|length }}</span>
+        {% endif %}
+      </div>
+      <p class="text-muted small mb-0 mt-1">
+        {{ packs_subtitle|default:_("Choisissez une formule claire (prix, délais, périmètre) ou demandez un devis sur mesure.") }}
+      </p>
+    </div>
+
+    {% if show_cta|default:True and base_list_url %}
+      <a class="btn btn-sm btn-outline-primary" href="{{ base_list_url }}">
+        {% trans "Voir tous les packs" %}
+      </a>
+    {% endif %}
+  </div>
+
+  <div class="row g-3">
+
+    {% if packs %}
+      {% for pack in packs %}
+
+        {# ✅ URLS: seulement si slug présent (sinon ça donne /packs/None/) #}
+        {% if pack.slug %}
+          {% safe_url "economic:prestations:package_detail" pack.slug as pack_url %}
+          {% safe_url "economic:prestations:package_quote" pack.slug as pack_quote_url %} 
+        {% else %}
+          {% with pack_url="#" pack_quote_url="#" %}
+          {% endwith %}
+        {% endif %}
+        {% safe_url "core:contact" as contact_url %}
+
+        <div class="col-12 col-md-6 col-xl-4 svc-pack-item">
+
+          <article class="card h-100 border-0 shadow-sm svc-pack">
+
+            <div class="card-body pb-0">
+              <div class="d-flex align-items-start justify-content-between gap-2">
+                <div>
+                  <h3 class="h6 mb-1">
+                    {% if pack.slug and pack_url != "#" %}
+                      <a class="text-decoration-none text-dark" href="{{ pack_url }}">
+                        {{ pack.title }}
+                      </a>
+                    {% else %}
+                      {{ pack.title }}
+                    {% endif %}
+                  </h3>
+
+                  <div class="d-flex flex-wrap gap-2 small text-muted">
+                    {% if pack.tier %}
+                      <span class="svc-chip">{{ pack.get_tier_display|default:pack.tier }}</span>
+                    {% endif %}
+                    {% if pack.duration_label %}
+                      <span class="svc-chip">⏱ {{ pack.duration_label }}</span>
+                    {% endif %}
+                    {% if pack.is_active is not None %}
+                      {% if pack.is_active %}
+                        <span class="svc-chip text-success">● {% trans "Actif" %}</span>
+                      {% else %}
+                        <span class="svc-chip text-danger">● {% trans "Inactif" %}</span>
+                      {% endif %}
+                    {% endif %}
+                  </div>
+                </div>
+
+                {% if pack.is_featured %}
+                  <span class="badge text-bg-warning">{% trans "Populaire" %}</span>
+                {% endif %}
+              </div>
+
+              <div class="mt-2">
+                {% if pack.short_description %}
+                  <p class="small text-muted mb-3">{{ pack.short_description|truncatechars:140 }}</p>
+                {% elif pack.summary %}
+                  <p class="small text-muted mb-3">{{ pack.summary|truncatechars:140 }}</p>
+                {% else %}
+                  <p class="small text-muted mb-3">
+                    {% trans "Pack prêt à l’emploi : périmètre clair, options incluses et accompagnement." %}
+                  </p>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="card-body pt-0">
+              {% if pack.prestations.all %}
+                <div class="svc-pack-includes">
+                  <div class="small fw-semibold mb-2">{% trans "Inclus" %}</div>
+                  <ul class="list-unstyled small text-muted mb-3">
+                    {% for p in pack.prestations.all|slice:":4" %}
+                      <li class="d-flex align-items-start gap-2 mb-1">
+                        <span class="text-success" aria-hidden="true">✓</span>
+                        <span>{{ p.title }}</span>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              {% endif %}
+
+              {% if pack.features.all %}
+                <div class="svc-pack-features">
+                  <div class="small fw-semibold mb-2">{% trans "Avantages" %}</div>
+                  <ul class="list-unstyled small text-muted mb-0">
+                    {% for f in pack.features.all|slice:":4" %}
+                      <li class="d-flex align-items-start gap-2 mb-1">
+                        <span class="text-primary" aria-hidden="true">•</span>
+                        <span>{{ f.label|default:f.title|default:f.name }}</span>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="card-footer bg-transparent border-0 pt-0">
+              <div class="d-flex align-items-center justify-content-between gap-2">
+
+                <div class="svc-pack-price">
+                  {% if pack.price %}
+                    <div class="fw-semibold">{% money pack.price cur %}</div>
+                    <div class="small text-muted">{% trans "prix indicatif" %}</div>
+                  {% else %}
+                    <div class="fw-semibold">{% trans "Sur devis" %}</div>
+                    <div class="small text-muted">{% trans "selon périmètre" %}</div>
+                  {% endif %}
+                </div>
+
+                <div class="d-flex align-items-center gap-2">
+                  {% if pack.slug and pack_url != "#" %}
+                    <a class="btn btn-sm btn-outline-secondary" href="{{ pack_url }}">
+                      {% trans "Détails" %}
+                    </a>
+                  {% endif %}
+
+                  {% if pack.slug and pack_quote_url != "#" %}
+                    <a class="btn btn-sm btn-primary" href="{{ pack_quote_url }}">
+                      {% trans "Devis" %}
+                    </a>
+                  {% elif contact_url and contact_url != "#" %}
+                    <a class="btn btn-sm btn-primary" href="{{ contact_url }}">
+                      {% trans "Contacter" %}
+                    </a>
+                  {% endif %}
+                </div>
+
+              </div>
+            </div>
+
+          </article>
+        </div>
+      {% endfor %}
+
+    {% else %}
+      <div class="col-12">
+        <div class="alert alert-light border shadow-sm mb-0">
+          <div class="fw-semibold">{% trans "Aucun pack disponible pour le moment." %}</div>
+        </div>
+      </div>
+    {% endif %}
+
+  </div>
+</section> {% endcomment %}
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/partials/index/_svc_packs.html #}
+{% load static i18n ecom_money dashboard_tags %}
+
+<section class="svc-packs" aria-label="{% trans 'Packs & offres' %}">
+
+  <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
+    <div>
+      <div class="d-flex align-items-center gap-2">
+        <span class="svc-dot" aria-hidden="true"></span>
+        <h2 class="h5 m-0">
+          {% if packs_title %}{{ packs_title }}{% else %}{% trans "Packs & offres" %}{% endif %}
+        </h2>
+        {% if packages %}
+          <span class="badge text-bg-light border">{{ packages|length }}</span>
+        {% elif packs %}
+          <span class="badge text-bg-light border">{{ packs|length }}</span>
+        {% endif %}
+      </div>
+
+      <p class="text-muted small mb-0 mt-1">
+        {% if packs_subtitle %}
+          {{ packs_subtitle }}
+        {% else %}
+          {% trans "Choisissez une formule claire (prix, délais, périmètre) ou demandez un devis sur mesure." %}
+        {% endif %}
+      </p>
+    </div>
+
+    {% if show_cta|default:True %}
+      {% if base_list_url %}
+        <a class="btn btn-sm btn-outline-primary" href="{{ base_list_url }}">
+          {% trans "Voir tous les packs" %}
+        </a>
+      {% endif %}
+    {% endif %}
+  </div>
+
+  <div class="row g-3">
+
+    {% if packages %}
+      {% for pack in packages %}
+        {% safe_url "economic:prestations:package_detail" pack.slug as pack_url %}
+        {% safe_url "economic:prestations:package_quote" pack.slug as pack_quote_url %}
+        {% safe_url "core:contact" as contact_url %}
+
+        <div class="col-12 col-md-6 col-xl-4">
+          <article class="card h-100 border-0 shadow-sm svc-pack">
+
+            <div class="card-body pb-0">
+              <div class="d-flex align-items-start justify-content-between gap-2">
+                <div>
+                  <h3 class="h6 mb-1">
+                    {% if pack_url and pack_url != '#' %}
+                      <a class="text-decoration-none text-dark" href="{{ pack_url }}">
+                        {{ pack.title|default:pack.name }}
+                      </a>
+                    {% else %}
+                      {{ pack.title|default:pack.name }}
+                    {% endif %}
+                  </h3>
+
+                  <div class="d-flex flex-wrap gap-2 small text-muted">
+                    {% if pack.tier %}
+                      <span class="svc-chip">{{ pack.get_tier_display|default:pack.tier }}</span>
+                    {% endif %}
+                    {% if pack.duration_label %}
+                      <span class="svc-chip">⏱ {{ pack.duration_label }}</span>
+                    {% endif %}
+                    {% if pack.is_active %}
+                      <span class="svc-chip text-success">● {% trans "Actif" %}</span>
+                    {% else %}
+                      <span class="svc-chip text-danger">● {% trans "Inactif" %}</span>
+                    {% endif %}
+                  </div>
+                </div>
+
+                {% if pack.is_featured %}
+                  <span class="badge text-bg-warning">{% trans "Populaire" %}</span>
+                {% endif %}
+              </div>
+
+              <div class="mt-2">
+                {% if pack.short_description %}
+                  <p class="small text-muted mb-3">{{ pack.short_description|truncatechars:140 }}</p>
+                {% elif pack.summary %}
+                  <p class="small text-muted mb-3">{{ pack.summary|truncatechars:140 }}</p>
+                {% else %}
+                  <p class="small text-muted mb-3">
+                    {% trans "Pack prêt à l’emploi : périmètre clair, options incluses et accompagnement." %}
+                  </p>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="card-body pt-0">
+              {% if pack.prestations.count %}
+                <div class="small fw-semibold mb-2">{% trans "Inclus" %}</div>
+                <ul class="list-unstyled small text-muted mb-3">
+                  {% for p in pack.prestations.all|slice:":4" %}
+                    <li class="d-flex align-items-start gap-2 mb-1">
+                      <span class="text-success" aria-hidden="true">✓</span>
+                      <span>{{ p.title|default:p.name }}</span>
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+
+              {% if pack.features.count %}
+                <div class="small fw-semibold mb-2">{% trans "Avantages" %}</div>
+                <ul class="list-unstyled small text-muted mb-0">
+                  {% for f in pack.features.all|slice:":4" %}
+                    <li class="d-flex align-items-start gap-2 mb-1">
+                      <span class="text-primary" aria-hidden="true">•</span>
+                      <span>{{ f.label|default:f.title|default:f.name }}</span>
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </div>
+
+            <div class="card-footer bg-transparent border-0 pt-0">
+              <div class="d-flex align-items-center justify-content-between gap-2">
+
+                <div class="svc-pack-price">
+                  {% if pack.price %}
+                    <div class="fw-semibold">{% money pack.price request.session.ECOMMERCE_CURRENCY|default:"XOF" %}</div>
+                    <div class="small text-muted">{% trans "prix indicatif" %}</div>
+                  {% else %}
+                    <div class="fw-semibold">{% trans "Sur devis" %}</div>
+                    <div class="small text-muted">{% trans "selon périmètre" %}</div>
+                  {% endif %}
+                </div>
+
+                <div class="d-flex align-items-center gap-2">
+                  {% if pack_url and pack_url != '#' %}
+                    <a class="btn btn-sm btn-outline-secondary" href="{{ pack_url }}">{% trans "Détails" %}</a>
+                  {% endif %}
+
+                  {% if pack_quote_url and pack_quote_url != '#' %}
+                    <a class="btn btn-sm btn-primary" href="{{ pack_quote_url }}">{% trans "Demander" %}</a>
+                  {% elif contact_url and contact_url != '#' %}
+                    <a class="btn btn-sm btn-primary" href="{{ contact_url }}">{% trans "Contacter" %}</a>
+                  {% endif %}
+                </div>
+
+              </div>
+            </div>
+
+          </article>
+        </div>
+      {% endfor %}
+    {% elif packs %}
+      {% for pack in packs %}
+        {% safe_url "economic:prestations:package_detail" pack.slug as pack_url %}
+        {% safe_url "economic:prestations:package_quote" pack.slug as pack_quote_url %}
+        {% safe_url "core:contact" as contact_url %}
+
+        <div class="col-12 col-md-6 col-xl-4">
+          <article class="card h-100 border-0 shadow-sm svc-pack">
+            <div class="card-body">
+              <h3 class="h6 mb-2">
+                {% if pack_url and pack_url != '#' %}
+                  <a class="text-decoration-none text-dark" href="{{ pack_url }}">{{ pack.title|default:pack.name }}</a>
+                {% else %}
+                  {{ pack.title|default:pack.name }}
+                {% endif %}
+              </h3>
+
+              <div class="d-flex align-items-center justify-content-between">
+                <div>
+                  {% if pack.price %}
+                    <div class="fw-semibold">{% money pack.price request.session.ECOMMERCE_CURRENCY|default:"XOF" %}</div>
+                  {% else %}
+                    <div class="fw-semibold">{% trans "Sur devis" %}</div>
+                  {% endif %}
+                </div>
+
+                <div class="d-flex gap-2">
+                  {% if pack_quote_url and pack_quote_url != '#' %}
+                    <a class="btn btn-sm btn-primary" href="{{ pack_quote_url }}">{% trans "Demander" %}</a>
+                  {% elif contact_url and contact_url != '#' %}
+                    <a class="btn btn-sm btn-primary" href="{{ contact_url }}">{% trans "Contacter" %}</a>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="col-12">
+        <div class="alert alert-light border shadow-sm mb-0">
+          <div class="fw-semibold">{% trans "Aucun pack disponible pour le moment." %}</div>
+        </div>
+      </div>
+    {% endif %}
+
+  </div>
+</section> {% endcomment %}
+
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/partials/index/_svc_packs.html #}
+{% load i18n ecom_money %}
+
+{# ===================== #}
+{#   PACKS & PRICING      #}
+{#   - anchor: #packs     #}
+{# ===================== #}
+<section id="packs" class="svc-packs border-top">
+  <div class="container py-4 py-lg-5">
+
+    <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
+      <div>
+        <h2 class="h4 fw-bold mb-1">{% trans "Packs & Tarifs" %}</h2>
+        <div class="text-muted small">
+          {% trans "Choisissez un pack prêt à démarrer, ou demandez un devis sur mesure." %}
+        </div>
+      </div>
+
+      <div class="d-flex gap-2">
+        <a class="btn btn-outline-secondary btn-sm" href="#prestations-list">
+          <i class="fa-solid fa-arrow-up me-2"></i>{% trans "Prestations" %}
+        </a>
+
+        <a class="btn btn-dark btn-sm {% if not u_tickets %}disabled{% endif %}"
+           href="{% if u_tickets %}{{ u_tickets }}{% else %}#{% endif %}"
+           {% if not u_tickets %}aria-disabled="true" tabindex="-1"{% endif %}>
+          <i class="fa-solid fa-ticket me-2"></i>{% trans "Support" %}
+        </a>
+      </div>
+    </div>
+
+    {% if packages %}
+      <div class="row g-3 g-lg-4">
+        {% for p in packages %}
+
+          {# ===================== #}
+          {#   URLS (dynamiques)    #}
+          {# ===================== #}
+          {% with u_pack_detail="" u_pack_quote="" %}
+            {% if p.slug %}
+              {# ✅ namespace prestations (plus de services) #}
+              {% url "economic:prestations:package_detail" slug=p.slug as u_pack_detail %}
+              {% url "economic:prestations:package_quote"  slug=p.slug as u_pack_quote %}
+            {% endif %}
+
+            <div class="col-lg-4">
+              <article class="card svc-pack border-0 shadow-sm h-100 {% if p.is_featured %}svc-pack-featured{% endif %}">
+                <div class="card-body d-flex flex-column p-3 p-md-4">
+
+                  <div class="d-flex align-items-start justify-content-between gap-2">
+                    <div class="min-w-0">
+                      <div class="text-muted small">
+                        {{ p.get_tier_display|default:p.tier }} · {{ p.get_billing_period_display|default:p.billing_period }}
+                      </div>
+                      <h3 class="h5 fw-bold mb-1 text-truncate">{{ p.name|default:"Pack" }}</h3>
+                      <div class="text-muted small">{{ p.tagline|default:_("Pack professionnel prêt à l’emploi.") }}</div>
+                    </div>
+
+                    {% if p.is_featured %}
+                      <span class="badge text-bg-warning">{% trans "Recommandé" %}</span>
+                    {% endif %}
+                  </div>
+
+                  <div class="svc-pack-price mt-3 mb-3 rounded-4 border bg-light p-3">
+                    {% if p.billing_period == "custom" %}
+                      <div class="h4 fw-bold mb-0">{% trans "Sur devis" %}</div>
+                      <div class="text-muted small">{% trans "Selon votre besoin" %}</div>
+                    {% else %}
+                      <div class="h4 fw-bold mb-0">{% money p.total_price %}</div>
+                      <div class="text-muted small">{{ p.get_billing_period_display|default:p.billing_period }}</div>
+                    {% endif %}
+                  </div>
+
+                  {# features #}
+                  {% with feats=p.features.all %}
+                    {% if feats %}
+                      <ul class="svc-bullets small mb-3">
+                        {% for f in feats|slice:":6" %}
+                          <li class="{% if f.is_highlight %}fw-semibold{% endif %}">
+                            <i class="fa-solid fa-circle-check me-2"></i>{{ f.label }}
+                          </li>
+                        {% endfor %}
+                      </ul>
+                    {% else %}
+                      <ul class="svc-bullets small mb-3">
+                        <li><i class="fa-solid fa-circle-check me-2"></i>{% trans "Installation & configuration" %}</li>
+                        <li><i class="fa-solid fa-circle-check me-2"></i>{% trans "Support de base" %}</li>
+                        <li><i class="fa-solid fa-circle-check me-2"></i>{% trans "Livrables pro" %}</li>
+                      </ul>
+                    {% endif %}
+                  {% endwith %}
+
+                  <div class="small text-muted mb-3">
+                    <div class="d-flex justify-content-between">
+                      <span>{% trans "SSL" %}</span>
+                      <span class="fw-semibold">
+                        {% if p.included_ssl %}{% trans "Inclus" %}{% else %}{% trans "Non" %}{% endif %}
+                      </span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                      <span>{% trans "Domaine (1 an)" %}</span>
+                      <span class="fw-semibold">
+                        {% if p.included_domain_year %}{% trans "Inclus" %}{% else %}{% trans "Non" %}{% endif %}
+                      </span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                      <span>{% trans "E-mails pro" %}</span>
+                      <span class="fw-semibold">{{ p.emails_count|default:0 }}</span>
+                    </div>
+                    {% if p.max_pages %}
+                      <div class="d-flex justify-content-between">
+                        <span>{% trans "Pages max" %}</span>
+                        <span class="fw-semibold">{{ p.max_pages }}</span>
+                      </div>
+                    {% endif %}
+                  </div>
+
+                  <div class="d-flex gap-2 mt-auto">
+                    <a class="btn btn-outline-dark w-50 {% if not u_pack_detail %}disabled{% endif %}"
+                       href="{% if u_pack_detail %}{{ u_pack_detail }}{% else %}#{% endif %}"
+                       {% if not u_pack_detail %}aria-disabled="true" tabindex="-1"{% endif %}>
+                      <i class="fa-regular fa-eye me-2"></i>{% trans "Voir" %}
+                    </a>
+
+                    <a class="btn btn-primary w-50 {% if not u_pack_quote %}disabled{% endif %}"
+                       href="{% if u_pack_quote %}{{ u_pack_quote }}{% else %}#{% endif %}"
+                       {% if not u_pack_quote %}aria-disabled="true" tabindex="-1"{% endif %}>
+                      <i class="fa-solid fa-file-signature me-2"></i>{% trans "Devis" %}
+                    </a>
+                  </div>
+
+                  {# ======================= #}
+                  {#   PRESTATIONS INCLUSES   #}
+                  {# ======================= #}
+                  {# ✅ compat: si ton modèle a déjà renommé services -> prestations #}
+                  {% with svcs=p.prestations.all %}
+                    {% if svcs %}
+                      <div class="mt-3 pt-3 border-top small text-muted d-flex align-items-center justify-content-between">
+                        <span>
+                          <i class="fa-solid fa-list-check me-2"></i>{{ svcs.count }} {% trans "prestation(s) incluse(s)" %}
+                        </span>
+
+                        <a class="text-decoration-none {% if not u_pack_detail %}disabled{% endif %}"
+                           href="{% if u_pack_detail %}{{ u_pack_detail }}{% else %}#{% endif %}"
+                           {% if not u_pack_detail %}aria-disabled="true" tabindex="-1"{% endif %}>
+                          {% trans "Détails" %} <i class="fa-solid fa-arrow-right-long ms-1"></i>
+                        </a>
+                      </div>
+                    {% endif %}
+                  {% endwith %}
+
+                </div>
+              </article>
+            </div>
+
+          {% endwith %}
+
+        {% endfor %}
+      </div>
+
+    {% else %}
+      <div class="alert alert-light border d-flex align-items-start gap-2">
+        <i class="fa-regular fa-folder-open mt-1"></i>
+        <div>
+          <div class="fw-semibold">{% trans "Aucun pack n’est disponible pour le moment." %}</div>
+          <div class="text-muted small">{% trans "Vous pouvez demander un devis pour une prestation, ou ouvrir un ticket." %}</div>
+        </div>
+      </div>
+    {% endif %}
+
+  </div>
+</section> {% endcomment %}
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/partials/index/_svc_packs.html #}
+{% load i18n ecom_money %}
+
+{# ===================== #}
+{#   PACKS & PRICING      #}
+{#   - anchor: #packs     #}
+{# ===================== #}
+<section id="packs" class="svc-packs border-top">
+  <div class="container py-4 py-lg-5">
+
+    <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
+      <div>
+        <h2 class="h4 fw-bold mb-1">{% trans "Packs & Tarifs" %}</h2>
+        <div class="text-muted small">
+          {% trans "Choisissez un pack prêt à démarrer, ou demandez un devis sur mesure." %}
+        </div>
+      </div>
+
+      <div class="d-flex gap-2">
+        {# Remonte/descend: mets #services si tu veux le HERO, ou #services-list pour la grille #}
+        <a class="btn btn-outline-secondary btn-sm" href="#services-list">
+          <i class="fa-solid fa-arrow-up me-2"></i>{% trans "Services" %}
+        </a>
+
+        <a class="btn btn-dark btn-sm {% if not u_tickets %}disabled{% endif %}"
+           href="{% if u_tickets %}{{ u_tickets }}{% else %}#{% endif %}"
+           {% if not u_tickets %}aria-disabled="true" tabindex="-1"{% endif %}>
+          <i class="fa-solid fa-ticket me-2"></i>{% trans "Support" %}
+        </a>
+      </div>
+    </div>
+
+    {% if packages %}
+      <div class="row g-3 g-lg-4">
+        {% for p in packages %}
+
+          {# ===================== #}
+          {#   URLS (dynamiques)    #}
+          {# ===================== #}
+          {% with u_pack_detail="" u_pack_quote="" %}
+            {% if p.slug %}
+              {% url "economic:services:package_detail" slug=p.slug as u_pack_detail %}
+              {% url "economic:services:package_quote"  slug=p.slug as u_pack_quote %}
+            {% endif %}
+
+            <div class="col-lg-4">
+              <article class="card svc-pack border-0 shadow-sm h-100 {% if p.is_featured %}svc-pack-featured{% endif %}">
+                <div class="card-body d-flex flex-column p-3 p-md-4">
+
+                  <div class="d-flex align-items-start justify-content-between gap-2">
+                    <div class="min-w-0">
+                      <div class="text-muted small">
+                        {{ p.get_tier_display|default:p.tier }} · {{ p.get_billing_period_display|default:p.billing_period }}
+                      </div>
+                      <h3 class="h5 fw-bold mb-1 text-truncate">{{ p.name|default:"Pack" }}</h3>
+                      <div class="text-muted small">{{ p.tagline|default:_("Pack professionnel prêt à l’emploi.") }}</div>
+                    </div>
+
+                    {% if p.is_featured %}
+                      <span class="badge text-bg-warning">{% trans "Recommandé" %}</span>
+                    {% endif %}
+                  </div>
+
+                  <div class="svc-pack-price mt-3 mb-3 rounded-4 border bg-light p-3">
+                    {% if p.billing_period == "custom" %}
+                      <div class="h4 fw-bold mb-0">{% trans "Sur devis" %}</div>
+                      <div class="text-muted small">{% trans "Selon votre besoin" %}</div>
+                    {% else %}
+                      <div class="h4 fw-bold mb-0">{% money p.total_price %}</div>
+                      <div class="text-muted small">{{ p.get_billing_period_display|default:p.billing_period }}</div>
+                    {% endif %}
+                  </div>
+
+                  {# features #}
+                  {% with feats=p.features.all %}
+                    {% if feats %}
+                      <ul class="svc-bullets small mb-3">
+                        {% for f in feats|slice:":6" %}
+                          <li class="{% if f.is_highlight %}fw-semibold{% endif %}">
+                            <i class="fa-solid fa-circle-check me-2"></i>{{ f.label }}
+                          </li>
+                        {% endfor %}
+                      </ul>
+                    {% else %}
+                      <ul class="svc-bullets small mb-3">
+                        <li><i class="fa-solid fa-circle-check me-2"></i>{% trans "Installation & configuration" %}</li>
+                        <li><i class="fa-solid fa-circle-check me-2"></i>{% trans "Support de base" %}</li>
+                        <li><i class="fa-solid fa-circle-check me-2"></i>{% trans "Livrables pro" %}</li>
+                      </ul>
+                    {% endif %}
+                  {% endwith %}
+
+                  <div class="small text-muted mb-3">
+                    <div class="d-flex justify-content-between">
+                      <span>{% trans "SSL" %}</span>
+                      <span class="fw-semibold">
+                        {% if p.included_ssl %}{% trans "Inclus" %}{% else %}{% trans "Non" %}{% endif %}
+                      </span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                      <span>{% trans "Domaine (1 an)" %}</span>
+                      <span class="fw-semibold">
+                        {% if p.included_domain_year %}{% trans "Inclus" %}{% else %}{% trans "Non" %}{% endif %}
+                      </span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                      <span>{% trans "E-mails pro" %}</span>
+                      <span class="fw-semibold">{{ p.emails_count|default:0 }}</span>
+                    </div>
+                    {% if p.max_pages %}
+                      <div class="d-flex justify-content-between">
+                        <span>{% trans "Pages max" %}</span>
+                        <span class="fw-semibold">{{ p.max_pages }}</span>
+                      </div>
+                    {% endif %}
+                  </div>
+
+                  <div class="d-flex gap-2 mt-auto">
+                    <a class="btn btn-outline-dark w-50 {% if not u_pack_detail %}disabled{% endif %}"
+                       href="{% if u_pack_detail %}{{ u_pack_detail }}{% else %}#{% endif %}"
+                       {% if not u_pack_detail %}aria-disabled="true" tabindex="-1"{% endif %}>
+                      <i class="fa-regular fa-eye me-2"></i>{% trans "Voir" %}
+                    </a>
+
+                    <a class="btn btn-primary w-50 {% if not u_pack_quote %}disabled{% endif %}"
+                       href="{% if u_pack_quote %}{{ u_pack_quote }}{% else %}#{% endif %}"
+                       {% if not u_pack_quote %}aria-disabled="true" tabindex="-1"{% endif %}>
+                      <i class="fa-solid fa-file-signature me-2"></i>{% trans "Devis" %}
+                    </a>
+                  </div>
+
+                  {# ======================= #}
+                  {#   SERVICES INCLUS        #}
+                  {# ======================= #}
+                  {% with svcs=p.services.all %}
+                    {% if svcs %}
+                      <div class="mt-3 pt-3 border-top small text-muted d-flex align-items-center justify-content-between">
+                        <span>
+                          <i class="fa-solid fa-list-check me-2"></i>{{ svcs.count }} {% trans "service(s) inclus" %}
+                        </span>
+
+                        <a class="text-decoration-none {% if not u_pack_detail %}disabled{% endif %}"
+                           href="{% if u_pack_detail %}{{ u_pack_detail }}{% else %}#{% endif %}"
+                           {% if not u_pack_detail %}aria-disabled="true" tabindex="-1"{% endif %}>
+                          {% trans "Détails" %} <i class="fa-solid fa-arrow-right-long ms-1"></i>
+                        </a>
+                      </div>
+                    {% endif %}
+                  {% endwith %}
+
+                </div>
+              </article>
+            </div>
+
+          {% endwith %}
+
+        {% endfor %}
+      </div>
+
+    {% else %}
+      <div class="alert alert-light border d-flex align-items-start gap-2">
+        <i class="fa-regular fa-folder-open mt-1"></i>
+        <div>
+          <div class="fw-semibold">{% trans "Aucun pack n’est disponible pour le moment." %}</div>
+          <div class="text-muted small">{% trans "Vous pouvez demander un devis pour un service, ou ouvrir un ticket." %}</div>
+        </div>
+      </div>
+    {% endif %}
+
+  </div>
+</section>
+ {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/economic/services/partials/index/_svc_packs.html #}
+{% load i18n ecom_money %}
+
+<section class="svc-packs border-top" id="packs">
+  <div class="container py-4 py-lg-5">
+
+    <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
+      <div>
+        <h2 class="h4 fw-bold mb-1">{% trans "Packs & Tarifs" %}</h2>
+        <div class="text-muted small">{% trans "Choisissez un pack prêt à démarrer, ou demandez un devis sur mesure." %}</div>
+      </div>
+      <div class="d-flex gap-2">
+        <a class="btn btn-outline-secondary btn-sm" href="#services">
+          <i class="fa-solid fa-arrow-up me-2"></i>{% trans "Services" %}
+        </a>
+        {% if u_tickets %}
+          <a class="btn btn-dark btn-sm" href="{{ u_tickets }}">
+            <i class="fa-solid fa-ticket me-2"></i>{% trans "Support" %}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if packages %}
+      <div class="row g-3 g-lg-4">
+        {% for p in packages %}
+          <div class="col-lg-4">
+            <article class="card svc-pack border-0 shadow-sm h-100 {% if p.is_featured %}svc-pack-featured{% endif %}">
+              <div class="card-body d-flex flex-column p-3 p-md-4">
+
+                <div class="d-flex align-items-start justify-content-between gap-2">
+                  <div class="min-w-0">
+                    <div class="text-muted small">
+                      {{ p.get_tier_display|default:p.tier }} · {{ p.get_billing_period_display|default:p.billing_period }}
+                    </div>
+                    <h3 class="h5 fw-bold mb-1 text-truncate">{{ p.name|default:"Pack" }}</h3>
+                    <div class="text-muted small">{{ p.tagline|default:_("Pack professionnel prêt à l’emploi.") }}</div>
+                  </div>
+
+                  {% if p.is_featured %}
+                    <span class="badge text-bg-warning">{% trans "Recommandé" %}</span>
+                  {% endif %}
+                </div>
+
+                <div class="svc-pack-price mt-3 mb-3 rounded-4 border bg-light p-3">
+                  {% if p.billing_period == "custom" %}
+                    <div class="h4 fw-bold mb-0">{% trans "Sur devis" %}</div>
+                    <div class="text-muted small">{% trans "Selon votre besoin" %}</div>
+                  {% else %}
+                    <div class="h4 fw-bold mb-0">{% money p.total_price %}</div>
+                    <div class="text-muted small">{{ p.get_billing_period_display|default:p.billing_period }}</div>
+                  {% endif %}
+                </div>
+
+                {% if p.features.all %}
+                  <ul class="svc-bullets small mb-3">
+                    {% for f in p.features.all|slice:":6" %}
+                      <li class="{% if f.is_highlight %}fw-semibold{% endif %}">
+                        <i class="fa-solid fa-circle-check me-2"></i>{{ f.label }}
+                      </li>
+                    {% endfor %}
+                  </ul>
+                {% else %}
+                  <ul class="svc-bullets small mb-3">
+                    <li><i class="fa-solid fa-circle-check me-2"></i>{% trans "Installation & configuration" %}</li>
+                    <li><i class="fa-solid fa-circle-check me-2"></i>{% trans "Support de base" %}</li>
+                    <li><i class="fa-solid fa-circle-check me-2"></i>{% trans "Livrables pro" %}</li>
+                  </ul>
+                {% endif %}
+
+                <div class="small text-muted mb-3">
+                  <div class="d-flex justify-content-between">
+                    <span>{% trans "SSL" %}</span>
+                    <span class="fw-semibold">{% if p.included_ssl %}{% trans "Inclus" %}{% else %}{% trans "Non" %}{% endif %}</span>
+                  </div>
+                  <div class="d-flex justify-content-between">
+                    <span>{% trans "Domaine (1 an)" %}</span>
+                    <span class="fw-semibold">{% if p.included_domain_year %}{% trans "Inclus" %}{% else %}{% trans "Non" %}{% endif %}</span>
+                  </div>
+                  <div class="d-flex justify-content-between">
+                    <span>{% trans "E-mails pro" %}</span>
+                    <span class="fw-semibold">{{ p.emails_count|default:0 }}</span>
+                  </div>
+                  {% if p.max_pages %}
+                    <div class="d-flex justify-content-between">
+                      <span>{% trans "Pages max" %}</span>
+                      <span class="fw-semibold">{{ p.max_pages }}</span>
+                    </div>
+                  {% endif %}
+                </div>
+
+                <div class="d-flex gap-2 mt-auto">
+                  {% if u_pack_detail %}
+                    <a class="btn btn-outline-dark w-50" href="{% url 'economic:services:package_detail' slug=p.slug %}">
+                      <i class="fa-regular fa-eye me-2"></i>{% trans "Voir" %}
+                    </a>
+                  {% endif %}
+                  {% if u_pack_quote %}
+                    <a class="btn btn-primary w-50" href="{% url 'economic:services:package_quote' slug=p.slug %}">
+                      <i class="fa-solid fa-file-signature me-2"></i>{% trans "Devis" %}
+                    </a>
+                  {% endif %}
+                </div>
+
+                {% if p.services.all %}
+                  <div class="mt-3 pt-3 border-top small text-muted d-flex align-items-center justify-content-between">
+                    <span><i class="fa-solid fa-list-check me-2"></i>{{ p.services.count }} {% trans "service(s) inclus" %}</span>
+                    <a class="text-decoration-none" href="{% url 'economic:services:package_detail' slug=p.slug %}">
+                      {% trans "Détails" %} <i class="fa-solid fa-arrow-right-long ms-1"></i>
+                    </a>
+                  </div>
+                {% endif %}
+
+              </div>
+            </article>
+          </div>
+        {% endfor %}
+      </div>
+
+    {% else %}
+      <div class="alert alert-light border d-flex align-items-start gap-2">
+        <i class="fa-regular fa-folder-open mt-1"></i>
+        <div>
+          <div class="fw-semibold">{% trans "Aucun pack n’est disponible pour le moment." %}</div>
+          <div class="text-muted small">{% trans "Vous pouvez demander un devis pour un service, ou ouvrir un ticket." %}</div>
+        </div>
+      </div>
+    {% endif %}
+
+  </div>
+</section> {% endcomment %}

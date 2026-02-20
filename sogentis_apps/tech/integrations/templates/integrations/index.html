@@ -1,0 +1,33 @@
+{# templates/tech/integrations/index.html #}
+{% extends "tech/base_tech.html" %}
+{% load i18n %}
+
+{% block tech_title %}{{ page_title|default:_("Intégrations") }}{% endblock %}
+
+{% block tech_content %}
+<div class="container py-4">
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <div>
+      <h1 class="h4 mb-1">🔌 {% trans "Intégrations" %}</h1>
+      <div class="text-muted small">{% trans "Connecteurs, webhooks, providers, statut et logs." %}</div>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-12 col-lg-4"><div class="card h-100"><div class="card-body">
+      <div class="fw-semibold">🪝 {% trans "Webhooks" %}</div>
+      <div class="text-muted small mt-1">{% trans "Réceptions, retries, signatures, erreurs." %}</div>
+    </div></div></div>
+
+    <div class="col-12 col-lg-4"><div class="card h-100"><div class="card-body">
+      <div class="fw-semibold">🔑 {% trans "Clés & Providers" %}</div>
+      <div class="text-muted small mt-1">{% trans "Stripe, PayPal, Wave, Orange Money, Email/SMS, etc." %}</div>
+    </div></div></div>
+
+    <div class="col-12 col-lg-4"><div class="card h-100"><div class="card-body">
+      <div class="fw-semibold">📜 {% trans "Logs" %}</div>
+      <div class="text-muted small mt-1">{% trans "Journal des événements et anomalies." %}</div>
+    </div></div></div>
+  </div>
+</div>
+{% endblock %}

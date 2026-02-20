@@ -13,6 +13,51 @@
   <p class="mb-2">
     {% trans "Référence" %} : <strong>{{ order.uuid }}</strong>
   </p>
+
+  <p class="mb-4">
+    {% trans "Montant" %} : <strong>{% money order.total_amount %}</strong>
+  </p>
+
+  <p class="text-muted mb-4">
+    {% trans "Vous pouvez maintenant procéder au paiement." %}
+  </p>
+
+  <div class="d-flex justify-content-center flex-wrap gap-2">
+    <a href="{% url 'economic:ecommerce:choose_payment' order.uuid %}" class="btn btn-primary">
+      {% trans "Choisir un moyen de paiement" %}
+    </a>
+
+    <a href="{% url 'economic:ecommerce:order_detail' order.uuid %}" class="btn btn-outline-dark">
+      {% trans "Voir la commande" %}
+    </a>
+
+    <a href="{% url 'economic:ecommerce:orders' %}" class="btn btn-outline-secondary">
+      {% trans "Voir mes commandes" %}
+    </a>
+  </div>
+</section>
+{% endblock %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/ecommerce/orders/order_success.html #}
+{% extends "economic/ecommerce/base_ecommerce.html" %}
+{% load i18n ecom_money %}
+
+{% block ecommerce_title %}
+  {% trans "Commande créée" %} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block content %}
+<section class="container py-5 text-center">
+  <h1 class="mb-3">🎉 {% trans "Votre commande a été créée." %}</h1>
+
+  <p class="mb-2">
+    {% trans "Référence" %} : <strong>{{ order.uuid }}</strong>
+  </p>
   <p class="mb-4">
     {% trans "Montant" %} : <strong>{% money order.total_amount %}</strong>
   </p>
@@ -32,7 +77,7 @@
     </a>
   </div>
 </section>
-{% endblock %}
+{% endblock %} {% endcomment %}
 
 
 

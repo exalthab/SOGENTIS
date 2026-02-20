@@ -1,0 +1,316 @@
+{# templates/economic/partials/menu/_eco_account_menu.html #}
+{% load i18n %}
+
+{% if user.is_authenticated %}
+  <li class="nav-item dropdown">
+    <a class="nav-link eco-nav-link small dropdown-toggle"
+       href="#"
+       role="button"
+       data-bs-toggle="dropdown"
+       aria-expanded="false"
+       aria-label="{% trans 'Menu utilisateur' %}">
+      👤 <span class="eco-user-name">{{ user.first_name|default:user.username }}</span>
+    </a>
+
+    <ul class="dropdown-menu dropdown-menu-end">
+
+      <li>
+        <a class="dropdown-item {% if not dashboard_hub_url %}disabled{% endif %}"
+           href="{{ dashboard_hub_url|default:'#' }}"
+           {% if not dashboard_hub_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+          📊 {% trans "Mon dashboard" %}
+        </a>
+      </li>
+
+      <li>
+        <a class="dropdown-item {% if not orders_url %}disabled{% endif %}"
+           href="{{ orders_url|default:'#' }}"
+           {% if not orders_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+          🧾 {% trans "Mes commandes" %}
+        </a>
+      </li>
+
+      <li>
+        <a class="dropdown-item {% if not my_downloads_url %}disabled{% endif %}"
+           href="{{ my_downloads_url|default:'#' }}"
+           {% if not my_downloads_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+          ⬇️ {% trans "Mes téléchargements" %}
+        </a>
+      </li>
+
+      {% if user.is_staff %}
+        <li>
+          <a class="dropdown-item {% if not vendor_home_url %}disabled{% endif %}"
+             href="{{ vendor_home_url|default:'#' }}"
+             {% if not vendor_home_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+            🏪 {% trans "Espace vendeur" %}
+          </a>
+        </li>
+      {% endif %}
+
+      <li><hr class="dropdown-divider"></li>
+
+      <li>
+        <a class="dropdown-item {% if not profile_url %}disabled{% endif %}"
+           href="{{ profile_url|default:'#' }}"
+           {% if not profile_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+          ⚙️ {% trans "Mon profil" %}
+        </a>
+      </li>
+
+      <li>
+        <form method="post" action="{{ logout_url|default:'#' }}" class="m-0">
+          {% csrf_token %}
+          <button type="submit"
+                  class="dropdown-item text-danger"
+                  {% if not logout_url %}disabled aria-disabled="true"{% endif %}>
+            🚪 {% trans "Déconnexion" %}
+          </button>
+        </form>
+      </li>
+
+    </ul>
+  </li>
+
+{% else %}
+  <li class="nav-item">
+    {% with next_path=request.get_full_path|default:'/'|urlencode %}
+      <a class="nav-link eco-nav-link small {% if not login_url %}disabled{% endif %}"
+         href="{% if login_url %}{{ login_url }}?context=economic&next={{ next_path }}{% else %}#{% endif %}"
+         {% if not login_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+        🔐 {% trans "Connexion / Inscription" %}
+      </a>
+    {% endwith %}
+  </li>
+{% endif %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/partials/menu/_eco_account_menu.html #}
+{% load i18n %}
+
+{% if user.is_authenticated %}
+  <li class="nav-item dropdown">
+    <a class="nav-link eco-nav-link small dropdown-toggle"
+       href="#"
+       role="button"
+       data-bs-toggle="dropdown"
+       aria-expanded="false"
+       aria-label="{% trans 'Menu utilisateur' %}">
+      👤 <span class="eco-user-name">{{ user.first_name|default:user.username }}</span>
+    </a>
+
+    <ul class="dropdown-menu dropdown-menu-end">
+
+      <li>
+        <a class="dropdown-item {% if not dashboard_hub_url %}disabled{% endif %}"
+           href="{{ dashboard_hub_url|default:'#' }}"
+           {% if not dashboard_hub_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+          📊 {% trans "Mon dashboard" %}
+        </a>
+      </li>
+
+      <li>
+        <a class="dropdown-item {% if not orders_url %}disabled{% endif %}"
+           href="{{ orders_url|default:'#' }}"
+           {% if not orders_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+          🧾 {% trans "Mes commandes" %}
+        </a>
+      </li>
+
+      {# Vendor : on limite à staff pour éviter tout accès direct à des relations optionnelles #}
+      {% if user.is_staff %}
+        <li>
+          <a class="dropdown-item {% if not vendor_home_url %}disabled{% endif %}"
+             href="{{ vendor_home_url|default:'#' }}"
+             {% if not vendor_home_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+            🏪 {% trans "Espace vendeur" %}
+          </a>
+        </li>
+      {% endif %}
+
+      <li>
+        <a class="dropdown-item {% if not b2b_index_url %}disabled{% endif %}"
+           href="{{ b2b_index_url|default:'#' }}"
+           {% if not b2b_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+          🏢 {% trans "Espace B2B" %}
+        </a>
+      </li>
+
+      <li><hr class="dropdown-divider"></li>
+
+      <li>
+        <a class="dropdown-item {% if not profile_url %}disabled{% endif %}"
+           href="{{ profile_url|default:'#' }}"
+           {% if not profile_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+          ⚙️ {% trans "Mon profil" %}
+        </a>
+      </li>
+
+      <li>
+        <form method="post" action="{{ logout_url|default:'#' }}" class="m-0">
+          {% csrf_token %}
+          <button type="submit"
+                  class="dropdown-item text-danger"
+                  {% if not logout_url %}disabled aria-disabled="true"{% endif %}>
+            🚪 {% trans "Déconnexion" %}
+          </button>
+        </form>
+      </li>
+
+    </ul>
+  </li>
+
+{% else %}
+  <li class="nav-item">
+    {% with next_path=request.get_full_path|default:'/'|urlencode %}
+      <a class="nav-link eco-nav-link small {% if not login_url %}disabled{% endif %}"
+         href="{% if login_url %}{{ login_url }}?context=economic&next={{ next_path }}{% else %}#{% endif %}"
+         {% if not login_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+        🔐 {% trans "Connexion / Inscription" %}
+      </a>
+    {% endwith %}
+  </li>
+{% endif %} {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/economic/partials/menu/_eco_account_menu.html #}
+{% load i18n %}
+
+{% if user.is_authenticated %}
+  <li class="nav-item dropdown">
+    <a class="nav-link eco-nav-link small dropdown-toggle"
+       href="#"
+       role="button"
+       data-bs-toggle="dropdown"
+       aria-expanded="false"
+       aria-label="{% trans 'Menu utilisateur' %}">
+      👤 <span class="eco-user-name">{{ user.first_name|default:user.username }}</span>
+    </a>
+
+    <ul class="dropdown-menu dropdown-menu-end">
+
+      <li>
+        <a class="dropdown-item {% if not dashboard_hub_url %}disabled{% endif %}"
+           href="{{ dashboard_hub_url|default:'#' }}"
+           {% if not dashboard_hub_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+          📊 {% trans "Mon dashboard" %}
+        </a>
+      </li>
+
+      <li>
+        <a class="dropdown-item {% if not orders_url %}disabled{% endif %}"
+           href="{{ orders_url|default:'#' }}"
+           {% if not orders_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+          🧾 {% trans "Mes commandes" %}
+        </a>
+      </li>
+
+
+      {% if user.is_staff %}
+        <li>
+          <a class="dropdown-item {% if not vendor_home_url %}disabled{% endif %}"
+             href="{{ vendor_home_url|default:'#' }}"
+             {% if not vendor_home_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+            🏪 {% trans "Espace vendeur" %}
+          </a>
+        </li>
+      {% endif %}
+
+      <li>
+        <a class="dropdown-item {% if not b2b_index_url %}disabled{% endif %}"
+           href="{{ b2b_index_url|default:'#' }}"
+           {% if not b2b_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+          🏢 {% trans "Espace B2B" %}
+        </a>
+      </li>
+
+      <li><hr class="dropdown-divider"></li>
+
+      <li>
+        <a class="dropdown-item {% if not profile_url %}disabled{% endif %}"
+           href="{{ profile_url|default:'#' }}"
+           {% if not profile_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+          ⚙️ {% trans "Mon profil" %}
+        </a>
+      </li>
+
+      <li>
+        <form method="post" action="{{ logout_url|default:'#' }}" class="m-0">
+          {% csrf_token %}
+          <button type="submit"
+                  class="dropdown-item text-danger"
+                  {% if not logout_url %}disabled aria-disabled="true"{% endif %}>
+            🚪 {% trans "Déconnexion" %}
+          </button>
+        </form>
+      </li>
+
+    </ul>
+  </li>
+
+{% else %}
+  <li class="nav-item">
+    {% with next_path=request.get_full_path|default:'/'|urlencode %}
+      <a class="nav-link eco-nav-link small {% if not login_url %}disabled{% endif %}"
+         href="{% if login_url %}{{ login_url }}?context=economic&next={{ next_path }}{% else %}#{% endif %}"
+         {% if not login_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+        🔐 {% trans "Connexion / Inscription" %}
+      </a>
+    {% endwith %}
+  </li>
+{% endif %} {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/economic/partials/menu/_eco_account_menu.html #}
+{% load i18n %}
+{% if user.is_authenticated %}
+  <li class="nav-item dropdown">
+    <a class="nav-link eco-nav-link small dropdown-toggle"
+       href="#"
+       role="button"
+       data-bs-toggle="dropdown"
+       aria-expanded="false">
+      👤 <span class="eco-user-name">{{ user.first_name|default:user.username }}</span>
+    </a>
+
+    <ul class="dropdown-menu dropdown-menu-end">
+      <li><a class="dropdown-item" href="{{ dashboard_hub_url|default:'#' }}">📊 {% trans "Mon dashboard" %}</a></li>
+      <li><a class="dropdown-item" href="{{ orders_url|default:'#' }}">🧾 {% trans "Mes commandes" %}</a></li>
+
+      {% if user.is_staff or user.vendor %}
+        <li><a class="dropdown-item" href="{{ vendor_home_url|default:'#' }}">🏪 {% trans "Espace vendeur" %}</a></li>
+      {% endif %}
+
+      <li><a class="dropdown-item" href="{{ b2b_index_url|default:'#' }}">🏢 {% trans "Espace B2B" %}</a></li>
+
+      <li><hr class="dropdown-divider"></li>
+
+      <li><a class="dropdown-item" href="{{ profile_url|default:'#' }}">⚙️ {% trans "Mon profil" %}</a></li>
+
+      <li>
+        <form method="post" action="{{ logout_url|default:'#' }}" class="m-0">
+          {% csrf_token %}
+          <button type="submit" class="dropdown-item text-danger">🚪 {% trans "Déconnexion" %}</button>
+        </form>
+      </li>
+    </ul>
+  </li>
+{% else %}
+  <li class="nav-item">
+    <a class="nav-link eco-nav-link small {% if not login_url %}disabled{% endif %}"
+       href="{% if login_url %}{{ login_url }}?context=economic&next={{ request.get_full_path|urlencode }}{% else %}#{% endif %}"
+       {% if not login_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      🔐 {% trans "Connexion / Inscription" %}
+    </a>
+  </li>
+{% endif %} {% endcomment %}

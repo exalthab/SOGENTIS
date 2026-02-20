@@ -1,0 +1,31 @@
+/* =========================================================
+   PRESTATIONS – INDEX PAGE
+   ========================================================= */
+
+.services-main{
+  min-height: 60vh;
+}
+
+#services-list,
+#packs,
+#tickets{
+  scroll-margin-top: calc(
+    var(--eco-global-navbar-height) +
+    var(--eco-hub-height) +
+    var(--eco-prestations-topbar-height)
+  );
+}
+
+.svc-hero{
+  border-radius: 18px;
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+
+.svc-hero-inner{
+  padding: 22px 18px;
+}
+
+@media (min-width: 992px){
+  .svc-hero-inner{ padding: 28px 24px; }
+}

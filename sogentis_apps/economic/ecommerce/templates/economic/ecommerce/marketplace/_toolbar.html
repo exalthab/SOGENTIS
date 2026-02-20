@@ -1,0 +1,31 @@
+{# templates/economic/ecommerce/marketplace/_toolbar.html #}
+{% load i18n %}
+
+<div class="mk-toolbar sticky-top">
+  <div class="mk-toolbar-inner">
+
+    <div class="mk-results">
+      <div class="mk-results-count">
+        <strong>{% if page_obj %}{{ page_obj.paginator.count }}{% else %}{{ products|length }}{% endif %}</strong>
+        <span>{% trans "produits" %}</span>
+        {% if current_category %}
+          <span class="mk-dot">·</span>
+          <span class="mk-muted">{{ current_category }}</span>
+        {% endif %}
+      </div>
+
+      {% include "economic/ecommerce/marketplace/_chips.html" with sort=sort badge=badge %}
+    </div>
+
+    <div class="mk-actions">
+      <button class="btn btn-sm btn-outline-secondary d-lg-none"
+              type="button" data-bs-toggle="offcanvas"
+              data-bs-target="#mkFilters" aria-controls="mkFilters">
+        <i class="bi bi-sliders"></i> {% trans "Filtres" %}
+      </button>
+
+      {% include "economic/ecommerce/marketplace/_sort.html" with sort=sort badge=badge %}
+    </div>
+
+  </div>
+</div>

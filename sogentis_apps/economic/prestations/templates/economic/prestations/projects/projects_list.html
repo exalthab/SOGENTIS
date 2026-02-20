@@ -1,0 +1,48 @@
+{# templates/economic/prestations/projects/projects_list.html #}
+{% extends "economic/prestations/base_prestations.html" %}
+{% load i18n dashboard_tags %}
+
+{% block prestations_title %}{% trans "Projets" %}{% endblock %}
+
+{% block prestations_content %}
+  {% safe_url "economic:prestations:projects_create" as u_new %}
+
+  <div class="rounded-4 bg-body border p-3 p-lg-4">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+      <div>
+        <h1 class="h5 mb-1">{% trans "Projets (Appels d'offres)" %}</h1>
+        <div class="text-muted small">{% trans "Consultez les demandes publiées et proposez une offre." %}</div>
+      </div>
+      <a class="btn btn-sm btn-primary" href="{{ u_new|default:'#' }}">{% trans "Publier un projet" %}</a>
+    </div>
+
+    {% if projects %}
+      <div class="row g-3">
+        {% for p in projects %}
+          {% safe_url "economic:prestations:projects_detail" p.slug as u_detail %}
+          <div class="col-12 col-lg-6">
+            <div class="card h-100 border-0 shadow-sm rounded-4">
+              <div class="card-body">
+                <div class="fw-semibold">
+                  <a class="text-decoration-none" href="{{ u_detail|default:'#' }}">{{ p.title }}</a>
+                </div>
+                {% if p.summary %}
+                  <div class="text-muted small mt-2">{{ p.summary }}</div>
+                {% endif %}
+                <div class="small text-muted mt-3">
+                  {{ p.created_at|date:"Y-m-d" }}
+                  {% if p.deadline %} · {% trans "Deadline" %}: {{ p.deadline|date:"Y-m-d" }}{% endif %}
+                </div>
+              </div>
+              <div class="card-footer bg-transparent border-0 pt-0 pb-3 px-3">
+                <a class="btn btn-sm btn-outline-primary" href="{{ u_detail|default:'#' }}">{% trans "Voir" %}</a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="text-muted">{% trans "Aucun projet publié." %}</div>
+    {% endif %}
+  </div>
+{% endblock %}

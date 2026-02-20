@@ -1,0 +1,26 @@
+{% load static i18n dashboard_tags ecom_money ecom_utils %}
+
+<section id="recognized" class="container mt-5 mb-5">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="h5 fw-bold mb-0">{% trans "Certifications reconnues" %}</h2>
+    <a class="small text-decoration-none" href="#top">{% trans "Haut de page" %} ↑</a>
+  </div>
+
+  <div class="ft-card">
+    <div class="row g-3 align-items-center">
+      <div class="col-lg-8">
+        <div class="fw-bold mb-1">{% trans "Vérification & traçabilité" %}</div>
+        <div class="small text-muted">
+          {% trans "Certificats avec identifiant unique, téléchargeables et consultables depuis votre espace apprenant." %}
+        </div>
+      </div>
+      <div class="col-lg-4 d-grid">
+        {% if request and request.user.is_authenticated and u_my_dashboard %}
+          <a class="btn btn-outline-primary" href="{{ u_my_dashboard }}">{% trans "Voir mes certificats" %}</a>
+        {% else %}
+          <a class="btn btn-outline-primary" href="#faq">{% trans "Comprendre le fonctionnement" %}</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>

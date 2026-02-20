@@ -1,0 +1,139 @@
+{# economic/formations/partials/index/_featured_courses.html #}
+{% load static i18n dashboard_tags ecom_money ecom_utils %}
+
+<section class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="h5 fw-bold mb-0">{% trans "Formations mises en avant" %}</h2>
+
+    <a href="{{ u_course_list|default:'#' }}"
+       class="small text-decoration-none {% if not u_course_list %}disabled{% endif %}"
+       {% if not u_course_list %}aria-disabled="true" tabindex="-1"{% endif %}>
+      {% trans "Catalogue complet" %} →
+    </a>
+  </div>
+
+  {% if featured_courses %}
+    <div class="row g-3 g-md-4">
+      {% for course in featured_courses %}
+
+        {# ===================== #}
+        {#   URL (detail)         #}
+        {# ===================== #}
+        {% url "economic:formations:course_detail" slug=course.slug as course_detail_url %}
+
+        <div class="col-md-6 col-lg-4">
+          <article class="ft-course h-100 d-flex flex-column">
+
+            <div class="ft-course-top d-flex justify-content-between align-items-start gap-2">
+              {% if course.category %}
+                <span class="badge bg-light text-dark border small">{{ course.category }}</span>
+              {% endif %}
+
+              {% if course.price %}
+                <span class="fw-semibold small">{% money course.price %}</span>
+              {% else %}
+                <span class="fw-semibold small text-success">{% trans "Gratuit" %}</span>
+              {% endif %}
+            </div>
+
+            <h3 class="h6 fw-bold mt-2 mb-1">
+              <a class="text-decoration-none" href="{{ course_detail_url }}">
+                {{ course }}
+              </a>
+            </h3>
+
+            {% if course.short_description %}
+              <p class="small text-muted mb-3">
+                {{ course.short_description|truncatechars:130 }}
+              </p>
+            {% endif %}
+
+            <div class="mt-auto d-flex justify-content-between align-items-center gap-2">
+              {% if course.level_label or course.get_level_display %}
+                <span class="badge bg-light text-muted border small">
+                  {{ course.level_label|default:course.get_level_display }}
+                </span>
+              {% endif %}
+
+              <a href="{{ course_detail_url }}" class="btn btn-sm btn-outline-primary">
+                {% trans "Voir le détail" %}
+              </a>
+            </div>
+
+          </article>
+        </div>
+
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="text-muted small">{% trans "Aucune formation mise en avant pour le moment." %}</div>
+  {% endif %}
+</section>
+
+
+
+
+
+{% comment %} {# economic/formations/partials/index/_featured_courses.html #}
+<section class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="h5 fw-bold mb-0">{% trans "Formations mises en avant" %}</h2>
+    <a href="{{ u_course_list|default:'#' }}"
+       class="small text-decoration-none {% if not u_course_list %}disabled{% endif %}">
+      {% trans "Catalogue complet" %} →
+    </a>
+  </div>
+
+  {% if featured_courses %}
+    <div class="row g-3 g-md-4">
+      {% for course in featured_courses %}
+        <div class="col-md-6 col-lg-4">
+          <article class="ft-course h-100">
+            <div class="ft-course-top">
+              {% if course.category %}
+                <span class="badge bg-light text-dark border small">{{ course.category }}</span>
+              {% endif %}
+              {% if course.price %}
+                <span class="fw-semibold small">{% money course.price %}</span>
+              {% else %}
+                <span class="fw-semibold small text-success">{% trans "Gratuit" %}</span>
+              {% endif %}
+            </div>
+
+            <h3 class="h6 fw-bold mt-2 mb-1">
+              {% if u_course_detail %}
+                <a class="text-decoration-none" href="{% url 'economic:formations:course_detail' slug=course.slug %}">
+                  {{ course }}
+                </a>
+              {% else %}
+                {{ course }}
+              {% endif %}
+            </h3>
+
+            {% if course.short_description %}
+              <p class="small text-muted mb-3">{{ course.short_description|truncatechars:130 }}</p>
+            {% endif %}
+
+            <div class="mt-auto d-flex justify-content-between align-items-center">
+              {% if course.level_label or course.get_level_display %}
+                <span class="badge bg-light text-muted border small">
+                  {{ course.level_label|default:course.get_level_display }}
+                </span>
+              {% endif %}
+
+              {% if u_course_detail %}
+                <a href="{% url 'economic:formations:course_detail' slug=course.slug %}" class="btn btn-sm btn-outline-primary">
+                  {% trans "Voir le détail" %}
+                </a>
+              {% else %}
+                <a class="btn btn-sm btn-outline-primary disabled" href="#">{% trans "Voir le détail" %}</a>
+              {% endif %}
+            </div>
+          </article>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="text-muted small">{% trans "Aucune formation mise en avant pour le moment." %}</div>
+  {% endif %}
+</section> {% endcomment %}

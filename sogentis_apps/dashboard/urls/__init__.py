@@ -43,7 +43,10 @@ urlpatterns = [
     path("formations/", include(("dashboard.urls.formations", "dashboard_formations"), namespace="formations")),
 
     path("social/", include(("dashboard.urls.social", "dashboard_social"), namespace="social")),
-
+    
+    path("accounting/", include(("dashboard.urls.accounting", "dashboard_accounting"), namespace="accounting")),
+    path("payments/", include(("dashboard.urls.payments", "dashboard_payments"), namespace="payments")),
+    
     path("profile/", dashboard_profile_view, name="profile"),
     path("profile/edit/", dashboard_profile_edit_view, name="profile_edit"),
 

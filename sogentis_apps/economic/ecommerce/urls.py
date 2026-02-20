@@ -22,7 +22,7 @@ from .views.orders import (
     order_detail_view,
 )
 
-from .views.invoice import invoice_download_view
+from .views.invoice import invoice_download_view, proforma_download_view
 
 from .views.wishlist import (
     wishlist_view,
@@ -42,6 +42,10 @@ from .views.vendor.vendor_dashboard import vendor_dashboard_view
 from .views.order_tracking import order_tracking_view
 
 from .views.switch_mode import switch_mode_view
+
+# ✅ AJOUTS
+from .views.quotes import request_quote_view
+from .views.likes import like_toggle_view
 
 
 app_name = "ecommerce"
@@ -96,7 +100,7 @@ urlpatterns = [
     # Factures
     # ==========================
     path("invoices/<uuid:uuid>/download/", invoice_download_view, name="invoice_download"),
-
+    path("proformas/<uuid:uuid>/download/", proforma_download_view, name="proforma_download"),
     # ==========================
     # Wishlist
     # ==========================
@@ -120,6 +124,9 @@ urlpatterns = [
     # ==========================
     path("switch-mode/<str:mode>/", switch_mode_view, name="switch_mode"),
 
+    # ✅ NOUVEAUX : pour que les liens template soient actifs
+    path("quotes/request/<int:product_id>/", request_quote_view, name="request_quote"),
+    path("likes/toggle/<int:product_id>/", like_toggle_view, name="like_toggle"),
 ]
 
 

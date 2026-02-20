@@ -1,0 +1,55 @@
+{% load i18n document_filters %}
+<section id="documents" class="section-spacing documents-section bg-documents-gradient">
+  <div class="container">
+    <h2 class="text-center mb-4 fw-bold text-documents-title">{% trans "Documents téléchargeables" %}</h2>
+
+    <div class="row g-4">
+      {% for doc in publications %}
+      <div class="col-md-6 col-lg-4">
+        <div class="card h-100 shadow bg-doc-card-modern position-relative">
+          {% if not user.is_authenticated or not doc|has_purchase:user %}
+            <div class="locked-overlay" aria-label="{% trans 'Document payant, authentification requise.' %}" role="img">
+              <i class="fas fa-lock fa-lg" aria-hidden="true"></i>
+            </div>
+          {% endif %}
+
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title mb-2 fw-semibold">
+              <i class="fas fa-file-alt me-2 text-primary"></i>
+              {{ doc.title }}
+            </h5>
+
+            <div>
+              <p class="desc-short mb-2 text-doc-short" id="desc-short-{{ doc.id }}">
+                {{ doc.description|truncatechars:120 }}
+                {% if doc.description|length > 120 %}
+                  <a href="#" class="desc-toggle" data-doc="{{ doc.id }}" data-target="desc-full">{% trans "Voir plus" %}</a>
+                {% endif %}
+              </p>
+
+              <div class="desc-full" id="desc-full-{{ doc.id }}" hidden>
+                {{ doc.description|linebreaks }}
+                <a href="#" class="desc-toggle" data-doc="{{ doc.id }}" data-target="desc-short">{% trans "Voir moins" %}</a>
+              </div>
+            </div>
+
+            <div class="mt-auto">
+              {% if user.is_authenticated and doc|has_purchase:user %}
+                <a href="{% url 'social:download_publication' doc.pk %}" class="btn btn-outline-success w-100 mt-2">
+                  <i class="fas fa-download me-2"></i> {% trans "Télécharger le PDF" %}
+                </a>
+              {% else %}
+                <a href="{% url 'social:publication_pay_and_request' doc.pk %}" class="btn btn-warning w-100 mt-2 z-3 position-relative">
+                  <i class="fas fa-lock me-2"></i> {% trans "Obtenir ce document" %}
+                </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+        <p class="text-center text-muted">{% trans "Aucun document disponible." %}</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>

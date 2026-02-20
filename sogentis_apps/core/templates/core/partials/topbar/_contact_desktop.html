@@ -1,0 +1,9 @@
+{# templates/core/partials/topbar/_contact_desktop.html #}
+{% load i18n %}
+<div class="d-none d-lg-flex align-items-center gap-2 small">
+  {% if CONTACT_PHONE %}
+    <a href="tel:{{ CONTACT_PHONE|cut:' ' }}" class="text-info text-decoration-none">📞 {{ CONTACT_PHONE }}</a>
+    <span class="opacity-50">|</span>
+  {% endif %}
+  <a href="{% url 'core:contact' %}" class="text-white text-decoration-none">📧 {% trans "Contact" %}</a>
+</div>

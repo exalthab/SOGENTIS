@@ -1,0 +1,41 @@
+{% load i18n %}
+<section class="container py-5 stats-section-modern">
+  <div class="text-center mb-5">
+    <span class="projects-title-badge-modern">
+      <i class="fas fa-lightbulb me-2"></i>
+      {% trans "Projets" %}
+    </span>
+  </div>
+
+  <div class="row text-center mb-4 g-4">
+    <div class="col-md-4">
+      <div class="card stats-card-modern h-100 shadow">
+        <div class="card-body">
+          <div class="stats-icon-modern bg-primary mb-3 mx-auto"><i class="fas fa-project-diagram"></i></div>
+          <h5 class="card-title">{% trans "Projets actifs" %}</h5>
+          <p class="fs-2 fw-bold text-primary stats-value">{{ total_projects }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card stats-card-modern h-100 shadow">
+        <div class="card-body">
+          <div class="stats-icon-modern bg-success mb-3 mx-auto"><i class="fas fa-coins"></i></div>
+          <h5 class="card-title">{% trans "Cagnotte totale reçue" %}</h5>
+          <p class="fs-2 fw-bold text-success stats-value">{{ total_cagnotte|floatformat:0 }} FCFA</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card stats-card-modern h-100 shadow">
+        <div class="card-body">
+          <div class="stats-icon-modern bg-info mb-3 mx-auto"><i class="fas fa-users"></i></div>
+          <h5 class="card-title">{% trans "Bénéficiaires" %}</h5>
+          <p class="fs-2 fw-bold text-info stats-value">{{ total_beneficiaires }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

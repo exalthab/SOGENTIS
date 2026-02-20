@@ -1,0 +1,226 @@
+{# templates/economic/partials/index/_eco_index_hero.html #}
+{% load i18n %}
+
+<section class="eco-hero position-relative" aria-labelledby="ecoHeroTitle">
+  <div class="eco-hero-overlay" aria-hidden="true"></div>
+
+  <div class="container eco-hero-content text-center">
+    <span class="eco-kicker small text-uppercase opacity-90">{% trans "Pôle économique" %}</span>
+
+    <h1 id="ecoHeroTitle" class="eco-title lh-sm mb-2">
+      {% trans "Acheter, apprendre et développer son activité" %}
+    </h1>
+
+    <p class="eco-subtitle small opacity-95 mb-3">
+      {% trans "Un écosystème de solutions économiques : e-commerce, prestations, formations et partenariats B2B." %}
+    </p>
+
+    <div class="eco-hero-actions d-flex justify-content-center gap-2 gap-lg-3 flex-wrap"
+         role="group"
+         aria-label="{% trans 'Accès rapides' %}">
+
+      <a href="{{ ecommerce_index_url|default:'#' }}"
+         class="btn btn-primary btn-lg {% if not ecommerce_index_url %}disabled{% endif %}"
+         {% if not ecommerce_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+        🛒 <span class="fw-semibold">{% trans "Accéder à la boutique" %}</span>
+      </a>
+
+      <a href="{{ prestations_index_url|default:'#' }}"
+         class="btn btn-outline-light btn-lg {% if not prestations_index_url %}disabled{% endif %}"
+         {% if not prestations_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+        🧩 <span class="fw-semibold">{% trans "Voir les prestations" %}</span>
+      </a>
+
+      <a href="{{ formations_index_url|default:'#' }}"
+         class="btn btn-outline-light btn-lg {% if not formations_index_url %}disabled{% endif %}"
+         {% if not formations_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+        🎓 <span class="fw-semibold">{% trans "Formations" %}</span>
+      </a>
+
+    </div>
+
+    <ul class="list-inline mt-3 mb-0 small opacity-90" aria-label="{% trans 'Engagements' %}">
+      <li class="list-inline-item me-2">✅ {% trans "Paiements sécurisés" %}</li>
+      <li class="list-inline-item opacity-75">·</li>
+      <li class="list-inline-item mx-2">🚚 {% trans "Livraison & suivi" %}</li>
+      <li class="list-inline-item opacity-75">·</li>
+      <li class="list-inline-item ms-2">🤝 {% trans "Support pro" %}</li>
+    </ul>
+  </div>
+</section>
+
+
+
+
+
+{% comment %} {# templates/economic/partials/index/_eco_index_hero.html #}
+{% load i18n %}
+
+<section class="eco-hero position-relative" aria-labelledby="ecoHeroTitle">
+  <div class="eco-hero-overlay" aria-hidden="true"></div>
+
+  <div class="container eco-hero-content text-center">
+    <span class="eco-kicker small text-uppercase opacity-90">{% trans "Pôle économique" %}</span>
+
+    <h1 id="ecoHeroTitle" class="eco-title lh-sm mb-2">
+      {% trans "Acheter, apprendre et développer son activité" %}
+    </h1>
+
+    <p class="eco-subtitle small opacity-95 mb-3">
+      {% trans "Un écosystème de solutions économiques : e-commerce, prestations, formations et partenariats B2B." %}
+    </p>
+
+    <div class="eco-hero-actions d-flex justify-content-center gap-2 gap-lg-3 flex-wrap"
+         role="group" aria-label="{% trans 'Accès rapides' %}">
+
+      <a href="{% if ecommerce_index_url and ecommerce_index_url != '#' %}{{ ecommerce_index_url }}{% else %}#{% endif %}"
+         class="btn btn-primary btn-lg {% if not ecommerce_index_url or ecommerce_index_url == '#' %}disabled{% endif %}"
+         {% if not ecommerce_index_url or ecommerce_index_url == '#' %}aria-disabled="true" tabindex="-1"{% endif %}>
+        🛒 <span class="fw-semibold">{% trans "Accéder à la boutique" %}</span>
+      </a>
+
+      <a href="{% if prestations_index_url and prestations_index_url != '#' %}{{ prestations_index_url }}{% else %}#{% endif %}"
+         class="btn btn-outline-light btn-lg {% if not prestations_index_url or prestations_index_url == '#' %}disabled{% endif %}"
+         {% if not prestations_index_url or prestations_index_url == '#' %}aria-disabled="true" tabindex="-1"{% endif %}>
+        🧰 <span class="fw-semibold">{% trans "Voir les prestations" %}</span>
+      </a>
+
+      <a href="{% if formations_index_url and formations_index_url != '#' %}{{ formations_index_url }}{% else %}#{% endif %}"
+         class="btn btn-outline-light btn-lg {% if not formations_index_url or formations_index_url == '#' %}disabled{% endif %}"
+         {% if not formations_index_url or formations_index_url == '#' %}aria-disabled="true" tabindex="-1"{% endif %}>
+        🎓 <span class="fw-semibold">{% trans "Formations" %}</span>
+      </a>
+
+    </div>
+
+    <ul class="list-inline mt-3 mb-0 small opacity-90" aria-label="{% trans 'Engagements' %}">
+      <li class="list-inline-item me-2">✅ {% trans "Paiements sécurisés" %}</li>
+      <li class="list-inline-item opacity-75">·</li>
+      <li class="list-inline-item mx-2">🚚 {% trans "Livraison & suivi" %}</li>
+      <li class="list-inline-item opacity-75">·</li>
+      <li class="list-inline-item ms-2">🤝 {% trans "Support pro" %}</li>
+    </ul>
+  </div>
+</section> {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/partials/index/_eco_index_hero.html #}
+{% load i18n %}
+
+<section class="eco-hero position-relative" aria-labelledby="ecoHeroTitle">
+  <div class="eco-hero-overlay" aria-hidden="true"></div>
+
+  <div class="container eco-hero-content text-center">
+    <span class="eco-kicker small text-uppercase opacity-90">{% trans "Pôle économique" %}</span>
+
+    <h1 id="ecoHeroTitle" class="eco-title lh-sm mb-2">
+      {% trans "Acheter, apprendre et développer son activité" %}
+    </h1>
+
+    <p class="eco-subtitle small opacity-95 mb-3">
+      {% trans "Un écosystème de solutions économiques : e-commerce, prestations, formations et partenariats B2B." %}
+    </p>
+
+    <div class="eco-hero-actions d-flex justify-content-center gap-2 gap-lg-3 flex-wrap"
+         role="group" aria-label="{% trans 'Accès rapides' %}">
+
+      <a href="{% if ecommerce_index_url and ecommerce_index_url != '#' %}{{ ecommerce_index_url }}{% else %}#{% endif %}"
+         class="btn btn-primary btn-lg {% if not ecommerce_index_url or ecommerce_index_url == '#' %}disabled{% endif %}"
+         {% if not ecommerce_index_url or ecommerce_index_url == '#' %}aria-disabled="true" tabindex="-1"{% endif %}>
+        🛒 <span class="fw-semibold">{% trans "Accéder à la boutique" %}</span>
+      </a>
+
+      <a href="{% if prestations_index_url and prestations_index_url != '#' %}{{ prestations_index_url }}{% else %}#{% endif %}"
+         class="btn btn-outline-light btn-lg {% if not prestations_index_url or prestations_index_url == '#' %}disabled{% endif %}"
+         {% if not prestations_index_url or prestations_index_url == '#' %}aria-disabled="true" tabindex="-1"{% endif %}>
+        🧰 <span class="fw-semibold">{% trans "Voir les prestations" %}</span>
+      </a>
+
+      <a href="{% if formations_index_url and formations_index_url != '#' %}{{ formations_index_url }}{% else %}#{% endif %}"
+         class="btn btn-outline-light btn-lg {% if not formations_index_url or formations_index_url == '#' %}disabled{% endif %}"
+         {% if not formations_index_url or formations_index_url == '#' %}aria-disabled="true" tabindex="-1"{% endif %}>
+        🎓 <span class="fw-semibold">{% trans "Formations" %}</span>
+      </a>
+
+    </div>
+
+    <ul class="list-inline mt-3 mb-0 small opacity-90" aria-label="{% trans 'Engagements' %}">
+      <li class="list-inline-item me-2">✅ {% trans "Paiements sécurisés" %}</li>
+      <li class="list-inline-item opacity-75">·</li>
+      <li class="list-inline-item mx-2">🚚 {% trans "Livraison & suivi" %}</li>
+      <li class="list-inline-item opacity-75">·</li>
+      <li class="list-inline-item ms-2">🤝 {% trans "Support pro" %}</li>
+    </ul>
+  </div>
+</section>
+ {% endcomment %}
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/partials/index/_eco_index_hero.html #}
+{% load i18n %}
+
+<section class="eco-hero position-relative" aria-labelledby="ecoHeroTitle">
+  <div class="eco-hero-overlay" aria-hidden="true"></div>
+
+  <div class="container eco-hero-content text-center">
+    <span class="eco-kicker small text-uppercase opacity-90">
+      {% trans "Pôle économique" %}
+    </span>
+
+    <h1 id="ecoHeroTitle" class="eco-title lh-sm mb-2">
+      {% trans "Acheter, apprendre et développer son activité" %}
+    </h1>
+
+    <p class="eco-subtitle small opacity-95 mb-3">
+      {% trans "Un écosystème de solutions économiques : e-commerce, services numériques, formations et partenariats B2B." %}
+    </p>
+
+    <div class="eco-hero-actions d-flex justify-content-center gap-2 gap-lg-3 flex-wrap"
+         role="group"
+         aria-label="{% trans 'Accès rapides' %}">
+
+      {% with u=ecommerce_index_url|default:'' %}
+        <a href="{% if u %}{{ u }}{% else %}#{% endif %}"
+           class="btn btn-primary btn-lg {% if not u %}disabled{% endif %}"
+           {% if not u %}aria-disabled="true" tabindex="-1"{% endif %}>
+          🛒 <span class="fw-semibold">{% trans "Accéder à la boutique" %}</span>
+        </a>
+      {% endwith %}
+
+      {% with u=services_index_url|default:'' %}
+        <a href="{% if u %}{{ u }}{% else %}#{% endif %}"
+           class="btn btn-outline-light btn-lg {% if not u %}disabled{% endif %}"
+           {% if not u %}aria-disabled="true" tabindex="-1"{% endif %}>
+          ⚙️ <span class="fw-semibold">{% trans "Voir les services" %}</span>
+        </a>
+      {% endwith %}
+
+      {% with u=formations_index_url|default:'' %}
+        <a href="{% if u %}{{ u }}{% else %}#{% endif %}"
+           class="btn btn-outline-light btn-lg {% if not u %}disabled{% endif %}"
+           {% if not u %}aria-disabled="true" tabindex="-1"{% endif %}>
+          🎓 <span class="fw-semibold">{% trans "Formations" %}</span>
+        </a>
+      {% endwith %}
+
+    </div>
+
+    <ul class="list-inline mt-3 mb-0 small opacity-90" aria-label="{% trans 'Engagements' %}">
+      <li class="list-inline-item me-2">✅ {% trans "Paiements sécurisés" %}</li>
+      <li class="list-inline-item opacity-75">·</li>
+      <li class="list-inline-item mx-2">🚚 {% trans "Livraison & suivi" %}</li>
+      <li class="list-inline-item opacity-75">·</li>
+      <li class="list-inline-item ms-2">🤝 {% trans "Support pro" %}</li>
+    </ul>
+  </div>
+</section>
+ {% endcomment %}

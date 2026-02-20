@@ -8,6 +8,31 @@
   const iconDesktop = qs("themeIcon");         // optionnel
   const iconMobile  = qs("themeIconMobile");   // optionnel
 
+  // =========================================================
+  // Logo fallback (brand): cache le nom si logo OK
+  // =========================================================
+  function initBrandLogo() {
+    const brand = document.querySelector(".topbar .topbar-brand");
+    if (!brand) return;
+
+    const logoUrl = "/static/global/image/logo.png";
+    const img = new Image();
+
+    img.onload = function () {
+      brand.classList.add("brand--has-logo");
+      brand.classList.remove("brand--no-logo");
+    };
+
+    img.onerror = function () {
+      brand.classList.remove("brand--has-logo");
+      brand.classList.add("brand--no-logo");
+    };
+
+    // cache-buster léger (évite cache agressif en dev)
+    // En prod, tu peux enlever ?v=1 ou le versionner.
+    img.src = logoUrl + "?v=1";
+  }
+
   // état initial : localStorage > prefers-color-scheme > clair
   function initialMode() {
     const saved = (localStorage.getItem("theme") || "").toLowerCase();
@@ -37,6 +62,7 @@
 
   // Init
   apply(initialMode());
+  initBrandLogo();
 
   // Bind boutons s'ils existent
   if (btnDesktop) btnDesktop.addEventListener("click", toggle);
@@ -45,6 +71,59 @@
   // API publique (optionnel)
   window.SogentisTheme = { apply, toggle, current };
 })();
+
+
+
+
+
+
+// // global/js/theme.js - good
+// (function () {
+//   function qs(id) { return document.getElementById(id); }
+
+//   const body = document.body;
+//   const btnDesktop = qs("themeToggle");
+//   const btnMobile  = qs("themeToggleMobile");
+//   const iconDesktop = qs("themeIcon");         // optionnel
+//   const iconMobile  = qs("themeIconMobile");   // optionnel
+
+//   // état initial : localStorage > prefers-color-scheme > clair
+//   function initialMode() {
+//     const saved = (localStorage.getItem("theme") || "").toLowerCase();
+//     if (saved === "dark" || saved === "light") return saved;
+//     try {
+//       return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches
+//         ? "dark" : "light";
+//     } catch { return "light"; }
+//   }
+
+//   function apply(mode) {
+//     const isDark = mode === "dark";
+//     body.classList.toggle("dark-mode", isDark);
+//     // MAJ icônes si elles existent
+//     if (iconDesktop) iconDesktop.textContent = isDark ? "☀️" : "🌙";
+//     if (iconMobile)  iconMobile.textContent  = isDark ? "☀️" : "🌙";
+//     try { localStorage.setItem("theme", isDark ? "dark" : "light"); } catch {}
+//   }
+
+//   function current() {
+//     return body.classList.contains("dark-mode") ? "dark" : "light";
+//   }
+
+//   function toggle() {
+//     apply(current() === "dark" ? "light" : "dark");
+//   }
+
+//   // Init
+//   apply(initialMode());
+
+//   // Bind boutons s'ils existent
+//   if (btnDesktop) btnDesktop.addEventListener("click", toggle);
+//   if (btnMobile)  btnMobile.addEventListener("click", toggle);
+
+//   // API publique (optionnel)
+//   window.SogentisTheme = { apply, toggle, current };
+// })();
 
 
 

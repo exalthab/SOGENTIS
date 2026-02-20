@@ -1,0 +1,845 @@
+{# templates/economic/prestations/partials/_prestations_topbar.html #}
+{% load i18n dashboard_tags %}
+
+{% safe_url "economic:index" as eco_home_url %}
+{% safe_url "economic:prestations:index" as prestations_index_url %}
+{% safe_url "economic:prestations:tickets" as tickets_url %}
+{% safe_url "economic:prestations:projects_list" as projects_list_url %}
+{% safe_url "economic:prestations:my_downloads" as my_downloads_url %}
+
+{% with rm=request.resolver_match ns=rm.namespace|default:'' name=rm.url_name|default:'' %}
+<div class="svc-topbar border-bottom bg-body">
+  <div class="container-fluid px-3 px-lg-4 py-2">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+
+      <div class="d-flex align-items-center gap-2 min-w-0">
+        <a class="btn btn-sm btn-outline-secondary"
+           href="{{ eco_home_url|default:'#' }}"
+           {% if not eco_home_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+          ⟵ {% trans "Économie" %}
+        </a>
+
+        <a class="svc-brand text-decoration-none fw-semibold text-truncate {% if not prestations_index_url %}disabled{% endif %}"
+           href="{{ prestations_index_url|default:'#' }}"
+           {% if not prestations_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+          🧰 {% trans "Prestations" %}
+        </a>
+
+        <span class="d-none d-md-inline text-muted small">•</span>
+        <span class="d-none d-md-inline small text-muted text-truncate">
+          {% if name == "detail" %}{% trans "Détail" %}
+          {% elif name == "quote" %}{% trans "Devis" %}
+          {% elif name == "prestation_offer_detail" or name == "package_offer_detail" %}{% trans "Offres" %}
+          {% elif name == "my_downloads" %}{% trans "Téléchargements" %}
+          {% elif name == "tickets" %}{% trans "Tickets" %}
+          {% elif "projects" in name %}{% trans "Projets" %}
+          {% else %}{% trans "Catalogue" %}{% endif %}
+        </span>
+      </div>
+
+      <div class="d-flex flex-wrap align-items-center gap-2">
+
+        <a class="btn btn-sm btn-outline-secondary {% if not tickets_url %}disabled{% endif %}"
+           href="{{ tickets_url|default:'#' }}"
+           {% if not tickets_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+          🎫 {% trans "Tickets" %}
+        </a>
+
+        <a class="btn btn-sm btn-outline-secondary {% if not projects_list_url %}disabled{% endif %}"
+           href="{{ projects_list_url|default:'#' }}"
+           {% if not projects_list_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+          📌 {% trans "Projets" %}
+        </a>
+
+        {% if request.user.is_authenticated %}
+          <a class="btn btn-sm btn-dark {% if not my_downloads_url %}disabled{% endif %}"
+             href="{{ my_downloads_url|default:'#' }}"
+             {% if not my_downloads_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+            ⬇️ {% trans "Mes accès" %}
+          </a>
+        {% endif %}
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endwith %}
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/partials/_prestations_topbar.html #}
+{% load i18n dashboard_tags %}
+
+{% with rm=request.resolver_match %}
+  {% with name=rm.url_name|default:'' %}
+    {% safe_url "economic:prestations:index" as u_index %}
+    {% safe_url "economic:prestations:tickets" as u_tickets %}
+    {% safe_url "economic:index" as u_economic %}
+    {% safe_url "core:contact" as u_contact %}
+
+    <header class="eco-topbar sticky-top">
+      <div class="container-fluid px-3 px-lg-4">
+        <div class="d-flex align-items-center justify-content-between gap-2 py-2">
+          <div class="d-flex align-items-center gap-2">
+            <a class="eco-brand text-decoration-none" href="{{ u_index|default:'#' }}">
+              <span class="eco-brand-mark">◎</span>
+              <span class="eco-brand-name">{% trans "Prestations" %}</span>
+            </a>
+            <span class="text-muted d-none d-md-inline small">— {% trans "Devis, packs, tickets" %}</span>
+          </div>
+
+          <div class="d-flex align-items-center gap-2">
+            <nav class="d-none d-lg-flex align-items-center gap-1">
+              <a class="btn btn-sm {% if name == 'index' %}btn-primary{% else %}btn-outline-primary{% endif %}" href="{{ u_index|default:'#' }}">
+                {% trans "Catalogue" %}
+              </a>
+              <a class="btn btn-sm btn-outline-primary" href="{{ u_index|default:'#' }}#packs">{% trans "Packs" %}</a>
+              <a class="btn btn-sm {% if name == 'tickets' %}btn-primary{% else %}btn-outline-primary{% endif %}" href="{{ u_tickets|default:'#' }}">
+                {% trans "Tickets" %}
+              </a>
+              <a class="btn btn-sm btn-outline-secondary" href="{{ u_contact|default:'#' }}">{% trans "Contact" %}</a>
+            </nav>
+
+            <div class="dropdown d-lg-none">
+              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                {% trans "Menu" %}
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="{{ u_index|default:'#' }}">{% trans "Catalogue" %}</a></li>
+                <li><a class="dropdown-item" href="{{ u_index|default:'#' }}#packs">{% trans "Packs" %}</a></li>
+                <li><a class="dropdown-item" href="{{ u_tickets|default:'#' }}">{% trans "Tickets" %}</a></li>
+                <li><a class="dropdown-item" href="{{ u_contact|default:'#' }}">{% trans "Contact" %}</a></li>
+              </ul>
+            </div>
+
+            <a class="btn btn-sm btn-outline-dark d-none d-md-inline" href="{{ u_economic|default:'#' }}">
+              {% trans "Pôle économique" %}
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+  {% endwith %}
+{% endwith %} {% endcomment %}
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/partials/_prestations_topbar.html #}
+{% load i18n static ecom_money dashboard_tags %}
+
+{% with rm=request.resolver_match %}
+{% with ns=rm.namespace|default:'' name=rm.url_name|default:'' %}
+
+{% safe_url "economic:prestations:index" as u_index %}
+{% safe_url "economic:prestations:tickets" as u_tickets %}
+{% safe_url "economic:index" as u_economic %}
+{% safe_url "core:contact" as u_contact %}
+
+<header class="eco-topbar sticky-top" role="navigation" aria-label="{% trans 'Navigation Prestations' %}">
+  <div class="container-fluid px-3 px-lg-4">
+    <div class="d-flex align-items-center justify-content-between gap-2 py-2">
+
+      {# Brand #}
+      <div class="d-flex align-items-center gap-2">
+        <a class="eco-brand text-decoration-none {% if not u_index %}disabled{% endif %}"
+           href="{{ u_index|default:'#' }}"
+           {% if not u_index %}aria-disabled="true" tabindex="-1"{% endif %}>
+          <span class="eco-brand-mark">◎</span>
+          <span class="eco-brand-name">{% trans "Prestations" %}</span>
+        </a>
+        <span class="text-muted d-none d-md-inline small">
+          — {% trans "Devis, packs, tickets" %}
+        </span>
+      </div>
+
+      {# Actions #}
+      <div class="d-flex align-items-center gap-2">
+
+        {# Desktop nav #}
+        <nav class="d-none d-lg-flex align-items-center gap-1">
+
+          <a class="btn btn-sm {% if name == 'index' %}btn-primary{% else %}btn-outline-primary{% endif %} {% if not u_index %}disabled{% endif %}"
+             href="{{ u_index|default:'#' }}"
+             {% if not u_index %}aria-disabled="true" tabindex="-1"{% endif %}>
+            {% trans "Catalogue" %}
+          </a>
+
+          <a class="btn btn-sm btn-outline-primary {% if not u_index %}disabled{% endif %}"
+             href="{{ u_index|default:'#' }}#packs"
+             {% if not u_index %}aria-disabled="true" tabindex="-1"{% endif %}>
+            {% trans "Packs" %}
+          </a>
+
+          <a class="btn btn-sm {% if name == 'tickets' %}btn-primary{% else %}btn-outline-primary{% endif %} {% if not u_tickets %}disabled{% endif %}"
+             href="{{ u_tickets|default:'#' }}"
+             {% if not u_tickets %}aria-disabled="true" tabindex="-1"{% endif %}>
+            {% trans "Tickets" %}
+          </a>
+
+          <a class="btn btn-sm btn-outline-secondary {% if not u_contact %}disabled{% endif %}"
+             href="{{ u_contact|default:'#' }}"
+             {% if not u_contact %}aria-disabled="true" tabindex="-1"{% endif %}>
+            {% trans "Contact" %}
+          </a>
+
+        </nav>
+
+        {# Mobile dropdown #}
+        <div class="dropdown d-lg-none">
+          <button class="btn btn-sm btn-outline-primary dropdown-toggle"
+                  type="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false">
+            {% trans "Menu" %}
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li>
+              <a class="dropdown-item {% if not u_index %}disabled{% endif %}"
+                 href="{{ u_index|default:'#' }}">
+                {% trans "Catalogue" %}
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item {% if not u_index %}disabled{% endif %}"
+                 href="{{ u_index|default:'#' }}#packs">
+                {% trans "Packs" %}
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item {% if not u_tickets %}disabled{% endif %}"
+                 href="{{ u_tickets|default:'#' }}">
+                {% trans "Tickets" %}
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item {% if not u_contact %}disabled{% endif %}"
+                 href="{{ u_contact|default:'#' }}">
+                {% trans "Contact" %}
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        {# Back to economic hub #}
+        <a class="btn btn-sm btn-outline-dark d-none d-md-inline {% if not u_economic %}disabled{% endif %}"
+           href="{{ u_economic|default:'#' }}"
+           {% if not u_economic %}aria-disabled="true" tabindex="-1"{% endif %}>
+          {% trans "Pôle économique" %}
+        </a>
+
+      </div>
+    </div>
+  </div>
+</header>
+
+{% endwith %}
+{% endwith %}
+ {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/partials/_prestations_topbar.html  #}
+{% load i18n dashboard_tags %}
+
+{% with rm=request.resolver_match %}
+  {% with ns=rm.namespace|default:'' name=rm.url_name|default:'' %}
+
+    {% safe_url "economic:prestations:index" as u_index %}
+    {% safe_url "economic:prestations:tickets" as u_tickets %}
+    {% safe_url "economic:index" as u_economic %}
+    {% safe_url "core:contact" as u_contact %}
+
+    <header class="eco-topbar sticky-top">
+      <div class="container-fluid px-3 px-lg-4">
+        <div class="d-flex align-items-center justify-content-between gap-2 py-2">
+          <div class="d-flex align-items-center gap-2">
+            <a class="eco-brand text-decoration-none" href="{{ u_index|default:'#' }}">
+              <span class="eco-brand-mark">◎</span>
+              <span class="eco-brand-name">{% trans "Prestations" %}</span>
+            </a>
+            <span class="text-muted d-none d-md-inline small">— {% trans "Devis, packs, tickets" %}</span>
+          </div>
+
+          <div class="d-flex align-items-center gap-2">
+            <nav class="d-none d-lg-flex align-items-center gap-1">
+              <a class="btn btn-sm {% if name == 'index' %}btn-primary{% else %}btn-outline-primary{% endif %}" href="{{ u_index|default:'#' }}">
+                {% trans "Catalogue" %}
+              </a>
+              <a class="btn btn-sm btn-outline-primary" href="{{ u_index|default:'#' }}#packs">
+                {% trans "Packs" %}
+              </a>
+              <a class="btn btn-sm {% if name == 'tickets' %}btn-primary{% else %}btn-outline-primary{% endif %}" href="{{ u_tickets|default:'#' }}">
+                {% trans "Tickets" %}
+              </a>
+              <a class="btn btn-sm btn-outline-secondary" href="{{ u_contact|default:'#' }}">
+                {% trans "Contact" %}
+              </a>
+            </nav>
+
+            <div class="dropdown d-lg-none">
+              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                {% trans "Menu" %}
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="{{ u_index|default:'#' }}">{% trans "Catalogue" %}</a></li>
+                <li><a class="dropdown-item" href="{{ u_index|default:'#' }}#packs">{% trans "Packs" %}</a></li>
+                <li><a class="dropdown-item" href="{{ u_tickets|default:'#' }}">{% trans "Tickets" %}</a></li>
+                <li><a class="dropdown-item" href="{{ u_contact|default:'#' }}">{% trans "Contact" %}</a></li>
+              </ul>
+            </div>
+
+            <a class="btn btn-sm btn-outline-dark d-none d-md-inline" href="{{ u_economic|default:'#' }}">
+              {% trans "Pôle économique" %}
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+  {% endwith %}
+{% endwith %} {% endcomment %}
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/partials/_prestations_topbar.html -good #}
+{% load i18n dashboard_tags %}
+
+{# ===================== #}
+{#   SAFE URLS            #}
+{# ===================== #}
+{% safe_url "economic:prestations:index"   as u_prestations_index %}
+{% safe_url "economic:prestations:tickets" as u_prestations_tickets %}
+{% safe_url "economic:support:ticket_list" as u_support %}
+
+{# ===================== #}
+{#   CONTEXT SAFE         #}
+{# ===================== #}
+{% with rm=request.resolver_match %}
+  {% with url_name=rm.url_name|default:"" %}
+    {% with anchor=request.GET.anchor|default:"" %}
+
+<header class="prestations-topbar sticky-top bg-white border-bottom">
+  <nav class="navbar navbar-expand-lg navbar-light py-2">
+    <div class="container-fluid px-2 px-md-3">
+
+      {# ===================== #}
+      {#   LEFT: BRAND + NAV    #}
+      {# ===================== #}
+      <div class="d-flex align-items-center gap-2">
+
+        <span class="prestations-dot" aria-hidden="true"></span>
+
+        <div class="lh-sm d-none d-sm-block">
+          <div class="fw-bold">{% trans "Prestations" %}</div>
+          <div class="small text-muted">{% trans "Devis · Tickets · Packs" %}</div>
+        </div>
+
+        {# Burger -> Offcanvas (mobile) #}
+        <button class="navbar-toggler ms-1"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#prestOffcanvas"
+                aria-controls="prestOffcanvas"
+                aria-label="{% trans 'Menu' %}">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        {# Desktop nav #}
+        <div class="collapse navbar-collapse">
+          <ul class="navbar-nav align-items-lg-center ms-0 gap-lg-1">
+
+            <li class="nav-item">
+              <a class="nav-link px-3 rounded-pill
+                        {% if url_name == 'index' and anchor != 'packs' %}active fw-semibold{% endif %}
+                        {% if not u_prestations_index %}disabled{% endif %}"
+                 href="{% if u_prestations_index %}{{ u_prestations_index }}#prestations-list{% else %}#{% endif %}"
+                 {% if not u_prestations_index %}aria-disabled="true" tabindex="-1"{% endif %}>
+                <i class="fa-solid fa-layer-group me-2"></i>{% trans "Catalogue" %}
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link px-3 rounded-pill
+                        {% if url_name == 'index' and anchor == 'packs' %}active fw-semibold{% endif %}
+                        {% if not u_prestations_index %}disabled{% endif %}"
+                 href="{% if u_prestations_index %}{{ u_prestations_index }}?anchor=packs#packs{% else %}#{% endif %}"
+                 {% if not u_prestations_index %}aria-disabled="true" tabindex="-1"{% endif %}>
+                <i class="fa-solid fa-box-open me-2"></i>{% trans "Packs" %}
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link px-3 rounded-pill
+                        {% if url_name == 'tickets' %}active fw-semibold{% endif %}
+                        {% if not u_prestations_tickets %}disabled{% endif %}"
+                 href="{% if u_prestations_tickets %}{{ u_prestations_tickets }}{% else %}#{% endif %}"
+                 {% if not u_prestations_tickets %}aria-disabled="true" tabindex="-1"{% endif %}>
+                <i class="fa-solid fa-ticket me-2"></i>{% trans "Mes demandes" %}
+              </a>
+            </li>
+
+          </ul>
+        </div>
+      </div>
+
+      {# ===================== #}
+      {#   RIGHT: CTAs          #}
+      {# ===================== #}
+      <div class="d-flex align-items-center gap-2 ms-auto">
+
+        <a class="btn btn-outline-secondary btn-sm rounded-pill px-3 {% if not u_support %}disabled{% endif %}"
+           href="{% if u_support %}{{ u_support }}{% else %}#{% endif %}"
+           {% if not u_support %}aria-disabled="true" tabindex="-1"{% endif %}>
+          <i class="fa-solid fa-headset me-2"></i>{% trans "Support" %}
+        </a>
+
+        <a class="btn btn-dark btn-sm rounded-pill px-3 {% if not u_prestations_tickets %}disabled{% endif %}"
+           href="{% if u_prestations_tickets %}{{ u_prestations_tickets }}{% else %}#{% endif %}"
+           {% if not u_prestations_tickets %}aria-disabled="true" tabindex="-1"{% endif %}>
+          <i class="fa-solid fa-bolt me-2"></i>{% trans "Ticket" %}
+        </a>
+
+      </div>
+
+    </div>
+  </nav>
+
+  {# ===================== #}
+  {#   OFFCANVAS (mobile)   #}
+  {# ===================== #}
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="prestOffcanvas" aria-labelledby="prestOffcanvasLabel">
+    <div class="offcanvas-header">
+      <div class="fw-bold" id="prestOffcanvasLabel">{% trans "Menu Prestations" %}</div>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="{% trans 'Fermer' %}"></button>
+    </div>
+
+    <div class="offcanvas-body">
+
+      <div class="list-group mb-3">
+
+        <a class="list-group-item list-group-item-action
+                  {% if url_name == 'index' and anchor != 'packs' %}active{% endif %}
+                  {% if not u_prestations_index %}disabled{% endif %}"
+           href="{% if u_prestations_index %}{{ u_prestations_index }}#prestations-list{% else %}#{% endif %}"
+           {% if not u_prestations_index %}aria-disabled="true" tabindex="-1"{% endif %}>
+          <i class="fa-solid fa-layer-group me-2"></i>{% trans "Catalogue" %}
+        </a>
+
+        <a class="list-group-item list-group-item-action
+                  {% if url_name == 'index' and anchor == 'packs' %}active{% endif %}
+                  {% if not u_prestations_index %}disabled{% endif %}"
+           href="{% if u_prestations_index %}{{ u_prestations_index }}?anchor=packs#packs{% else %}#{% endif %}"
+           {% if not u_prestations_index %}aria-disabled="true" tabindex="-1"{% endif %}>
+          <i class="fa-solid fa-box-open me-2"></i>{% trans "Packs & tarifs" %}
+        </a>
+
+        <a class="list-group-item list-group-item-action
+                  {% if url_name == 'tickets' %}active{% endif %}
+                  {% if not u_prestations_tickets %}disabled{% endif %}"
+           href="{% if u_prestations_tickets %}{{ u_prestations_tickets }}{% else %}#{% endif %}"
+           {% if not u_prestations_tickets %}aria-disabled="true" tabindex="-1"{% endif %}>
+          <i class="fa-solid fa-ticket me-2"></i>{% trans "Mes demandes" %}
+        </a>
+
+      </div>
+
+      <div class="list-group">
+        <a class="list-group-item list-group-item-action {% if not u_support %}disabled{% endif %}"
+           href="{% if u_support %}{{ u_support }}{% else %}#{% endif %}"
+           {% if not u_support %}aria-disabled="true" tabindex="-1"{% endif %}>
+          <i class="fa-solid fa-headset me-2"></i>{% trans "Support" %}
+        </a>
+      </div>
+
+    </div>
+  </div>
+</header>
+
+    {% endwith %}
+  {% endwith %}
+{% endwith %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/services/partials/_prestationstopbar.html #}
+{% load i18n dashboard_tags %}
+
+{# ===================== #}
+{#   SAFE URLS            #}
+{# ===================== #}
+{% safe_url "economic:prestations:index" as u_prestations_index %}
+{% safe_url "economic:prestations:tickets" as u_prestations_tickets %}
+{% safe_url "economic:support:ticket_list" as u_support %}
+
+{# ===================== #}
+{#   CONTEXT SAFE         #}
+{# ===================== #}
+{% with rm=request.resolver_match %}
+  {% with url_name=rm.url_name|default:"" %}
+    {% with anchor=request.GET.anchor|default:"" %}
+
+<header class="services-topbar sticky-top bg-white border-bottom">
+  <nav class="navbar navbar-expand-lg navbar-light py-2">
+    <div class="container-fluid px-2 px-md-3">
+
+      {# ===================== #}
+      {#   LEFT: BRAND + NAV    #}
+      {# ===================== #}
+      <div class="d-flex align-items-center gap-2">
+
+        <span class="services-dot" aria-hidden="true"></span>
+
+        <div class="lh-sm d-none d-sm-block">
+          <div class="fw-bold">{% trans "Services" %}</div>
+          <div class="small text-muted">{% trans "Devis · Tickets · Packs" %}</div>
+        </div>
+
+        {# Burger -> Offcanvas (mobile) #}
+        <button class="navbar-toggler ms-1"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#svcOffcanvas"
+                aria-controls="svcOffcanvas"
+                aria-label="{% trans 'Menu' %}">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        {# Desktop nav #}
+        <div class="collapse navbar-collapse">
+          <ul class="navbar-nav align-items-lg-center ms-0 gap-lg-1">
+
+            <li class="nav-item">
+              <a class="nav-link px-3 rounded-pill
+                        {% if url_name == 'index' and anchor != 'packs' %}active fw-semibold{% endif %}
+                        {% if not u_services_index %}disabled{% endif %}"
+                 href="{% if u_services_index %}{{ u_services_index }}#services-list{% else %}#{% endif %}"
+                 {% if not u_services_index %}aria-disabled="true" tabindex="-1"{% endif %}>
+                <i class="fa-solid fa-layer-group me-2"></i>{% trans "Catalogue" %}
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link px-3 rounded-pill
+                        {% if url_name == 'index' and anchor == 'packs' %}active fw-semibold{% endif %}
+                        {% if not u_services_index %}disabled{% endif %}"
+                 href="{% if u_services_index %}{{ u_services_index }}?anchor=packs#packs{% else %}#{% endif %}"
+                 {% if not u_services_index %}aria-disabled="true" tabindex="-1"{% endif %}>
+                <i class="fa-solid fa-box-open me-2"></i>{% trans "Packs" %}
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link px-3 rounded-pill
+                        {% if url_name == 'tickets' %}active fw-semibold{% endif %}
+                        {% if not u_services_tickets %}disabled{% endif %}"
+                 href="{% if u_services_tickets %}{{ u_services_tickets }}{% else %}#{% endif %}"
+                 {% if not u_services_tickets %}aria-disabled="true" tabindex="-1"{% endif %}>
+                <i class="fa-solid fa-ticket me-2"></i>{% trans "Mes demandes" %}
+              </a>
+            </li>
+
+          </ul>
+        </div>
+      </div>
+
+      {# ===================== #}
+      {#   RIGHT: CTAs          #}
+      {# ===================== #}
+      <div class="d-flex align-items-center gap-2 ms-auto">
+
+        <a class="btn btn-outline-secondary btn-sm rounded-pill px-3 {% if not u_support %}disabled{% endif %}"
+           href="{% if u_support %}{{ u_support }}{% else %}#{% endif %}"
+           {% if not u_support %}aria-disabled="true" tabindex="-1"{% endif %}>
+          <i class="fa-solid fa-headset me-2"></i>{% trans "Support" %}
+        </a>
+
+        <a class="btn btn-dark btn-sm rounded-pill px-3 {% if not u_services_tickets %}disabled{% endif %}"
+           href="{% if u_services_tickets %}{{ u_services_tickets }}{% else %}#{% endif %}"
+           {% if not u_services_tickets %}aria-disabled="true" tabindex="-1"{% endif %}>
+          <i class="fa-solid fa-bolt me-2"></i>{% trans "Ticket" %}
+        </a>
+
+      </div>
+
+    </div>
+  </nav>
+
+  {# ===================== #}
+  {#   OFFCANVAS (mobile)   #}
+  {# ===================== #}
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="svcOffcanvas" aria-labelledby="svcOffcanvasLabel">
+    <div class="offcanvas-header">
+      <div class="fw-bold" id="svcOffcanvasLabel">{% trans "Menu Services" %}</div>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="{% trans 'Fermer' %}"></button>
+    </div>
+
+    <div class="offcanvas-body">
+
+      <div class="list-group mb-3">
+
+        <a class="list-group-item list-group-item-action
+                  {% if url_name == 'index' and anchor != 'packs' %}active{% endif %}
+                  {% if not u_services_index %}disabled{% endif %}"
+           href="{% if u_services_index %}{{ u_services_index }}#services-list{% else %}#{% endif %}"
+           {% if not u_services_index %}aria-disabled="true" tabindex="-1"{% endif %}>
+          <i class="fa-solid fa-layer-group me-2"></i>{% trans "Catalogue" %}
+        </a>
+
+        <a class="list-group-item list-group-item-action
+                  {% if url_name == 'index' and anchor == 'packs' %}active{% endif %}
+                  {% if not u_services_index %}disabled{% endif %}"
+           href="{% if u_services_index %}{{ u_services_index }}?anchor=packs#packs{% else %}#{% endif %}"
+           {% if not u_services_index %}aria-disabled="true" tabindex="-1"{% endif %}>
+          <i class="fa-solid fa-box-open me-2"></i>{% trans "Packs & tarifs" %}
+        </a>
+
+        <a class="list-group-item list-group-item-action
+                  {% if url_name == 'tickets' %}active{% endif %}
+                  {% if not u_services_tickets %}disabled{% endif %}"
+           href="{% if u_services_tickets %}{{ u_services_tickets }}{% else %}#{% endif %}"
+           {% if not u_services_tickets %}aria-disabled="true" tabindex="-1"{% endif %}>
+          <i class="fa-solid fa-ticket me-2"></i>{% trans "Mes demandes" %}
+        </a>
+
+      </div>
+
+      <div class="list-group">
+        <a class="list-group-item list-group-item-action {% if not u_support %}disabled{% endif %}"
+           href="{% if u_support %}{{ u_support }}{% else %}#{% endif %}"
+           {% if not u_support %}aria-disabled="true" tabindex="-1"{% endif %}>
+          <i class="fa-solid fa-headset me-2"></i>{% trans "Support" %}
+        </a>
+      </div>
+
+    </div>
+  </div>
+</header>
+
+    {% endwith %}
+  {% endwith %}
+{% endwith %} {% endcomment %}
+
+
+
+
+{% comment %} {# templates/economic/services/partials/_services_topbar.html #}
+
+{% load i18n dashboard_tags %}
+
+{# ========================================= #}
+{# SAFE URLS                                  #}
+{# ========================================= #}
+{% safe_url "economic:services:index" as u_services_index %}
+{% safe_url "economic:services:tickets" as u_services_tickets %}
+{% safe_url "economic:support:ticket_list" as u_support %}
+
+{# ========================================= #}
+{# CONTEXT SAFE                               #}
+{# ========================================= #}
+{% with rm=request.resolver_match %}
+  {% with url_name=rm.url_name|default:"" %}
+    {% with path=request.path|default:"" %}
+
+<header class="services-topbar sticky-top bg-white border-bottom">
+  <nav class="navbar navbar-expand-lg navbar-light py-2">
+    <div class="container-fluid px-2 px-md-3">
+
+      {# ----------------------------------------- #}
+      {# LEFT: Brand / Nav                          #}
+      {# ----------------------------------------- #}
+      <div class="d-flex align-items-center gap-2">
+
+        <span class="services-dot" aria-hidden="true"></span>
+
+        <div class="lh-sm d-none d-sm-block">
+          <div class="fw-bold">{% trans "Services" %}</div>
+          <div class="small text-muted">{% trans "Devis · Tickets · Packs" %}</div>
+        </div>
+
+        <button class="navbar-toggler ms-1"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#svcOffcanvas"
+                aria-controls="svcOffcanvas"
+                aria-label="{% trans 'Menu' %}">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse">
+          <ul class="navbar-nav align-items-lg-center ms-0 gap-lg-1">
+
+            <li class="nav-item">
+              <a class="nav-link px-3 rounded-pill
+                        {% if url_name == 'index' %}active fw-semibold{% endif %}
+                        {% if not u_services_index %}disabled{% endif %}"
+                 href="{% if u_services_index %}{{ u_services_index }}#services-list{% else %}#{% endif %}"
+                 {% if not u_services_index %}aria-disabled="true" tabindex="-1"{% endif %}>
+                <i class="fa-solid fa-layer-group me-2"></i>{% trans "Catalogue" %}
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link px-3 rounded-pill
+                        {% if '#packs' in path %}active fw-semibold{% endif %}
+                        {% if not u_services_index %}disabled{% endif %}"
+                 href="{% if u_services_index %}{{ u_services_index }}#packs{% else %}#{% endif %}"
+                 {% if not u_services_index %}aria-disabled="true" tabindex="-1"{% endif %}>
+                <i class="fa-solid fa-box-open me-2"></i>{% trans "Packs" %}
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link px-3 rounded-pill
+                        {% if url_name == 'tickets' %}active fw-semibold{% endif %}
+                        {% if not u_services_tickets %}disabled{% endif %}"
+                 href="{{ u_services_tickets|default:'#' }}"
+                 {% if not u_services_tickets %}aria-disabled="true" tabindex="-1"{% endif %}>
+                <i class="fa-solid fa-ticket me-2"></i>{% trans "Mes demandes" %}
+              </a>
+            </li>
+
+          </ul>
+        </div>
+      </div>
+
+      {# ----------------------------------------- #}
+      {# RIGHT: CTAs                               #}
+      {# ----------------------------------------- #}
+      <div class="d-flex align-items-center gap-2 ms-auto">
+
+        <a class="btn btn-outline-secondary btn-sm rounded-pill px-3
+                  {% if not u_support %}disabled{% endif %}"
+           href="{{ u_support|default:'#' }}"
+           {% if not u_support %}aria-disabled="true" tabindex="-1"{% endif %}>
+          <i class="fa-solid fa-headset me-2"></i>{% trans "Support" %}
+        </a>
+
+        <a class="btn btn-dark btn-sm rounded-pill px-3
+                  {% if not u_services_tickets %}disabled{% endif %}"
+           href="{{ u_services_tickets|default:'#' }}"
+           {% if not u_services_tickets %}aria-disabled="true" tabindex="-1"{% endif %}>
+          <i class="fa-solid fa-bolt me-2"></i>{% trans "Ticket" %}
+        </a>
+
+      </div>
+
+    </div>
+  </nav>
+
+  {# ========================================= #}
+  {# OFFCANVAS (mobile)                         #}
+  {# ========================================= #}
+  <div class="offcanvas offcanvas-start"
+       tabindex="-1"
+       id="svcOffcanvas"
+       aria-labelledby="svcOffcanvasLabel">
+
+    <div class="offcanvas-header">
+      <div class="fw-bold" id="svcOffcanvasLabel">{% trans "Menu Services" %}</div>
+      <button type="button"
+              class="btn-close"
+              data-bs-dismiss="offcanvas"
+              aria-label="{% trans 'Fermer' %}">
+      </button>
+    </div>
+
+    <div class="offcanvas-body">
+
+      <div class="list-group mb-3">
+        <a class="list-group-item list-group-item-action
+                  {% if url_name == 'index' %}active{% endif %}"
+           href="{% if u_services_index %}{{ u_services_index }}#services-list{% else %}#{% endif %}">
+          <i class="fa-solid fa-layer-group me-2"></i>{% trans "Catalogue" %}
+        </a>
+
+        <a class="list-group-item list-group-item-action"
+           href="{% if u_services_index %}{{ u_services_index }}#packs{% else %}#{% endif %}">
+          <i class="fa-solid fa-box-open me-2"></i>{% trans "Packs & tarifs" %}
+        </a>
+
+        <a class="list-group-item list-group-item-action
+                  {% if url_name == 'tickets' %}active{% endif %}"
+           href="{{ u_services_tickets|default:'#' }}">
+          <i class="fa-solid fa-ticket me-2"></i>{% trans "Mes demandes" %}
+        </a>
+      </div>
+
+      <div class="list-group">
+        <a class="list-group-item list-group-item-action
+                  {% if not u_support %}disabled{% endif %}"
+           href="{{ u_support|default:'#' }}"
+           {% if not u_support %}aria-disabled="true" tabindex="-1"{% endif %}>
+          <i class="fa-solid fa-headset me-2"></i>{% trans "Support" %}
+        </a>
+      </div>
+
+    </div>
+  </div>
+</header>
+
+    {% endwith %} {# end path #}
+  {% endwith %} {# end url_name #}
+{% endwith %} {# end rm #}
+ {% endcomment %}
+
+
+
+{% comment %} {# templates/economic/services/partials/_services_topbar.html #}
+{% load i18n dashboard_tags %}
+
+{% safe_url "economic:services:index" as u_services_index %}
+{% safe_url "economic:services:tickets" as u_services_tickets %}
+{% safe_url "economic:support:ticket_list" as u_support %}
+
+<header class="services-topbar border-bottom bg-white">
+  <div class="container py-3 d-flex flex-wrap align-items-center justify-content-between gap-3">
+
+    <div class="services-brand d-flex align-items-center gap-2">
+      <span class="dot" aria-hidden="true"></span>
+      <div class="lh-sm">
+        <strong class="d-block">{% trans "Services SOGENTIS" %}</strong>
+        <small class="text-muted">
+          {% trans "Solutions numériques, accompagnement et support professionnel" %}
+        </small>
+      </div>
+    </div>
+
+    <nav class="services-nav d-flex flex-wrap gap-2" aria-label="{% trans 'Navigation services' %}">
+      <a href="{{ u_services_index|default:'#' }}"
+         class="btn btn-sm btn-outline-dark {% if request.resolver_match.url_name == 'index' %}active{% endif %} {% if not u_services_index %}disabled{% endif %}"
+         {% if not u_services_index %}aria-disabled="true" tabindex="-1"{% endif %}>
+        {% trans "Catalogue" %}
+      </a>
+
+      <a href="{{ u_services_tickets|default:'#' }}"
+         class="btn btn-sm btn-outline-dark {% if request.resolver_match.url_name == 'tickets' %}active{% endif %} {% if not u_services_tickets %}disabled{% endif %}"
+         {% if not u_services_tickets %}aria-disabled="true" tabindex="-1"{% endif %}>
+        {% trans "Mes demandes" %}
+      </a>
+
+      <a href="{{ u_support|default:'#' }}"
+         class="btn btn-sm btn-outline-secondary {% if not u_support %}disabled{% endif %}"
+         {% if not u_support %}aria-disabled="true" tabindex="-1"{% endif %}>
+        {% trans "Support" %}
+      </a>
+    </nav>
+
+  </div>
+</header> {% endcomment %}

@@ -1,0 +1,425 @@
+{# templates/economic/prestations/partials/index/_svc_prestations_grid.html #}
+{% load static i18n ecom_money dashboard_tags %}
+
+<div id="prestations-list" class="svc-grid-wrap">
+
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <div class="d-flex align-items-center gap-2">
+      <span class="svc-dot" aria-hidden="true"></span>
+      <h2 class="h5 m-0">{% trans "Catalogue" %}</h2>
+      {% if paginator %}
+        <span class="badge text-bg-light border">{{ paginator.count }}</span>
+      {% endif %}
+    </div>
+
+    <div class="d-flex gap-2">
+      <a class="btn btn-sm btn-outline-dark" href="{{ request.path }}">{% trans "Réinitialiser" %}</a>
+    </div>
+  </div>
+
+  <form class="card border-0 shadow-sm mb-3" method="get" action="{{ request.path }}">
+    <div class="card-body py-3">
+      <div class="row g-2 align-items-end">
+
+        <div class="col-12 col-md-5">
+          <label class="form-label small mb-1" for="q">{% trans "Recherche" %}</label>
+          <div class="input-group input-group-sm">
+            <span class="input-group-text">⌕</span>
+            <input id="q" name="q" type="search" class="form-control"
+                   value="{{ q|default:'' }}"
+                   placeholder="{% trans 'Mot-clé, slug, titre…' %}">
+          </div>
+        </div>
+
+        <div class="col-6 col-md-3">
+          <label class="form-label small mb-1" for="cat">{% trans "Catégorie" %}</label>
+          <select id="cat" name="cat" class="form-select form-select-sm">
+            <option value="">{% trans "Toutes" %}</option>
+            {% for c in categories %}
+              <option value="{{ c.slug }}" {% if cat == c.slug %}selected{% endif %}>
+                {{ c.display_title }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-6 col-md-2">
+          <label class="form-label small mb-1" for="type">{% trans "Type" %}</label>
+          <select id="type" name="type" class="form-select form-select-sm">
+            <option value="">{% trans "Tous" %}</option>
+            {% for val,label in prestation_type_choices %}
+              <option value="{{ val }}" {% if type == val %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-12 col-md-2 d-grid">
+          <button type="submit" class="btn btn-sm btn-outline-primary">{% trans "Filtrer" %}</button>
+        </div>
+
+        <input type="hidden" name="per_page" value="{{ per_page|default:12 }}">
+      </div>
+    </div>
+  </form>
+
+  <div class="row g-3">
+    {% if prestations %}
+      {% for p in prestations %}
+        {% include "economic/prestations/partials/_prestation_card.html" with p=p cur=cur only %}
+      {% endfor %}
+    {% else %}
+      <div class="col-12">
+        <div class="alert alert-light border shadow-sm mb-0">
+          <div class="fw-semibold">{% trans "Aucune prestation pour le moment." %}</div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/partials/index/_svc_prestations_grid.html - good #}
+{% load static i18n ecom_money dashboard_tags %}
+
+<div id="prestations-list" class="svc-grid-wrap">
+
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <div class="d-flex align-items-center gap-2">
+      <span class="svc-dot" aria-hidden="true"></span>
+      <h2 class="h5 m-0">{% trans "Catalogue" %}</h2>
+      {% if paginator %}
+        <span class="badge text-bg-light border">{{ paginator.count }}</span>
+      {% endif %}
+    </div>
+
+    <div class="d-flex gap-2">
+      <a class="btn btn-sm btn-outline-dark" href="{{ request.path }}">{% trans "Réinitialiser" %}</a>
+    </div>
+  </div>
+
+  <form class="card border-0 shadow-sm mb-3" method="get" action="{{ request.path }}">
+    <div class="card-body py-3">
+      <div class="row g-2 align-items-end">
+
+        <div class="col-12 col-md-5">
+          <label class="form-label small mb-1" for="q">{% trans "Recherche" %}</label>
+          <div class="input-group input-group-sm">
+            <span class="input-group-text">⌕</span>
+            <input id="q" name="q" type="search" class="form-control"
+                   value="{{ q|default:'' }}"
+                   placeholder="{% trans 'Mot-clé, slug, titre…' %}">
+          </div>
+        </div>
+
+        <div class="col-6 col-md-3">
+          <label class="form-label small mb-1" for="cat">{% trans "Catégorie" %}</label>
+          <select id="cat" name="cat" class="form-select form-select-sm">
+            <option value="">{% trans "Toutes" %}</option>
+            {% for c in categories %}
+              <option value="{{ c.slug }}" {% if cat == c.slug %}selected{% endif %}>
+                {{ c.display_title }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-6 col-md-2">
+          <label class="form-label small mb-1" for="type">{% trans "Type" %}</label>
+          <select id="type" name="type" class="form-select form-select-sm">
+            <option value="">{% trans "Tous" %}</option>
+            {% for val,label in prestation_type_choices %}
+              <option value="{{ val }}" {% if type == val %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-12 col-md-2 d-grid">
+          <button type="submit" class="btn btn-sm btn-outline-primary">{% trans "Filtrer" %}</button>
+        </div>
+
+        <input type="hidden" name="per_page" value="{{ per_page|default:12 }}">
+      </div>
+    </div>
+  </form>
+
+  <div class="row g-3">
+    {% if prestations %}
+      {% for p in prestations %}
+
+        {% safe_url "economic:prestations:detail" p.slug as p_url %}
+        {% safe_url "economic:prestations:quote" p.slug as quote_url %} 
+        {% safe_url "core:contact" as contact_url %}
+
+        <div class="col-12 col-sm-6 col-lg-4 col-xxl-3">
+          <article class="card h-100 border-0 shadow-sm svc-card">
+
+            <div class="svc-media ratio ratio-16x9">
+              {% if p.cover %}
+                <img src="{{ p.cover.url }}" alt="{{ p.display_title }}" loading="lazy">
+              {% elif p.image %}
+                <img src="{{ p.image.url }}" alt="{{ p.display_title }}" loading="lazy">
+              {% else %}
+                <img src="{% static 'prestations/img/prestation2_16x9.jpg' %}"
+                     alt="{% trans 'Illustration prestation' %}" loading="lazy">
+              {% endif %}
+
+              {% if p.is_featured %}
+                <span class="badge text-bg-warning svc-badge">{% trans "Vedette" %}</span>
+              {% endif %}
+            </div>
+
+            <div class="card-body d-flex flex-column">
+              <h3 class="h6 mb-1">
+                {% if p_url and p_url != '#' %}
+                  <a class="stretched-link text-decoration-none text-dark" href="{{ p_url }}">
+                    {{ p.display_title }}
+                  </a>
+                {% else %}
+                  {{ p.display_title }}
+                {% endif %}
+              </h3>
+
+              <div class="d-flex flex-wrap align-items-center gap-2 small text-muted mb-2">
+                {% if p.prestation_type %}
+                  <span class="svc-chip">{{ p.get_prestation_type_display|default:p.prestation_type }}</span>
+                {% endif %}
+                {% if p.duration_label %}
+                  <span class="svc-chip">⏱ {{ p.duration_label }}</span>
+                {% endif %}
+              </div>
+
+              {% if p.short_description %}
+                <p class="small text-muted mb-3">{{ p.short_description|truncatechars:120 }}</p>
+              {% else %}
+                <p class="small text-muted mb-3">
+                  {% trans "Prestation professionnelle prête à démarrer. Détails, devis et options disponibles." %}
+                </p>
+              {% endif %}
+
+              <div class="mt-auto d-flex align-items-center justify-content-between gap-2">
+                <div>
+                  {% if p.display_price %}
+                    <div class="fw-semibold">{% money p.display_price cur %}</div>
+                    <div class="small text-muted">{% trans "à partir de" %}</div>
+                  {% else %}
+                    <div class="fw-semibold">{% trans "Sur devis" %}</div>
+                    <div class="small text-muted">{% trans "Réponse rapide" %}</div>
+                  {% endif %}
+                </div>
+
+                <div class="d-flex align-items-center gap-2">
+                  {% if quote_url and quote_url != '#' %}
+                    <a class="btn btn-sm btn-primary" href="{{ quote_url }}">{% trans "Demander" %}</a>
+                  {% elif contact_url and contact_url != '#' %}
+                    <a class="btn btn-sm btn-primary" href="{{ contact_url }}">{% trans "Contacter" %}</a>
+                  {% endif %}
+
+                  {% if p_url and p_url != '#' %}
+                    <a class="btn btn-sm btn-outline-secondary" href="{{ p_url }}">{% trans "Détails" %}</a>
+                  {% endif %}
+                </div>
+              </div>
+
+            </div>
+          </article>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="col-12">
+        <div class="alert alert-light border shadow-sm mb-0">
+          <div class="fw-semibold">{% trans "Aucune prestation pour le moment." %}</div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+</div>
+
+ {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/partials/index/_svc_prestations_pagination.html #}
+{% load i18n %}
+
+{% if is_paginated and page_obj %}
+  <nav class="mt-4" aria-label="{% trans 'Pagination prestations' %}">
+    <ul class="pagination justify-content-center flex-wrap gap-1 mb-0">
+
+      {% if page_obj.has_previous %}
+        <li class="page-item">
+          <a class="page-link" rel="first"
+             href="?{% if base_qs %}{{ base_qs }}&{% endif %}page=1#prestations-list"
+             aria-label="{% trans 'Première page' %}">«</a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" rel="prev"
+             href="?{% if base_qs %}{{ base_qs }}&{% endif %}page={{ page_obj.previous_page_number }}#prestations-list"
+             aria-label="{% trans 'Page précédente' %}">‹</a>
+        </li>
+      {% else %}
+        <li class="page-item disabled" aria-disabled="true"><span class="page-link">«</span></li>
+        <li class="page-item disabled" aria-disabled="true"><span class="page-link">‹</span></li>
+      {% endif %}
+
+      <li class="page-item disabled" aria-disabled="true">
+        <span class="page-link">
+          {% trans "Page" %} <span class="fw-semibold">{{ page_obj.number }}</span>
+          <span class="text-muted">/</span>
+          {{ page_obj.paginator.num_pages }}
+        </span>
+      </li>
+
+      {% if page_obj.has_next %}
+        <li class="page-item">
+          <a class="page-link" rel="next"
+             href="?{% if base_qs %}{{ base_qs }}&{% endif %}page={{ page_obj.next_page_number }}#prestations-list"
+             aria-label="{% trans 'Page suivante' %}">›</a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" rel="last"
+             href="?{% if base_qs %}{{ base_qs }}&{% endif %}page={{ page_obj.paginator.num_pages }}#prestations-list"
+             aria-label="{% trans 'Dernière page' %}">»</a>
+        </li>
+      {% else %}
+        <li class="page-item disabled" aria-disabled="true"><span class="page-link">›</span></li>
+        <li class="page-item disabled" aria-disabled="true"><span class="page-link">»</span></li>
+      {% endif %}
+
+    </ul>
+  </nav>
+{% endif %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/partials/index/_svc_prestations_pagination.html #}
+{% load i18n %}
+
+{% if is_paginated and page_obj %}
+  <nav class="mt-4" aria-label="{% trans 'Pagination prestations' %}">
+    <ul class="pagination justify-content-center flex-wrap gap-1 mb-0">
+
+      {% if page_obj.has_previous %}
+        <li class="page-item">
+          <a class="page-link" rel="first"
+             href="?q={{ q|default:''|urlencode }}&cat={{ cat|default:''|urlencode }}&type={{ type|default:''|urlencode }}&per_page={{ per_page|default:12 }}&page=1#prestations-list">«</a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" rel="prev"
+             href="?q={{ q|default:''|urlencode }}&cat={{ cat|default:''|urlencode }}&type={{ type|default:''|urlencode }}&per_page={{ per_page|default:12 }}&page={{ page_obj.previous_page_number }}#prestations-list">‹</a>
+        </li>
+      {% else %}
+        <li class="page-item disabled" aria-disabled="true"><span class="page-link">«</span></li>
+        <li class="page-item disabled" aria-disabled="true"><span class="page-link">‹</span></li>
+      {% endif %}
+
+      <li class="page-item disabled" aria-disabled="true">
+        <span class="page-link">
+          {% trans "Page" %} <span class="fw-semibold">{{ page_obj.number }}</span> / {{ page_obj.paginator.num_pages }}
+        </span>
+      </li>
+
+      {% if page_obj.has_next %}
+        <li class="page-item">
+          <a class="page-link" rel="next"
+             href="?q={{ q|default:''|urlencode }}&cat={{ cat|default:''|urlencode }}&type={{ type|default:''|urlencode }}&per_page={{ per_page|default:12 }}&page={{ page_obj.next_page_number }}#prestations-list">›</a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" rel="last"
+             href="?q={{ q|default:''|urlencode }}&cat={{ cat|default:''|urlencode }}&type={{ type|default:''|urlencode }}&per_page={{ per_page|default:12 }}&page={{ page_obj.paginator.num_pages }}#prestations-list">»</a>
+        </li>
+      {% else %}
+        <li class="page-item disabled" aria-disabled="true"><span class="page-link">›</span></li>
+        <li class="page-item disabled" aria-disabled="true"><span class="page-link">»</span></li>
+      {% endif %}
+
+    </ul>
+  </nav>
+{% endif %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/partials/index/_svc_prestations_pagination.html #}
+{% load i18n %}
+
+{% if is_paginated and page_obj %}
+  {# ===================== #}
+  {#   PAGINATION (prestations) #}
+  {# ===================== #}
+  {% with qv=q|default_if_none:'' cv=cat|default_if_none:'' tv=type|default_if_none:'' pp=per_page|default:12 %}
+    {% with base_qs="q="|add:qv|urlencode|add:"&cat="|add:cv|urlencode|add:"&type="|add:tv|urlencode|add:"&per_page="|add:pp %}
+      <nav class="mt-4" aria-label="{% trans 'Pagination prestations' %}">
+        <div class="container">
+          <ul class="pagination justify-content-center flex-wrap gap-1 mb-0">
+
+            {# First + Prev #}
+            {% if page_obj.has_previous %}
+              <li class="page-item">
+                <a class="page-link" rel="first"
+                   href="?{{ base_qs }}&page=1#services-list"
+                   aria-label="{% trans 'Première page' %}">«</a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" rel="prev"
+                   href="?{{ base_qs }}&page={{ page_obj.previous_page_number }}#services-list"
+                   aria-label="{% trans 'Page précédente' %}">‹</a>
+              </li>
+            {% else %}
+              <li class="page-item disabled" aria-disabled="true"><span class="page-link">«</span></li>
+              <li class="page-item disabled" aria-disabled="true"><span class="page-link">‹</span></li>
+            {% endif %}
+
+            {# Status #}
+            <li class="page-item disabled" aria-disabled="true">
+              <span class="page-link">
+                {% trans "Page" %} <span class="fw-semibold">{{ page_obj.number }}</span>
+                <span class="text-muted">/</span>
+                {{ page_obj.paginator.num_pages }}
+              </span>
+            </li>
+
+            {# Next + Last #}
+            {% if page_obj.has_next %}
+              <li class="page-item">
+                <a class="page-link" rel="next"
+                   href="?{{ base_qs }}&page={{ page_obj.next_page_number }}#services-list"
+                   aria-label="{% trans 'Page suivante' %}">›</a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" rel="last"
+                   href="?{{ base_qs }}&page={{ page_obj.paginator.num_pages }}#services-list"
+                   aria-label="{% trans 'Dernière page' %}">»</a>
+              </li>
+            {% else %}
+              <li class="page-item disabled" aria-disabled="true"><span class="page-link">›</span></li>
+              <li class="page-item disabled" aria-disabled="true"><span class="page-link">»</span></li>
+            {% endif %}
+
+          </ul>
+        </div>
+      </nav>
+    {% endwith %}
+  {% endwith %}
+{% endif %} {% endcomment %}

@@ -5,17 +5,37 @@ from urllib.parse import urlsplit
 
 from django.conf import settings
 from django.http import HttpRequest, HttpResponseRedirect
-from django.urls import translate_url, resolve, Resolver404
+from django.urls import Resolver404, resolve, translate_url
 from django.utils import translation
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.translation import get_supported_language_variant
 from django.views.decorators.http import require_http_methods
 
+# ============================================================
+# Session keys (alignés avec ton menu + money.py)
+# ============================================================
 SESSION_LANG_KEY = getattr(translation, "LANGUAGE_SESSION_KEY", "django_language")
 
-# ✅ Ajoute XAF si tu l'utilises dans money.py
+ECOMMERCE_CURRENCY_SESSION_KEY = getattr(settings, "ECOMMERCE_CURRENCY_SESSION_KEY", "ECOMMERCE_CURRENCY")
+ECOMMERCE_COUNTRY_SESSION_KEY = getattr(settings, "ECOMMERCE_COUNTRY_SESSION_KEY", "ECOMMERCE_COUNTRY")
+COUNTRY_FALLBACK_SESSION_KEY = getattr(settings, "COUNTRY_CODE_SESSION_KEY", "country_code")
+
+ECOMMERCE_CURRENCY_QUERY_PARAM = getattr(settings, "ECOMMERCE_CURRENCY_QUERY_PARAM", "currency")
+ECOMMERCE_COUNTRY_QUERY_PARAM = getattr(settings, "ECOMMERCE_COUNTRY_QUERY_PARAM", "country")
+
 ALLOWED_CURRENCIES = set(getattr(settings, "ECOMMERCE_CURRENCIES", ["XOF", "XAF", "EUR", "USD"]))
 DEFAULT_CURRENCY = getattr(settings, "ECOMMERCE_CURRENCY", "XOF")
+DEFAULT_COUNTRY = getattr(settings, "ECOMMERCE_DEFAULT_COUNTRY", "SN")
+
+
+# ============================================================
+# Helpers
+# ============================================================
+def _default_lang() -> str:
+    try:
+        return get_supported_language_variant(settings.LANGUAGE_CODE, strict=False)
+    except LookupError:
+        return "fr"
 
 
 def _normalize_lang(raw: str) -> str:
@@ -23,21 +43,30 @@ def _normalize_lang(raw: str) -> str:
     try:
         lang = get_supported_language_variant(raw, strict=False)
     except LookupError:
-        # ⚠️ normalise aussi le LANGUAGE_CODE du settings
-        try:
-            lang = get_supported_language_variant(settings.LANGUAGE_CODE, strict=False)
-        except LookupError:
-            lang = "fr"
+        lang = _default_lang()
 
     allowed = {c for c, _ in getattr(settings, "LANGUAGES", [])}
-    return lang if (not allowed or lang in allowed) else (allowed.pop() if allowed else "fr")
+    if allowed and lang not in allowed:
+        # fallback stable
+        return _default_lang().split("-", 1)[0]
+    return lang
 
 
-def _default_lang() -> str:
-    try:
-        return get_supported_language_variant(settings.LANGUAGE_CODE, strict=False)
-    except LookupError:
-        return "fr"
+def _normalize_currency(raw: str) -> str | None:
+    c = (raw or "").strip().upper()
+    if not c:
+        return None
+    return c if c in ALLOWED_CURRENCIES else None
+
+
+def _normalize_country(raw: str) -> str | None:
+    c = (raw or "").strip().upper()
+    if not c:
+        return None
+    # ISO2 simple (SN, FR, CI, ...)
+    if len(c) != 2 or not c.isalpha():
+        return None
+    return c
 
 
 def _path_query_only(raw_url: str) -> str:
@@ -56,6 +85,7 @@ def _safe_next(request: HttpRequest, default: str = "/") -> str:
     )
     raw = (raw or "").strip()
 
+    # accepte URL absolue OU path relatif, mais uniquement sur l’host courant
     if not url_has_allowed_host_and_scheme(
         raw,
         allowed_hosts={request.get_host()},
@@ -88,22 +118,41 @@ def _set_cookie(resp: HttpResponseRedirect, lang: str) -> None:
 
 
 def _store_currency_and_country(request: HttpRequest) -> None:
-    """Optionnel ecommerce: conserve currency/country (GET ou POST)."""
+    """
+    Stocke currency/country en session (prod) :
+    - currency : GET ?currency= / POST currency
+    - country  : GET ?country= / POST country
+    Clés: ECOMMERCE_CURRENCY + ECOMMERCE_COUNTRY (+ fallback country_code)
+    """
     if not hasattr(request, "session"):
         return
 
     data = request.POST if request.method == "POST" else request.GET
 
-    raw_currency = (data.get("currency") or "").strip().upper()
-    if raw_currency and raw_currency in ALLOWED_CURRENCIES:
-        request.session["ECOMMERCE_CURRENCY"] = raw_currency
+    # currency
+    cur = _normalize_currency(data.get(ECOMMERCE_CURRENCY_QUERY_PARAM))
+    if cur:
+        request.session[ECOMMERCE_CURRENCY_SESSION_KEY] = cur
     else:
-        request.session["ECOMMERCE_CURRENCY"] = request.session.get("ECOMMERCE_CURRENCY") or DEFAULT_CURRENCY
+        request.session[ECOMMERCE_CURRENCY_SESSION_KEY] = (
+            request.session.get(ECOMMERCE_CURRENCY_SESSION_KEY) or DEFAULT_CURRENCY
+        )
 
-    raw_country = (data.get("country") or "").strip().upper()
-    if raw_country:
-        request.session["country_code"] = raw_country
-        request.session["ECOMMERCE_COUNTRY"] = raw_country
+    # country
+    ctry = _normalize_country(data.get(ECOMMERCE_COUNTRY_QUERY_PARAM))
+    if ctry:
+        request.session[ECOMMERCE_COUNTRY_SESSION_KEY] = ctry
+        request.session[COUNTRY_FALLBACK_SESSION_KEY] = ctry
+    else:
+        # garde existant ou défaut
+        existing = (
+            request.session.get(ECOMMERCE_COUNTRY_SESSION_KEY)
+            or request.session.get(COUNTRY_FALLBACK_SESSION_KEY)
+            or DEFAULT_COUNTRY
+        )
+        existing = _normalize_country(existing) or DEFAULT_COUNTRY
+        request.session[ECOMMERCE_COUNTRY_SESSION_KEY] = existing
+        request.session[COUNTRY_FALLBACK_SESSION_KEY] = existing
 
     request.session.modified = True
 
@@ -117,30 +166,42 @@ def _resolves(path_with_query: str) -> bool:
         return False
 
 
+def _strip_lang_prefix_if_default(target: str, lang: str) -> str:
+    """
+    Anti-404 : si la langue cible est la langue par défaut et que ton site
+    n’a pas de préfixe pour défaut, on tente de retirer /<lang>/.
+    """
+    base = (lang or "").split("-", 1)[0]
+    dflt = (_default_lang() or "").split("-", 1)[0]
+    if base and base == dflt and target.startswith(f"/{base}/"):
+        stripped = "/" + target[len(base) + 2 :]  # enlève "/fr/"
+        return stripped
+    return target
+
+
+# ============================================================
+# Views
+# ============================================================
 @require_http_methods(["GET", "POST"])
 def switch_language(request: HttpRequest) -> HttpResponseRedirect:
     """
     Change la langue + réécrit l'URL (FR <-> /en/...) et reste sur la même page.
-    + fallback anti-404 si /fr/ n'existe pas (FR langue par défaut sans préfixe).
+    + anti-404 si la langue par défaut n'est pas préfixée.
+    + conserve currency/country en session (menu économique).
     """
     data = request.POST if request.method == "POST" else request.GET
 
-    raw_lang = data.get("language")
-    lang = _normalize_lang(raw_lang or _default_lang())
-
+    lang = _normalize_lang(data.get("language") or _default_lang())
     _store_currency_and_country(request)
 
     next_url = _safe_next(request, "/")
     target = translate_url(next_url, lang) or next_url
 
-    # ✅ Anti-404 : si la cible ne resolve pas, tente de retirer /<lang>/
+    # anti-404 : retirer /fr/ si fr est la langue par défaut sans préfixe
     if not _resolves(target):
-        base = (lang or "").split("-", 1)[0]  # "fr-fr" -> "fr"
-        dflt = (_default_lang() or "").split("-", 1)[0]
-        if base == dflt and target.startswith(f"/{base}/"):
-            stripped = "/" + target[len(base) + 2:]  # enlève "/fr/"
-            if _resolves(stripped):
-                target = stripped
+        stripped = _strip_lang_prefix_if_default(target, lang)
+        if stripped != target and _resolves(stripped):
+            target = stripped
 
     _activate_and_store(request, lang)
     resp = HttpResponseRedirect(target)
@@ -150,9 +211,13 @@ def switch_language(request: HttpRequest) -> HttpResponseRedirect:
 
 @require_http_methods(["GET", "POST"])
 def force_language(request: HttpRequest) -> HttpResponseRedirect:
-    raw_lang = request.POST.get("language") if request.method == "POST" else request.GET.get("language")
-    lang = _normalize_lang(raw_lang or _default_lang())
+    """
+    Force uniquement la langue sans translate_url (garde l’URL actuelle).
+    + conserve currency/country en session.
+    """
+    data = request.POST if request.method == "POST" else request.GET
 
+    lang = _normalize_lang(data.get("language") or _default_lang())
     _store_currency_and_country(request)
 
     next_url = _safe_next(request, "/")
@@ -161,6 +226,173 @@ def force_language(request: HttpRequest) -> HttpResponseRedirect:
     resp = HttpResponseRedirect(next_url)
     _set_cookie(resp, lang)
     return resp
+
+
+
+
+# # core/views/lang.py
+# from __future__ import annotations
+
+# from urllib.parse import urlsplit
+
+# from django.conf import settings
+# from django.http import HttpRequest, HttpResponseRedirect
+# from django.urls import translate_url, resolve, Resolver404
+# from django.utils import translation
+# from django.utils.http import url_has_allowed_host_and_scheme
+# from django.utils.translation import get_supported_language_variant
+# from django.views.decorators.http import require_http_methods
+
+# SESSION_LANG_KEY = getattr(translation, "LANGUAGE_SESSION_KEY", "django_language")
+
+# # ✅ Ajoute XAF si tu l'utilises dans money.py
+# ALLOWED_CURRENCIES = set(getattr(settings, "ECOMMERCE_CURRENCIES", ["XOF", "XAF", "EUR", "USD"]))
+# DEFAULT_CURRENCY = getattr(settings, "ECOMMERCE_CURRENCY", "XOF")
+
+
+# def _normalize_lang(raw: str) -> str:
+#     raw = (raw or "").strip()
+#     try:
+#         lang = get_supported_language_variant(raw, strict=False)
+#     except LookupError:
+#         # ⚠️ normalise aussi le LANGUAGE_CODE du settings
+#         try:
+#             lang = get_supported_language_variant(settings.LANGUAGE_CODE, strict=False)
+#         except LookupError:
+#             lang = "fr"
+
+#     allowed = {c for c, _ in getattr(settings, "LANGUAGES", [])}
+#     return lang if (not allowed or lang in allowed) else (allowed.pop() if allowed else "fr")
+
+
+# def _default_lang() -> str:
+#     try:
+#         return get_supported_language_variant(settings.LANGUAGE_CODE, strict=False)
+#     except LookupError:
+#         return "fr"
+
+
+# def _path_query_only(raw_url: str) -> str:
+#     parts = urlsplit(raw_url)
+#     path = parts.path or "/"
+#     query = parts.query or ""
+#     return path + (("?" + query) if query else "")
+
+
+# def _safe_next(request: HttpRequest, default: str = "/") -> str:
+#     raw = (
+#         (request.POST.get("next") if request.method == "POST" else None)
+#         or request.GET.get("next")
+#         or request.META.get("HTTP_REFERER")
+#         or default
+#     )
+#     raw = (raw or "").strip()
+
+#     if not url_has_allowed_host_and_scheme(
+#         raw,
+#         allowed_hosts={request.get_host()},
+#         require_https=request.is_secure(),
+#     ):
+#         return default
+
+#     return _path_query_only(raw) or default
+
+
+# def _activate_and_store(request: HttpRequest, lang: str) -> None:
+#     translation.activate(lang)
+#     request.LANGUAGE_CODE = lang
+#     if hasattr(request, "session"):
+#         request.session[SESSION_LANG_KEY] = lang
+#         request.session.modified = True
+
+
+# def _set_cookie(resp: HttpResponseRedirect, lang: str) -> None:
+#     resp.set_cookie(
+#         settings.LANGUAGE_COOKIE_NAME,
+#         lang,
+#         max_age=getattr(settings, "LANGUAGE_COOKIE_AGE", None),
+#         path=getattr(settings, "LANGUAGE_COOKIE_PATH", "/"),
+#         domain=getattr(settings, "LANGUAGE_COOKIE_DOMAIN", None),
+#         secure=getattr(settings, "LANGUAGE_COOKIE_SECURE", False),
+#         httponly=getattr(settings, "LANGUAGE_COOKIE_HTTPONLY", False),
+#         samesite=getattr(settings, "LANGUAGE_COOKIE_SAMESITE", "Lax"),
+#     )
+
+
+# def _store_currency_and_country(request: HttpRequest) -> None:
+#     """Optionnel ecommerce: conserve currency/country (GET ou POST)."""
+#     if not hasattr(request, "session"):
+#         return
+
+#     data = request.POST if request.method == "POST" else request.GET
+
+#     raw_currency = (data.get("currency") or "").strip().upper()
+#     if raw_currency and raw_currency in ALLOWED_CURRENCIES:
+#         request.session["ECOMMERCE_CURRENCY"] = raw_currency
+#     else:
+#         request.session["ECOMMERCE_CURRENCY"] = request.session.get("ECOMMERCE_CURRENCY") or DEFAULT_CURRENCY
+
+#     raw_country = (data.get("country") or "").strip().upper()
+#     if raw_country:
+#         request.session["country_code"] = raw_country
+#         request.session["ECOMMERCE_COUNTRY"] = raw_country
+
+#     request.session.modified = True
+
+
+# def _resolves(path_with_query: str) -> bool:
+#     path = (path_with_query or "/").split("?", 1)[0] or "/"
+#     try:
+#         resolve(path)
+#         return True
+#     except Resolver404:
+#         return False
+
+
+# @require_http_methods(["GET", "POST"])
+# def switch_language(request: HttpRequest) -> HttpResponseRedirect:
+#     """
+#     Change la langue + réécrit l'URL (FR <-> /en/...) et reste sur la même page.
+#     + fallback anti-404 si /fr/ n'existe pas (FR langue par défaut sans préfixe).
+#     """
+#     data = request.POST if request.method == "POST" else request.GET
+
+#     raw_lang = data.get("language")
+#     lang = _normalize_lang(raw_lang or _default_lang())
+
+#     _store_currency_and_country(request)
+
+#     next_url = _safe_next(request, "/")
+#     target = translate_url(next_url, lang) or next_url
+
+#     # ✅ Anti-404 : si la cible ne resolve pas, tente de retirer /<lang>/
+#     if not _resolves(target):
+#         base = (lang or "").split("-", 1)[0]  # "fr-fr" -> "fr"
+#         dflt = (_default_lang() or "").split("-", 1)[0]
+#         if base == dflt and target.startswith(f"/{base}/"):
+#             stripped = "/" + target[len(base) + 2:]  # enlève "/fr/"
+#             if _resolves(stripped):
+#                 target = stripped
+
+#     _activate_and_store(request, lang)
+#     resp = HttpResponseRedirect(target)
+#     _set_cookie(resp, lang)
+#     return resp
+
+
+# @require_http_methods(["GET", "POST"])
+# def force_language(request: HttpRequest) -> HttpResponseRedirect:
+#     raw_lang = request.POST.get("language") if request.method == "POST" else request.GET.get("language")
+#     lang = _normalize_lang(raw_lang or _default_lang())
+
+#     _store_currency_and_country(request)
+
+#     next_url = _safe_next(request, "/")
+#     _activate_and_store(request, lang)
+
+#     resp = HttpResponseRedirect(next_url)
+#     _set_cookie(resp, lang)
+#     return resp
 
 
 

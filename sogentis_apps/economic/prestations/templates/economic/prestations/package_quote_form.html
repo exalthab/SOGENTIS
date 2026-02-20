@@ -1,0 +1,460 @@
+{# templates/economic/prestations/package_quote_form.html #}
+{% extends "economic/prestations/base_prestations.html" %}
+{% load i18n static ecom_money dashboard_tags widget_tweaks %}
+
+{% trans "Pack" as t_pack %}
+{% with pack_title=package.title|default:package.name|default:package.slug|default:t_pack %}
+
+{% block prestations_title %}{% trans "Devis pack" %}{% endblock %}
+
+{% block prestations_content %}
+  {% safe_url "economic:prestations:package_detail" package.slug as u_back %}
+  {% safe_url "economic:prestations:package_quote" package.slug as u_post %}
+  {% safe_url "economic:prestations:index" as u_index %}
+
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb small mb-0">
+      <li class="breadcrumb-item">
+        <a class="text-decoration-none" href="{{ u_index|default:'#' }}">
+          {% trans "Prestations" %}
+        </a>
+      </li>
+      <li class="breadcrumb-item">
+        <a class="text-decoration-none" href="{{ u_index|default:'#' }}#packs">
+          {% trans "Packs" %}
+        </a>
+      </li>
+      <li class="breadcrumb-item">
+        <a class="text-decoration-none" href="{{ u_back|default:'#' }}">
+          {{ pack_title }}
+        </a>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">
+        {% trans "Devis pack" %}
+      </li>
+    </ol>
+  </nav>
+
+  <div class="rounded-4 bg-body border p-3 p-lg-4">
+    <div class="d-flex align-items-start justify-content-between flex-wrap gap-2 mb-3">
+      <div>
+        <h1 class="h5 mb-1">{% trans "Demander un devis pack" %}</h1>
+        <div class="text-muted small">{{ pack_title }}</div>
+      </div>
+      <a class="btn btn-sm btn-outline-secondary" href="{{ u_back|default:'#' }}">
+        {% trans "Retour" %}
+      </a>
+    </div>
+
+    <form method="post"
+          action="{{ u_post|default:request.path }}"
+          class="row g-3"
+          novalidate>
+      {% csrf_token %}
+
+      {% for field in form.visible_fields %}
+        {% with has_error=field.errors %}
+        <div class="col-12 {% if field.name in 'full_name,email,phone,budget' %}col-lg-6{% endif %}">
+
+          {% if field.field.widget.input_type == "checkbox" %}
+            <div class="form-check">
+              {{ field|add_class:"form-check-input"|add_error_class:"is-invalid" }}
+              <label class="form-check-label" for="{{ field.id_for_label }}">
+                {{ field.label }}
+              </label>
+            </div>
+
+          {% elif field.field.widget.input_type == "select" %}
+            <label class="form-label" for="{{ field.id_for_label }}">
+              {{ field.label }}
+            </label>
+            {{ field|add_class:"form-select"|add_error_class:"is-invalid" }}
+
+          {% else %}
+            <label class="form-label" for="{{ field.id_for_label }}">
+              {{ field.label }}
+            </label>
+            {% if field.name == "message" %}
+              {{ field|add_class:"form-control"|add_error_class:"is-invalid"|attr:"rows:6" }}
+            {% else %}
+              {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+            {% endif %}
+          {% endif %}
+
+          {% if field.help_text %}
+            <div class="form-text">{{ field.help_text }}</div>
+          {% endif %}
+
+          {% if has_error %}
+            <div class="invalid-feedback d-block">
+              {{ field.errors }}
+            </div>
+          {% endif %}
+        </div>
+        {% endwith %}
+      {% endfor %}
+
+      {% if form.non_field_errors %}
+        <div class="col-12">
+          <div class="alert alert-danger mb-0">
+            {{ form.non_field_errors }}
+          </div>
+        </div>
+      {% endif %}
+
+      <div class="col-12 d-flex flex-wrap gap-2">
+        <button class="btn btn-primary" type="submit">
+          {% trans "Envoyer" %}
+        </button>
+        <a class="btn btn-outline-secondary" href="{{ u_back|default:'#' }}">
+          {% trans "Annuler" %}
+        </a>
+      </div>
+    </form>
+  </div>
+{% endblock %}
+
+{% endwith %}
+
+
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/package_quote_form.html #}
+{% extends "economic/prestations/base_prestations.html" %}
+{% load i18n static dashboard_tags widget_tweaks %}
+
+{% trans "Pack" as t_pack %}
+{% with title=package.title|default:package.name|default:package.slug|default:t_pack %}
+
+{% block prestations_title %}{% trans "Devis pack" %}{% endblock %}
+
+{% block prestations_content %}
+  {% safe_url "economic:prestations:package_detail" package.slug as u_back %}
+  {% safe_url "economic:prestations:package_quote" package.slug as u_post %}
+
+  <div class="rounded-4 bg-body border p-3 p-lg-4">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+      <div>
+        <h1 class="h5 mb-1">{% trans "Demander un devis pack" %}</h1>
+        <div class="text-muted small">{{ title }}</div>
+      </div>
+      <a class="btn btn-sm btn-outline-secondary" href="{{ u_back|default:'#' }}">{% trans "Retour" %}</a>
+    </div>
+
+    <form method="post" action="{{ u_post|default:request.path }}" class="row g-3">
+      {% csrf_token %}
+
+      {% for field in form.visible_fields %}
+        <div class="col-12 {% if field.name in 'full_name,email,phone,budget' %}col-lg-6{% endif %}">
+          {% if field.field.widget.input_type == "checkbox" %}
+            <div class="form-check">
+              {{ field|add_class:"form-check-input" }}
+              <label class="form-check-label">{{ field.label }}</label>
+            </div>
+          {% else %}
+            <label class="form-label">{{ field.label }}</label>
+
+            {% if field.field.widget.input_type == "select" %}
+              {{ field|add_class:"form-select" }}
+            {% else %}
+              {{ field|add_class:"form-control" }}
+            {% endif %}
+          {% endif %}
+
+          {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+          {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors }}</div>{% endif %}
+        </div>
+      {% endfor %}
+
+      {% if form.non_field_errors %}
+        <div class="col-12">
+          <div class="alert alert-danger mb-0">{{ form.non_field_errors }}</div>
+        </div>
+      {% endif %}
+
+      <div class="col-12 d-flex flex-wrap gap-2">
+        <button class="btn btn-primary" type="submit">{% trans "Envoyer" %}</button>
+        <a class="btn btn-outline-secondary" href="{{ u_back|default:'#' }}">{% trans "Annuler" %}</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}
+
+{% endwith %}
+ {% endcomment %}
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/package_quote_form.html #}
+{% extends "economic/prestations/base_prestations.html" %}
+{% load i18n static ecom_money dashboard_tags widget_tweaks %}
+
+{% block prestations_title %}{% trans "Devis pack" %}{% endblock %}
+
+{% block prestations_content %}
+  {% safe_url "economic:prestations:package_detail" package.slug as u_back %}
+  {% safe_url "economic:prestations:package_quote" package.slug as u_post %}
+
+  <div class="rounded-4 bg-body border p-3 p-lg-4">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+      <div>
+        <h1 class="h5 mb-1">{% trans "Demander un devis pack" %}</h1>
+        <div class="text-muted small">{{ package.title|default:package.name|default:_("Pack") }}</div>
+      </div>
+      <a class="btn btn-sm btn-outline-secondary" href="{{ u_back|default:'#' }}">{% trans "Retour" %}</a>
+    </div>
+
+    <form method="post" action="{{ u_post|default:request.path }}" class="row g-3">
+      {% csrf_token %}
+
+      {# Form robuste: aucun champ “figé” => pas de crash si le ModelForm change #}
+      {% for field in form.visible_fields %}
+        <div class="col-12 {% if field.name == 'full_name' or field.name == 'email' or field.name == 'phone' or field.name == 'budget' %}col-lg-6{% endif %}">
+          <label class="form-label">{{ field.label }}</label>
+          {{ field|add_class:"form-control" }}
+          {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+          {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors }}</div>{% endif %}
+        </div>
+      {% endfor %}
+
+      {% if form.non_field_errors %}
+        <div class="col-12"><div class="alert alert-danger mb-0">{{ form.non_field_errors }}</div></div>
+      {% endif %}
+
+      <div class="col-12 d-flex flex-wrap gap-2">
+        <button class="btn btn-primary" type="submit">{% trans "Envoyer" %}</button>
+        <a class="btn btn-outline-secondary" href="{{ u_back|default:'#' }}">{% trans "Annuler" %}</a>
+      </div>
+    </form>
+  </div>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/package_quote_form.html -good #}
+{% extends "economic/prestations/base_prestations.html" %}
+{% load i18n static ecom_money dashboard_tags %}
+
+{% block prestations_title %}
+  {% trans "Demande de devis" %} — {% trans "Prestations" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}
+{% endblock prestations_title %}
+
+{% block prestations_extra_css %}
+  {{ block.super }}
+  {# <link rel="stylesheet" href="{% static 'prestations/css/prestations_quote.css' %}"> #}
+{% endblock prestations_extra_css %}
+
+{% block prestations_content %}
+
+  {% safe_url "economic:prestations:package_detail" package.slug as u_pack_detail %}
+
+  <div class="container my-4 my-lg-5">
+
+    <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
+      <div class="min-w-0">
+        <div class="text-muted small mb-1">{% trans "Demande de devis" %}</div>
+        <h1 class="h4 fw-bold mb-1 text-truncate">{{ package.name|default:_("Pack") }}</h1>
+        <div class="text-muted">{% trans "Remplissez le formulaire, nous vous recontactons rapidement." %}</div>
+      </div>
+
+      <div class="text-end">
+        <a class="btn btn-outline-secondary {% if not u_pack_detail %}disabled{% endif %}"
+           href="{% if u_pack_detail %}{{ u_pack_detail }}{% else %}#{% endif %}"
+           {% if not u_pack_detail %}aria-disabled="true" tabindex="-1"{% endif %}>
+          <i class="fa-solid fa-arrow-left me-2"></i>{% trans "Retour au pack" %}
+        </a>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-8">
+        <div class="card shadow-sm border-0">
+          <div class="card-body">
+            <form method="post" novalidate>
+              {% csrf_token %}
+
+              {% if form.non_field_errors %}
+                <div class="alert alert-danger mb-3">{{ form.non_field_errors }}</div>
+              {% endif %}
+
+              {% for field in form %}
+                <div class="mb-3">
+                  <label class="form-label fw-semibold" for="{{ field.id_for_label }}">{{ field.label }}</label>
+
+                  {# champs déjà rendus par Django (widget) #}
+                  {{ field }}
+
+                  {% if field.help_text %}
+                    <div class="form-text">{{ field.help_text }}</div>
+                  {% endif %}
+
+                  {% for e in field.errors %}
+                    <div class="text-danger small">{{ e }}</div>
+                  {% endfor %}
+                </div>
+              {% endfor %}
+
+              <button type="submit" class="btn btn-primary">
+                <i class="fa-solid fa-paper-plane me-2"></i>{% trans "Envoyer la demande" %}
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4">
+        <div class="card shadow-sm border-0">
+          <div class="card-body">
+            <h3 class="h6 fw-bold mb-3">{% trans "Récapitulatif" %}</h3>
+
+            <div class="mb-2">
+              <div class="fw-semibold">{{ package.name|default:_("Pack") }}</div>
+              <div class="text-muted small">
+                {% if package.tier %}{{ package.get_tier_display|default:package.tier }} · {% endif %}
+                {% if package.billing_period %}{{ package.get_billing_period_display|default:package.billing_period }}{% endif %}
+              </div>
+            </div>
+
+            <div class="border-top pt-3">
+              <div class="d-flex justify-content-between">
+                <span class="text-muted">{% trans "Prix" %}</span>
+                <span class="fw-semibold">
+                  {% if package.billing_period == "custom" %}
+                    {% trans "Sur devis" %}
+                  {% else %}
+                    {% if package.total_price %}
+                      {% money package.total_price %}
+                    {% else %}
+                      {{ package.total_price|default:"0" }} {{ package.currency|default:"EUR" }}
+                    {% endif %}
+                  {% endif %}
+                </span>
+              </div>
+            </div>
+
+            <div class="small text-muted mt-3">
+              <i class="fa-regular fa-circle-check me-1"></i>
+              {% trans "Vous pouvez préciser vos besoins dans le message. Nous ajusterons l’offre si nécessaire." %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+{% endblock prestations_content %}
+ {% endcomment %}
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/package_quote_form.html #}
+{% extends "economic/prestations/base_prestations.html" %}
+{% load i18n static %}
+
+{% block title %}
+  {% trans "Demande de devis" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'economic/css/prestations.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+
+  <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
+    <div>
+      <div class="text-muted small mb-1">{% trans "Demande de devis" %}</div>
+      <h1 class="h4 fw-bold mb-1">{{ package.name|default:_("Pack") }}</h1>
+      <div class="text-muted">{% trans "Remplissez le formulaire, nous vous recontactons rapidement." %}</div>
+    </div>
+
+    <div class="text-end">
+      <a class="btn btn-outline-secondary" href="{% url 'economic:services:package_detail' slug=package.slug %}">
+        {% trans "Retour au pack" %}
+      </a>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <form method="post" novalidate>
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+            {% endif %}
+
+            {% for field in form %}
+              <div class="mb-3">
+                <label class="form-label fw-semibold" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+                {% for e in field.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+              </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-primary">
+              {% trans "Envoyer la demande" %}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <h3 class="h6 fw-bold mb-3">{% trans "Récapitulatif" %}</h3>
+
+          <div class="mb-2">
+            <div class="fw-semibold">{{ package.name|default:_("Pack") }}</div>
+            <div class="text-muted small">
+              {% if package.tier %}{{ package.get_tier_display }} · {% endif %}
+              {% if package.billing_period %}{{ package.get_billing_period_display }}{% endif %}
+            </div>
+          </div>
+
+          <div class="border-top pt-3">
+            <div class="d-flex justify-content-between">
+              <span class="text-muted">{% trans "Prix" %}</span>
+              <span class="fw-semibold">
+                {% if package.billing_period == "custom" %}
+                  {% trans "Sur devis" %}
+                {% else %}
+                  {{ package.total_price }} {{ package.currency }}
+                {% endif %}
+              </span>
+            </div>
+          </div>
+
+          <div class="small text-muted mt-3">
+            {% trans "Vous pouvez préciser vos besoins dans le message. Nous ajusterons l’offre si nécessaire." %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %} {% endcomment %}

@@ -1,0 +1,10 @@
+{# templates/core/partials/topbar/_lang_btn.html #}
+<form action="{% url 'core:switch_language' %}" method="post" class="flex-fill">
+  {% csrf_token %}
+  <input type="hidden" name="language" value="{{ code }}">
+  <input type="hidden" name="next" value="{{ NEXT }}">
+  <button type="submit"
+          class="btn btn-sm w-100 {% if CUR_LANG == code %}btn-light{% else %}btn-outline-light{% endif %}">
+    {{ label }}
+  </button>
+</form>

@@ -1,12 +1,36 @@
 /* =========================================================
-   TOPBAR — SOGENTIS
-   Compatible avec core/partials/_topbar.html + theme.js
+   TOPBAR — SOGENTIS (FINAL / COMPLET)
+   Compatible avec:
+   - templates/core/partials/_topbar.html
+   - templates/core/partials/topbar/_brand.html
+   - global/js/theme.js (ajoute brand--has-logo / brand--no-logo)
    ========================================================= */
 
+/* =========================
+   TOKENS
+   ========================= */
+:root{
+  --topbar-bg: #111;
+  --topbar-fg: #fff;
+  --topbar-border: rgba(255,255,255,0.08);
+  --topbar-hover-opacity: .85;
+
+  --brand-size: 40px;
+  --brand-radius: 10px;
+
+  /* Chemin logo */
+  --brand-logo-url: url("/static/global/image/logo.png");
+}
+
+/* =========================
+   TOPBAR BASE
+   ========================= */
 .topbar{
   font-size: .875rem;
   line-height: 1.2;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  background: var(--bs-dark, var(--topbar-bg));
+  color: var(--topbar-fg);
+  border-bottom: 1px solid var(--topbar-border);
 }
 
 .topbar a{
@@ -19,30 +43,67 @@
 
 .topbar a i{ font-size: 1rem; }
 
-/* -------- Brand -------- */
+.topbar a:hover,
+.topbar button:hover{
+  opacity: var(--topbar-hover-opacity);
+  transition: opacity .2s ease;
+}
+
+.topbar .opacity-50{ opacity: .45 !important; }
+
+/* =========================
+   BRAND
+   ========================= */
 .topbar .topbar-brand{
   display: inline-flex;
   align-items: center;
   gap: .5rem;
+  white-space: nowrap;
+  min-height: calc(var(--brand-size) + 2px);
 }
 
 .topbar .topbar-brand-mark{
   display: inline-block;
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  background-image: var(--brand-logo);
+  width: var(--brand-size);
+  height: var(--brand-size);
+  border-radius: var(--brand-radius);
+  background-image: var(--brand-logo-url);
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
   flex: 0 0 auto;
 }
 
-.topbar .fw-bold{ letter-spacing: .2px; }
+.topbar .topbar-brand-name{
+  display: inline;
+  font-weight: 700;
+  letter-spacing: .2px;
+  line-height: 1;
+}
 
-.topbar .opacity-50{ opacity: .45 !important; }
+/* ✅ Comportement demandé:
+   - logo OK => cacher le texte
+   - logo KO => afficher le texte
+   (le JS pose/retire la classe)
+*/
+.topbar .topbar-brand.brand--has-logo .topbar-brand-name{
+  display: none !important;
+}
 
-/* -------- Social icons -------- */
+/* Optionnel (recommandé): si logo KO, retirer le carré vide */
+.topbar .topbar-brand.brand--no-logo .topbar-brand-mark{
+  display: none !important;
+}
+
+/* =========================
+   SOCIAL ICONS
+   ========================= */
+.topbar .social-icon{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .topbar .social-icon svg{
   width: 20px;
   height: 20px;
@@ -51,13 +112,16 @@
   color: currentColor;
   fill: currentColor;
 }
+
 .topbar .social-icon:hover svg{
   transform: scale(1.1);
   color: var(--bs-primary, #0d6efd);
   fill: var(--bs-primary, #0d6efd);
 }
 
-/* -------- Buttons -------- */
+/* =========================
+   BUTTONS / CONTROLS
+   ========================= */
 .topbar .btn-sm{
   padding: .25rem .5rem;
   font-size: .75rem;
@@ -69,21 +133,25 @@
   line-height: 1;
 }
 
-/* Hover */
-.topbar a:hover,
-.topbar button:hover{
-  opacity: .85;
-  transition: opacity .2s ease;
+/* Boutons / liens "actifs" (menus) */
+.btn.active{
+  background-color: var(--bs-primary, #0d6efd) !important;
+  color: #fff !important;
+  border-color: var(--bs-primary, #0d6efd) !important;
 }
 
-/* =========================================================
-   OFFCANVAS (Mobile)
-   ========================================================= */
+/* =========================
+   OFFCANVAS (MOBILE)
+   ========================= */
 .offcanvas-header.bg-dark,
-.offcanvas-body.bg-dark{ background: #111; }
+.offcanvas-body.bg-dark{
+  background: #111;
+}
 
 .offcanvas-header,
-.offcanvas-body{ border-left: 1px solid rgba(255,255,255,0.08); }
+.offcanvas-body{
+  border-left: 1px solid rgba(255,255,255,0.08);
+}
 
 .offcanvas-body a,
 .offcanvas-body button{
@@ -106,35 +174,38 @@
   gap: .5rem;
 }
 
-.btn.active{
-  background-color: var(--bs-primary, #0d6efd) !important;
-  color: #fff !important;
-  border-color: var(--bs-primary, #0d6efd) !important;
-}
-
-/* Responsive */
+/* =========================
+   RESPONSIVE
+   ========================= */
 @media (max-width: 576px){
+  :root{ --brand-size: 36px; }
+
   .topbar .topbar-brand-mark{
-    width: 36px;
-    height: 36px;
+    width: var(--brand-size);
+    height: var(--brand-size);
   }
 }
 
-/* Dark mode */
+/* =========================
+   DARK MODE (theme.js -> body.dark-mode)
+   ========================= */
 body.dark-mode .topbar{
   background: #0d0f14 !important;
   color: #f1f3f5;
   border-bottom-color: rgba(255,255,255,0.05);
 }
+
 body.dark-mode .topbar .btn.btn-outline-light{
   border-color: #2a3242;
 }
+
 body.dark-mode .offcanvas.bg-dark,
 body.dark-mode .offcanvas-header.bg-dark,
 body.dark-mode .offcanvas-body.bg-dark{
   background: #0b0e12 !important;
   color: #e6e9ef;
 }
+
 body.dark-mode .offcanvas-header,
 body.dark-mode .offcanvas-body{
   border-left-color: rgba(255,255,255,0.06);

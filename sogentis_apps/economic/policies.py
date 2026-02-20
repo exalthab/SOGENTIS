@@ -1,52 +1,98 @@
-# /economic/policies.py
-# =====================================================
-# Politiques d'accès simples et réutilisables
-# =====================================================
+# economic/policies.py
+from __future__ import annotations
 
-from dashboard.permissions import is_admin as is_staff_admin
+from dashboard.permissions import is_admin as is_platform_admin
 from economic.permissions import (
-    is_vendor as is_vendor_user,
+    is_vendor,
     is_verified_vendor,
-    is_b2b_user as is_b2b,
+    is_b2b_user,
+    is_b2b_admin,
     is_b2b_manager,
 )
 
 
-# -----------------------------------------------------
 # VENDOR
-# -----------------------------------------------------
-
-def vendor_required(user):
-    """Utilisateur lié à un profil vendeur (Marketplace)"""
-    return is_vendor_user(user)
+def vendor_required(user) -> bool:
+    return is_vendor(user)
 
 
-def verified_vendor_required(user):
-    """Vendeur validé par l’administrateur"""
+def verified_vendor_required(user) -> bool:
     return is_verified_vendor(user)
 
 
-# -----------------------------------------------------
 # B2B
-# -----------------------------------------------------
-
-def b2b_required(user):
-    """Utilisateur B2B"""
-    return is_b2b(user)
+def b2b_required(user) -> bool:
+    return is_b2b_user(user)
 
 
-def b2b_admin_required(user):
-    """Admin d’une entreprise B2B"""
+def b2b_admin_required(user) -> bool:
+    # ✅ strict admin (CompanyUser.is_admin)
+    return is_b2b_admin(user)
+
+
+def b2b_manager_required(user) -> bool:
+    # ✅ manager (admin OU role staff/manager)
     return is_b2b_manager(user)
 
 
-# -----------------------------------------------------
-# STAFF / ADMIN
-# -----------------------------------------------------
+# STAFF / ADMIN (plateforme)
+def admin_required(user) -> bool:
+    return is_platform_admin(user)
 
-def admin_required(user):
-    """Staff ou superuser de la plateforme"""
-    return is_staff_admin(user)
+
+
+
+
+
+# # /economic/policies.py
+# # =====================================================
+# # Politiques d'accès simples et réutilisables
+# # =====================================================
+
+# from dashboard.permissions import is_admin as is_staff_admin
+# from economic.permissions import (
+#     is_vendor as is_vendor_user,
+#     is_verified_vendor,
+#     is_b2b_user as is_b2b,
+#     is_b2b_manager,
+# )
+
+
+# # -----------------------------------------------------
+# # VENDOR
+# # -----------------------------------------------------
+
+# def vendor_required(user):
+#     """Utilisateur lié à un profil vendeur (Marketplace)"""
+#     return is_vendor_user(user)
+
+
+# def verified_vendor_required(user):
+#     """Vendeur validé par l’administrateur"""
+#     return is_verified_vendor(user)
+
+
+# # -----------------------------------------------------
+# # B2B
+# # -----------------------------------------------------
+
+# def b2b_required(user):
+#     """Utilisateur B2B"""
+#     return is_b2b(user)
+
+
+# def b2b_admin_required(user):
+#     """Admin d’une entreprise B2B"""
+#     return is_b2b_manager(user)
+
+
+# # -----------------------------------------------------
+# # STAFF / ADMIN
+# # -----------------------------------------------------
+
+# def admin_required(user):
+#     """Staff ou superuser de la plateforme"""
+#     return is_staff_admin(user)
 
 
 

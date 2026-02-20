@@ -1,10 +1,14 @@
 # economic/ecommerce/views/payments.py
+from __future__ import annotations
+
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 
 from ..models.order import Order
 
@@ -17,38 +21,61 @@ def choose_payment_view(request, uuid):
     """
     order = get_object_or_404(Order, uuid=uuid, user=request.user)
 
+    # Optionnel : empêcher choix si déjà payée
+    if getattr(order, "is_paid", False):
+        messages.info(request, _("Cette commande est déjà payée."))
+        return redirect("economic:ecommerce:order_detail", uuid=order.uuid)
+
     payment_methods = [
         {
             "label": "💳 Stripe",
-            "action_url": reverse("economic:ecommerce:payment_checkout", kwargs={"provider": "stripe", "uuid": order.uuid}),
+            "action_url": reverse(
+                "economic:ecommerce:payment_checkout",
+                kwargs={"provider": "stripe", "uuid": order.uuid},
+            ),
             "description": _("Payer par carte bancaire via Stripe."),
         },
         {
             "label": "🅿️ PayPal",
-            "action_url": reverse("economic:ecommerce:payment_checkout", kwargs={"provider": "paypal", "uuid": order.uuid}),
+            "action_url": reverse(
+                "economic:ecommerce:payment_checkout",
+                kwargs={"provider": "paypal", "uuid": order.uuid},
+            ),
             "description": _("Payer avec votre compte PayPal."),
         },
         {
             "label": "📱 Mobile Money",
-            "action_url": reverse("economic:ecommerce:payment_checkout", kwargs={"provider": "mobilemoney", "uuid": order.uuid}),
+            "action_url": reverse(
+                "economic:ecommerce:payment_checkout",
+                kwargs={"provider": "mobilemoney", "uuid": order.uuid},
+            ),
             "description": _("Orange Money, Wave, etc."),
         },
     ]
 
+    payment_note = _("Le paiement est traité par le prestataire. Une confirmation sera appliquée à la commande après retour ou webhook.")
+
     return render(
         request,
         "economic/ecommerce/payments/choose_payment.html",
-        {"order": order, "payment_methods": payment_methods},
+        {"order": order, "payment_methods": payment_methods, "payment_note": payment_note},
     )
 
 
+@require_POST
 @login_required
 def provider_checkout_view(request, provider, uuid):
     """
     URL:
       path("payments/<str:provider>/<uuid:uuid>/", provider_checkout_view, name="payment_checkout")
+
+    POST attendu (depuis choose_payment).
     """
     order = get_object_or_404(Order, uuid=uuid, user=request.user)
+
+    if getattr(order, "is_paid", False):
+        messages.info(request, _("Cette commande est déjà payée."))
+        return redirect("economic:ecommerce:order_detail", uuid=order.uuid)
 
     provider_display_name = {
         "stripe": "Stripe",
@@ -56,9 +83,16 @@ def provider_checkout_view(request, provider, uuid):
         "mobilemoney": _("Mobile Money"),
     }.get(provider, provider)
 
-    # TODO: ici tu crées une session/provider checkout et tu donnes redirect_url
+    # ✅ Placeholder propre (production-safe)
+    # Ici: créer session/provider checkout, puis mettre redirect_url (Stripe Checkout Session / PayPal Approval URL / etc.)
     redirect_url = None
+    instructions = None
 
+    messages.warning(
+        request,
+        _("Le prestataire %(p)s n'est pas encore configuré. Choisissez un autre moyen de paiement.")
+        % {"p": provider_display_name},
+    )
     return render(
         request,
         "economic/ecommerce/payments/checkout_provider.html",
@@ -67,6 +101,7 @@ def provider_checkout_view(request, provider, uuid):
             "provider": provider,
             "provider_display_name": provider_display_name,
             "redirect_url": redirect_url,
+            "instructions": instructions,
         },
     )
 
@@ -81,6 +116,96 @@ def webhook_generic_view(request, provider):
     TODO: vérifier signature provider + mettre à jour Order (paid/failed).
     """
     return HttpResponse("OK", status=200)
+
+
+
+
+
+
+
+# # economic/ecommerce/views/payments.py
+# from django.contrib.auth.decorators import login_required
+# from django.http import HttpResponse
+# from django.shortcuts import get_object_or_404, render
+# from django.urls import reverse
+# from django.utils.translation import gettext as _
+# from django.views.decorators.csrf import csrf_exempt
+
+# from ..models.order import Order
+
+
+# @login_required
+# def choose_payment_view(request, uuid):
+#     """
+#     URL:
+#       path("payments/choose/<uuid:uuid>/", choose_payment_view, name="choose_payment")
+#     """
+#     order = get_object_or_404(Order, uuid=uuid, user=request.user)
+
+#     payment_methods = [
+#         {
+#             "label": "💳 Stripe",
+#             "action_url": reverse("economic:ecommerce:payment_checkout", kwargs={"provider": "stripe", "uuid": order.uuid}),
+#             "description": _("Payer par carte bancaire via Stripe."),
+#         },
+#         {
+#             "label": "🅿️ PayPal",
+#             "action_url": reverse("economic:ecommerce:payment_checkout", kwargs={"provider": "paypal", "uuid": order.uuid}),
+#             "description": _("Payer avec votre compte PayPal."),
+#         },
+#         {
+#             "label": "📱 Mobile Money",
+#             "action_url": reverse("economic:ecommerce:payment_checkout", kwargs={"provider": "mobilemoney", "uuid": order.uuid}),
+#             "description": _("Orange Money, Wave, etc."),
+#         },
+#     ]
+
+#     return render(
+#         request,
+#         "economic/ecommerce/payments/choose_payment.html",
+#         {"order": order, "payment_methods": payment_methods},
+#     )
+
+
+# @login_required
+# def provider_checkout_view(request, provider, uuid):
+#     """
+#     URL:
+#       path("payments/<str:provider>/<uuid:uuid>/", provider_checkout_view, name="payment_checkout")
+#     """
+#     order = get_object_or_404(Order, uuid=uuid, user=request.user)
+
+#     provider_display_name = {
+#         "stripe": "Stripe",
+#         "paypal": "PayPal",
+#         "mobilemoney": _("Mobile Money"),
+#     }.get(provider, provider)
+
+#     # TODO: ici tu crées une session/provider checkout et tu donnes redirect_url
+#     redirect_url = None
+
+#     return render(
+#         request,
+#         "economic/ecommerce/payments/checkout_provider.html",
+#         {
+#             "order": order,
+#             "provider": provider,
+#             "provider_display_name": provider_display_name,
+#             "redirect_url": redirect_url,
+#         },
+#     )
+
+
+# @csrf_exempt
+# def webhook_generic_view(request, provider):
+#     """
+#     URL:
+#       path("payments/webhook/<str:provider>/", webhook_generic_view, name="payment_webhook")
+
+#     IMPORTANT: webhook -> csrf_exempt obligatoire.
+#     TODO: vérifier signature provider + mettre à jour Order (paid/failed).
+#     """
+#     return HttpResponse("OK", status=200)
 
 
 

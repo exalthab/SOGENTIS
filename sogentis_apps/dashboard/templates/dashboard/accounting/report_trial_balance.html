@@ -1,0 +1,237 @@
+{# templates/dashboard/accounting/report_trial_balance.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n dashboard_tags %}
+
+{% block title %}{% trans "Trial Balance" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block dashboard_header %}
+  {% safe_url "dashboard:accounting:index" as u_home %}
+  {% safe_url "dashboard:accounting:reports" as u_reports %}
+  {% safe_url "accounting:trial_balance" as u_target %}
+  {% safe_url "accounting:report_income_statement" as u_pl %}
+  {% safe_url "accounting:report_balance_sheet" as u_bs %}
+  {% safe_url "accounting:report_cash_flow" as u_cf %}
+
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div>
+      <h1 class="fw-bold mb-1">⚖️ {% trans "Trial Balance" %}</h1>
+      <p class="text-muted mb-0">{% trans "Redirection vers le rapport statutaire." %}</p>
+    </div>
+
+    <div class="d-flex flex-wrap gap-2">
+      {% if u_home %}<a class="btn btn-sm btn-outline-secondary" href="{{ u_home }}">← {% trans "Accounting" %}</a>{% endif %}
+      {% if u_reports %}<a class="btn btn-sm btn-outline-dark" href="{{ u_reports }}">📈 {% trans "Rapports" %}</a>{% endif %}
+      {% if u_pl %}<a class="btn btn-sm btn-outline-primary" href="{{ u_pl }}">🧮 {% trans "P&L" %}</a>{% endif %}
+      {% if u_bs %}<a class="btn btn-sm btn-outline-primary" href="{{ u_bs }}">🏛️ {% trans "Balance Sheet" %}</a>{% endif %}
+      {% if u_cf %}<a class="btn btn-sm btn-outline-primary" href="{{ u_cf }}">💧 {% trans "Cash Flow" %}</a>{% endif %}
+    </div>
+  </div>
+{% endblock %}
+
+{% block dashboard_content %}
+  {% safe_url "accounting:trial_balance" as u_target %}
+
+  <div class="container-fluid px-3 px-lg-4 py-3">
+    <div class="rounded-4 bg-body border p-3 p-lg-4">
+
+      {% if u_target %}
+        <script>
+          (function () {
+            var base = "{{ u_target|escapejs }}";
+            var qs = "{{ request.GET.urlencode|escapejs }}";
+            var url = qs ? (base + "?" + qs) : base;
+            window.location.replace(url);
+          })();
+        </script>
+
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+          <div>
+            <div class="fw-semibold">{% trans "Redirecting…" %}</div>
+            <div class="text-muted small">
+              {% trans "Si la redirection ne se fait pas automatiquement, utilise le bouton." %}
+            </div>
+          </div>
+
+          <a class="btn btn-primary"
+             href="{{ u_target }}{% if request.GET.urlencode %}?{{ request.GET.urlencode }}{% endif %}">
+            {% trans "Open report" %}
+          </a>
+        </div>
+      {% else %}
+        <div class="text-muted">{% trans "Route manquante: accounting:trial_balance" %}</div>
+      {% endif %}
+
+    </div>
+  </div>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+{% comment %} {# templates/dashboard/accounting/report_trial_balance.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n dashboard_tags %}
+
+{% block title %}{% trans "Trial Balance" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block dashboard_header %}
+  {% safe_url "dashboard:accounting:index" as u_home %}
+  {% safe_url "dashboard:accounting:reports" as u_reports %}
+  {% safe_url "dashboard:accounting:trial_balance" as u_self %}
+  {% safe_url "dashboard:accounting:profit_loss" as u_pl %}
+  {% safe_url "dashboard:accounting:balance_sheet" as u_bs %}
+
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div>
+      <h1 class="fw-bold mb-1">⚖️ {% trans "Trial Balance" %}</h1>
+      <p class="text-muted mb-0">{% trans "Balance générale par compte, sur une période." %}</p>
+    </div>
+
+    <div class="d-flex flex-wrap gap-2">
+      {% if u_home %}<a class="btn btn-sm btn-outline-secondary" href="{{ u_home }}">← {% trans "Accounting" %}</a>{% endif %}
+      {% if u_reports %}<a class="btn btn-sm btn-outline-dark" href="{{ u_reports }}">📈 {% trans "Rapports" %}</a>{% endif %}
+      {% if u_pl %}<a class="btn btn-sm btn-outline-primary" href="{{ u_pl }}">🧮 {% trans "P&L" %}</a>{% endif %}
+      {% if u_bs %}<a class="btn btn-sm btn-outline-primary" href="{{ u_bs }}">🏛 {% trans "Balance Sheet" %}</a>{% endif %}
+    </div>
+  </div>
+{% endblock %}
+
+{% block dashboard_content %}
+  {% safe_url "dashboard:accounting:trial_balance" as u_self %}
+
+  <div class="container-fluid px-3 px-lg-4 py-3">
+
+    <div class="rounded-4 bg-body border p-3 p-lg-4 mb-3">
+      <div class="d-flex align-items-start justify-content-between flex-wrap gap-2 mb-3">
+        <div>
+          <div class="h5 mb-1">{% trans "Trial Balance" %}</div>
+          <div class="text-muted small">
+            {% if as_of %}{% trans "As of" %} {{ as_of|date:"Y-m-d" }}{% endif %}
+            {% if date_from or date_to %}
+              ·
+              {% trans "Période" %}:
+              {{ date_from|default:"—" }} → {{ date_to|default:"—" }}
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <form class="row g-2 align-items-end" method="get" action="{{ u_self|default:request.path }}">
+        <div class="col-6 col-md-2">
+          <label class="form-label small mb-1">{% trans "Du" %}</label>
+          <input type="date" class="form-control form-control-sm" name="from" value="{{ date_from|default:'' }}">
+        </div>
+
+        <div class="col-6 col-md-2">
+          <label class="form-label small mb-1">{% trans "Au" %}</label>
+          <input type="date" class="form-control form-control-sm" name="to" value="{{ date_to|default:'' }}">
+        </div>
+
+        <div class="col-6 col-md-2">
+          <label class="form-label small mb-1">{% trans "Pôle" %}</label>
+          <select class="form-select form-select-sm" name="pole">
+            <option value="">{% trans "Tous" %}</option>
+            {% for v,l in pole_choices %}
+              <option value="{{ v }}" {% if pole == v %}selected{% endif %}>{{ l }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-6 col-md-3">
+          <label class="form-label small mb-1">{% trans "Entité (company_code)" %}</label>
+          <input class="form-control form-control-sm" name="company" value="{{ company_code|default:'' }}" placeholder="ECONOMIC-SN">
+        </div>
+
+        <div class="col-6 col-md-2">
+          <label class="form-label small mb-1">{% trans "Devise" %}</label>
+          <input class="form-control form-control-sm" name="currency" value="{{ currency|default:'' }}" placeholder="XOF">
+        </div>
+
+        <div class="col-6 col-md-1 d-flex gap-2">
+          <button class="btn btn-sm btn-primary w-100" type="submit">{% trans "OK" %}</button>
+        </div>
+
+        <div class="col-12">
+          <a class="btn btn-sm btn-outline-secondary"
+             href="{{ u_self|default:request.path }}">
+            {% trans "Reset" %}
+          </a>
+        </div>
+      </form>
+    </div>
+
+    <div class="rounded-4 bg-body border overflow-hidden">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead>
+            <tr class="text-muted small">
+              <th style="min-width:130px;">{% trans "Compte" %}</th>
+              <th>{% trans "Nom" %}</th>
+              <th>{% trans "Type" %}</th>
+              <th class="text-end" style="min-width:140px;">{% trans "Débit" %}</th>
+              <th class="text-end" style="min-width:140px;">{% trans "Crédit" %}</th>
+              <th class="text-end" style="min-width:140px;">{% trans "Solde" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in rows %}
+              <tr>
+                <td class="fw-semibold">
+                  {{ r.code|default:r.account_code|default:"—" }}
+                </td>
+                <td class="text-muted small">
+                  {{ r.name|default:r.account_name|default:"—" }}
+                  {% if r.full_name %}
+                    <div class="text-muted small">{{ r.full_name }}</div>
+                  {% endif %}
+                </td>
+                <td class="text-muted small">
+                  {{ r.type|default:"—" }}
+                  {% if r.subtype %}
+                    <div class="text-muted small">{{ r.subtype }}</div>
+                  {% endif %}
+                </td>
+
+                <td class="text-end fw-semibold">
+                  {{ r.debit|default:r.total_debit|default:"0.00" }}
+                </td>
+                <td class="text-end fw-semibold">
+                  {{ r.credit|default:r.total_credit|default:"0.00" }}
+                </td>
+                <td class="text-end fw-bold">
+                  {{ r.balance|default:"0.00" }}
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="6" class="text-muted">{% trans "Aucune donnée pour cette période." %}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+
+          <tfoot>
+            <tr class="border-top">
+              <th colspan="3" class="text-end">{% trans "Total" %}</th>
+              <th class="text-end fw-bold">{{ totals.debit|default:"0.00" }}</th>
+              <th class="text-end fw-bold">{{ totals.credit|default:"0.00" }}</th>
+              <th class="text-end fw-bold">
+                {{ totals.balance|default:"0.00" }}
+                {% if currency %}<span class="text-muted small ms-1">{{ currency }}</span>{% endif %}
+              </th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+
+    <div class="mt-3 text-muted small">
+      {% trans "Note : la balance doit être équilibrée (Total Débit = Total Crédit). Si ce n'est pas le cas, vérifier les écritures." %}
+    </div>
+
+  </div>
+{% endblock %} {% endcomment %}

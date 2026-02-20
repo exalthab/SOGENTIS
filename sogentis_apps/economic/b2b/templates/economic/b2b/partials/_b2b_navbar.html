@@ -1,4 +1,143 @@
 {# templates/economic/b2b/partials/_b2b_navbar.html #}
+{% load i18n dashboard_tags %}
+
+{% with rm=request.resolver_match %}
+  {% with ns=rm.namespace|default:'' %}
+    {% with name=rm.url_name|default:'' %}
+
+      {% safe_url "economic:b2b:index" as b2b_index_url %}
+      {% safe_url "economic:b2b:company_list" as company_list_url %}
+
+      {% if B2B_COMPANY_ID %}
+        {% safe_url "economic:b2b:bulk_order_list" B2B_COMPANY_ID as orders_url %}
+        {% safe_url "economic:b2b:invoice_list" B2B_COMPANY_ID as invoices_url %}
+        {% safe_url "economic:b2b:rfq_list" B2B_COMPANY_ID as rfq_url %}
+      {% else %}
+        {% with orders_url=company_list_url invoices_url=company_list_url rfq_url=company_list_url %}
+        {% endwith %}
+      {% endif %}
+
+<nav class="border-bottom bg-white" aria-label="{% trans 'Menu B2B' %}">
+  <div class="container py-2 d-flex gap-3 align-items-center flex-wrap">
+
+    <a class="eco-hub-link {% if 'b2b' in ns and name == 'index' %}active{% endif %} {% if not b2b_index_url %}disabled{% endif %}"
+       href="{{ b2b_index_url|default:'#' }}"
+       {% if not b2b_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      🏢 {% trans "B2B" %}
+    </a>
+
+    <a class="eco-hub-link {% if 'b2b' in ns and name in 'company_list company_create company_detail' %}active{% endif %} {% if not company_list_url %}disabled{% endif %}"
+       href="{{ company_list_url|default:'#' }}"
+       {% if not company_list_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      🏢 {% trans "Entreprises" %}
+    </a>
+
+    <a class="eco-hub-link {% if 'b2b' in ns and name in 'bulk_order_list bulk_order_create bulk_order_detail bulk_order_add_item bulk_order_submit' %}active{% endif %} {% if not orders_url %}disabled{% endif %}"
+       href="{{ orders_url|default:'#' }}"
+       {% if not orders_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      🧾 {% trans "Commandes" %}
+    </a>
+
+    <a class="eco-hub-link {% if 'b2b' in ns and name in 'invoice_list invoice_create_for_order invoice_detail' %}active{% endif %} {% if not invoices_url %}disabled{% endif %}"
+       href="{{ invoices_url|default:'#' }}"
+       {% if not invoices_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      🧾 {% trans "Factures" %}
+    </a>
+
+    <a class="eco-hub-link {% if 'b2b' in ns and name in 'rfq_list rfq_create offer_create' %}active{% endif %} {% if not rffq_url %}disabled{% endif %}"
+       href="{{ rfq_url|default:'#' }}"
+       {% if not rfq_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      📄 {% trans "RFQ" %}
+    </a>
+
+  </div>
+</nav>
+
+    {% endwith %}
+  {% endwith %}
+{% endwith %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/b2b/partials/_b2b_navbar.html #}
+{% load i18n dashboard_tags %}
+
+{% with rm=request.resolver_match %}
+  {% with ns=rm.namespace|default:'' %}
+    {% with name=rm.url_name|default:'' %}
+
+{% with is_b2b_index=name == "index" %}
+  {% with is_company=name == "company_list" or name == "company_create" or name == "company_detail" %}
+    {% with is_orders=name == "bulk_order_list" or name == "bulk_order_create" or name == "bulk_order_detail" or name == "bulk_order_add_item" or name == "bulk_order_submit" %}
+      {% with is_invoices=name == "invoice_list" or name == "invoice_create_for_order" or name == "invoice_detail" %}
+        {% with is_rfq=name == "rfq_list" or name == "rfq_create" or name == "offer_create" %}
+
+<nav class="border-bottom bg-white" aria-label="{% trans 'Menu B2B' %}">
+  <div class="container py-2 d-flex gap-3 align-items-center flex-wrap">
+
+    {% safe_url "economic:b2b:index" as b2b_index_url %}
+    {% safe_url "economic:b2b:company_list" as company_list_url %}
+
+    {% if B2B_COMPANY_ID %}
+      {% safe_url "economic:b2b:bulk_order_list" B2B_COMPANY_ID as orders_url %}
+      {% safe_url "economic:b2b:invoice_list" B2B_COMPANY_ID as invoices_url %}
+      {% safe_url "economic:b2b:rfq_list" B2B_COMPANY_ID as rfq_url %}
+    {% else %}
+      {% with orders_url=company_list_url invoices_url=company_list_url rfq_url=company_list_url %}
+      {% endwith %}
+    {% endif %}
+
+    <a class="eco-hub-link {% if 'b2b' in ns and is_b2b_index %}active{% endif %} {% if not b2b_index_url %}disabled{% endif %}"
+       href="{{ b2b_index_url|default:'#' }}"
+       {% if not b2b_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      🏢 {% trans "B2B" %}
+    </a>
+
+    <a class="eco-hub-link {% if 'b2b' in ns and is_company %}active{% endif %} {% if not company_list_url %}disabled{% endif %}"
+       href="{{ company_list_url|default:'#' }}"
+       {% if not company_list_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      🏢 {% trans "Entreprises" %}
+    </a>
+
+    <a class="eco-hub-link {% if 'b2b' in ns and is_orders %}active{% endif %} {% if not orders_url %}disabled{% endif %}"
+       href="{{ orders_url|default:'#' }}"
+       {% if not orders_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      🧾 {% trans "Commandes" %}
+    </a>
+
+    <a class="eco-hub-link {% if 'b2b' in ns and is_invoices %}active{% endif %} {% if not invoices_url %}disabled{% endif %}"
+       href="{{ invoices_url|default:'#' }}"
+       {% if not invoices_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      🧾 {% trans "Factures" %}
+    </a>
+
+    <a class="eco-hub-link {% if 'b2b' in ns and is_rfq %}active{% endif %} {% if not rfq_url %}disabled{% endif %}"
+       href="{{ rfq_url|default:'#' }}"
+       {% if not rfq_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      📄 {% trans "RFQ" %}
+    </a>
+
+  </div>
+</nav>
+
+        {% endwith %}
+      {% endwith %}
+    {% endwith %}
+  {% endwith %}
+{% endwith %}
+
+    {% endwith %}
+  {% endwith %}
+{% endwith %} {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/economic/b2b/partials/_b2b_navbar.html #}
 {% load i18n %}
 
 {% with rm=request.resolver_match ns=rm.namespace|default:'' name=rm.url_name|default:'' %}
@@ -72,7 +211,7 @@
   </div>
 </nav>
 {% endwith %}
-
+ {% endcomment %}
 
 
 

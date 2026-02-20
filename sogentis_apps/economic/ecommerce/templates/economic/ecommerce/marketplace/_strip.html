@@ -1,0 +1,21 @@
+{% load i18n %}
+<div class="mk-strip">
+  <div class="container-fluid px-3 px-lg-4">
+    <div class="mk-strip-inner">
+      <div class="mk-strip-left">
+        <span class="mk-strip-badge">🔥</span>
+        <strong class="mk-strip-title">{% trans "Super Deals" %}</strong>
+        <span class="mk-strip-muted">{% trans "Coupons • Promotions • Nouveautés" %}</span>
+      </div>
+      <div class="mk-strip-right d-none d-md-flex">
+        <a class="mk-pill" href="?badge=fast">{% trans "Livraison rapide" %}</a>
+        <a class="mk-pill {% if not url_cart %}disabled{% endif %}" href="{{ url_cart|default:'#' }}">
+          {% trans "Paiement sécurisé" %}
+        </a>
+        <a class="mk-pill {% if not url_contact %}disabled{% endif %}" href="{{ url_contact|default:'#' }}">
+          {% trans "Support 24/7" %}
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

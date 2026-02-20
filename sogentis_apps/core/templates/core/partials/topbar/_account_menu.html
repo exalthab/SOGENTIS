@@ -1,0 +1,29 @@
+{# templates/core/partials/topbar/_account_menu.html #}
+{% load i18n %}
+{% if user.is_authenticated %}
+  <div class="dropdown">
+    <button class="btn btn-sm btn-outline-light dropdown-toggle px-2"
+            type="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+            aria-label="{% trans 'Menu utilisateur' %}">
+      <i class="fas fa-user-circle fa-lg"></i>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end">
+      <li><a class="dropdown-item" href="{% url 'dashboard:hub' %}">📊 {% trans "Tableau de bord" %}</a></li>
+      <li><hr class="dropdown-divider"></li>
+      <li>
+        <form method="post" action="{% url 'logout' %}" class="px-3 py-1">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-sm btn-outline-danger w-100">⏻ {% trans "Se déconnecter" %}</button>
+        </form>
+      </li>
+    </ul>
+  </div>
+{% else %}
+  <a href="{% url 'accounts_users:web:auth:auth_choice' %}?next={{ NEXT|urlencode }}"
+     class="btn btn-sm btn-primary px-2">
+    <i class="fas fa-sign-in-alt"></i>
+    <span class="d-none d-lg-inline ms-1">{% trans "Se connecter" %}</span>
+  </a>
+{% endif %}

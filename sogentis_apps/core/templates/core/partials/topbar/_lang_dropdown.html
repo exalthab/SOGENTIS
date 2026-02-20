@@ -1,0 +1,16 @@
+{# templates/core/partials/topbar/_lang_dropdown.html #}
+{% load i18n %}
+<div class="dropdown">
+  <button class="btn btn-sm btn-outline-light dropdown-toggle px-2"
+          type="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+          aria-label="{% trans 'Changer la langue' %}">
+    {% if CUR_LANG == "fr" %}🇫🇷 FR{% else %}🇬🇧 EN{% endif %}
+  </button>
+
+  <ul class="dropdown-menu dropdown-menu-end">
+    {% include "core/partials/topbar/_lang_item.html" with code="fr" label="🇫🇷 Français" CUR_LANG=CUR_LANG NEXT=NEXT %}
+    {% include "core/partials/topbar/_lang_item.html" with code="en" label="🇬🇧 English"  CUR_LANG=CUR_LANG NEXT=NEXT %}
+  </ul>
+</div>

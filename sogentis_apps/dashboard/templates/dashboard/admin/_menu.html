@@ -1,4 +1,128 @@
 {# templates/dashboard/admin/_menu.html #}
+{% load i18n dashboard_tags %}
+
+{% with rm=request.resolver_match %}
+  {% with view_name=rm.view_name|default:"" url_name=rm.url_name|default:"" namespaces=rm.namespaces|default:None %}
+
+    {# URLs safe (ne casse pas si route absente) #}
+    {% safe_url "dashboard:admin:index" as u_admin_home %}
+    {% safe_url "dashboard:admin:users" as u_admin_users %}
+    {% safe_url "dashboard:admin:moderation" as u_admin_moderation %}
+    {% safe_url "dashboard:admin:reports" as u_admin_reports %}
+    {% safe_url "dashboard:admin:settings" as u_admin_settings %}
+
+    {% safe_url "dashboard:pending_profiles" as u_pending_profiles %}
+    {% safe_url "dashboard:notes_list" as u_notes %}
+    {% safe_url "dashboard:hub" as u_hub %}
+    {% safe_url "core:home" as u_core_home %}
+
+    {# Finance (si activé) #}
+    {% safe_url "dashboard:payments:home" as u_pay_home %}
+    {% safe_url "dashboard:accounting:home" as u_acc_home %}
+
+    {# Active state (robuste sans hacks) #}
+    {% if view_name|slice:":16" == "dashboard:admin:" %} {% endif %}
+
+
+      <ul class="nav flex-column dashboard-menu">
+
+        <li class="nav-item">
+          <a class="nav-link {% if is_admin and url_name == 'index' %}active{% endif %}"
+             href="{{ u_admin_home|default:'#' }}">
+            🛠 {% trans "Administration" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link {% if is_admin and url_name == 'users' %}active{% endif %}"
+             href="{{ u_admin_users|default:'#' }}">
+            👥 {% trans "Utilisateurs" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link {% if is_admin and url_name == 'moderation' %}active{% endif %}"
+             href="{{ u_admin_moderation|default:'#' }}">
+            🛡 {% trans "Modération" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link {% if is_admin and url_name == 'reports' %}active{% endif %}"
+             href="{{ u_admin_reports|default:'#' }}">
+            📊 {% trans "Rapports & statistiques" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link {% if is_admin and url_name == 'settings' %}active{% endif %}"
+             href="{{ u_admin_settings|default:'#' }}">
+            ⚙️ {% trans "Paramètres" %}
+          </a>
+        </li>
+
+        {# Raccourcis utiles (hors namespace admin) #}
+        {% if u_pending_profiles and u_pending_profiles != "#" %}
+          <li class="nav-item mt-2">
+            <a class="nav-link {% if view_name == 'dashboard:pending_profiles' %}active{% endif %}"
+               href="{{ u_pending_profiles }}">
+              ⏳ {% trans "Profils en attente" %}
+            </a>
+          </li>
+        {% endif %}
+
+        {% if u_notes and u_notes != "#" %}
+          <li class="nav-item">
+            <a class="nav-link {% if view_name|slice:":15" == "dashboard:notes" %}active{% endif %}"
+               href="{{ u_notes }}">
+              📝 {% trans "Notes" %}
+            </a>
+          </li>
+        {% endif %}
+
+        {% if u_pay_home and u_pay_home != "#" %}
+          <li class="nav-item">
+            <a class="nav-link {% if view_name|slice:":17" == "dashboard:payments:" %}active{% endif %}"
+               href="{{ u_pay_home }}">
+              💳 {% trans "Paiements" %}
+            </a>
+          </li>
+        {% endif %}
+
+        {% if u_acc_home and u_acc_home != "#" %}
+          <li class="nav-item">
+            <a class="nav-link {% if view_name|slice:":19" == "dashboard:accounting:" %}active{% endif %}"
+               href="{{ u_acc_home }}">
+              📚 {% trans "Comptabilité" %}
+            </a>
+          </li>
+        {% endif %}
+
+        <li class="nav-item mt-3"><hr class="my-2"></li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="{{ u_hub|default:'#' }}">
+            🔙 {% trans "Retour au hub" %}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="{{ u_core_home|default:'#' }}">
+            🌐 {% trans "Retour au site" %}
+          </a>
+        </li>
+
+      </ul>
+
+    {% endwith %}
+  {% endwith %}
+
+
+
+
+
+
+{% comment %} {# templates/dashboard/admin/_menu.html-16-02-2026 #}
 {% load i18n %}
 
 {% with rm=request.resolver_match %}
@@ -93,7 +217,7 @@
   {% endif %}
 {% endwith %}
 
-
+ {% endcomment %}
 
 
 

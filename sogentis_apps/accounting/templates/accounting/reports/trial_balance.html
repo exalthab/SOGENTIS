@@ -1,0 +1,201 @@
+{% extends "accounting/base_accounting.html" %}
+{% load i18n dashboard_tags %}
+
+{% block accounting_title %}{% trans "Trial Balance" %}{% endblock %}
+
+{% block accounting_content %}
+<div class="container-fluid py-3">
+
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <div>
+      <h1 class="h4 mb-1">{% trans "Trial Balance" %}</h1>
+      <div class="text-muted small">
+        {% trans "Posted only" %} • {% if from %}{{ from }}{% else %}—{% endif %} → {% if to %}{{ to }}{% else %}—{% endif %}
+        {% if pole %} • Pole: {{ pole }}{% endif %}
+      </div>
+    </div>
+
+    {% safe_url "accounting:trial_balance_csv" as csv_url %}
+    {% if csv_url %}
+      <a class="btn btn-outline-secondary btn-sm"
+         href="{{ csv_url }}?from={{ from|default:'' }}&to={{ to|default:'' }}&pole={{ pole|default:'' }}&q={{ q|default:'' }}">
+        {% trans "Export CSV" %}
+      </a>
+    {% endif %}
+  </div>
+
+  <form method="get" class="card mb-3">
+    <div class="card-body">
+      <div class="row g-2 align-items-end">
+        <div class="col-6 col-md-2">
+          <label class="form-label">{% trans "From" %}</label>
+          <input type="date" name="from" class="form-control" value="{{ from|date:'Y-m-d' }}">
+        </div>
+        <div class="col-6 col-md-2">
+          <label class="form-label">{% trans "To" %}</label>
+          <input type="date" name="to" class="form-control" value="{{ to|date:'Y-m-d' }}">
+        </div>
+        <div class="col-6 col-md-2">
+          <label class="form-label">{% trans "Pole" %}</label>
+          <input type="text" name="pole" class="form-control" value="{{ pole|default:'' }}" placeholder="SOCIAL / ECONOMIC">
+        </div>
+        <div class="col-6 col-md-4">
+          <label class="form-label">{% trans "Search" %}</label>
+          <input type="text" name="q" class="form-control" value="{{ q|default:'' }}" placeholder="{% trans 'code or name' %}">
+        </div>
+        <div class="col-12 col-md-2 d-flex gap-2 justify-content-md-end">
+          <button class="btn btn-primary w-100" type="submit">{% trans "Run" %}</button>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-sm table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th style="width:140px;">{% trans "Account" %}</th>
+            <th>{% trans "Name" %}</th>
+            <th class="text-end" style="width:160px;">{% trans "Debit" %}</th>
+            <th class="text-end" style="width:160px;">{% trans "Credit" %}</th>
+            <th class="text-end" style="width:160px;">{% trans "Balance" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in rows %}
+            <tr>
+              <td class="fw-semibold">
+                {% safe_url "accounting:ledger" r.account_id as ledger_url %}
+                {% if ledger_url %}
+                  <a class="text-decoration-none" href="{{ ledger_url }}?from={{ from|default:'' }}&to={{ to|default:'' }}">{{ r.code }}</a>
+                {% else %}
+                  {{ r.code }}
+                {% endif %}
+              </td>
+              <td>{{ r.name }}</td>
+              <td class="text-end">{{ r.debit|floatformat:2 }}</td>
+              <td class="text-end">{{ r.credit|floatformat:2 }}</td>
+              <td class="text-end">{{ r.balance|floatformat:2 }}</td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="5" class="text-center text-muted py-4">{% trans "No data." %}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot class="table-light">
+          <tr>
+            <th colspan="2" class="text-end">{% trans "Totals" %}</th>
+            <th class="text-end">{{ total_debit|floatformat:2 }}</th>
+            <th class="text-end">{{ total_credit|floatformat:2 }}</th>
+            <th class="text-end">{{ total_balance|floatformat:2 }}</th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+
+
+
+
+
+{% comment %} {# templates/accounting/reports/trial_balance.html #}
+{% load i18n %}
+<!doctype html>
+<html lang="{{ LANGUAGE_CODE|default:'fr' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% trans "Balance" %}</title>
+</head>
+<body class="bg-body">
+  <div class="container py-4">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+      <div>
+        <h1 class="h4 mb-1">{% trans "Balance (Trial balance)" %}</h1>
+        <div class="text-muted small">
+          {% if from %}{{ from }}{% else %}…{% endif %} — {% if to %}{{ to }}{% else %}…{% endif %}
+          {% if pole %} · {{ pole }}{% endif %}
+        </div>
+      </div>
+
+      <div class="d-flex gap-2">
+        <a class="btn btn-sm btn-outline-secondary"
+           href="{% url 'accounting:trial_balance_csv' %}?from={{ from|default:'' }}&to={{ to|default:'' }}&pole={{ pole|default:'' }}&q={{ q|default:''|urlencode }}">
+          {% trans "Exporter CSV" %}
+        </a>
+      </div>
+    </div>
+
+    <form class="card mb-3" method="get">
+      <div class="card-body">
+        <div class="row g-2 align-items-end">
+          <div class="col-12 col-md-3">
+            <label class="form-label small mb-1">{% trans "Du" %}</label>
+            <input type="date" name="from" class="form-control form-control-sm" value="{{ from|date:'Y-m-d' }}">
+          </div>
+          <div class="col-12 col-md-3">
+            <label class="form-label small mb-1">{% trans "Au" %}</label>
+            <input type="date" name="to" class="form-control form-control-sm" value="{{ to|date:'Y-m-d' }}">
+          </div>
+          <div class="col-12 col-md-2">
+            <label class="form-label small mb-1">{% trans "Pôle" %}</label>
+            <input type="text" name="pole" class="form-control form-control-sm" value="{{ pole|default:'' }}" placeholder="ECONOMIC / SOCIAL…">
+          </div>
+          <div class="col-12 col-md-3">
+            <label class="form-label small mb-1">{% trans "Recherche" %}</label>
+            <input type="search" name="q" class="form-control form-control-sm" value="{{ q|default:'' }}" placeholder="7010 / Mobile Money…">
+          </div>
+          <div class="col-12 col-md-1 d-grid">
+            <button class="btn btn-sm btn-primary" type="submit">{% trans "OK" %}</button>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div class="card">
+      <div class="table-responsive">
+        <table class="table align-middle mb-0">
+          <thead>
+            <tr class="text-muted small">
+              <th>{% trans "Compte" %}</th>
+              <th>{% trans "Libellé" %}</th>
+              <th class="text-end">{% trans "Débit" %}</th>
+              <th class="text-end">{% trans "Crédit" %}</th>
+              <th class="text-end">{% trans "Solde" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in rows %}
+              <tr>
+                <td class="fw-semibold">
+                  <a href="{% url 'accounting:ledger' r.account_id %}?from={{ from|date:'Y-m-d' }}&to={{ to|date:'Y-m-d' }}">{{ r.code }}</a>
+                </td>
+                <td>{{ r.name }}</td>
+                <td class="text-end">{{ r.debit }}</td>
+                <td class="text-end">{{ r.credit }}</td>
+                <td class="text-end">{{ r.balance }}</td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="5" class="text-muted">{% trans "Aucune écriture." %}</td></tr>
+            {% endfor %}
+          </tbody>
+          <tfoot>
+            <tr class="fw-semibold">
+              <td colspan="2" class="text-end">{% trans "Totaux" %}</td>
+              <td class="text-end">{{ total_debit }}</td>
+              <td class="text-end">{{ total_credit }}</td>
+              <td class="text-end">{{ total_balance }}</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+</body>
+</html> {% endcomment %}

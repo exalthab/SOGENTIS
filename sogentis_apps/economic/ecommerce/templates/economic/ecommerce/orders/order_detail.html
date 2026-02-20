@@ -3,6 +3,620 @@
 {% load i18n ecom_money %}
 
 {% block ecommerce_title %}
+  {% trans "Commande" %} {{ order.reference|default:order.uuid }} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+
+  {# ========================================================= #}
+  {# Header #}
+  {# ========================================================= #}
+  <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-4">
+    <div>
+      <h1 class="h4 mb-1">
+        📦 {% trans "Commande" %} {{ order.reference|default:order.uuid }}
+      </h1>
+
+      <div class="text-muted">
+        {% trans "Statut" %} :
+        <strong>
+          {% if order.get_status_display %}{{ order.get_status_display }}{% else %}{{ order.status }}{% endif %}
+        </strong>
+      </div>
+
+      {% if order.created_at %}
+        <div class="text-muted small">
+          {% trans "Créée le" %} : {{ order.created_at|date:"d/m/Y H:i" }}
+        </div>
+      {% endif %}
+
+      {% if order.paid_at %}
+        <div class="text-muted small">
+          {% trans "Payée le" %} : {{ order.paid_at|date:"d/m/Y H:i" }}
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="d-flex flex-wrap gap-2 align-items-start">
+      {# can_pay optionnel #}
+      {% if order.can_pay %}
+        <a href="{% url 'economic:ecommerce:choose_payment' order.uuid %}" class="btn btn-primary">
+          {% trans "Payer cette commande" %}
+        </a>
+      {% endif %}
+
+      {% if order.is_paid %}
+        <span class="badge bg-success align-self-center">{% trans "Payée" %}</span>
+      {% elif order.status == "cancelled" %}
+        <span class="badge bg-secondary align-self-center">{% trans "Annulée" %}</span>
+      {% elif order.status == "pending" %}
+        <span class="badge bg-warning text-dark align-self-center">{% trans "En attente" %}</span>
+      {% elif order.status == "shipped" %}
+        <span class="badge bg-info text-dark align-self-center">{% trans "Expédiée" %}</span>
+      {% elif order.status == "completed" %}
+        <span class="badge bg-success align-self-center">{% trans "Terminée" %}</span>
+      {% endif %}
+
+      <a href="{% url 'economic:ecommerce:orders' %}" class="btn btn-outline-secondary">
+        {% trans "Retour à mes commandes" %}
+      </a>
+    </div>
+  </div>
+
+  {# ========================================================= #}
+  {# Articles #}
+  {# ========================================================= #}
+  <div class="card mb-4">
+    <div class="card-body">
+      <h2 class="h6 mb-3">{% trans "Articles de la commande" %}</h2>
+
+      <div class="table-responsive">
+        <table class="table align-middle mb-0">
+          <thead>
+            <tr>
+              <th>{% trans "Produit" %}</th>
+              <th class="text-end">{% trans "Prix" %}</th>
+              <th class="text-end">{% trans "Qté" %}</th>
+              <th class="text-end">{% trans "Total" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in order.items.all %}
+              <tr>
+                <td class="fw-semibold">
+                  {{ item.product_name }}
+                  {% if item.product_sku %}
+                    <div class="text-muted small">{% trans "SKU" %} : {{ item.product_sku }}</div>
+                  {% endif %}
+                </td>
+                <td class="text-end">{% money item.unit_price %}</td>
+                <td class="text-end">{{ item.quantity }}</td>
+                <td class="text-end fw-semibold">{% money item.total_price %}</td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="4" class="text-muted">{% trans "Aucun article." %}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <hr class="my-3">
+
+      <div class="d-flex justify-content-between text-muted small">
+        <span>{% trans "Sous-total" %}</span>
+        <span>{% money order.subtotal_amount %}</span>
+      </div>
+
+      {% if order.shipping_amount and order.shipping_amount|floatformat:2 != "0.00" %}
+        <div class="d-flex justify-content-between text-muted small mt-1">
+          <span>{% trans "Livraison" %}</span>
+          <span>{% money order.shipping_amount %}</span>
+        </div>
+      {% endif %}
+
+      {% if order.tax_amount and order.tax_amount|floatformat:2 != "0.00" %}
+        <div class="d-flex justify-content-between text-muted small mt-1">
+          <span>{% trans "Taxes" %}</span>
+          <span>{% money order.tax_amount %}</span>
+        </div>
+      {% endif %}
+
+      {% if order.discount_amount and order.discount_amount|floatformat:2 != "0.00" %}
+        <div class="d-flex justify-content-between text-muted small mt-1">
+          <span>{% trans "Remise" %}</span>
+          <span>- {% money order.discount_amount %}</span>
+        </div>
+      {% endif %}
+
+      <div class="d-flex justify-content-between fw-bold mt-2">
+        <span>{% trans "Total" %}</span>
+        <span>{% money order.total_amount %}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    {# ========================================================= #}
+    {# Infos client / facturation #}
+    {# ========================================================= #}
+    <div class="col-12 col-lg-7">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="h6 mb-3">{% trans "Informations de facturation" %}</h2>
+
+          <p class="mb-0">
+            <strong>
+              {% if order.billing_name %}{{ order.billing_name }}{% else %}
+                {% if order.user %}
+                  {% if order.user.get_full_name %}{{ order.user.get_full_name|default:order.user.username }}{% else %}{{ order.user.username }}{% endif %}
+                {% else %}
+                  {% trans "Client" %}
+                {% endif %}
+              {% endif %}
+            </strong>
+            <br>
+
+            {% if order.customer_email %}
+              <span class="text-muted">{{ order.customer_email }}</span><br>
+            {% endif %}
+
+            {% if order.billing_phone %}
+              <span class="text-muted">{{ order.billing_phone }}</span><br>
+            {% endif %}
+
+            {% if order.billing_address %}
+              {{ order.billing_address|linebreaksbr }}<br>
+            {% endif %}
+
+            {% if order.billing_zip or order.billing_city %}
+              {{ order.billing_zip|default:"" }} {{ order.billing_city|default:"" }}<br>
+            {% endif %}
+
+            {% if order.billing_country %}
+              {{ order.billing_country }}<br>
+            {% endif %}
+
+            {% if order.customer_note %}
+              <span class="text-muted small d-block mt-2">
+                <strong>{% trans "Note" %} :</strong> {{ order.customer_note }}
+              </span>
+            {% endif %}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    {# ========================================================= #}
+    {# Actions : Proforma / Facture / Paiement #}
+    {# ========================================================= #}
+    <div class="col-12 col-lg-5">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="h6 mb-3">{% trans "Actions" %}</h2>
+
+          <div class="d-grid gap-2">
+
+            {# ✅ Proforma AVANT paiement #}
+            {% if not order.is_paid %}
+              <a class="btn btn-outline-dark" href="{% url 'economic:ecommerce:proforma_download' order.uuid %}">
+                📄 {% trans "Télécharger la proforma" %}
+              </a>
+              <div class="small text-muted">
+                {% trans "La facture sera disponible après paiement." %}
+              </div>
+            {% endif %}
+
+            {# ✅ Facture APRÈS paiement #}
+            {% if order.is_paid %}
+              <a class="btn btn-outline-dark" href="{% url 'economic:ecommerce:invoice_download' order.uuid %}">
+                🧾 {% trans "Télécharger la facture" %}
+              </a>
+              <div class="small text-muted">
+                {% trans "Paiement confirmé — facture disponible." %}
+              </div>
+            {% endif %}
+
+            {# Paiement (optionnel) #}
+            {% if order.can_pay %}
+              <a class="btn btn-primary" href="{% url 'economic:ecommerce:choose_payment' order.uuid %}">
+                💳 {% trans "Procéder au paiement" %}
+              </a>
+            {% endif %}
+          </div>
+
+          <p class="text-muted small mt-3 mb-0">
+            {% trans "Pour toute question, contactez le support avec votre référence de commande." %}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+{% endblock %}
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/ecommerce/orders/order_detail.html #}
+{% extends "economic/ecommerce/base_ecommerce.html" %}
+{% load i18n ecom_money %}
+
+{% block ecommerce_title %}
+  {% trans "Commande" %} {{ order.reference|default:order.uuid }} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+
+  {# ========================================================= #}
+   {#  Header #}
+   {#  ========================================================= #}
+  <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-4">
+    <div>
+      <h1 class="h4 mb-1">
+        📦 {% trans "Commande" %} {{ order.reference|default:order.uuid }}
+      </h1>
+
+      <div class="text-muted">
+        {% trans "Statut" %} :
+        <strong>
+          {% if order.get_status_display %}{{ order.get_status_display }}{% else %}{{ order.status }}{% endif %}
+        </strong>
+      </div>
+
+      {% if order.created_at %}
+        <div class="text-muted small">
+          {% trans "Créée le" %} : {{ order.created_at|date:"d/m/Y H:i" }}
+        </div>
+      {% endif %}
+
+      {% if order.paid_at %}
+        <div class="text-muted small">
+          {% trans "Payée le" %} : {{ order.paid_at|date:"d/m/Y H:i" }}
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="d-flex flex-wrap gap-2 align-items-start">
+      {# can_pay est optionnel (si pas dans ton modèle, ça n'affiche rien) #}
+      {% if order.can_pay %}
+        <a href="{% url 'economic:ecommerce:choose_payment' order.uuid %}" class="btn btn-primary">
+          {% trans "Payer cette commande" %}
+        </a>
+      {% endif %}
+
+      {% if order.is_paid %}
+        <span class="badge bg-success align-self-center">{% trans "Payée" %}</span>
+      {% elif order.status == "cancelled" %}
+        <span class="badge bg-secondary align-self-center">{% trans "Annulée" %}</span>
+      {% elif order.status == "pending" %}
+        <span class="badge bg-warning text-dark align-self-center">{% trans "En attente" %}</span>
+      {% endif %}
+
+      <a href="{% url 'economic:ecommerce:orders' %}" class="btn btn-outline-secondary">
+        {% trans "Retour à mes commandes" %}
+      </a>
+    </div>
+  </div>
+
+
+  {# ========================================================= #}
+    {#   Articles #}
+     {#  ========================================================= #}
+  <div class="card mb-4">
+    <div class="card-body">
+      <h2 class="h6 mb-3">{% trans "Articles de la commande" %}</h2>
+
+      <div class="table-responsive">
+        <table class="table align-middle mb-0">
+          <thead>
+            <tr>
+              <th>{% trans "Produit" %}</th>
+              <th class="text-end">{% trans "Prix" %}</th>
+              <th class="text-end">{% trans "Qté" %}</th>
+              <th class="text-end">{% trans "Total" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in order.items.all %}
+              <tr>
+                <td class="fw-semibold">
+                  {{ item.product_name }}
+                  {% if item.product_sku %}
+                    <div class="text-muted small">{% trans "SKU" %}: {{ item.product_sku }}</div>
+                  {% endif %}
+                </td>
+                <td class="text-end">{% money item.unit_price %}</td>
+                <td class="text-end">{{ item.quantity }}</td>
+                <td class="text-end fw-semibold">{% money item.line_total %}</td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="4" class="text-muted">{% trans "Aucun article." %}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <hr class="my-3">
+
+      {# Totaux détaillés (optionnels) #}
+      <div class="d-flex justify-content-between text-muted small">
+        <span>{% trans "Sous-total" %}</span>
+        <span>{% money order.subtotal_amount %}</span>
+      </div>
+
+      {% if order.shipping_amount %}
+        <div class="d-flex justify-content-between text-muted small mt-1">
+          <span>{% trans "Livraison" %}</span>
+          <span>{% money order.shipping_amount %}</span>
+        </div>
+      {% endif %}
+
+      {% if order.tax_amount %}
+        <div class="d-flex justify-content-between text-muted small mt-1">
+          <span>{% trans "Taxes" %}</span>
+          <span>{% money order.tax_amount %}</span>
+        </div>
+      {% endif %}
+
+      {% if order.discount_amount %}
+        <div class="d-flex justify-content-between text-muted small mt-1">
+          <span>{% trans "Remise" %}</span>
+          <span>- {% money order.discount_amount %}</span>
+        </div>
+      {% endif %}
+
+      <div class="d-flex justify-content-between fw-bold mt-2">
+        <span>{% trans "Total" %}</span>
+        <span>{% money order.total_amount %}</span>
+      </div>
+    </div>
+  </div>
+
+
+  {# =========================================================  #}
+    {#   Billing / Customer snapshot (compatible avec ton modèle)  #}
+    {#   ========================================================= #}
+  <div class="row g-3">
+    <div class="col-12 col-lg-7">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="h6 mb-3">{% trans "Informations client" %}</h2>
+
+          {# Nom client: user.get_full_name -> username -> fallback #}
+          <p class="mb-0">
+            <strong>
+              {% if order.user %}
+                {% if order.user.get_full_name %}{{ order.user.get_full_name|default:order.user.username }}{% else %}{{ order.user.username }}{% endif %}
+              {% else %}
+                {% trans "Client" %}
+              {% endif %}
+            </strong>
+            <br>
+
+            {# Email snapshot: customer_email (dans ton modèle) #}
+            {% if order.customer_email %}
+              <span class="text-muted">{{ order.customer_email }}</span><br>
+            {% endif %}
+
+            {# Adresse: ton modèle actuel n'a PAS billing_*.  #}
+              {#   On prévoit un fallback si tu ajoutes shipping_* plus tard (sans casser maintenant). #}
+            {% if order.shipping_address or order.shipping_city or order.shipping_zip or order.shipping_country %}
+              <span class="text-muted small">{% trans "Adresse" %} :</span><br>
+              {{ order.shipping_address|default:"" }}<br>
+              {{ order.shipping_zip|default:"" }} {{ order.shipping_city|default:"" }}
+              {% if order.shipping_country %}, {{ order.shipping_country }}{% endif %}
+            {% else %}
+              <span class="text-muted small">
+                {% trans "Adresse non renseignée sur cette commande." %}
+              </span>
+            {% endif %}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    {# ========================================================= #}
+      {#   Actions (Proforma / Invoice / Pay) #}
+      {#   ========================================================= #}
+    <div class="col-12 col-lg-5">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="h6 mb-3">{% trans "Actions" %}</h2>
+
+          <div class="d-grid gap-2">
+
+            {# ✅ Proforma AVANT paiement #}
+            {% if not order.is_paid %}
+              <a class="btn btn-outline-dark" href="{% url 'economic:ecommerce:proforma_download' order.uuid %}">
+                📄 {% trans "Télécharger la proforma" %}
+              </a>
+            {% endif %}
+
+            {# ✅ Facture APRÈS paiement #}
+            {% if order.is_paid %}
+              <a class="btn btn-outline-dark" href="{% url 'economic:ecommerce:invoice_download' order.uuid %}">
+                🧾 {% trans "Télécharger la facture" %}
+              </a>
+            {% endif %}
+
+            {# Paiement (si propriété can_pay existe) #}
+            {% if order.can_pay %}
+              <a class="btn btn-primary" href="{% url 'economic:ecommerce:choose_payment' order.uuid %}">
+                💳 {% trans "Procéder au paiement" %}
+              </a>
+            {% endif %}
+          </div>
+
+          <p class="text-muted small mt-3 mb-0">
+            {% trans "Pour toute question, contactez le support avec votre numéro de commande." %}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/ecommerce/orders/order_detail.html #}
+{% extends "economic/ecommerce/base_ecommerce.html" %}
+{% load i18n ecom_money %}
+
+{% block ecommerce_title %}
+  {% trans "Commande" %} {{ order.uuid }} | {{ PROJECT_NAME }}
+{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+
+  <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-4">
+    <div>
+      <h1 class="h4 mb-1">📦 {% trans "Commande" %} {{ order.uuid }}</h1>
+
+      <div class="text-muted">
+        {% trans "Statut" %} :
+        <strong>
+          {% if order.get_status_display %}{{ order.get_status_display }}{% else %}{{ order.status }}{% endif %}
+        </strong>
+      </div>
+
+      {% if order.created_at %}
+        <div class="text-muted small">
+          {% trans "Créée le" %} : {{ order.created_at|date:"d/m/Y H:i" }}
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="d-flex flex-wrap gap-2 align-items-start">
+      {% if order.can_pay %}
+        <a href="{% url 'economic:ecommerce:choose_payment' order.uuid %}" class="btn btn-primary">
+          {% trans "Payer cette commande" %}
+        </a>
+      {% endif %}
+
+      {% if order.is_paid %}
+        <span class="badge bg-success align-self-center">{% trans "Payée" %}</span>
+      {% elif order.status == "FAILED" %}
+        <span class="badge bg-danger align-self-center">{% trans "Échec paiement" %}</span>
+      {% endif %}
+
+      <a href="{% url 'economic:ecommerce:orders' %}" class="btn btn-outline-secondary">
+        {% trans "Retour à mes commandes" %}
+      </a>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <h2 class="h6 mb-3">{% trans "Articles de la commande" %}</h2>
+
+      <div class="table-responsive">
+        <table class="table align-middle mb-0">
+          <thead>
+            <tr>
+              <th>{% trans "Produit" %}</th>
+              <th class="text-end">{% trans "Prix" %}</th>
+              <th class="text-end">{% trans "Qté" %}</th>
+              <th class="text-end">{% trans "Total" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in order.items.all %}
+              <tr>
+                <td>{{ item.product_name }}</td>
+                <td class="text-end">{% money item.unit_price %}</td>
+                <td class="text-end">{{ item.quantity }}</td>
+                <td class="text-end fw-semibold">{% money item.line_total %}</td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="4" class="text-muted">{% trans "Aucun article." %}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <hr>
+      <div class="d-flex justify-content-between fw-bold">
+        <span>{% trans "Total" %}</span>
+        <span>{% money order.total_amount %}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-12 col-lg-7">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="h6 mb-3">{% trans "Informations de facturation" %}</h2>
+          <p class="mb-0">
+            {{ order.billing_name }}<br>
+            {{ order.billing_address }}<br>
+            {{ order.billing_zip }} {{ order.billing_city }}{% if order.billing_country %}, {{ order.billing_country }}{% endif %}
+            {% if order.email %}<br>{{ order.email }}{% endif %}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-5">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="h6 mb-3">{% trans "Actions" %}</h2>
+
+          <div class="d-grid gap-2">
+            {% if order.is_paid %}
+              <a class="btn btn-outline-dark" href="{% url 'economic:ecommerce:invoice_download' order.uuid %}">
+                🧾 {% trans "Télécharger la facture" %}
+              </a>
+            {% endif %}
+
+            {% if order.can_pay %}
+              <a class="btn btn-primary" href="{% url 'economic:ecommerce:choose_payment' order.uuid %}">
+                💳 {% trans "Procéder au paiement" %}
+              </a>
+            {% endif %}
+          </div>
+
+          <p class="text-muted small mt-3 mb-0">
+            {% trans "Pour toute question, contactez le support avec votre numéro de commande." %}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/ecommerce/orders/order_detail.html #}
+{% extends "economic/ecommerce/base_ecommerce.html" %}
+{% load i18n ecom_money %}
+
+{% block ecommerce_title %}
   {% trans "Commande" %} {{ order.uuid }} | {{ PROJECT_NAME }}
 {% endblock %}
 
@@ -81,7 +695,7 @@
 
 </section>
 {% endblock %}
-
+ {% endcomment %}
 
 
 

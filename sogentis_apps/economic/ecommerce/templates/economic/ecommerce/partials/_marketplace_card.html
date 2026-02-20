@@ -1,0 +1,127 @@
+{# templates/economic/ecommerce/partials/_marketplace_card.html #}
+{% load static i18n ecom_money ecom_utils dashboard_tags %}
+
+<div class="col-6 col-md-4 col-lg-4 col-xl-3 col-xxl-2">
+  <article class="mk-card h-100">
+
+    <div class="mk-media">
+      <a class="mk-media-link {% if not detail_url %}disabled{% endif %}" href="{{ detail_url|default:'#' }}">
+        {% with img=product.images.all.0 %}
+          {% if img %}
+            <img src="{{ img.image.url }}" alt="{{ img.alt_text|default:product.name }}" loading="lazy">
+          {% else %}
+            {% if product.main_image_url %}
+              <img src="{{ product.main_image_url }}" alt="{{ product.name }}" loading="lazy">
+            {% else %}
+              <img src="{% static 'global/image/product-placeholder.png' %}" alt="{% trans 'Produit' %}" loading="lazy">
+            {% endif %}
+          {% endif %}
+        {% endwith %}
+      </a>
+
+      {% if has_promo %}
+        <div class="mk-ribbon">
+          <span class="mk-ribbon-left">{% trans "WELCOME DEAL" %}</span>
+          <span class="mk-ribbon-sep">•</span>
+          <span class="mk-ribbon-right">{% trans "Free shipping" %}</span>
+        </div>
+      {% endif %}
+
+      <div class="mk-badges">
+        {% if product.is_featured %}
+          <a class="mk-badge mk-badge-choice mk-badge-link" href="?badge=choice">
+            {% trans "Choix" %}
+          </a>
+        {% endif %}
+
+        {# discount percent si existant #}
+        {% if product|has_attr:"discount_percent" and product.discount_percent %}
+          <span class="mk-badge mk-badge-off">-{{ product.discount_percent }}%</span>
+        {% endif %}
+
+        {% if product.track_stock and product.stock|default:0 <= 0 %}
+          <span class="mk-badge mk-badge-out">{% trans "Rupture" %}</span>
+        {% endif %}
+      </div>
+
+      {# ✅ Add-to-cart: POST #}
+      <form method="post"
+            action="{{ add_url|default:'#' }}"
+            class="mk-cart-form {% if not add_url or not product.purchasable %}disabled{% endif %}">
+        {% csrf_token %}
+        <input type="hidden" name="quantity" value="1">
+        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+        <button type="submit"
+                class="mk-cart-fab {% if not add_url or not product.purchasable %}disabled{% endif %}"
+                aria-label="{% trans 'Ajouter au panier' %}">
+          <span class="mk-plus">+</span>
+        </button>
+      </form>
+    </div>
+
+    <div class="mk-body">
+      <h3 class="mk-title">
+        <a href="{{ detail_url|default:'#' }}" class="{% if not detail_url %}disabled{% endif %}">
+          {{ product.name|truncatechars:60 }}
+        </a>
+      </h3>
+
+      <div class="mk-sub">
+        <span class="mk-stars" aria-hidden="true">★★★★★</span>
+
+        {% if product|has_attr:"average_rating" and product.average_rating %}
+          <span class="mk-rate">{{ product.average_rating|floatformat:1 }}</span>
+        {% endif %}
+
+        {% if product|has_attr:"reviews_count" and product.reviews_count %}
+          <span class="mk-muted">({{ product.reviews_count }})</span>
+        {% endif %}
+
+        {% if product|has_attr:"sold_count" and product.sold_count %}
+          <span class="mk-dot">·</span>
+          <span class="mk-sold">{{ product.sold_count }}+ {% trans "vendus" %}</span>
+        {% endif %}
+      </div>
+
+      <div class="mk-price-row">
+        <div class="mk-price">{% money product.price %}</div>
+
+        {% if product|has_attr:"old_price" and product.old_price and product.old_price > product.price %}
+          <div class="mk-old">{% money product.old_price %}</div>
+        {% endif %}
+      </div>
+
+      <div class="mk-benefits">
+        {% if has_promo and product|has_attr:"discount_percent" and product.discount_percent %}
+          <div class="mk-benefit">
+            <span class="mk-benefit-ico">%</span>
+            <span class="mk-benefit-txt">{% trans "Économisez" %} {{ product.discount_percent }}%</span>
+          </div>
+        {% endif %}
+        <div class="mk-benefit">
+          <span class="mk-benefit-ico">✓</span>
+          <span class="mk-benefit-txt">{% trans "Paiement sécurisé" %}</span>
+        </div>
+      </div>
+
+      {# ✅ chips actives: toutes GET #}
+      <div class="mk-meta">
+        <a class="mk-chip mk-chip-hot" href="?badge=deal">🔥 {% trans "Deal" %}</a>
+        <a class="mk-chip mk-chip-ship" href="?badge=fast">🚚 {% trans "Livraison" %}</a>
+        <a class="mk-chip mk-chip-sec" href="{% url 'economic:ecommerce:cart' %}">🔒 {% trans "Pay" %}</a>
+      </div>
+
+      <a class="mk-preview-btn {% if not detail_url %}disabled{% endif %}" href="{{ detail_url|default:'#' }}">
+        {% trans "Voir" %}
+      </a>
+
+      {% if product.vendor %}
+        <div class="mk-store">
+          <i class="bi bi-shop"></i>
+          <span class="mk-store-name">{{ product.vendor }}</span>
+        </div>
+      {% endif %}
+    </div>
+
+  </article>
+</div>

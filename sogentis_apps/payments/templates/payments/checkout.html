@@ -1,0 +1,493 @@
+{# templates/payments/checkout.html #}
+{% extends "base.html" %}
+{% load i18n dashboard_tags %}
+
+{% block title %}
+  {% trans "Paiement sécurisé" %}{% if intent %} — {{ intent.reference|default:intent.uuid }}{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container py-3 py-lg-4" style="max-width:980px">
+
+  {% if messages %}
+    <div class="mb-3">
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags|default:'info' }} mb-2" role="alert">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <div class="min-w-0">
+      <h1 class="h4 mb-1">{% trans "Paiement sécurisé" %}</h1>
+      <div class="small text-muted text-truncate">
+        {% if intent %}{{ intent.description|default:_("Finaliser votre paiement") }}{% else %}{% trans "Intent introuvable." %}{% endif %}
+      </div>
+    </div>
+
+    {% if intent and intent.cancel_url %}
+      <a class="btn btn-sm btn-outline-secondary" href="{{ intent.cancel_url }}">{% trans "Retour" %}</a>
+    {% elif intent and intent.return_url %}
+      <a class="btn btn-sm btn-outline-secondary" href="{{ intent.return_url }}">{% trans "Retour" %}</a>
+    {% else %}
+      <a class="btn btn-sm btn-outline-secondary" href="javascript:history.back()">{% trans "Retour" %}</a>
+    {% endif %}
+  </div>
+
+  {% if not user.is_authenticated %}
+    {% safe_url "accounts_users:web:auth:login" as login_url %}
+    <div class="alert alert-warning border">
+      <div class="fw-semibold mb-1">{% trans "Connexion requise" %}</div>
+      <div class="small mb-2">{% trans "Pour finaliser un paiement, vous devez être connecté." %}</div>
+      {% with next_path=request.get_full_path|default:'/'|urlencode %}
+        <a class="btn btn-sm btn-dark {% if not login_url %}disabled{% endif %}"
+           href="{% if login_url %}{{ login_url }}?next={{ next_path }}{% else %}#{% endif %}"
+           {% if not login_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+          {% trans "Se connecter" %}
+        </a>
+      {% endwith %}
+    </div>
+
+  {% elif not intent %}
+    <div class="alert alert-danger border mb-0">
+      <div class="fw-semibold">{% trans "Paiement introuvable" %}</div>
+      <div class="small">{% trans "Ce paiement n’existe pas ou n’est plus accessible." %}</div>
+    </div>
+
+  {% else %}
+
+    {# =========================
+       RÉCAPITULATIF
+       ========================= #}
+    <div class="card border mb-3" style="border-radius:14px">
+      <div class="card-body p-3 p-lg-4">
+        <div class="d-flex flex-wrap align-items-start justify-content-between gap-2">
+          <div class="min-w-0">
+            <div class="fw-semibold">{% trans "Récapitulatif" %}</div>
+            <div class="small text-muted">
+              {% trans "Référence" %} : <span class="font-monospace">{{ intent.reference|default:intent.uuid }}</span>
+            </div>
+            <div class="small text-muted">
+              {% trans "Objet" %} : {{ intent.get_purpose_display|default:intent.purpose }}
+              {% if intent.pole %}<span class="opacity-50">•</span> {{ intent.get_pole_display|default:intent.pole }}{% endif %}
+            </div>
+          </div>
+
+          <div class="text-end">
+            <div class="h5 mb-0">
+              {{ intent.amount }} <span class="fs-6 text-muted">{{ intent.currency|default:"XOF" }}</span>
+            </div>
+            <div class="small text-muted">
+              {% trans "Statut" %} : {{ intent.get_status_display|default:intent.status }}
+            </div>
+          </div>
+        </div>
+
+        {% if intent.checkout_url %}
+          <div class="alert alert-light border small mt-3 mb-0">
+            <div class="fw-semibold mb-1">{% trans "Lien de paiement déjà généré" %}</div>
+            <a class="btn btn-sm btn-dark" href="{{ intent.checkout_url }}">{% trans "Continuer" %}</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    {# =========================
+       ÉTATS
+       ========================= #}
+    {% if intent.is_paid or intent.status == "PAID" %}
+      <div class="alert alert-success border">
+        <div class="fw-semibold mb-1">{% trans "Paiement confirmé" %}</div>
+        <div class="small">{% trans "Merci ! Votre paiement a été validé." %}</div>
+        {% if intent.return_url %}
+          <div class="mt-2">
+            <a class="btn btn-sm btn-success" href="{{ intent.return_url }}">{% trans "Continuer" %}</a>
+          </div>
+        {% endif %}
+      </div>
+
+    {% elif intent.status == "CANCELED" or intent.status == "FAILED" or intent.status == "REFUNDED" %}
+      <div class="alert alert-warning border">
+        <div class="fw-semibold mb-1">{% trans "Paiement indisponible" %}</div>
+        <div class="small">
+          {% if intent.status == "CANCELED" %}{% trans "Ce paiement a été annulé." %}
+          {% elif intent.status == "FAILED" %}{% trans "Ce paiement a échoué." %}
+          {% else %}{% trans "Ce paiement a été remboursé." %}{% endif %}
+        </div>
+      </div>
+
+    {% else %}
+
+      {# =========================
+         CHOIX DU PROVIDER (selon TES URLS)
+         payments:provider_start => start/<uuid>/<provider>/
+         ========================= #}
+
+      {% safe_url "payments:provider_start" intent.uuid "stripe" as u_stripe %}
+      {% safe_url "payments:provider_start" intent.uuid "paypal" as u_paypal %}
+      {% safe_url "payments:provider_start" intent.uuid "wave" as u_wave %}
+      {% safe_url "payments:provider_start" intent.uuid "orange_money" as u_orange %}
+      {% safe_url "payments:provider_start" intent.uuid "visa" as u_visa %}
+
+      <div class="card border" style="border-radius:14px">
+        <div class="card-body p-3 p-lg-4">
+          <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+            <div class="fw-semibold">{% trans "Choisir un mode de paiement" %}</div>
+            <div class="small text-muted">{% trans "Les moyens indisponibles restent non cliquables." %}</div>
+          </div>
+
+          <div class="row g-2">
+
+            <div class="col-12 col-md-6">
+              <a class="d-flex gap-2 align-items-center text-decoration-none border rounded p-3 {% if not u_stripe %}opacity-50 pe-none{% endif %}"
+                 href="{{ u_stripe|default:'#' }}"
+                 {% if not u_stripe %}aria-disabled="true" tabindex="-1"{% endif %}>
+                <div class="rounded" style="width:34px;height:34px;display:grid;place-items:center;background:rgba(16,24,40,.06)">💳</div>
+                <div class="min-w-0">
+                  <div class="fw-semibold text-truncate">Stripe / Carte</div>
+                  <div class="small text-muted text-truncate">{% trans "Visa / MasterCard (si activé)" %}</div>
+                </div>
+              </a>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <a class="d-flex gap-2 align-items-center text-decoration-none border rounded p-3 {% if not u_paypal %}opacity-50 pe-none{% endif %}"
+                 href="{{ u_paypal|default:'#' }}"
+                 {% if not u_paypal %}aria-disabled="true" tabindex="-1"{% endif %}>
+                <div class="rounded" style="width:34px;height:34px;display:grid;place-items:center;background:rgba(16,24,40,.06)">🅿️</div>
+                <div class="min-w-0">
+                  <div class="fw-semibold text-truncate">PayPal</div>
+                  <div class="small text-muted text-truncate">{% trans "Paiement via compte PayPal" %}</div>
+                </div>
+              </a>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <a class="d-flex gap-2 align-items-center text-decoration-none border rounded p-3 {% if not u_wave %}opacity-50 pe-none{% endif %}"
+                 href="{{ u_wave|default:'#' }}"
+                 {% if not u_wave %}aria-disabled="true" tabindex="-1"{% endif %}>
+                <div class="rounded" style="width:34px;height:34px;display:grid;place-items:center;background:rgba(16,24,40,.06)">🌊</div>
+                <div class="min-w-0">
+                  <div class="fw-semibold text-truncate">Wave</div>
+                  <div class="small text-muted text-truncate">{% trans "Mobile money (si activé)" %}</div>
+                </div>
+              </a>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <a class="d-flex gap-2 align-items-center text-decoration-none border rounded p-3 {% if not u_orange %}opacity-50 pe-none{% endif %}"
+                 href="{{ u_orange|default:'#' }}"
+                 {% if not u_orange %}aria-disabled="true" tabindex="-1"{% endif %}>
+                <div class="rounded" style="width:34px;height:34px;display:grid;place-items:center;background:rgba(16,24,40,.06)">🟧</div>
+                <div class="min-w-0">
+                  <div class="fw-semibold text-truncate">Orange Money</div>
+                  <div class="small text-muted text-truncate">{% trans "Mobile money (si activé)" %}</div>
+                </div>
+              </a>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <a class="d-flex gap-2 align-items-center text-decoration-none border rounded p-3 {% if not u_visa %}opacity-50 pe-none{% endif %}"
+                 href="{{ u_visa|default:'#' }}"
+                 {% if not u_visa %}aria-disabled="true" tabindex="-1"{% endif %}>
+                <div class="rounded" style="width:34px;height:34px;display:grid;place-items:center;background:rgba(16,24,40,.06)">💳</div>
+                <div class="min-w-0">
+                  <div class="fw-semibold text-truncate">Visa</div>
+                  <div class="small text-muted text-truncate">{% trans "Checkout Visa (si activé)" %}</div>
+                </div>
+              </a>
+            </div>
+
+          </div>
+
+          <div class="small text-muted mt-3">
+            {% trans "Référence" %} : <span class="font-monospace">{{ intent.reference|default:intent.uuid }}</span>
+          </div>
+        </div>
+      </div>
+
+    {% endif %}
+  {% endif %}
+
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+{% comment %} {# templates/payments/checkout.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n dashboard_tags %}
+
+{% block title %}
+  {% trans "Paiement sécurisé" %}{% if intent %} — {{ intent.reference|default:intent.uuid }}{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container py-3 py-lg-4" style="max-width:980px">
+
+  {% if messages %}
+    <div class="mb-3">
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags|default:'info' }} mb-2" role="alert">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <div class="min-w-0">
+      <h1 class="h4 mb-1">{% trans "Paiement sécurisé" %}</h1>
+      <div class="small text-muted text-truncate">
+        {% if intent %}{{ intent.description|default:_("Finaliser votre paiement") }}{% else %}{% trans "Intent introuvable." %}{% endif %}
+      </div>
+    </div>
+
+    {# Priorité: cancel_url -> return_url -> history.back #}
+    {% if intent and intent.cancel_url %}
+      <a class="btn btn-sm btn-outline-secondary" href="{{ intent.cancel_url }}">{% trans "Retour" %}</a>
+    {% elif intent and intent.return_url %}
+      <a class="btn btn-sm btn-outline-secondary" href="{{ intent.return_url }}">{% trans "Retour" %}</a>
+    {% else %}
+      <a class="btn btn-sm btn-outline-secondary" href="javascript:history.back()">{% trans "Retour" %}</a>
+    {% endif %}
+  </div>
+
+  {% if not user.is_authenticated %}
+    {% safe_url "accounts_users:web:auth:login" as login_url %}
+    <div class="alert alert-warning border">
+      <div class="fw-semibold mb-1">{% trans "Connexion requise" %}</div>
+      <div class="small mb-2">{% trans "Pour finaliser un paiement, vous devez être connecté." %}</div>
+      {% with next_path=request.get_full_path|default:'/'|urlencode %}
+        <a class="btn btn-sm btn-dark {% if not login_url %}disabled{% endif %}"
+           href="{% if login_url %}{{ login_url }}?next={{ next_path }}{% else %}#{% endif %}"
+           {% if not login_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+          {% trans "Se connecter" %}
+        </a>
+      {% endwith %}
+    </div>
+
+  {% elif not intent %}
+    <div class="alert alert-danger border mb-0">
+      <div class="fw-semibold">{% trans "Paiement introuvable" %}</div>
+      <div class="small">{% trans "Ce paiement n’existe pas ou n’est plus accessible." %}</div>
+    </div>
+
+  {% else %}
+
+    {# RÉCAPITULATIF #}
+    <div class="card border mb-3" style="border-radius:14px">
+      <div class="card-body p-3 p-lg-4">
+        <div class="d-flex flex-wrap align-items-start justify-content-between gap-2">
+          <div class="min-w-0">
+            <div class="fw-semibold">{% trans "Récapitulatif" %}</div>
+            <div class="small text-muted">
+              {% trans "Référence" %} : <span class="font-monospace">{{ intent.reference|default:intent.uuid }}</span>
+            </div>
+            {% if intent.purpose %}
+              <div class="small text-muted">
+                {% trans "Objet" %} : {{ intent.get_purpose_display|default:intent.purpose }}
+              </div>
+            {% endif %}
+            {% if intent.pole %}
+              <div class="small text-muted">
+                {% trans "Pôle" %} : {{ intent.get_pole_display|default:intent.pole }}
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="text-end">
+            <div class="h5 mb-0">
+              {{ intent.amount }} <span class="fs-6 text-muted">{{ intent.currency|default:"XOF" }}</span>
+            </div>
+            <div class="small text-muted">
+              {% trans "Statut" %} : {{ intent.get_status_display|default:intent.status }}
+            </div>
+          </div>
+        </div>
+
+        {% if intent.metadata %}
+          <div class="mt-2 small text-muted">
+            {% trans "Détails" %} : {{ intent.metadata }}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    {# ÉTATS #}
+    {% if intent.is_paid or intent.status == "PAID" %}
+      <div class="alert alert-success border">
+        <div class="fw-semibold mb-1">{% trans "Paiement confirmé" %}</div>
+        <div class="small">{% trans "Merci ! Votre paiement a été validé." %}</div>
+        {% if intent.return_url %}
+          <div class="mt-2">
+            <a class="btn btn-sm btn-success" href="{{ intent.return_url }}">{% trans "Continuer" %}</a>
+          </div>
+        {% endif %}
+      </div>
+
+    {% elif intent.status == "CANCELED" or intent.status == "FAILED" or intent.status == "REFUNDED" %}
+      <div class="alert alert-warning border">
+        <div class="fw-semibold mb-1">{% trans "Paiement indisponible" %}</div>
+        <div class="small">
+          {% if intent.status == "CANCELED" %}{% trans "Ce paiement a été annulé." %}
+          {% elif intent.status == "FAILED" %}{% trans "Ce paiement a échoué." %}
+          {% else %}{% trans "Ce paiement a été remboursé." %}{% endif %}
+        </div>
+      </div>
+
+    {% else %}
+
+      {# CHOIX DU PROVIDER #}
+
+      {# URLs provider (défensif: si tes routes n'existent pas, ça se désactive) #}
+      {% safe_url "payments:provider_checkout" "stripe" intent.uuid as u_stripe %}
+      {% safe_url "payments:provider_checkout" "paypal" intent.uuid as u_paypal %}
+      {% safe_url "payments:provider_checkout" "wave" intent.uuid as u_wave %}
+      {% safe_url "payments:provider_checkout" "orange_money" intent.uuid as u_orange %}
+      {% safe_url "payments:provider_checkout" "visa" intent.uuid as u_visa %}
+
+      <div class="card border" style="border-radius:14px">
+        <div class="card-body p-3 p-lg-4">
+          <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+            <div class="fw-semibold">{% trans "Choisir un mode de paiement" %}</div>
+            <div class="small text-muted">{% trans "Les moyens indisponibles restent non cliquables." %}</div>
+          </div>
+
+          {# Si le backend a déjà posé un checkout_url (cas provider direct) #}
+          {% if intent.checkout_url %}
+            <div class="alert alert-light border small mb-3">
+              <div class="fw-semibold mb-1">{% trans "Continuer le paiement" %}</div>
+              <a class="btn btn-sm btn-dark" href="{{ intent.checkout_url }}">
+                {% trans "Ouvrir la page de paiement" %}
+              </a>
+            </div>
+          {% endif %}
+
+          <div class="row g-2">
+
+            <div class="col-12 col-md-6">
+              <a class="d-flex gap-2 align-items-center text-decoration-none border rounded p-3 {% if not u_stripe %}opacity-50 pe-none{% endif %}"
+                 href="{{ u_stripe|default:'#' }}"
+                 {% if not u_stripe %}aria-disabled="true" tabindex="-1"{% endif %}>
+                <div class="rounded" style="width:34px;height:34px;display:grid;place-items:center;background:rgba(16,24,40,.06)">💳</div>
+                <div class="min-w-0">
+                  <div class="fw-semibold text-truncate">Stripe / Carte</div>
+                  <div class="small text-muted text-truncate">{% trans "Visa / MasterCard (si activé)" %}</div>
+                </div>
+              </a>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <a class="d-flex gap-2 align-items-center text-decoration-none border rounded p-3 {% if not u_paypal %}opacity-50 pe-none{% endif %}"
+                 href="{{ u_paypal|default:'#' }}"
+                 {% if not u_paypal %}aria-disabled="true" tabindex="-1"{% endif %}>
+                <div class="rounded" style="width:34px;height:34px;display:grid;place-items:center;background:rgba(16,24,40,.06)">🅿️</div>
+                <div class="min-w-0">
+                  <div class="fw-semibold text-truncate">PayPal</div>
+                  <div class="small text-muted text-truncate">{% trans "Paiement via compte PayPal" %}</div>
+                </div>
+              </a>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <a class="d-flex gap-2 align-items-center text-decoration-none border rounded p-3 {% if not u_wave %}opacity-50 pe-none{% endif %}"
+                 href="{{ u_wave|default:'#' }}"
+                 {% if not u_wave %}aria-disabled="true" tabindex="-1"{% endif %}>
+                <div class="rounded" style="width:34px;height:34px;display:grid;place-items:center;background:rgba(16,24,40,.06)">🌊</div>
+                <div class="min-w-0">
+                  <div class="fw-semibold text-truncate">Wave</div>
+                  <div class="small text-muted text-truncate">{% trans "Mobile money (si activé)" %}</div>
+                </div>
+              </a>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <a class="d-flex gap-2 align-items-center text-decoration-none border rounded p-3 {% if not u_orange %}opacity-50 pe-none{% endif %}"
+                 href="{{ u_orange|default:'#' }}"
+                 {% if not u_orange %}aria-disabled="true" tabindex="-1"{% endif %}>
+                <div class="rounded" style="width:34px;height:34px;display:grid;place-items:center;background:rgba(16,24,40,.06)">🟧</div>
+                <div class="min-w-0">
+                  <div class="fw-semibold text-truncate">Orange Money</div>
+                  <div class="small text-muted text-truncate">{% trans "Mobile money (si activé)" %}</div>
+                </div>
+              </a>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <a class="d-flex gap-2 align-items-center text-decoration-none border rounded p-3 {% if not u_visa %}opacity-50 pe-none{% endif %}"
+                 href="{{ u_visa|default:'#' }}"
+                 {% if not u_visa %}aria-disabled="true" tabindex="-1"{% endif %}>
+                <div class="rounded" style="width:34px;height:34px;display:grid;place-items:center;background:rgba(16,24,40,.06)">💳</div>
+                <div class="min-w-0">
+                  <div class="fw-semibold text-truncate">Visa</div>
+                  <div class="small text-muted text-truncate">{% trans "Checkout Visa dédié (si prévu)" %}</div>
+                </div>
+              </a>
+            </div>
+
+          </div>
+
+          <div class="small text-muted mt-3">
+            {% trans "Référence" %} : <span class="font-monospace">{{ intent.reference|default:intent.uuid }}</span>
+          </div>
+
+        </div>
+      </div>
+
+    {% endif %}
+  {% endif %}
+
+</div>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+
+{% comment %} {# templates/payments/checkout.html #}
+{% load i18n ecom_money dashboard_tags %}
+
+{% trans "Paiement" as t_payment %}
+
+<div class="container py-4">
+  <div class="rounded-4 bg-body border p-3 p-lg-4">
+    <div class="d-flex align-items-start justify-content-between gap-2 flex-wrap mb-3">
+      <div>
+        <h1 class="h5 mb-1">{% trans "Finaliser le paiement" %}</h1>
+        <div class="text-muted small">{{ intent.description|default:t_payment }}</div>
+      </div>
+      <a class="btn btn-sm btn-outline-secondary" href="{% if intent.cancel_url %}{{ intent.cancel_url }}{% else %}/{% endif %}">{% trans "Retour" %}</a>
+    </div>
+
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+      <span class="badge text-bg-light border">{% trans "Référence" %} : {{ intent.uuid }}</span>
+      <span class="badge text-bg-light border">
+        {% trans "Montant" %} : <strong>{% money intent.amount intent.currency %}</strong>
+      </span>
+      <span class="badge text-bg-light border">{% trans "Statut" %} : {{ intent.get_status_display }}</span>
+    </div>
+
+    <div class="row g-2">
+      <div class="col-12 col-md-6 col-lg-4 d-grid">
+        <a class="btn btn-primary" href="{% url 'payments:provider_start' intent.uuid 'stripe' %}">Stripe</a>
+      </div>
+      <div class="col-12 col-md-6 col-lg-4 d-grid">
+        <a class="btn btn-outline-primary" href="{% url 'payments:provider_start' intent.uuid 'paypal' %}">PayPal</a>
+      </div>
+      <div class="col-12 col-md-6 col-lg-4 d-grid">
+        <a class="btn btn-outline-primary" href="{% url 'payments:provider_start' intent.uuid 'wave' %}">Wave</a>
+      </div>
+      <div class="col-12 col-md-6 col-lg-4 d-grid">
+        <a class="btn btn-outline-primary" href="{% url 'payments:provider_start' intent.uuid 'orange' %}">Orange Money</a>
+      </div>
+      <div class="col-12 col-md-6 col-lg-4 d-grid">
+        <a class="btn btn-outline-primary" href="{% url 'payments:provider_start' intent.uuid 'visa' %}">Visa</a>
+      </div>
+    </div>
+  </div>
+</div> {% endcomment %}

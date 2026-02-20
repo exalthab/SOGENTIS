@@ -1,0 +1,174 @@
+{# templates/dashboard/accounting/journal_detail.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n dashboard_tags %}
+
+{% block title %}{{ journal.name|default:_("Journal") }} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block dashboard_header %}
+  {% safe_url "dashboard:accounting:index" as u_home %}
+  {% safe_url "dashboard:accounting:journal" as u_journals %}
+  {% safe_url "dashboard:accounting:entries" as u_entries %}
+  {% safe_url "dashboard:accounting:reports" as u_reports %}
+
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div>
+      <h1 class="fw-bold mb-1">📓 {{ journal.name|default:_("Journal") }}</h1>
+      <p class="text-muted mb-0">
+        <span class="me-2"><span class="text-muted">{% trans "Code" %}:</span> <strong>{{ journal.code|default:"—" }}</strong></span>
+        {% if journal.pole %}<span class="me-2"><span class="text-muted">{% trans "Pôle" %}:</span> <strong>{{ journal.pole }}</strong></span>{% endif %}
+        {% if journal.default_currency %}<span class="me-2"><span class="text-muted">{% trans "Devise" %}:</span> <strong>{{ journal.default_currency }}</strong></span>{% endif %}
+      </p>
+    </div>
+
+    <div class="d-flex flex-wrap gap-2">
+      {% if u_home %}<a class="btn btn-sm btn-outline-secondary" href="{{ u_home }}">← {% trans "Accounting" %}</a>{% endif %}
+      {% if u_journals %}<a class="btn btn-sm btn-outline-primary" href="{{ u_journals }}">📓 {% trans "Journaux" %}</a>{% endif %}
+      {% if u_entries %}<a class="btn btn-sm btn-outline-dark" href="{{ u_entries }}">🧾 {% trans "Écritures" %}</a>{% endif %}
+      {% if u_reports %}<a class="btn btn-sm btn-outline-dark" href="{{ u_reports }}">📈 {% trans "Rapports" %}</a>{% endif %}
+    </div>
+  </div>
+{% endblock %}
+
+{% block dashboard_content %}
+  {% safe_url "dashboard:accounting:journal_detail" journal.pk as u_self %}
+  {% safe_url "dashboard:accounting:entries" as u_entries %}
+
+  <div class="container-fluid px-3 px-lg-4 py-3">
+
+    <div class="rounded-4 bg-body border p-3 p-lg-4 mb-3">
+      <div class="row g-3 align-items-center">
+        <div class="col-12 col-lg-8">
+          <div class="d-flex align-items-center gap-2 flex-wrap">
+            {% if journal.is_active %}
+              <span class="badge text-bg-success">{% trans "Actif" %}</span>
+            {% else %}
+              <span class="badge text-bg-secondary">{% trans "Inactif" %}</span>
+            {% endif %}
+
+            {% if journal.is_system %}
+              <span class="badge text-bg-light border">{% trans "Système" %}</span>
+            {% endif %}
+          </div>
+
+          {% if journal.description %}
+            <div class="text-muted mt-2">{{ journal.description }}</div>
+          {% else %}
+            <div class="text-muted small mt-2">{% trans "Aucune description." %}</div>
+          {% endif %}
+        </div>
+
+        <div class="col-12 col-lg-4">
+          <div class="d-grid gap-2">
+            {% if u_entries %}
+              {# Filtre via querystring (safe_url supporte qs=dict) #}
+              {% safe_url "dashboard:accounting:entries" qs=entries_qs as u_entries_filtered %}
+              {% if not u_entries_filtered %}
+                {% safe_url "dashboard:accounting:entries" as u_entries_filtered %}
+              {% endif %}
+
+              <a class="btn btn-sm btn-primary" href="{{ u_entries_filtered|default:u_entries }}">
+                🧾 {% trans "Voir les écritures" %}
+              </a>
+            {% endif %}
+
+            {# Lien admin change si tu veux (optionnel) #}
+            {% admin_change_url journal as u_admin_change %}
+            {% if u_admin_change %}
+              <a class="btn btn-sm btn-outline-secondary" href="{{ u_admin_change }}">
+                ⚙️ {% trans "Ouvrir dans l’admin" %}
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {# ===================== ENTRIES TABLE ===================== #}
+    <div class="rounded-4 bg-body border overflow-hidden">
+
+      <div class="p-3 border-bottom d-flex align-items-center justify-content-between flex-wrap gap-2">
+        <div class="fw-bold">{% trans "Dernières écritures" %}</div>
+        <div class="text-muted small">
+          {% if entries_paginator %}{{ entries_paginator.count }}{% else %}{% if entries_count %}{{ entries_count }}{% else %}0{% endif %}{% endif %}
+          {% trans "élément(s)" %}
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table align-middle mb-0">
+          <thead>
+            <tr class="text-muted small">
+              <th style="min-width:110px;">{% trans "Date" %}</th>
+              <th style="min-width:120px;">{% trans "Référence" %}</th>
+              <th>{% trans "Mémo" %}</th>
+              <th style="min-width:120px;">{% trans "Statut" %}</th>
+              <th class="text-end" style="min-width:140px;">{% trans "Total" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for e in entries %}
+              {% safe_url "dashboard:accounting:entry_detail" e.pk as u_entry %}
+              <tr>
+                <td class="text-muted small">{{ e.date|date:"Y-m-d" }}</td>
+                <td class="fw-semibold">
+                  <a class="text-decoration-none" href="{{ u_entry|default:'#' }}">
+                    {{ e.reference|default:e.pk }}
+                  </a>
+                </td>
+                <td class="text-muted small">{{ e.memo|default:"—" }}</td>
+                <td>
+                  {% if e.status %}
+                    <span class="badge text-bg-light border">{{ e.status }}</span>
+                  {% else %}
+                    <span class="badge text-bg-light border">{% trans "—" %}</span>
+                  {% endif %}
+                </td>
+                <td class="text-end fw-semibold">
+                  {# essaie plusieurs noms de champs possibles #}
+                  {% firstof e.total e.total_amount e.amount_total e.debit_total e.credit_total "0.00" as tot %}
+                  {{ tot }}
+                  {% if e.currency %}<span class="text-muted small ms-1">{{ e.currency }}</span>{% endif %}
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="5" class="text-muted">{% trans "Aucune écriture pour ce journal." %}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      {# ===================== PAGINATION (OPTIONNEL) ===================== #}
+      {% if entries_page_obj and entries_page_obj.paginator and entries_page_obj.paginator.num_pages > 1 %}
+        <div class="p-2">
+          <nav aria-label="{% trans 'Pagination' %}">
+            <ul class="pagination pagination-sm mb-0 flex-wrap">
+              {% if entries_page_obj.has_previous %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ entries_page_obj.previous_page_number }}">{% trans "Précédent" %}</a>
+                </li>
+              {% else %}
+                <li class="page-item disabled"><span class="page-link">{% trans "Précédent" %}</span></li>
+              {% endif %}
+
+              <li class="page-item disabled">
+                <span class="page-link">{{ entries_page_obj.number }}/{{ entries_page_obj.paginator.num_pages }}</span>
+              </li>
+
+              {% if entries_page_obj.has_next %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ entries_page_obj.next_page_number }}">{% trans "Suivant" %}</a>
+                </li>
+              {% else %}
+                <li class="page-item disabled"><span class="page-link">{% trans "Suivant" %}</span></li>
+              {% endif %}
+            </ul>
+          </nav>
+        </div>
+      {% endif %}
+
+    </div>
+
+  </div>
+{% endblock %}

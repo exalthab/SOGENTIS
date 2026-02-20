@@ -1,0 +1,346 @@
+{# templates/economic/prestations/base_prestations.html #}
+{% extends "economic/base_economic.html" %}
+{% load i18n static ecom_money dashboard_tags %}
+
+{% block economic_title %}
+  {% block prestations_title %}{% trans "Prestations" %}{% endblock %} | {{ PROJECT_NAME|default:"SOGENTIS" }}
+{% endblock %}
+
+{% block economic_extra_css %}
+  {{ block.super }}
+  {% block prestations_extra_css %}
+    <link rel="stylesheet" href="{% static 'prestations/css/prestations_index.css' %}">
+    <link rel="stylesheet" href="{% static 'prestations/css/prestations_topbar.css' %}">
+    <link rel="stylesheet" href="{% static 'prestations/css/prestations.css' %}">
+  {% endblock %}
+{% endblock %}
+
+{% block economic_extra_js %}
+  {{ block.super }}
+  {% block prestations_extra_js %}
+    <script src="{% static 'prestations/js/prestations_index.js' %}" defer></script>
+  {% endblock %}
+{% endblock %}
+
+{% block economic_content %}
+  {% include "economic/prestations/partials/_prestations_topbar.html" %}
+
+  <main class="container-fluid px-3 px-lg-4 py-3">
+    {% if messages %}
+      <div class="mb-3">
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags|default:'info' }} mb-2" role="alert">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% block prestations_content %}{% endblock %}
+  </main>
+{% endblock %}
+
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/base_prestations.html #}
+{% extends "economic/base_economic.html" %}
+{% load i18n static ecom_money dashboard_tags %}
+
+{# =========================
+   PAGE TITLE
+   ========================= #}
+{% block economic_title %}
+  {% block prestations_title %}{% trans "Prestations" %}{% endblock %} | {{ PROJECT_NAME|default:"SOGENTIS" }}
+{% endblock %}
+
+{# =========================
+   PAGE CSS
+   ========================= #}
+{% block economic_extra_css %}
+  {{ block.super }}
+  {% block prestations_extra_css %}
+    <link rel="stylesheet" href="{% static 'prestations/css/prestations_index.css' %}">
+    <link rel="stylesheet" href="{% static 'prestations/css/prestations_topbar.css' %}">
+    <link rel="stylesheet" href="{% static 'prestations/css/prestations.css' %}">
+
+    {% endblock %}
+{% endblock %}
+
+{# =========================
+   PAGE JS
+   ========================= #}
+{% block economic_extra_js %}
+  {{ block.super }}
+  {% block prestations_extra_js %}
+    <script src="{% static 'prestations/js/prestations_index.js' %}" defer></script>
+  {% endblock %}
+{% endblock %}
+
+{# =========================
+   PAGE CONTENT
+   ========================= #}
+{% block economic_content %}
+
+  {# TOPBAR #}
+  {% include "economic/prestations/partials/_prestations_topbar.html" %}
+
+  <main class="container-fluid px-3 px-lg-4 py-3">
+
+    {# Django messages #}
+    {% if messages %}
+      <div class="mb-3">
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags|default:'info' }} mb-2" role="alert">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {# CONTENT SLOT #}
+    {% block prestations_content %}{% endblock %}
+
+  </main>
+{% endblock %}
+ {% endcomment %}
+
+
+
+
+{% comment %} {# templates/economic/prestations/base_prestations.html #}
+{% extends "economic/base_economic.html" %}
+{% load static i18n dashboard_tags %}
+
+{% block economic_title %}
+  {% block prestations_title %}{% trans "Prestations" %}{% endblock %} | {{ PROJECT_NAME|default:"SOGENTIS" }}
+{% endblock %}
+
+{% block economic_extra_css %}
+  {{ block.super }}
+  {% block prestations_extra_css %}
+    <link rel="stylesheet" href="{% static 'prestations/css/prestations_index.css' %}">
+  {% endblock %}
+{% endblock %}
+
+{% block economic_extra_js %}
+  {{ block.super }}
+  {% block prestations_extra_js %}
+    <script src="{% static 'prestations/js/prestations_index.js' %}" defer></script>
+  {% endblock %}
+{% endblock %}
+
+{% block economic_content %}
+  {% include "economic/prestations/partials/_prestations_topbar.html" %}
+
+  <main class="py-3 py-lg-4">
+    <div class="container-fluid px-3 px-lg-4">
+      {% if messages %}
+        <div class="mb-3">
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'info' }} mb-2" role="alert">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% block prestations_content %}{% endblock %}
+    </div>
+  </main>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/base_prestations.html - good #}
+{% extends "economic/base_economic.html" %}
+{% load static i18n %}
+
+{# ===================== #
+   SEO
+   ===================== #}
+{% block economic_title %}
+  {% block prestations_title %}{% trans "Prestations" %}{% endblock prestations_title %}
+{% endblock economic_title %}
+
+{% block economic_description %}
+  {% block prestations_description %}
+    {% trans "Solutions numériques, accompagnement et support professionnel." %}
+  {% endblock prestations_description %}
+{% endblock economic_description %}
+
+{# ===================== #
+   CSS
+   ===================== #}
+{% block economic_extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'prestations/css/prestations.css' %}">
+  {% block prestations_extra_css %}{% endblock prestations_extra_css %}
+{% endblock economic_extra_css %}
+
+{# ===================== #
+   SUBNAV
+   ===================== #}
+{% block economic_subnav %}
+  {% include "economic/prestations/partials/_prestations_topbar.html" %}
+{% endblock economic_subnav %}
+
+{# ===================== #
+   CONTENT
+   ===================== #}
+{% block economic_content %}
+  <main class="prestations-main">
+    {% block prestations_content %}{% endblock prestations_content %}
+  </main>
+{% endblock economic_content %}
+
+{# ===================== #
+   JS
+   ===================== #}
+{% block economic_extra_js %}
+  {{ block.super }}
+  <script src="{% static 'prestations/js/prestations_index.js' %}" defer></script>
+  {% block prestations_extra_js %}{% endblock prestations_extra_js %}
+{% endblock economic_extra_js %} {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/base_prestations.html #}
+{% extends "economic/base_economic.html" %}
+{% load static i18n %}
+
+{# ===================== #}
+{# SEO                   #}
+{# ===================== #}
+{% block economic_title %}
+  {% block services_title %}{% trans "Prestations" %}{% endblock services_title %}
+{% endblock economic_title %}
+
+{% block economic_description %}
+  {% block services_description %}
+    {% trans "Solutions numériques, accompagnement et support professionnel." %}
+  {% endblock services_description %}
+{% endblock economic_description %}
+
+{# ===================== #}
+{# CSS                   #}
+{# ===================== #}
+{% block economic_extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'prestations/css/prestations.css' %}">
+  {% block services_extra_css %}{% endblock services_extra_css %}
+{% endblock economic_extra_css %}
+
+{# ===================== #}
+{# SUBNAV                #}
+{# ===================== #}
+{% block economic_subnav %}
+  {% include "economic/prestations/partials/_prestations_topbar.html" %}
+{% endblock economic_subnav %}
+
+{# ===================== #}
+{# CONTENT               #}
+{# ===================== #}
+{% block economic_content %}
+  <main class="services-main">
+    {% block services_content %}{% endblock services_content %}
+  </main>
+{% endblock economic_content %}
+
+{# ===================== #}
+{# JS                    #}
+{# ===================== #}
+{% block economic_extra_js %}
+  {{ block.super }}
+  <script src="{% static 'prestations/js/prestations.js' %}" defer></script>
+  {% block services_extra_js %}{% endblock services_extra_js %}
+{% endblock economic_extra_js %}
+ {% endcomment %}
+
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/services/base_services.html #}
+{% load static i18n %}
+<!doctype html>
+<html lang="{{ LANGUAGE_CODE|default:'fr' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>{% block title %}SOGENTIS — Services{% endblock %}</title>
+
+  {# CSS principal du pôle services #}
+  <link rel="stylesheet" href="{% static 'services/css/services.css' %}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<div class="services-shell">
+
+  {# TOPBAR SERVICES #}
+  <header class="services-topbar">
+    <div class="services-topbar-inner">
+      <div class="services-brand">
+        <span class="dot"></span>
+        <div>
+          <strong>{% trans "Services SOGENTIS" %}</strong>
+          <small class="text-muted d-block">
+            {% trans "Solutions numériques, accompagnement et support professionnel" %}
+          </small>
+        </div>
+      </div>
+
+      <nav class="services-nav">
+        {# Catalogue / page index #}
+        <a href="{% url 'economic:services:index' %}"
+           class="services-nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}">
+          {% trans "Catalogue" %}
+        </a>
+
+        {# Demandes / tickets côté services #}
+        <a href="{% url 'economic:services:tickets' %}"
+           class="services-nav-link {% if request.resolver_match.url_name == 'tickets' %}active{% endif %}">
+          {% trans "Mes demandes" %}
+        </a>
+
+        {# Support global économique (si app support active) #}
+        <a href="{% url 'economic:support:ticket_list' %}" class="services-nav-link">
+          {% trans "Support" %}
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  {# CONTENU PRINCIPAL #}
+  <main class="services-main">
+    {% block content %}{% endblock %}
+  </main>
+
+  {# FOOTER SIMPLE #}
+  <footer class="services-footer">
+    <small>
+      &copy; {{ PROJECT_NAME|default:"SOGENTIS" }} — {% now "Y" %}.
+      {% trans "Pôle économique — Services" %}
+    </small>
+  </footer>
+
+</div>
+
+{# JS principal du pôle services #}
+<script src="{% static 'services/js/services.js' %}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html> {% endcomment %}

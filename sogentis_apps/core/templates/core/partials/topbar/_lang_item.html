@@ -1,0 +1,9 @@
+{# templates/core/partials/topbar/_lang_item.html #}
+<form action="{% url 'core:switch_language' %}" method="post" class="px-2 py-1">
+  {% csrf_token %}
+  <input type="hidden" name="language" value="{{ code }}">
+  <input type="hidden" name="next" value="{{ NEXT }}">
+  <button type="submit" class="dropdown-item {% if CUR_LANG == code %}active{% endif %}">
+    {{ label }}
+  </button>
+</form>

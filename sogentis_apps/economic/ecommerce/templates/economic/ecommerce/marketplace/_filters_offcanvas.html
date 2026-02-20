@@ -1,0 +1,10 @@
+{% load i18n %}
+<div class="offcanvas offcanvas-start mk-offcanvas" tabindex="-1" id="mkFilters" aria-labelledby="mkFiltersLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="mkFiltersLabel">{% trans "Filtres" %}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="{% trans 'Fermer' %}"></button>
+  </div>
+  <div class="offcanvas-body">
+    {% include "economic/ecommerce/partials/_marketplace_filters.html" %}
+  </div>
+</div>

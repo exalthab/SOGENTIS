@@ -1,0 +1,38 @@
+{# templates/economic/prestations/projects/project_create.html #}
+{% extends "economic/prestations/base_prestations.html" %}
+{% load i18n dashboard_tags %}
+
+{% block prestations_title %}{% trans "Publier un projet" %}{% endblock %}
+
+{% block prestations_content %}
+  {% safe_url "economic:prestations:projects_list" as u_list %}
+
+  <div class="rounded-4 bg-body border p-3 p-lg-4">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+      <div>
+        <h1 class="h5 mb-1">{% trans "Publier un projet" %}</h1>
+        <div class="text-muted small">{% trans "Décrivez votre besoin : vous recevrez des propositions." %}</div>
+      </div>
+      <a class="btn btn-sm btn-outline-secondary" href="{{ u_list|default:'#' }}">{% trans "Voir les projets" %}</a>
+    </div>
+
+    <form method="post" class="row g-3">
+      {% csrf_token %}
+      <div class="col-12">
+        <label class="form-label">{% trans "Titre" %}</label>
+        <input class="form-control" name="title" minlength="5" required placeholder="{% trans 'Ex : Site vitrine pour PME' %}">
+      </div>
+
+      <div class="col-12">
+        <label class="form-label">{% trans "Description" %}</label>
+        <textarea class="form-control" name="description" rows="7" minlength="40" required
+          placeholder="{% trans 'Contexte, objectifs, délai, budget estimatif…' %}"></textarea>
+      </div>
+
+      <div class="col-12 d-flex flex-wrap gap-2">
+        <button class="btn btn-primary" type="submit">{% trans "Publier" %}</button>
+        <a class="btn btn-outline-secondary" href="{{ u_list|default:'#' }}">{% trans "Annuler" %}</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}

@@ -1,0 +1,47 @@
+{# templates/tech/partials/menu/_tech_nav_primary.html #}
+{% load i18n dashboard_tags %}
+
+{% safe_url "tech:integrations:index" as integrations_index_url %}
+{% safe_url "tech:analytics:index" as analytics_index_url %}
+{% safe_url "tech:ai:index" as ai_index_url %}
+{% safe_url "tech:labs:index" as labs_index_url %}
+
+<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+  {% if integrations_index_url %}
+    <li class="nav-item">
+      <a class="nav-link {% if request.resolver_match.namespaces|any_in_csv:'integrations' %}active{% endif %}"
+         href="{{ integrations_index_url }}">
+        🔌 {% trans "Intégrations" %}
+      </a>
+    </li>
+  {% endif %}
+
+  {% if analytics_index_url %}
+    <li class="nav-item">
+      <a class="nav-link {% if request.resolver_match.namespaces|any_in_csv:'analytics' %}active{% endif %}"
+         href="{{ analytics_index_url }}">
+        📈 {% trans "Analytics" %}
+      </a>
+    </li>
+  {% endif %}
+
+  {% if ai_index_url %}
+    <li class="nav-item">
+      <a class="nav-link {% if request.resolver_match.namespaces|any_in_csv:'ai' %}active{% endif %}"
+         href="{{ ai_index_url }}">
+        🤖 {% trans "AI" %}
+      </a>
+    </li>
+  {% endif %}
+
+  {% if labs_index_url %}
+    <li class="nav-item">
+      <a class="nav-link {% if request.resolver_match.namespaces|any_in_csv:'labs' %}active{% endif %}"
+         href="{{ labs_index_url }}">
+        🧪 {% trans "Labs" %}
+      </a>
+    </li>
+  {% endif %}
+
+</ul>

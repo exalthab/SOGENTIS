@@ -1,0 +1,430 @@
+{# templates/economic/prestations/partials/index/_svc_filters.html #}
+{% load i18n dashboard_tags %}
+
+{% safe_url "economic:prestations:index" as prestations_index_url %}
+
+{% with q=request.GET.q|default:'' typ=request.GET.type|default:'' sort=request.GET.sort|default:'' %}
+<section class="svc-filters mb-3" aria-label="{% trans 'Filtres prestations' %}">
+  <form method="get" action="{{ prestations_index_url|default:'#' }}" class="svc-filters-bar">
+    <div class="row g-2 align-items-end">
+
+      <div class="col-12 col-md-6 col-lg-5">
+        <label class="form-label small mb-1" for="svcQ">{% trans "Recherche" %}</label>
+        <div class="input-group input-group-sm">
+          <span class="input-group-text">🔎</span>
+          <input id="svcQ"
+                 class="form-control"
+                 type="search"
+                 name="q"
+                 value="{{ q }}"
+                 placeholder="{% trans 'Ex: site vitrine, logo, application, audit…' %}">
+          {% if q %}
+            <a class="btn btn-outline-secondary"
+               href="{{ prestations_index_url|default:'#' }}"
+               {% if not prestations_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>✕</a>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="col-6 col-md-3 col-lg-3">
+        <label class="form-label small mb-1" for="svcType">{% trans "Type" %}</label>
+
+        {% if type_choices %}
+          <select id="svcType" class="form-select form-select-sm" name="type">
+            <option value="">{% trans "Tous" %}</option>
+            {% for code,label in type_choices %}
+              <option value="{{ code }}" {% if typ == code %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+        {% else %}
+          <input id="svcType"
+                 class="form-control form-control-sm"
+                 name="type"
+                 value="{{ typ }}"
+                 placeholder="{% trans 'ex: DESIGN, DEV…' %}">
+        {% endif %}
+      </div>
+
+      <div class="col-6 col-md-3 col-lg-2">
+        <label class="form-label small mb-1" for="svcSort">{% trans "Trier" %}</label>
+        <select id="svcSort" class="form-select form-select-sm" name="sort">
+          <option value="">{% trans "Pertinence" %}</option>
+          <option value="new" {% if sort == "new" %}selected{% endif %}>{% trans "Nouveaux" %}</option>
+          <option value="popular" {% if sort == "popular" %}selected{% endif %}>{% trans "Populaires" %}</option>
+          <option value="price_asc" {% if sort == "price_asc" %}selected{% endif %}>{% trans "Prix ↑" %}</option>
+          <option value="price_desc" {% if sort == "price_desc" %}selected{% endif %}>{% trans "Prix ↓" %}</option>
+        </select>
+      </div>
+
+      <div class="col-12 col-lg-2 d-flex gap-2">
+        <button type="submit" class="btn btn-sm btn-dark flex-grow-1" {% if not prestations_index_url %}disabled{% endif %}>
+          {% trans "Filtrer" %}
+        </button>
+        {% if q or typ or sort %}
+          <a class="btn btn-sm btn-outline-secondary"
+             href="{{ prestations_index_url|default:'#' }}"
+             {% if not prestations_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+            {% trans "Reset" %}
+          </a>
+        {% endif %}
+      </div>
+
+    </div>
+  </form>
+</section>
+{% endwith %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/partials/index/_svc_filters.html #}
+{% load i18n static ecom_money dashboard_tags %}
+
+{% safe_url "prestations:index" as u_index %}
+
+<section class="rounded-4 bg-body border p-3 p-lg-4 mb-3">
+  <form method="get" action="{{ u_index }}" class="row g-2 g-lg-3 align-items-end">
+
+    <div class="col-12 col-lg-5">
+      <label class="form-label small text-muted">{% trans "Recherche" %}</label>
+      <input
+        type="search"
+        name="q"
+        value="{{ request.GET.q|default:'' }}"
+        class="form-control"
+        placeholder="{% trans 'Mot-clé, besoin, objectif…' %}">
+    </div>
+
+    <div class="col-12 col-sm-6 col-lg-3">
+      <label class="form-label small text-muted">{% trans "Type" %}</label>
+      <select name="type" class="form-select">
+        <option value="">{% trans "Tous" %}</option>
+        {% for t in prestation_types %}
+          <option value="{{ t.code }}"
+                  {% if request.GET.type == t.code %}selected{% endif %}>
+            {{ t.label }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col-12 col-sm-6 col-lg-2">
+      <label class="form-label small text-muted">{% trans "Tri" %}</label>
+      <select name="sort" class="form-select">
+        <option value="featured" {% if not request.GET.sort or request.GET.sort == 'featured' %}selected{% endif %}>
+          {% trans "Recommandé" %}
+        </option>
+        <option value="new" {% if request.GET.sort == 'new' %}selected{% endif %}>
+          {% trans "Nouveauté" %}
+        </option>
+        <option value="price_asc" {% if request.GET.sort == 'price_asc' %}selected{% endif %}>
+          {% trans "Prix croissant" %}
+        </option>
+        <option value="price_desc" {% if request.GET.sort == 'price_desc' %}selected{% endif %}>
+          {% trans "Prix décroissant" %}
+        </option>
+      </select>
+    </div>
+
+    <div class="col-12 col-lg-2 d-grid">
+      <button class="btn btn-primary" type="submit">
+        {% trans "Appliquer" %}
+      </button>
+    </div>
+
+    {% if request.GET %}
+      <div class="col-12">
+        <div class="d-flex flex-wrap align-items-center gap-2">
+          <span class="small text-muted">{% trans "Filtres actifs :" %}</span>
+
+          {% if request.GET.q %}
+            <span class="badge text-bg-light border">q: {{ request.GET.q }}</span>
+          {% endif %}
+          {% if request.GET.type %}
+            <span class="badge text-bg-light border">type: {{ request.GET.type }}</span>
+          {% endif %}
+          {% if request.GET.sort %}
+            <span class="badge text-bg-light border">sort: {{ request.GET.sort }}</span>
+          {% endif %}
+
+          <a class="btn btn-sm btn-outline-secondary ms-auto" href="{{ u_index }}">
+            {% trans "Réinitialiser" %}
+          </a>
+        </div>
+      </div>
+    {% endif %}
+
+  </form>
+</section>
+ {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/partials/index/_svc_filters.html #}
+{% load i18n dashboard_tags %}
+
+{% safe_url "prestations:index" as u_index %}
+
+<section id="catalogue" class="rounded-4 bg-body border p-3 p-lg-4 mb-3">
+  <form method="get" action="{{ u_index|default:'' }}" class="row g-2 g-lg-3 align-items-end">
+    <div class="col-12 col-lg-5">
+      <label class="form-label small text-muted">{% trans "Recherche" %}</label>
+      <input type="text" name="q" value="{{ request.GET.q|default:'' }}" class="form-control" placeholder="{% trans 'Mot-clé, besoin, objectif…' %}">
+    </div>
+
+    <div class="col-12 col-sm-6 col-lg-3">
+      <label class="form-label small text-muted">{% trans "Type" %}</label>
+      <select name="type" class="form-select">
+        <option value="">{% trans "Tous" %}</option>
+        {% if prestation_types %}
+          {% for t in prestation_types %}
+            <option value="{{ t.code|default:t }}" {% if request.GET.type == t.code or request.GET.type == t %}selected{% endif %}>
+              {{ t.label|default:t.name|default:t }}
+            </option>
+          {% endfor %}
+        {% else %}
+          <option value="audit" {% if request.GET.type == 'audit' %}selected{% endif %}>{% trans "Audit" %}</option>
+          <option value="maintenance" {% if request.GET.type == 'maintenance' %}selected{% endif %}>{% trans "Maintenance" %}</option>
+          <option value="installation" {% if request.GET.type == 'installation' %}selected{% endif %}>{% trans "Installation" %}</option>
+        {% endif %}
+      </select>
+    </div>
+
+    <div class="col-12 col-sm-6 col-lg-2">
+      <label class="form-label small text-muted">{% trans "Tri" %}</label>
+      <select name="sort" class="form-select">
+        <option value="featured" {% if request.GET.sort == 'featured' or not request.GET.sort %}selected{% endif %}>{% trans "Recommandé" %}</option>
+        <option value="new" {% if request.GET.sort == 'new' %}selected{% endif %}>{% trans "Nouveauté" %}</option>
+        <option value="price_asc" {% if request.GET.sort == 'price_asc' %}selected{% endif %}>{% trans "Prix croissant" %}</option>
+        <option value="price_desc" {% if request.GET.sort == 'price_desc' %}selected{% endif %}>{% trans "Prix décroissant" %}</option>
+      </select>
+    </div>
+
+    <div class="col-12 col-lg-2 d-grid">
+      <button class="btn btn-primary" type="submit">{% trans "Appliquer" %}</button>
+    </div>
+
+    {% if request.GET %}
+      <div class="col-12">
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+          <span class="small text-muted">{% trans "Filtres actifs :" %}</span>
+          {% if request.GET.q %}<span class="badge text-bg-light border">q: {{ request.GET.q }}</span>{% endif %}
+          {% if request.GET.type %}<span class="badge text-bg-light border">type: {{ request.GET.type }}</span>{% endif %}
+          {% if request.GET.sort %}<span class="badge text-bg-light border">sort: {{ request.GET.sort }}</span>{% endif %}
+          <a class="btn btn-sm btn-outline-secondary ms-auto" href="{{ u_index|default:'#' }}">{% trans "Réinitialiser" %}</a>
+        </div>
+      </div>
+    {% endif %}
+  </form>
+</section> {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/partials/index/_svc_filters.html -good #}
+{% load i18n %}
+
+<section class="svc-filters" id="prestations">
+  <div class="container pb-2 pb-lg-3">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body p-3 p-md-4">
+
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+          <div>
+            <h2 class="h5 fw-bold mb-1">{% trans "Trouver une prestation" %}</h2>
+            <div class="text-muted small">{% trans "Filtrez par mot-clé, catégorie ou type." %}</div>
+          </div>
+
+          <div class="text-muted small">
+            <i class="fa-regular fa-circle-dot me-1"></i>
+            {{ page_obj.paginator.count|default:services|length|default:0 }} {% trans "résultat(s)" %}
+          </div>
+        </div>
+
+        <form method="get" class="row g-2 g-md-3 align-items-end">
+
+          <div class="col-lg-5">
+            <label class="form-label fw-semibold">{% trans "Recherche" %}</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i></span>
+
+              <input type="search"
+                     name="q"
+                     value="{{ q|default_if_none:'' }}"
+                     class="form-control"
+                     placeholder="{% trans 'Ex: site e-commerce, VPS, logo…' %}">
+
+              {% if q or cat or type %}
+                <a class="btn btn-outline-secondary"
+                   href="?"
+                   aria-label="{% trans 'Réinitialiser' %}">
+                  <i class="fa-solid fa-xmark"></i>
+                </a>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="col-lg-3">
+            <label class="form-label fw-semibold">{% trans "Catégorie" %}</label>
+            <select name="cat" class="form-select">
+              <option value="">{% trans "Toutes" %}</option>
+              {% for c in categories %}
+                <option value="{{ c.slug }}" {% if cat == c.slug %}selected{% endif %}>
+                  {{ c.name|default:c.slug }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="col-lg-3">
+            <label class="form-label fw-semibold">{% trans "Type" %}</label>
+            <select name="type" class="form-select">
+              <option value="">{% trans "Tous" %}</option>
+              {% for value,label in service_type_choices %}
+                <option value="{{ value }}" {% if type == value %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="col-lg-1 d-grid">
+            <button class="btn btn-primary"
+                    type="submit"
+                    aria-label="{% trans 'Rechercher' %}">
+              <i class="fa-solid fa-arrow-right-long"></i>
+            </button>
+          </div>
+
+        </form>
+
+        <div class="mt-3 d-flex flex-wrap gap-2 align-items-center small text-muted">
+          <span class="badge text-bg-light border">
+            <i class="fa-regular fa-calendar me-1"></i>
+            {% trans "Affichage" %}: {{ per_page|default:12 }}
+          </span>
+
+          {% if is_paginated %}
+            <span class="badge text-bg-light border">
+              <i class="fa-solid fa-layer-group me-1"></i>
+              {% trans "Pages" %}: {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+            </span>
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section> {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/partials/index/_svc_filters.html #}
+{% load i18n %}
+
+{# ===================== #}
+{#   FILTRES SERVICES     #}
+{# ===================== #}
+<section class="svc-filters" id="services">
+  <div class="container pb-2 pb-lg-3">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body p-3 p-md-4">
+
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+          <div>
+            <h2 class="h5 fw-bold mb-1">{% trans "Trouver un service" %}</h2>
+            <div class="text-muted small">{% trans "Filtrez par mot-clé, catégorie ou type." %}</div>
+          </div>
+
+          <div class="text-muted small">
+            <i class="fa-regular fa-circle-dot me-1"></i>
+            {{ page_obj.paginator.count|default:services|length|default:0 }} {% trans "résultat(s)" %}
+          </div>
+        </div>
+
+        {# ===================== #}
+        {#   FORM (GET)           #}
+        {# ===================== #}
+        <form method="get" class="row g-2 g-md-3 align-items-end">
+
+          <div class="col-lg-5">
+            <label class="form-label fw-semibold">{% trans "Recherche" %}</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i></span>
+
+              <input type="search"
+                     name="q"
+                     value="{{ q|default_if_none:'' }}"
+                     class="form-control"
+                     placeholder="{% trans 'Ex: site e-commerce, VPS, logo…' %}">
+
+              {% if q or cat or type %}
+                <a class="btn btn-outline-secondary"
+                   href="?"
+                   aria-label="{% trans 'Réinitialiser' %}">
+                  <i class="fa-solid fa-xmark"></i>
+                </a>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="col-lg-3">
+            <label class="form-label fw-semibold">{% trans "Catégorie" %}</label>
+            <select name="cat" class="form-select">
+              <option value="">{% trans "Toutes" %}</option>
+              {% for c in categories %}
+                <option value="{{ c.slug }}" {% if cat == c.slug %}selected{% endif %}>
+                  {{ c.name|default:c.slug }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="col-lg-3">
+            <label class="form-label fw-semibold">{% trans "Type" %}</label>
+            <select name="type" class="form-select">
+              <option value="">{% trans "Tous" %}</option>
+              {% for value,label in service_type_choices %}
+                <option value="{{ value }}" {% if type == value %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="col-lg-1 d-grid">
+            <button class="btn btn-primary"
+                    type="submit"
+                    aria-label="{% trans 'Rechercher' %}">
+              <i class="fa-solid fa-arrow-right-long"></i>
+            </button>
+          </div>
+
+        </form>
+
+        {# ===================== #}
+        {#   META (compact)       #}
+        {# ===================== #}
+        <div class="mt-3 d-flex flex-wrap gap-2 align-items-center small text-muted">
+          <span class="badge text-bg-light border">
+            <i class="fa-regular fa-calendar me-1"></i>
+            {% trans "Affichage" %}: {{ per_page|default:12 }}
+          </span>
+
+          {% if is_paginated %}
+            <span class="badge text-bg-light border">
+              <i class="fa-solid fa-layer-group me-1"></i>
+              {% trans "Pages" %}: {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+            </span>
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section> {% endcomment %}

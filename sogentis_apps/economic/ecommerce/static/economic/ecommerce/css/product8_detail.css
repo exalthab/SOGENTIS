@@ -1,0 +1,297 @@
+/* static/economic/ecommerce/css/product8_detail.css */
+.pd-shell{ --pd-gap: 18px; }
+
+.pd-title{ font-weight: 800; letter-spacing: -.2px; }
+.pd-muted{ color: rgba(0,0,0,.62); }
+
+.pd-card{
+  border-radius: 16px;
+  border: 1px solid rgba(0,0,0,.08);
+  background:#fff;
+}
+
+.pd-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  padding:.25rem .6rem;
+  border-radius:999px;
+  background: rgba(0,0,0,.06);
+  font-size:.82rem;
+}
+
+.pd-deal{
+  border: 1px solid rgba(220,53,69,.35);
+  background: rgba(220,53,69,.06);
+  border-radius: 14px;
+  overflow:hidden;
+}
+.pd-deal .pd-deal-head{
+  background: #dc3545;
+  color:#fff;
+  padding: .55rem .9rem;
+  font-weight: 800;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:.75rem;
+  flex-wrap:wrap;
+}
+.pd-price{
+  font-size: 2.05rem;
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -.3px;
+}
+.pd-old{ text-decoration: line-through; opacity:.55; }
+.pd-savings{
+  color:#dc3545;
+  font-weight: 800;
+  background: rgba(220,53,69,.10);
+  padding:.25rem .5rem;
+  border-radius: 10px;
+}
+
+/* ========================= */
+/* Gallery                   */
+/* ========================= */
+.pd-gallery{
+  display:grid;
+  grid-template-columns: 84px 1fr;
+  gap: var(--pd-gap);
+  align-items:start;
+}
+.pd-thumbs{
+  display:flex;
+  flex-direction:column;
+  gap: 10px;
+  max-height: 520px;
+  overflow:auto;
+  padding-right: 6px;
+}
+.pd-thumb-btn{
+  width: 78px;
+  height: 78px;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,.10);
+  background:#fff;
+  padding:0;
+  overflow:hidden;
+  position:relative;
+  transition: transform .12s ease, border-color .12s ease;
+}
+.pd-thumb-btn:hover{
+  transform: translateY(-1px);
+  border-color: rgba(13,110,253,.35);
+}
+.pd-thumb-btn.is-active{ border: 2px solid #0d6efd; }
+.pd-thumb-btn img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+.pd-main{
+  border-radius: 18px;
+  border: 1px solid rgba(0,0,0,.08);
+  background: #fff;
+  overflow:hidden;
+  position:relative;
+  min-height: 320px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.pd-main img{ width:100%; height:auto; display:block; }
+
+.pd-main .pd-zoom{
+  position:absolute;
+  right: 12px;
+  bottom: 12px;
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,.12);
+  background: rgba(255,255,255,.92);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* ========================= */
+/* Sticky buy box            */
+/* ========================= */
+.pd-buybox{ position: sticky; top: 92px; }
+
+.pd-buybox .pd-buy-actions .btn{
+  border-radius: 14px;
+  font-weight: 800;
+  padding: .85rem 1rem;
+}
+
+/* ========================= */
+/* Qty                       */
+/* ========================= */
+.pd-qty{
+  display:flex;
+  align-items:center;
+  gap:.5rem;
+  border: 1px solid rgba(0,0,0,.12);
+  border-radius: 14px;
+  padding: .35rem .45rem;
+  width: max-content;
+  background:#fff;
+}
+.pd-qty button{
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 0;
+  background: rgba(0,0,0,.06);
+  font-weight: 900;
+}
+.pd-qty button:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+.pd-qty input{
+  width: 46px;
+  border: 0;
+  text-align:center;
+  font-weight: 800;
+  outline:none;
+  background: transparent;
+}
+
+/* ========================= */
+/* Service commitment (image) */
+/* ========================= */
+.pd-commit{
+  border-radius: 16px;
+  border: 1px solid rgba(0,0,0,.08);
+  background:#fff;
+  overflow:hidden;
+}
+.pd-commit-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(0,0,0,.06);
+}
+.pd-commit-title{
+  font-weight: 900;
+  letter-spacing: -.2px;
+}
+.pd-commit-shipto{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+}
+.pd-shipto-pill{
+  display:inline-flex;
+  align-items:center;
+  gap: 8px;
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: rgba(0,0,0,.06);
+  font-weight: 800;
+}
+.pd-commit-list{ display:block; }
+.pd-commit-item{
+  display:flex;
+  align-items:center;
+  gap: 12px;
+  padding: 12px 14px;
+  text-decoration:none;
+  color: inherit;
+}
+.pd-commit-item + .pd-commit-item{
+  border-top: 1px solid rgba(0,0,0,.06);
+}
+.pd-commit-item:hover{
+  background: rgba(0,0,0,.02);
+}
+.pd-commit-ico{
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: rgba(0,0,0,.05);
+}
+.pd-commit-main{
+  display:flex;
+  flex-direction:column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+.pd-commit-strong{
+  font-weight: 900;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pd-commit-arrow{
+  font-size: 1.35rem;
+  opacity: .55;
+}
+
+/* Tabs */
+.pd-tabs .nav-link{ border-radius: 999px; font-weight: 800; }
+
+/* Related */
+.pd-related .card{
+  border-radius: 16px;
+  border: 1px solid rgba(0,0,0,.08);
+  overflow:hidden;
+  transition: transform .14s ease;
+}
+.pd-related .card:hover{ transform: translateY(-2px); }
+
+/* Delivery modal box */
+.pd-delivery-box{
+  border: 1px solid rgba(0,0,0,.08);
+  border-radius: 14px;
+  padding: 12px;
+  background: rgba(25,135,84,.06);
+}
+
+/* Responsive */
+@media (max-width: 992px){
+  .pd-gallery{ grid-template-columns: 1fr; }
+  .pd-thumbs{
+    flex-direction: row;
+    max-height: none;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-right: 0;
+    padding-bottom: 6px;
+  }
+  .pd-thumb-btn{ width: 74px; height: 74px; }
+  .pd-buybox{ position: static; top:auto; }
+}
+
+/* Dark */
+[data-bs-theme="dark"] .pd-card,
+[data-bs-theme="dark"] .pd-main,
+[data-bs-theme="dark"] .pd-thumb-btn,
+[data-bs-theme="dark"] .pd-commit{
+  background: rgba(20,20,22,.92);
+  border-color: rgba(255,255,255,.12);
+}
+[data-bs-theme="dark"] .pd-muted{ color: rgba(255,255,255,.68); }
+[data-bs-theme="dark"] .pd-chip{ background: rgba(255,255,255,.08); }
+[data-bs-theme="dark"] .pd-qty{ background: rgba(20,20,22,.92); border-color: rgba(255,255,255,.12); }
+[data-bs-theme="dark"] .pd-qty button{ background: rgba(255,255,255,.10); color: rgba(255,255,255,.92); }
+[data-bs-theme="dark"] .pd-zoom{ background: rgba(20,20,22,.92); border-color: rgba(255,255,255,.12); }
+[data-bs-theme="dark"] .pd-shipto-pill{ background: rgba(255,255,255,.10); }
+[data-bs-theme="dark"] .pd-commit-item:hover{ background: rgba(255,255,255,.04); }
+[data-bs-theme="dark"] .pd-commit-ico{ background: rgba(255,255,255,.08); }
+[data-bs-theme="dark"] .pd-delivery-box{
+  background: rgba(25,135,84,.12);
+  border-color: rgba(255,255,255,.12);
+}

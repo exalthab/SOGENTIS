@@ -1,0 +1,29 @@
+{# templates/tech/ai/index.html #}
+{% extends "tech/base_tech.html" %}
+{% load i18n %}
+
+{% block tech_title %}{{ page_title|default:_("AI") }}{% endblock %}
+
+{% block tech_content %}
+<div class="container py-4">
+  <h1 class="h4 mb-1">🤖 {% trans "AI" %}</h1>
+  <div class="text-muted small mb-3">{% trans "Génération, tri, aide au support, SEO, productivité." %}</div>
+
+  <div class="row g-3">
+    <div class="col-12 col-lg-4"><div class="card h-100"><div class="card-body">
+      <div class="fw-semibold">{% trans "Rédaction / SEO" %}</div>
+      <div class="text-muted small mt-1">{% trans "Fiches produit, descriptions, meta." %}</div>
+    </div></div></div>
+
+    <div class="col-12 col-lg-4"><div class="card h-100"><div class="card-body">
+      <div class="fw-semibold">{% trans "Support Assist" %}</div>
+      <div class="text-muted small mt-1">{% trans "Brouillons, résumés, priorisation." %}</div>
+    </div></div></div>
+
+    <div class="col-12 col-lg-4"><div class="card h-100"><div class="card-body">
+      <div class="fw-semibold">{% trans "Automatisations" %}</div>
+      <div class="text-muted small mt-1">{% trans "Workflows et actions répétitives." %}</div>
+    </div></div></div>
+  </div>
+</div>
+{% endblock %}

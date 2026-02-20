@@ -1,0 +1,588 @@
+{% load i18n dashboard_tags %}
+
+{% with rm=request.resolver_match %}
+  {% with ns=rm.namespace|default:'' %}
+
+    {% safe_url "economic:ecommerce:index" as ecommerce_index_url %}
+    {% safe_url "economic:prestations:index" as prestations_index_url %}
+    {% safe_url "economic:formations:index" as formations_index_url %}
+    {% safe_url "economic:b2b:index" as b2b_index_url %}
+
+    {% safe_url "economic:resources:index" as resources_index_url %}
+    {% safe_url "economic:support:index" as support_index_url %}
+
+    {% safe_url "tech:ai:index" as ai_index_url %}
+    {% safe_url "tech:integrations:index" as integrations_index_url %}
+    {% safe_url "tech:analytics:index" as analytics_index_url %}
+    {% safe_url "tech:labs:index" as labs_index_url %}
+
+    <ul class="navbar-nav eco-nav-primary flex-row flex-nowrap me-lg-auto">
+
+      <li class="nav-item">
+        <a class="nav-link eco-nav-link small {% if 'ecommerce' in ns %}active{% endif %} {% if not ecommerce_index_url %}disabled{% endif %}"
+           href="{{ ecommerce_index_url|default:'#' }}"
+           {% if 'ecommerce' in ns %}aria-current="page"{% endif %}
+           {% if not ecommerce_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+          🛒 {% trans "Boutique" %}
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link eco-nav-link small {% if 'prestations' in ns %}active{% endif %} {% if not prestations_index_url %}disabled{% endif %}"
+           href="{{ prestations_index_url|default:'#' }}"
+           {% if 'prestations' in ns %}aria-current="page"{% endif %}
+           {% if not prestations_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+          🧰 {% trans "Prestations" %}
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link eco-nav-link small {% if 'formations' in ns %}active{% endif %} {% if not formations_index_url %}disabled{% endif %}"
+           href="{{ formations_index_url|default:'#' }}"
+           {% if 'formations' in ns %}aria-current="page"{% endif %}
+           {% if not formations_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+          🎓 {% trans "Formations" %}
+        </a>
+      </li>
+
+      {% if resources_index_url or support_index_url or ai_index_url or integrations_index_url or analytics_index_url or labs_index_url %}
+        {% with tech_active=request.resolver_match.namespaces|any_in_csv:"resources,support,tech,ai,integrations,analytics,labs" %}
+          <li class="nav-item dropdown">
+            <a class="nav-link eco-nav-link small dropdown-toggle {% if tech_active %}active{% endif %}"
+               href="#"
+               role="button"
+               data-bs-toggle="dropdown"
+               aria-expanded="false">
+              ⚡ {% trans "Tech+" %}
+            </a>
+
+            <ul class="dropdown-menu">
+
+              {% if resources_index_url %}
+                <li><a class="dropdown-item {% if request.resolver_match.namespaces|any_in_csv:'resources' %}active{% endif %}" href="{{ resources_index_url }}">📚 {% trans "Ressources" %}</a></li>
+              {% endif %}
+              {% if support_index_url %}
+                <li><a class="dropdown-item {% if request.resolver_match.namespaces|any_in_csv:'support' %}active{% endif %}" href="{{ support_index_url }}">🛟 {% trans "Support" %}</a></li>
+              {% endif %}
+
+              {% if ai_index_url or integrations_index_url or analytics_index_url or labs_index_url %}
+                <li><hr class="dropdown-divider"></li>
+              {% endif %}
+
+              {% if ai_index_url %}
+                <li><a class="dropdown-item {% if request.resolver_match.namespaces|any_in_csv:'ai' %}active{% endif %}" href="{{ ai_index_url }}">🤖 {% trans "AI" %}</a></li>
+              {% endif %}
+              {% if integrations_index_url %}
+                <li><a class="dropdown-item {% if request.resolver_match.namespaces|any_in_csv:'integrations' %}active{% endif %}" href="{{ integrations_index_url }}">🔌 {% trans "Intégrations" %}</a></li>
+              {% endif %}
+              {% if analytics_index_url %}
+                <li><a class="dropdown-item {% if request.resolver_match.namespaces|any_in_csv:'analytics' %}active{% endif %}" href="{{ analytics_index_url }}">📈 {% trans "Analytics" %}</a></li>
+              {% endif %}
+              {% if labs_index_url %}
+                <li><a class="dropdown-item {% if request.resolver_match.namespaces|any_in_csv:'labs' %}active{% endif %}" href="{{ labs_index_url }}">🧪 {% trans "Labs" %}</a></li>
+              {% endif %}
+
+            </ul>
+          </li>
+        {% endwith %}
+      {% endif %}
+
+      <li class="nav-item">
+        <a class="nav-link eco-nav-link small {% if 'b2b' in ns %}active{% endif %} {% if not b2b_index_url %}disabled{% endif %}"
+           href="{{ b2b_index_url|default:'#' }}"
+           {% if 'b2b' in ns %}aria-current="page"{% endif %}
+           {% if not b2b_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+          🏢 {% trans "B2B" %}
+        </a>
+      </li>
+
+    </ul>
+
+  {% endwith %}
+{% endwith %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/partials/menu/_eco_nav_primary.html #}
+{% load i18n dashboard_tags %}
+
+<ul class="navbar-nav eco-nav-primary flex-row flex-nowrap me-lg-auto">
+
+  <li class="nav-item">
+    <a class="nav-link eco-nav-link small
+              {% if 'ecommerce' in ns %}active{% endif %}
+              {% if not ecommerce_index_url %}disabled{% endif %}"
+       href="{{ ecommerce_index_url|default:'#' }}"
+       {% if 'ecommerce' in ns %}aria-current="page"{% endif %}
+       {% if not ecommerce_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      🛒 {% trans "Boutique" %}
+    </a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link eco-nav-link small
+              {% if 'prestations' in ns %}active{% endif %}
+              {% if not prestations_index_url %}disabled{% endif %}"
+       href="{{ prestations_index_url|default:'#' }}"
+       {% if 'prestations' in ns %}aria-current="page"{% endif %}
+       {% if not prestations_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      🧰 {% trans "Prestations" %}
+    </a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link eco-nav-link small
+              {% if 'formations' in ns %}active{% endif %}
+              {% if not formations_index_url %}disabled{% endif %}"
+       href="{{ formations_index_url|default:'#' }}"
+       {% if 'formations' in ns %}aria-current="page"{% endif %}
+       {% if not formations_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      🎓 {% trans "Formations" %}
+    </a>
+  </li>
+
+  {% if resources_index_url or support_index_url or ai_index_url or integrations_index_url or analytics_index_url or labs_index_url %}
+    {% with tech_active=request.resolver_match.namespaces|any_in_csv:"resources,support,ai,integrations,analytics,labs" %}
+      <li class="nav-item dropdown">
+        <a class="nav-link eco-nav-link small dropdown-toggle {% if tech_active %}active{% endif %}"
+           href="#"
+           role="button"
+           data-bs-toggle="dropdown"
+           aria-expanded="false">
+          ⚡ {% trans "Tech+" %}
+        </a>
+
+        <ul class="dropdown-menu">
+
+          {% if resources_index_url %}
+            <li>
+              <a class="dropdown-item {% if request.resolver_match.namespaces|any_in_csv:'resources' %}active{% endif %}"
+                 href="{{ resources_index_url }}">
+                📚 {% trans "Ressources" %}
+              </a>
+            </li>
+          {% endif %}
+
+          {% if support_index_url %}
+            <li>
+              <a class="dropdown-item {% if request.resolver_match.namespaces|any_in_csv:'support' %}active{% endif %}"
+                 href="{{ support_index_url }}">
+                🛟 {% trans "Support" %}
+              </a>
+            </li>
+          {% endif %}
+
+          {% if ai_index_url or integrations_index_url or analytics_index_url or labs_index_url %}
+            <li><hr class="dropdown-divider"></li>
+          {% endif %}
+
+          {% if ai_index_url %}
+            <li><a class="dropdown-item {% if request.resolver_match.namespaces|any_in_csv:'ai' %}active{% endif %}" href="{{ ai_index_url }}">🤖 {% trans "AI" %}</a></li>
+          {% endif %}
+          {% if integrations_index_url %}
+            <li><a class="dropdown-item {% if request.resolver_match.namespaces|any_in_csv:'integrations' %}active{% endif %}" href="{{ integrations_index_url }}">🔌 {% trans "Intégrations" %}</a></li>
+          {% endif %}
+          {% if analytics_index_url %}
+            <li><a class="dropdown-item {% if request.resolver_match.namespaces|any_in_csv:'analytics' %}active{% endif %}" href="{{ analytics_index_url }}">📈 {% trans "Analytics" %}</a></li>
+          {% endif %}
+          {% if labs_index_url %}
+            <li><a class="dropdown-item {% if request.resolver_match.namespaces|any_in_csv:'labs' %}active{% endif %}" href="{{ labs_index_url }}">🧪 {% trans "Labs" %}</a></li>
+          {% endif %}
+
+        </ul>
+      </li>
+    {% endwith %}
+  {% endif %}
+
+  <li class="nav-item">
+    <a class="nav-link eco-nav-link small
+              {% if 'b2b' in ns %}active{% endif %}
+              {% if not b2b_index_url %}disabled{% endif %}"
+       href="{{ b2b_index_url|default:'#' }}"
+       {% if 'b2b' in ns %}aria-current="page"{% endif %}
+       {% if not b2b_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      🏢 {% trans "B2B" %}
+    </a>
+  </li>
+
+</ul> {% endcomment %}
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/partials/menu/_eco_nav_primary.html #}
+{% load i18n dashboard_tags %}
+
+<ul class="navbar-nav eco-nav-primary me-lg-auto">
+
+  <li class="nav-item">
+    <a class="nav-link eco-nav-link small py-2 {% if ns == 'ecommerce' %}active{% endif %} {% if not ecommerce_index_url %}disabled{% endif %}"
+       href="{{ ecommerce_index_url|default:'#' }}"
+       {% if ns == 'ecommerce' %}aria-current="page"{% endif %}
+       {% if not ecommerce_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      🛒 <span class="d-lg-none d-xl-inline">{% trans "Boutique" %}</span>
+    </a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link eco-nav-link small py-2 {% if ns == 'prestations' %}active{% endif %} {% if not prestations_index_url %}disabled{% endif %}"
+       href="{{ prestations_index_url|default:'#' }}"
+       {% if ns == 'prestations' %}aria-current="page"{% endif %}
+       {% if not prestations_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      🧰 <span class="d-lg-none d-xl-inline">{% trans "Prestations" %}</span>
+    </a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link eco-nav-link small py-2 {% if ns == 'formations' %}active{% endif %} {% if not formations_index_url %}disabled{% endif %}"
+       href="{{ formations_index_url|default:'#' }}"
+       {% if ns == 'formations' %}aria-current="page"{% endif %}
+       {% if not formations_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      🎓 <span class="d-lg-none d-xl-inline">{% trans "Formations" %}</span>
+    </a>
+  </li>
+
+  {# B2B : visible public, accès réel contrôlé par la vue (login/permissions) #}
+  <li class="nav-item">
+    <a class="nav-link eco-nav-link small py-2 {% if ns == 'b2b' %}active{% endif %} {% if not b2b_index_url %}disabled{% endif %}"
+       href="{{ b2b_index_url|default:'#' }}"
+       {% if ns == 'b2b' %}aria-current="page"{% endif %}
+       {% if not b2b_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      🏢 <span class="d-lg-none d-xl-inline">{% trans "B2B" %}</span>
+    </a>
+  </li>
+
+  {# Tech+ : PUBLIC (ressources/support/faq) + items compte requis (tickets) #}
+  {% with tech_active=ns|in_csv:"resources,support,ai,integrations,analytics,labs" %}
+  <li class="nav-item dropdown">
+    <a class="nav-link eco-nav-link small dropdown-toggle py-2 {% if tech_active %}active{% endif %}"
+       href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"
+       aria-label="{% trans 'Menu Tech+' %}">
+      ✨ <span class="d-lg-none d-xl-inline">{% trans "Tech+" %}</span>
+    </a>
+
+    <ul class="dropdown-menu dropdown-menu-lg-start">
+
+      <li>
+        <a class="dropdown-item {% if ns == 'resources' %}active{% endif %} {% if not resources_index_url %}disabled{% endif %}"
+           href="{{ resources_index_url|default:'#' }}"
+           {% if not resources_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+          📚 {% trans "Ressources" %}
+        </a>
+      </li>
+
+      <li><hr class="dropdown-divider"></li>
+
+      <li>
+        <a class="dropdown-item {% if ns == 'support' and name == 'index' %}active{% endif %} {% if not support_index_url %}disabled{% endif %}"
+           href="{{ support_index_url|default:'#' }}"
+           {% if not support_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+          🛟 {% trans "Support" %}
+        </a>
+      </li>
+
+      <li>
+        <a class="dropdown-item {% if ns == 'support' and name == 'faq_list' %}active{% endif %} {% if not support_faq_list_url %}disabled{% endif %}"
+           href="{{ support_faq_list_url|default:'#' }}"
+           {% if not support_faq_list_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+          ❓ {% trans "FAQ" %}
+        </a>
+      </li>
+
+      {# Tickets = compte requis #}
+      <li><hr class="dropdown-divider"></li>
+      {% if is_auth %}
+        <li>
+          <a class="dropdown-item {% if ns == 'support' and name == 'ticket_list' %}active{% endif %} {% if not support_ticket_list_url %}disabled{% endif %}"
+             href="{{ support_ticket_list_url|default:'#' }}"
+             {% if not support_ticket_list_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+            🎫 {% trans "Mes tickets" %}
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item {% if ns == 'support' and name == 'ticket_create' %}active{% endif %} {% if not support_ticket_create_url %}disabled{% endif %}"
+             href="{{ support_ticket_create_url|default:'#' }}"
+             {% if not support_ticket_create_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+            ➕ {% trans "Ouvrir un ticket" %}
+          </a>
+        </li>
+      {% else %}
+        {% with nxt=support_ticket_create_url|default:support_index_url|default:'/'|urlencode %}
+          <li>
+            <a class="dropdown-item {% if not login_url %}disabled{% endif %}"
+               href="{% if login_url %}{{ login_url }}?context=economic&next={{ nxt }}{% else %}#{% endif %}"
+               {% if not login_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+              🔒 {% trans "Ouvrir un ticket (connexion)" %}
+            </a>
+          </li>
+        {% endwith %}
+      {% endif %}
+
+      {# Futurs (optionnels) #}
+      {% if ai_index_url or integrations_index_url or analytics_index_url or labs_index_url %}
+        <li><hr class="dropdown-divider"></li>
+        <li>
+          <a class="dropdown-item {% if not ai_index_url %}disabled{% endif %}" href="{{ ai_index_url|default:'#' }}"
+             {% if not ai_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>🤖 {% trans "IA" %}</a>
+        </li>
+        <li>
+          <a class="dropdown-item {% if not integrations_index_url %}disabled{% endif %}" href="{{ integrations_index_url|default:'#' }}"
+             {% if not integrations_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>🔌 {% trans "Intégrations" %}</a>
+        </li>
+        <li>
+          <a class="dropdown-item {% if not analytics_index_url %}disabled{% endif %}" href="{{ analytics_index_url|default:'#' }}"
+             {% if not analytics_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>📈 {% trans "Analytics" %}</a>
+        </li>
+        <li>
+          <a class="dropdown-item {% if not labs_index_url %}disabled{% endif %}" href="{{ labs_index_url|default:'#' }}"
+             {% if not labs_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>🧪 {% trans "Labs" %}</a>
+        </li>
+      {% endif %}
+
+    </ul>
+  </li>
+  {% endwith %}
+
+</ul>
+ {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/partials/menu/_eco_nav_primary.html #}
+{% load i18n %}
+
+<ul class="navbar-nav eco-nav-primary me-lg-auto">
+
+  <li class="nav-item">
+    <a class="nav-link eco-nav-link small py-2 {% if ns == 'ecommerce' %}active{% endif %} {% if not ecommerce_index_url %}disabled{% endif %}"
+       href="{{ ecommerce_index_url|default:'#' }}"
+       {% if ns == 'ecommerce' %}aria-current="page"{% endif %}
+       {% if not ecommerce_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      🛒 <span class="d-lg-none d-xl-inline">{% trans "Boutique (B2C)" %}</span>
+    </a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link eco-nav-link small py-2 {% if ns == 'prestations' %}active{% endif %} {% if not prestations_index_url %}disabled{% endif %}"
+       href="{{ prestations_index_url|default:'#' }}"
+       {% if ns == 'prestations' %}aria-current="page"{% endif %}
+       {% if not prestations_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      🧰 <span class="d-lg-none d-xl-inline">{% trans "Prestations" %}</span>
+    </a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link eco-nav-link small py-2 {% if ns == 'formations' %}active{% endif %} {% if not formations_index_url %}disabled{% endif %}"
+       href="{{ formations_index_url|default:'#' }}"
+       {% if ns == 'formations' %}aria-current="page"{% endif %}
+       {% if not formations_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      🎓 <span class="d-lg-none d-xl-inline">{% trans "Formations" %}</span>
+    </a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link eco-nav-link small py-2 {% if ns == 'b2b' %}active{% endif %} {% if not b2b_index_url %}disabled{% endif %}"
+       href="{{ b2b_index_url|default:'#' }}"
+       {% if ns == 'b2b' %}aria-current="page"{% endif %}
+       {% if not b2b_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      🏢 <span class="d-lg-none d-xl-inline">{% trans "Entreprise (B2B)" %}</span>
+    </a>
+  </li>
+
+  {# ✅ Tech+ ACTIVE (resources/support + futurs modules) #}
+  <li class="nav-item dropdown">
+    <a class="nav-link eco-nav-link small dropdown-toggle py-2
+      {% if ns == 'resources' or ns == 'support' or ns == 'ai' or ns == 'integrations' or ns == 'analytics' or ns == 'labs' %}active{% endif %}"
+      href="#"
+      role="button"
+      data-bs-toggle="dropdown"
+      aria-expanded="false"
+      aria-label="{% trans 'Menu Tech+' %}"
+      {% if ns == 'resources' or ns == 'support' or ns == 'ai' or ns == 'integrations' or ns == 'analytics' or ns == 'labs' %}aria-current="page"{% endif %}>
+      ✨ <span class="d-lg-none d-xl-inline">{% trans "Tech+" %}</span>
+    </a>
+
+
+    <ul class="dropdown-menu dropdown-menu-lg-start">
+
+      {# Actifs (déjà en prod) #}
+      <li>
+        <a class="dropdown-item {% if ns == 'resources' %}active{% endif %} {% if not resources_index_url %}disabled{% endif %}"
+           href="{{ resources_index_url|default:'#' }}"
+           {% if not resources_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+          📚 {% trans "Ressources" %}
+        </a>
+      </li>
+
+      <li><hr class="dropdown-divider"></li>
+
+      <li>
+        <a class="dropdown-item {% if ns == 'support' and name == 'index' %}active{% endif %} {% if not support_index_url %}disabled{% endif %}"
+           href="{{ support_index_url|default:'#' }}"
+           {% if not support_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+          🛟 {% trans "Support" %}
+        </a>
+      </li>
+      <li>
+        <a class="dropdown-item {% if ns == 'support' and name == 'ticket_list' %}active{% endif %} {% if not support_ticket_list_url %}disabled{% endif %}"
+           href="{{ support_ticket_list_url|default:'#' }}"
+           {% if not support_ticket_list_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+          🎫 {% trans "Tickets" %}
+        </a>
+      </li>
+      <li>
+        <a class="dropdown-item {% if ns == 'support' and name == 'faq_list' %}active{% endif %} {% if not support_faq_list_url %}disabled{% endif %}"
+           href="{{ support_faq_list_url|default:'#' }}"
+           {% if not support_faq_list_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+          ❓ {% trans "FAQ" %}
+        </a>
+      </li>
+
+      <li><hr class="dropdown-divider"></li>
+
+      {# Futurs (2026+) : actifs dès que tes urls existent #}
+      <li>
+        <a class="dropdown-item {% if ns == 'ai' %}active{% endif %} {% if not ai_index_url %}disabled{% endif %}"
+           href="{{ ai_index_url|default:'#' }}"
+           {% if not ai_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+          🤖 {% trans "IA & Automations" %}
+        </a>
+      </li>
+      <li>
+        <a class="dropdown-item {% if ns == 'integrations' %}active{% endif %} {% if not integrations_index_url %}disabled{% endif %}"
+           href="{{ integrations_index_url|default:'#' }}"
+           {% if not integrations_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+          🔌 {% trans "API & Intégrations" %}
+        </a>
+      </li>
+      <li>
+        <a class="dropdown-item {% if ns == 'analytics' %}active{% endif %} {% if not analytics_index_url %}disabled{% endif %}"
+           href="{{ analytics_index_url|default:'#' }}"
+           {% if not analytics_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+          📈 {% trans "Analytics" %}
+        </a>
+      </li>
+      <li>
+        <a class="dropdown-item {% if ns == 'labs' %}active{% endif %} {% if not labs_index_url %}disabled{% endif %}"
+           href="{{ labs_index_url|default:'#' }}"
+           {% if not labs_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+          🧪 {% trans "Labs" %}
+        </a>
+      </li>
+
+    </ul>
+  </li>
+
+</ul> {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/partials/menu/_eco_nav_primary.html #}
+{% load i18n %}
+<ul class="navbar-nav eco-nav-primary flex-row flex-nowrap me-lg-auto">
+
+  <li class="nav-item">
+    <a class="nav-link eco-nav-link small
+              {% if 'ecommerce' in ns %}active{% endif %}
+              {% if not ecommerce_index_url %}disabled{% endif %}"
+       href="{{ ecommerce_index_url|default:'#' }}"
+       {% if 'ecommerce' in ns %}aria-current="page"{% endif %}
+       {% if not ecommerce_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      🛒 {% trans "Particulier (B2C)" %}
+    </a>
+  </li>
+
+  {# ✅ SERVICES -> PRESTATIONS #}
+  <li class="nav-item">
+    <a class="nav-link eco-nav-link small
+              {% if 'prestations' in ns %}active{% endif %}
+              {% if not prestations_index_url %}disabled{% endif %}"
+       href="{{ prestations_index_url|default:'#' }}"
+       {% if 'prestations' in ns %}aria-current="page"{% endif %}
+       {% if not prestations_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      🧰 {% trans "Prestations" %}
+    </a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link eco-nav-link small
+              {% if 'formations' in ns %}active{% endif %}
+              {% if not formations_index_url %}disabled{% endif %}"
+       href="{{ formations_index_url|default:'#' }}"
+       {% if 'formations' in ns %}aria-current="page"{% endif %}
+       {% if not formations_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      🎓 {% trans "Formations" %}
+    </a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link eco-nav-link small
+              {% if 'b2b' in ns %}active{% endif %}
+              {% if not b2b_index_url %}disabled{% endif %}"
+       href="{{ b2b_index_url|default:'#' }}"
+       {% if 'b2b' in ns %}aria-current="page"{% endif %}
+       {% if not b2b_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      🏢 {% trans "Entreprise (B2B)" %}
+    </a>
+  </li>
+
+</ul> {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/partials/menu/_eco_nav_primary.html #}
+{% load i18n %}
+<ul class="navbar-nav eco-nav-primary flex-row flex-nowrap me-lg-auto">
+
+  <li class="nav-item">
+    <a class="nav-link eco-nav-link small {% if 'ecommerce' in ns %}active{% endif %} {% if not ecommerce_index_url %}disabled{% endif %}"
+       href="{{ ecommerce_index_url|default:'#' }}"
+       {% if 'ecommerce' in ns %}aria-current="page"{% endif %}
+       {% if not ecommerce_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      🛒 {% trans "Particulier (B2C)" %}
+    </a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link eco-nav-link small {% if 'services' in ns %}active{% endif %} {% if not services_index_url %}disabled{% endif %}"
+       href="{{ services_index_url|default:'#' }}"
+       {% if 'services' in ns %}aria-current="page"{% endif %}
+       {% if not services_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      🧰 {% trans "Services" %}
+    </a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link eco-nav-link small {% if 'formations' in ns %}active{% endif %} {% if not formations_index_url %}disabled{% endif %}"
+       href="{{ formations_index_url|default:'#' }}"
+       {% if 'formations' in ns %}aria-current="page"{% endif %}
+       {% if not formations_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      🎓 {% trans "Formations" %}
+    </a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link eco-nav-link small {% if 'b2b' in ns %}active{% endif %} {% if not b2b_index_url %}disabled{% endif %}"
+       href="{{ b2b_index_url|default:'#' }}"
+       {% if 'b2b' in ns %}aria-current="page"{% endif %}
+       {% if not b2b_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+      🏢 {% trans "Entreprise (B2B)" %}
+    </a>
+  </li>
+
+</ul> {% endcomment %}

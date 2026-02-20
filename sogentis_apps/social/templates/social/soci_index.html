@@ -1,12 +1,66 @@
 {# templates/social/soci_index.html #}
-{% extends "main.html" %}
+{% extends "social/base_social.html" %}
 {% load static i18n document_filters %}
 
 {% block title %}SOGENTIS | Impact Social{% endblock %}
 
 {% block extra_css %}
-{% comment %} <link rel="stylesheet" href="{% static 'social/css/new_social_index.css' %}">
-<link rel="stylesheet" href="{% static 'social/css/vision_mission.css' %}"> {% endcomment %}
+  <link rel="stylesheet" href="{% static 'global/css/soci_index.css' %}">
+  <link rel="stylesheet" href="{% static 'social/css/menubar_soci.css' %}">
+  {# Optionnel: CSS page (si tu veux séparer encore +) #}
+  {# <link rel="stylesheet" href="{% static 'social/css/soci_index_page.css' %}"> #}
+{% endblock %}
+
+{% block section_menu %}
+  {% include "social/partials/_menubar_soci.html" %}
+{% endblock %}
+
+{% block content %}
+<main class="social-index">
+
+  {% include "social/index/_legal_message.html" %}
+
+  {% include "social/index/_hero_carousel.html" %}
+
+  {% include "social/index/_urgency_alert.html" %}
+
+  {% include "social/index/_stats_cards.html" with total_projects=total_projects total_cagnotte=total_cagnotte total_beneficiaires=total_beneficiaires %}
+
+  {% include "social/index/_projects_grid.html" with projects=projects %}
+
+  {% include "social/index/_cta_participate.html" %}
+
+  {% include "social/index/_video.html" %}
+
+  {% include "social/index/_documents.html" with publications=publications %}
+
+  {% include "social/index/_stats_clickable.html" with total_beneficiaries=total_beneficiaries total_projects=total_projects total_regions=total_regions %}
+
+  {% include "social/index/_bottom_actions.html" %}
+
+</main>
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'social/js/soci_index.js' %}" defer></script>
+{% endblock %}
+
+
+
+
+
+
+
+
+{% comment %} {# templates/social/soci_index.html #}
+{% extends "social/base_social.html" %}
+{% load static i18n document_filters %}
+
+{% block title %}SOGENTIS | Impact Social{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'social/css/new_social_index.css' %}">
+<link rel="stylesheet" href="{% static 'social/css/vision_mission.css' %}">
 <link rel="stylesheet" href="{% static 'global/css/soci_index.css' %}">
 <link rel="stylesheet" href="{% static 'social/css/menubar_soci.css' %}">
 
@@ -310,8 +364,7 @@
   </div>
 </section>
 
-{% comment %} 
-<!-- 🔹 MISSION -->
+<!-- 🔹 MISSION  a commenter -->
 <section class="py-5 bg-mission-gradient text-center text-md-start mission-section">
   <div class="container">
     <div class="row align-items-center g-5 flex-md-row flex-column">
@@ -396,9 +449,9 @@
       {% endfor %}
     </div>
   </div>
-</section> {% endcomment %}
+</section>
 
-  {% comment %} <!-- 🔹 BOUTON FLOTTANT -->
+  <!-- 🔹 BOUTON FLOTTANT a commenter -->
   <a href="{% url 'social:donation' %}"
     class="btn btn-danger btn-donation-floating shadow-lg"
     aria-label="{% trans 'Faire un don' %}">
@@ -407,7 +460,7 @@
 
   <a href="{% url 'about:about_index' %}" class="btn btn-outline-primary mt-2">
   {% trans "Retour à propos" %}
-</a> {% endcomment %}
+</a> 
 
 <!-- Conteneur des boutons -->
 <div class="d-flex flex-column flex-md-row gap-2 justify-content-end position-relative">
@@ -430,6 +483,6 @@
 {% endblock %}
 
 {% block extra_js %}
-{% comment %} <script src="{% static 'social/js/bootstrap.bundle.min.js' %}"></script>
-<script src="{% static 'social/js/voirplus.js' %}"></script> {% endcomment %}
-{% endblock %}
+<script src="{% static 'social/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'social/js/voirplus.js' %}"></script>
+{% endblock %} {% endcomment %}

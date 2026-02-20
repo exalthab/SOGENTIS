@@ -1,0 +1,79 @@
+{# templates/accounting/reports/ledger.html #}
+{% load i18n %}
+<!doctype html>
+<html lang="{{ LANGUAGE_CODE|default:'fr' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% trans "Grand livre" %}</title>
+</head>
+<body class="bg-body">
+  <div class="container py-4">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+      <div>
+        <h1 class="h4 mb-1">{% trans "Grand livre" %}</h1>
+        <div class="text-muted small">{{ account.code }} — {{ account.name }}</div>
+      </div>
+    </div>
+
+    <form class="card mb-3" method="get">
+      <div class="card-body">
+        <div class="row g-2 align-items-end">
+          <div class="col-12 col-md-3">
+            <label class="form-label small mb-1">{% trans "Du" %}</label>
+            <input type="date" name="from" class="form-control form-control-sm" value="{{ from|date:'Y-m-d' }}">
+          </div>
+          <div class="col-12 col-md-3">
+            <label class="form-label small mb-1">{% trans "Au" %}</label>
+            <input type="date" name="to" class="form-control form-control-sm" value="{{ to|date:'Y-m-d' }}">
+          </div>
+          <div class="col-12 col-md-2 d-grid">
+            <button class="btn btn-sm btn-primary" type="submit">{% trans "OK" %}</button>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div class="card">
+      <div class="table-responsive">
+        <table class="table align-middle mb-0">
+          <thead>
+            <tr class="text-muted small">
+              <th>{% trans "Date" %}</th>
+              <th>{% trans "Référence" %}</th>
+              <th>{% trans "Journal" %}</th>
+              <th>{% trans "Libellé" %}</th>
+              <th class="text-end">{% trans "Débit" %}</th>
+              <th class="text-end">{% trans "Crédit" %}</th>
+              <th class="text-end">{% trans "Solde" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in rows %}
+              <tr>
+                <td class="text-muted small">{{ r.date }}</td>
+                <td class="fw-semibold">{{ r.ref }}</td>
+                <td class="text-muted small">{{ r.journal }}</td>
+                <td>{{ r.label }}</td>
+                <td class="text-end">{{ r.debit }}</td>
+                <td class="text-end">{{ r.credit }}</td>
+                <td class="text-end">{{ r.running }}</td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="7" class="text-muted">{% trans "Aucune ligne." %}</td></tr>
+            {% endfor %}
+          </tbody>
+          <tfoot>
+            <tr class="fw-semibold">
+              <td colspan="4" class="text-end">{% trans "Totaux" %}</td>
+              <td class="text-end">{{ total_debit }}</td>
+              <td class="text-end">{{ total_credit }}</td>
+              <td class="text-end">{{ closing_balance }}</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

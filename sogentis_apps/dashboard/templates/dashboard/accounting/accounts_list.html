@@ -1,0 +1,138 @@
+{# templates/dashboard/accounting/accounts_list.html #}
+{% extends "dashboard/base.html" %}
+
+{% load i18n dashboard_tags %}
+
+{% safe_url "dashboard:accounting:index" as u_home %}
+{% safe_url "dashboard:accounting:accounts" as u_self %}
+
+
+{% block title %}{% trans "Chart of Accounts" %}{% endblock %}
+{% block dashboard_title %}{% trans "Chart of Accounts" %}{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-3 px-lg-4 py-3">
+
+  <div class="rounded-4 bg-body border p-3 p-lg-4 mb-3">
+    <div class="d-flex align-items-start justify-content-between flex-wrap gap-2 mb-3">
+      <div>
+        <h1 class="h5 mb-1">{% trans "Chart of Accounts" %}</h1>
+        <div class="text-muted small">
+          {% if paginator %}{{ paginator.count }}{% else %}0{% endif %}
+          {% trans "compte(s)" %}
+        </div>
+      </div>
+      <a class="btn btn-sm btn-outline-secondary" href="{{ u_home|default:'#' }}">{% trans "Dashboard" %}</a>
+    </div>
+
+    <form class="row g-2" method="get" action="{{ u_self|default:request.path }}">
+      <div class="col-12 col-md-4">
+        <label class="form-label small mb-1">{% trans "Recherche" %}</label>
+        <input class="form-control form-control-sm" name="q" value="{{ q|default:'' }}" placeholder="{% trans 'Code, nom, numéro…' %}">
+      </div>
+
+      <div class="col-6 col-md-2">
+        <label class="form-label small mb-1">{% trans "Pole" %}</label>
+        <select class="form-select form-select-sm" name="pole">
+          <option value="">{% trans "Tous" %}</option>
+          {% for v,l in pole_choices %}
+            <option value="{{ v }}" {% if pole == v %}selected{% endif %}>{{ l }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-6 col-md-2">
+        <label class="form-label small mb-1">{% trans "Entité" %}</label>
+        <input class="form-control form-control-sm" name="company" value="{{ company|default:'' }}" placeholder="ECONOMIC-SN">
+      </div>
+
+      <div class="col-6 col-md-2">
+        <label class="form-label small mb-1">{% trans "Type" %}</label>
+        <select class="form-select form-select-sm" name="type">
+          <option value="">{% trans "Tous" %}</option>
+          {% for v,l in type_choices %}
+            <option value="{{ v }}" {% if type == v %}selected{% endif %}>{{ l }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-6 col-md-2">
+        <label class="form-label small mb-1">{% trans "Actif" %}</label>
+        <select class="form-select form-select-sm" name="active">
+          <option value="">{% trans "Tous" %}</option>
+          <option value="1" {% if active == "1" %}selected{% endif %}>{% trans "Oui" %}</option>
+          <option value="0" {% if active == "0" %}selected{% endif %}>{% trans "Non" %}</option>
+        </select>
+      </div>
+
+      <div class="col-12 d-flex gap-2">
+        <button class="btn btn-sm btn-primary" type="submit">{% trans "Filtrer" %}</button>
+        <a class="btn btn-sm btn-outline-secondary" href="{{ u_self|default:request.path }}">{% trans "Reset" %}</a>
+      </div>
+    </form>
+  </div>
+
+  <div class="rounded-4 bg-body border overflow-hidden">
+    <div class="table-responsive">
+      <table class="table align-middle mb-0">
+        <thead>
+          <tr class="text-muted small">
+            <th>{% trans "Code" %}</th>
+            <th>{% trans "Nom" %}</th>
+            <th>{% trans "Type" %}</th>
+            <th>{% trans "Subtype" %}</th>
+            <th>{% trans "Pole" %}</th>
+            <th>{% trans "Entité" %}</th>
+            <th class="text-end">{% trans "Actif" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for a in accounts %}
+            {% safe_url "dashboard:accounting:account_detail" a.pk as u_detail %}
+            <tr>
+              <td class="fw-semibold">
+                <a class="text-decoration-none" href="{{ u_detail|default:'#' }}">{{ a.code }}</a>
+                {% if a.account_number %}<span class="text-muted small ms-1">[{{ a.account_number }}]</span>{% endif %}
+              </td>
+              <td>
+                {{ a.name }}
+                {% if a.parent %}<div class="text-muted small">{% trans "Parent" %}: {{ a.parent.code }} — {{ a.parent.name }}</div>{% endif %}
+              </td>
+              <td><span class="badge text-bg-light border">{{ a.type }}</span></td>
+              <td class="text-muted small">{{ a.subtype|default:"—" }}</td>
+              <td class="text-muted small">{{ a.pole|default:"—" }}</td>
+              <td class="text-muted small">{{ a.company_code|default:"—" }}</td>
+              <td class="text-end">
+                {% if a.is_active %}<span class="badge text-bg-success">{% trans "Oui" %}</span>{% else %}<span class="badge text-bg-secondary">{% trans "Non" %}</span>{% endif %}
+              </td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="7" class="text-muted">{% trans "Aucun compte." %}</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% if page_obj and page_obj.paginator and page_obj.paginator.num_pages > 1 %}
+      <div class="p-2">
+        <nav aria-label="{% trans 'Pagination' %}">
+          <ul class="pagination pagination-sm mb-0 flex-wrap">
+            {% if page_obj.has_previous %}
+              <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ q|urlencode }}&pole={{ pole|urlencode }}&company={{ company|urlencode }}&type={{ type|urlencode }}&subtype={{ subtype|urlencode }}&active={{ active|urlencode }}">{% trans "Précédent" %}</a></li>
+            {% else %}
+              <li class="page-item disabled"><span class="page-link">{% trans "Précédent" %}</span></li>
+            {% endif %}
+            <li class="page-item disabled"><span class="page-link">{{ page_obj.number }}/{{ page_obj.paginator.num_pages }}</span></li>
+            {% if page_obj.has_next %}
+              <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ q|urlencode }}&pole={{ pole|urlencode }}&company={{ company|urlencode }}&type={{ type|urlencode }}&subtype={{ subtype|urlencode }}&active={{ active|urlencode }}">{% trans "Suivant" %}</a></li>
+            {% else %}
+              <li class="page-item disabled"><span class="page-link">{% trans "Suivant" %}</span></li>
+            {% endif %}
+          </ul>
+        </nav>
+      </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

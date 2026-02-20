@@ -38,12 +38,14 @@ INSTALLED_APPS = [
     # 🔹 PÔLE ÉCONOMIQUE (ARCHITECTURE SAINE)
     # =====================================================
     # Hub (pas de modèles, uniquement urls / views)
-    "economic",
+    "economic.apps.EconomicConfig",
 
     # Apps métier (modèles + migrations)
+    "economic.api",
     "economic.ecommerce",
     "economic.formations",
-    "economic.services",
+    # ✅ prestations (mais label = services)
+    "economic.prestations",
     "economic.b2b",
     "economic.resources",
     "economic.support",
@@ -73,6 +75,16 @@ INSTALLED_APPS = [
     "documents",
     "search",
     "donations",
+    "payments",
+    "accounting",
+    
+    "tech.integrations",
+    "tech.analytics",
+    "tech.ai",
+    "tech.labs",
+    "platform_api",
+
+    
 
     # =====================================================
     # Internationalisation

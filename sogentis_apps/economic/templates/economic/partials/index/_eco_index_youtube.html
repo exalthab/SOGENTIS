@@ -1,0 +1,201 @@
+{# templates/economic/partials/index/_eco_index_youtube.html #}
+{% load i18n %}
+
+<section class="eco-youtube py-4 py-lg-5" aria-labelledby="ecoYoutubeTitle">
+  <div class="container">
+    <div class="eco-youtube-card">
+
+      <div class="eco-youtube-left">
+        <span class="eco-badge small">
+          <i class="bi bi-youtube" aria-hidden="true"></i> {% trans "Chaîne YouTube" %}
+        </span>
+
+        <h2 id="ecoYoutubeTitle" class="eco-youtube-title h5 lh-sm mt-2">
+          {% trans "Regarder & s’abonner pour soutenir nos actions sociales" %}
+        </h2>
+
+        <p class="eco-youtube-text small mb-3">
+          {% trans "Chaque abonnement, vue et partage aide à financer nos activités d’aide aux personnes démunies. Rejoignez la communauté et participez à l’impact." %}
+        </p>
+
+        <div class="eco-youtube-stats" aria-label="{% trans 'Statistiques YouTube' %}">
+          <div class="eco-stat">
+            <div class="eco-stat-value">{{ YT_SUBSCRIBERS_LABEL|default:"—" }}</div>
+            <div class="eco-stat-label small">{% trans "Abonnés" %}</div>
+          </div>
+
+          <div class="eco-stat">
+            <div class="eco-stat-value">{{ YT_VIEWS_LABEL|default:"—" }}</div>
+            <div class="eco-stat-label small">{% trans "Vues" %}</div>
+          </div>
+
+          <div class="eco-stat">
+            <div class="eco-stat-value">{{ YT_VIDEOS_LABEL|default:"—" }}</div>
+            <div class="eco-stat-label small">{% trans "Vidéos" %}</div>
+          </div>
+        </div>
+
+        <ul class="eco-youtube-points small mb-3" aria-label="{% trans 'Comment soutenir' %}">
+          <li><i class="bi bi-check2-circle" aria-hidden="true"></i> {% trans "Abonnez-vous pour ne rien manquer" %}</li>
+          <li><i class="bi bi-check2-circle" aria-hidden="true"></i> {% trans "Regardez et partagez les vidéos" %}</li>
+          <li><i class="bi bi-check2-circle" aria-hidden="true"></i> {% trans "Activez la cloche pour soutenir la portée" %}</li>
+        </ul>
+
+        <div class="eco-youtube-actions d-flex gap-2 flex-wrap" role="group" aria-label="{% trans 'Actions YouTube' %}">
+
+          {% with u=YOUTUBE_CHANNEL_URL|default:'' %}
+            <a class="btn btn-danger btn-lg {% if not u %}disabled{% endif %}"
+               href="{{ u|default:'#' }}"
+               {% if not u %}aria-disabled="true" tabindex="-1"{% endif %}
+               {% if u %}target="_blank" rel="noopener noreferrer"{% endif %}>
+              <i class="bi bi-youtube me-2" aria-hidden="true"></i>
+              <span class="fw-semibold">{% trans "S’abonner sur YouTube" %}</span>
+            </a>
+          {% endwith %}
+
+          {% with u=YOUTUBE_VIDEOS_URL|default:'' %}
+            <a class="btn btn-outline-light btn-lg {% if not u %}disabled{% endif %}"
+               href="{{ u|default:'#' }}"
+               {% if not u %}aria-disabled="true" tabindex="-1"{% endif %}
+               {% if u %}target="_blank" rel="noopener noreferrer"{% endif %}>
+              <i class="bi bi-play-circle me-2" aria-hidden="true"></i>
+              <span class="fw-semibold">{% trans "Voir les vidéos" %}</span>
+            </a>
+          {% endwith %}
+
+        </div>
+
+        <div class="eco-youtube-note small mt-3">
+          <i class="bi bi-info-circle me-2" aria-hidden="true"></i>
+          {% trans "Vous pouvez aussi soutenir en aimant 👍, commentant 💬 et partageant 🔁 — cela augmente la visibilité et l’impact." %}
+        </div>
+      </div>
+
+      <div class="eco-youtube-right">
+        <div class="eco-youtube-preview" aria-hidden="true">
+          <div class="eco-youtube-play"><i class="bi bi-play-fill"></i></div>
+          <div class="eco-youtube-meta">
+            <div class="eco-youtube-channel">
+              <strong>{{ YOUTUBE_CHANNEL_NAME|default:"SOGENTIS" }}</strong>
+              <span class="muted small">{% trans "Développement & impact social" %}</span>
+            </div>
+          </div>
+        </div>
+
+        {% if YOUTUBE_FEATURED_VIDEO_ID %}
+          <div class="eco-youtube-embed">
+            <iframe
+              src="https://www.youtube.com/embed/{{ YOUTUBE_FEATURED_VIDEO_ID }}"
+              title="{% trans 'Vidéo YouTube' %} — {{ YOUTUBE_CHANNEL_NAME|default:'SOGENTIS' }}"
+              frameborder="0"
+              loading="lazy"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen>
+            </iframe>
+          </div>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+
+
+
+{% comment %} {# templates/economic/partials/index/_eco_index_youtube.html #}
+{% load i18n %}
+
+<section class="eco-youtube py-4 py-lg-5" aria-label="{% trans 'Soutien via YouTube' %}">
+  <div class="container">
+    <div class="eco-youtube-card">
+      <div class="eco-youtube-left">
+        <span class="eco-badge small">
+          <i class="bi bi-youtube" aria-hidden="true"></i> {% trans "Chaîne YouTube" %}
+        </span>
+
+        <h2 class="eco-youtube-title h5 lh-sm mt-2">
+          {% trans "Regarder & s’abonner pour soutenir nos actions sociales" %}
+        </h2>
+
+        <p class="eco-youtube-text small mb-3">
+          {% trans "Chaque abonnement, vue et partage aide à financer nos activités d’aide aux personnes démunies. Rejoignez la communauté et participez à l’impact." %}
+        </p>
+
+        <div class="eco-youtube-stats" aria-label="{% trans 'Statistiques YouTube' %}">
+          <div class="eco-stat">
+            <div class="eco-stat-value">{{ YT_SUBSCRIBERS_LABEL|default:"—" }}</div>
+            <div class="eco-stat-label small">{% trans "Abonnés" %}</div>
+          </div>
+
+          <div class="eco-stat">
+            <div class="eco-stat-value">{{ YT_VIEWS_LABEL|default:"—" }}</div>
+            <div class="eco-stat-label small">{% trans "Vues" %}</div>
+          </div>
+
+          <div class="eco-stat">
+            <div class="eco-stat-value">{{ YT_VIDEOS_LABEL|default:"—" }}</div>
+            <div class="eco-stat-label small">{% trans "Vidéos" %}</div>
+          </div>
+        </div>
+
+        <ul class="eco-youtube-points small mb-3">
+          <li><i class="bi bi-check2-circle" aria-hidden="true"></i> {% trans "Abonnez-vous pour ne rien manquer" %}</li>
+          <li><i class="bi bi-check2-circle" aria-hidden="true"></i> {% trans "Regardez et partagez les vidéos" %}</li>
+          <li><i class="bi bi-check2-circle" aria-hidden="true"></i> {% trans "Activez la cloche pour soutenir la portée" %}</li>
+        </ul>
+
+        <div class="eco-youtube-actions d-flex gap-2 flex-wrap">
+          <a class="btn btn-danger btn-lg {% if not YOUTUBE_CHANNEL_URL %}disabled{% endif %}"
+             href="{{ YOUTUBE_CHANNEL_URL|default:'#' }}"
+             {% if not YOUTUBE_CHANNEL_URL %}aria-disabled="true" tabindex="-1"{% endif %}
+             {% if YOUTUBE_CHANNEL_URL %}target="_blank" rel="noopener"{% endif %}>
+            <i class="bi bi-youtube me-2" aria-hidden="true"></i>
+            <span class="fw-semibold">{% trans "S’abonner sur YouTube" %}</span>
+          </a>
+
+          <a class="btn btn-outline-light btn-lg {% if not YOUTUBE_VIDEOS_URL %}disabled{% endif %}"
+             href="{{ YOUTUBE_VIDEOS_URL|default:'#' }}"
+             {% if not YOUTUBE_VIDEOS_URL %}aria-disabled="true" tabindex="-1"{% endif %}
+             {% if YOUTUBE_VIDEOS_URL %}target="_blank" rel="noopener"{% endif %}>
+            <i class="bi bi-play-circle me-2" aria-hidden="true"></i>
+            <span class="fw-semibold">{% trans "Voir les vidéos" %}</span>
+          </a>
+        </div>
+
+        <div class="eco-youtube-note small mt-3">
+          <i class="bi bi-info-circle me-2" aria-hidden="true"></i>
+          {% trans "Vous pouvez aussi soutenir en aimant 👍, commentant 💬 et partageant 🔁 — cela augmente la visibilité et l’impact." %}
+        </div>
+      </div>
+
+      <div class="eco-youtube-right">
+        <div class="eco-youtube-preview" aria-hidden="true">
+          <div class="eco-youtube-play"><i class="bi bi-play-fill"></i></div>
+          <div class="eco-youtube-meta">
+            <div class="eco-youtube-channel">
+              <strong>{{ YOUTUBE_CHANNEL_NAME|default:"SOGENTIS" }}</strong>
+              <span class="muted small">{% trans "Développement & impact social" %}</span>
+            </div>
+          </div>
+        </div>
+
+        {% if YOUTUBE_FEATURED_VIDEO_ID %}
+          <div class="eco-youtube-embed">
+            <iframe
+              src="https://www.youtube.com/embed/{{ YOUTUBE_FEATURED_VIDEO_ID }}"
+              title="{% trans 'Vidéo YouTube' %}"
+              frameborder="0"
+              loading="lazy"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen>
+            </iframe>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section> {% endcomment %}

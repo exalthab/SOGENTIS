@@ -1,0 +1,213 @@
+{# templates/economic/prestations/offers/my_entitlements.html #}
+{% extends "economic/prestations/base_prestations.html" %}
+{% load i18n static ecom_money dashboard_tags %}
+
+{% block prestations_title %}{% trans "Mes téléchargements" %}{% endblock %}
+
+{% block prestations_extra_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'prestations/css/offers.css' %}">
+{% endblock %}
+
+{% block prestations_content %}
+
+{% safe_url "economic:prestations:index" as u_presta_index %}
+{% safe_url "dashboard:hub" as u_hub %}
+
+<section class="py-2">
+
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <div>
+      <h1 class="h5 mb-1">{% trans "Mes téléchargements" %}</h1>
+      <div class="text-muted small">{% trans "Accès aux livrables, fichiers et contenus associés à vos achats." %}</div>
+    </div>
+    <div class="d-flex gap-2">
+      <a class="btn btn-sm btn-outline-secondary" href="{{ u_presta_index|default:'#' }}">← {% trans "Prestations" %}</a>
+      <a class="btn btn-sm btn-outline-dark" href="{{ u_hub|default:'#' }}">📊 {% trans "Dashboard" %}</a>
+    </div>
+  </div>
+
+  {% if entitlements %}
+    <div class="card border-0 shadow-sm">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr class="small text-uppercase">
+              <th scope="col">{% trans "Produit" %}</th>
+              <th scope="col" class="d-none d-md-table-cell">{% trans "Type" %}</th>
+              <th scope="col" class="d-none d-lg-table-cell">{% trans "Statut" %}</th>
+              <th scope="col" class="d-none d-lg-table-cell">{% trans "Validité" %}</th>
+              <th scope="col" class="text-end">{% trans "Action" %}</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for ent in entitlements %}
+              {% safe_url "economic:prestations:download" token=ent.download_token as u_download %}
+
+              <tr>
+                <td class="min-w-0">
+                  <div class="fw-semibold text-truncate" style="max-width: 720px;">
+                    {% if ent.prestation_plan %}
+                      {{ ent.prestation_plan.title|default:ent.prestation_plan.slug }}
+                      <span class="text-muted">—</span>
+                      <span class="text-muted">{{ ent.prestation_plan.prestation.title|default:ent.prestation_plan.prestation.slug }}</span>
+                    {% elif ent.package_offer %}
+                      {{ ent.package_offer.title|default:ent.package_offer.slug }}
+                      <span class="text-muted">—</span>
+                      <span class="text-muted">{{ ent.package_offer.package.title|default:ent.package_offer.package.slug }}</span>
+                    {% else %}
+                      {% trans "Accès" %}
+                    {% endif %}
+                  </div>
+
+                  <div class="small text-muted">
+                    {% if ent.created_at %}{% trans "Acheté le" %} {{ ent.created_at|date:"d/m/Y" }}{% endif %}
+                    {% if ent.last_download_at %}
+                      <span class="opacity-50">•</span>{% trans "Dernier accès" %} {{ ent.last_download_at|date:"d/m/Y H:i" }}
+                    {% endif %}
+                  </div>
+                </td>
+
+                <td class="d-none d-md-table-cell">
+                  {% if ent.prestation_plan %}
+                    <span class="badge text-bg-light border">{% trans "Prestation" %}</span>
+                  {% elif ent.package_offer %}
+                    <span class="badge text-bg-light border">{% trans "Pack" %}</span>
+                  {% else %}
+                    <span class="badge text-bg-light border">—</span>
+                  {% endif %}
+                </td>
+
+                <td class="d-none d-lg-table-cell">
+                  {% if ent.status == "ACTIVE" %}
+                    <span class="badge text-bg-success">{% trans "Actif" %}</span>
+                  {% elif ent.status == "EXPIRED" %}
+                    <span class="badge text-bg-secondary">{% trans "Expiré" %}</span>
+                  {% elif ent.status == "REVOKED" %}
+                    <span class="badge text-bg-danger">{% trans "Révoqué" %}</span>
+                  {% else %}
+                    <span class="badge text-bg-light border">{{ ent.status|default:"—" }}</span>
+                  {% endif %}
+                </td>
+
+                <td class="d-none d-lg-table-cell small text-muted">
+                  {% if ent.expires_at %}{{ ent.expires_at|date:"d/m/Y" }}{% else %}—{% endif %}
+                  {% if ent.downloads_left is not None %}
+                    <div class="small text-muted">{% trans "Restants" %}: {{ ent.downloads_left }}</div>
+                  {% endif %}
+                </td>
+
+                <td class="text-end">
+                  {% if ent.status == "ACTIVE" and u_download %}
+                    <a class="btn btn-sm btn-dark" href="{{ u_download }}">⬇️ {% trans "Télécharger" %}</a>
+                  {% elif ent.deliverable_url %}
+                    <a class="btn btn-sm btn-outline-dark" href="{{ ent.deliverable_url }}" target="_blank" rel="noopener">
+                      🔗 {% trans "Ouvrir" %}
+                    </a>
+                  {% else %}
+                    <button class="btn btn-sm btn-outline-secondary" disabled>{% trans "Indisponible" %}</button>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+
+        </table>
+      </div>
+    </div>
+
+    <div class="small text-muted mt-2">
+      {% trans "Certains accès peuvent expirer ou limiter le nombre de téléchargements." %}
+    </div>
+
+  {% else %}
+    <div class="card border-0 shadow-sm">
+      <div class="card-body p-4">
+        <div class="d-flex align-items-start gap-3">
+          <div style="font-size: 1.6rem;">📦</div>
+          <div>
+            <div class="fw-semibold mb-1">{% trans "Aucun accès pour le moment" %}</div>
+            <div class="text-muted small mb-3">
+              {% trans "Vos achats et livrables apparaîtront ici après validation." %}
+            </div>
+            <a class="btn btn-sm btn-dark" href="{{ u_presta_index|default:'#' }}">🧰 {% trans "Voir les prestations" %}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+</section>
+{% endblock %}
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/offers/my_entitlements.html #}
+{% extends "economic/prestations/base_prestations.html" %}
+{% load i18n dashboard_tags %}
+
+{% block prestations_title %}{% trans "Mes accès & téléchargements" %}{% endblock %}
+
+{% block prestations_content %}
+  {% safe_url "economic:prestations:index" as u_index %}
+
+  <div class="rounded-4 bg-body border p-3 p-lg-4">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+      <div>
+        <h1 class="h5 mb-1">{% trans "Mes accès & téléchargements" %}</h1>
+        <div class="text-muted small">{% trans "Vos livrables digitaux et liens privés après paiement." %}</div>
+      </div>
+      <a class="btn btn-sm btn-outline-secondary" href="{{ u_index|default:'#' }}">{% trans "Catalogue" %}</a>
+    </div>
+
+    {% if entitlements %}
+      <div class="table-responsive">
+        <table class="table align-middle">
+          <thead>
+            <tr class="text-muted small">
+              <th>{% trans "Cible" %}</th>
+              <th>{% trans "Statut" %}</th>
+              <th>{% trans "Paiement" %}</th>
+              <th>{% trans "Téléchargements" %}</th>
+              <th class="text-end">{% trans "Action" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for e in entitlements %}
+              {% safe_url "economic:prestations:download" e.download_token as u_dl %}
+              <tr>
+                <td class="fw-semibold">
+                  {% if e.prestation_plan %}{{ e.prestation_plan.title|default:e.prestation_plan.slug }}
+                  {% elif e.package_offer %}{{ e.package_offer.title|default:e.package_offer.slug }}
+                  {% elif e.prestation %}{{ e.prestation.title|default:e.prestation.slug }}
+                  {% elif e.package %}{{ e.package.title|default:e.package.slug }}
+                  {% else %}—{% endif %}
+                </td>
+                <td><span class="badge text-bg-light border">{{ e.status }}</span></td>
+                <td class="small text-muted">
+                  {% if e.paid_amount %}{{ e.paid_amount }} {{ e.paid_currency|default:cur }}{% else %}—{% endif %}
+                  {% if e.provider %}<div class="small text-muted">{{ e.provider }}</div>{% endif %}
+                </td>
+                <td class="small text-muted">{{ e.download_count }} / {{ e.download_limit }}</td>
+                <td class="text-end">
+                  {% if u_dl and u_dl != "#" %}
+                    <a class="btn btn-sm btn-primary" href="{{ u_dl }}">{% trans "Télécharger" %}</a>
+                  {% else %}
+                    <span class="text-muted small">—</span>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="text-muted">{% trans "Aucun accès pour le moment." %}</div>
+    {% endif %}
+  </div>
+{% endblock %} {% endcomment %}

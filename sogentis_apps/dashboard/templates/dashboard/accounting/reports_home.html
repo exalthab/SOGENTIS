@@ -1,0 +1,118 @@
+{# templates/dashboard/accounting/reports_home.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n dashboard_tags %}
+
+{% block title %}{% trans "Accounting reports" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block dashboard_header %}
+  {% safe_url "dashboard:accounting:index" as u_home %}
+  {% safe_url "dashboard:accounting:accounts" as u_accounts %}
+  {% safe_url "dashboard:accounting:journal" as u_journal %}
+  {% safe_url "dashboard:accounting:entries" as u_entries %}
+
+  {% safe_url "accounting:trial_balance" as u_tb %}
+  {% safe_url "accounting:report_balance_sheet" as u_bs %}
+  {% safe_url "accounting:report_income_statement" as u_pl %}
+  {% safe_url "accounting:report_cash_flow" as u_cf %}
+
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div>
+      <h1 class="fw-bold mb-1">📈 {% trans "Accounting reports" %}</h1>
+      <p class="text-muted mb-0">{% trans "États financiers et rapports statutaires (source unique côté accounting)." %}</p>
+    </div>
+
+    <div class="d-flex flex-wrap gap-2">
+      {% if u_home %}<a class="btn btn-sm btn-outline-secondary" href="{{ u_home }}">← {% trans "Retour" %}</a>{% endif %}
+      {% if u_accounts %}<a class="btn btn-sm btn-outline-primary" href="{{ u_accounts }}">🗂 {% trans "Comptes" %}</a>{% endif %}
+      {% if u_entries %}<a class="btn btn-sm btn-outline-dark" href="{{ u_entries }}">🧾 {% trans "Écritures" %}</a>{% endif %}
+    </div>
+  </div>
+{% endblock %}
+
+{% block dashboard_content %}
+  {% safe_url "dashboard:accounting:index" as u_home %}
+  {% safe_url "dashboard:accounting:accounts" as u_accounts %}
+  {% safe_url "dashboard:accounting:journal" as u_journal %}
+  {% safe_url "dashboard:accounting:entries" as u_entries %}
+
+  {% safe_url "accounting:trial_balance" as u_tb %}
+  {% safe_url "accounting:report_balance_sheet" as u_bs %}
+  {% safe_url "accounting:report_income_statement" as u_pl %}
+  {% safe_url "accounting:report_cash_flow" as u_cf %}
+
+  <div class="container-fluid px-3 px-lg-4 py-3">
+    <div class="rounded-4 bg-body border p-3 p-lg-4">
+
+      <div class="row g-3">
+        <div class="col-12 col-xl-8">
+          <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body">
+              <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+                <div class="fw-semibold">{% trans "Reports" %}</div>
+                <div class="text-muted small">
+                  {% trans "Tip: utilisez les filtres (dates, pôle, entité) directement sur chaque rapport." %}
+                </div>
+              </div>
+
+              <div class="d-flex flex-wrap gap-2">
+                {% if u_tb %}<a class="btn btn-sm btn-outline-dark" href="{{ u_tb }}">⚖️ {% trans "Trial balance" %}</a>{% endif %}
+                {% if u_bs %}<a class="btn btn-sm btn-outline-dark" href="{{ u_bs }}">🏛️ {% trans "Balance sheet" %}</a>{% endif %}
+                {% if u_pl %}<a class="btn btn-sm btn-outline-dark" href="{{ u_pl }}">🧮 {% trans "Profit & loss" %}</a>{% endif %}
+                {% if u_cf %}<a class="btn btn-sm btn-outline-dark" href="{{ u_cf }}">💧 {% trans "Cash flow" %}</a>{% endif %}
+              </div>
+
+              {% if not u_tb and not u_bs and not u_pl and not u_cf %}
+                <div class="text-muted small mt-3">
+                  {% trans "Aucune route de rapport disponible. Vérifie les names: accounting:trial_balance, accounting:report_balance_sheet, accounting:report_income_statement, accounting:report_cash_flow." %}
+                </div>
+              {% endif %}
+
+              <hr class="my-3">
+
+              <div class="row g-2">
+                <div class="col-12 col-md-6">
+                  <div class="p-3 rounded-4 border bg-body">
+                    <div class="fw-semibold mb-1">{% trans "Scope" %}</div>
+                    <div class="text-muted small">
+                      {% trans "Les rapports sont la source statutaire. Le dashboard ne fait que naviguer/filtrer." %}
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12 col-md-6">
+                  <div class="p-3 rounded-4 border bg-body">
+                    <div class="fw-semibold mb-1">{% trans "Exports" %}</div>
+                    <div class="text-muted small">
+                      {% trans "Trial Balance supporte CSV. Les autres états peuvent suivre (PDF/CSV) via accounting/reports." %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-xl-4">
+          <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body">
+              <div class="fw-semibold mb-2">{% trans "Quick actions" %}</div>
+
+              <div class="d-grid gap-2">
+                {% if u_accounts %}<a class="btn btn-outline-primary" href="{{ u_accounts }}">🗂 {% trans "Open chart of accounts" %}</a>{% endif %}
+                {% if u_journal %}<a class="btn btn-outline-secondary" href="{{ u_journal }}">📓 {% trans "Open journals" %}</a>{% endif %}
+                {% if u_entries %}<a class="btn btn-outline-dark" href="{{ u_entries }}">🧾 {% trans "Open entries" %}</a>{% endif %}
+                {% if u_home %}<a class="btn btn-outline-secondary" href="{{ u_home }}">← {% trans "Back to accounting home" %}</a>{% endif %}
+              </div>
+
+              <div class="text-muted small mt-3">
+                {% trans "Astuce: garde tes rapports dans accounting/templates/accounting/reports/ pour éviter les doublons." %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+{% endblock %}

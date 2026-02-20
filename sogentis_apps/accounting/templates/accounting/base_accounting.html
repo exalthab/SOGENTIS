@@ -1,0 +1,19 @@
+{# templates/accounting/base_accounting.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n static %}
+
+{% block title %}{% block accounting_title %}{% trans "Accounting" %}{% endblock %}{% endblock %}
+
+{% block extra_css %}
+  {{ block.super }}
+  {% block accounting_extra_css %}{% endblock %}
+{% endblock %}
+
+{% block content %}
+  {% block accounting_content %}{% endblock %}
+{% endblock %}
+
+{% block extra_js %}
+  {{ block.super }}
+  {% block accounting_extra_js %}{% endblock %}
+{% endblock %}

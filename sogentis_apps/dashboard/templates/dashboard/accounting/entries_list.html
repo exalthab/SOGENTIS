@@ -1,0 +1,224 @@
+{# templates/dashboard/accounting/entries_list.html #}
+{% extends "dashboard/base.html" %}
+{% load i18n dashboard_tags %}
+
+{% block title %}{% trans "Journal entries" %} | {{ PROJECT_NAME|default:"SOGENTIS" }}{% endblock %}
+
+{% block dashboard_header %}
+  {% safe_url "dashboard:accounting:index" as u_home %}
+  {% safe_url "dashboard:accounting:entries" as u_self %}
+  {% safe_url "dashboard:accounting:accounts" as u_accounts %}
+  {% safe_url "dashboard:accounting:journal" as u_journal %}
+  {% safe_url "dashboard:accounting:reports" as u_reports %}
+
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div>
+      <h1 class="fw-bold mb-1">🧾 {% trans "Journal entries" %}</h1>
+      <p class="text-muted mb-0">{% trans "Liste des écritures (draft/posted) avec filtres." %}</p>
+    </div>
+
+    <div class="d-flex flex-wrap gap-2">
+      {% if u_home %}<a class="btn btn-sm btn-outline-secondary" href="{{ u_home }}">← {% trans "Accounting" %}</a>{% endif %}
+      {% if u_accounts %}<a class="btn btn-sm btn-outline-primary" href="{{ u_accounts }}">🗂 {% trans "Comptes" %}</a>{% endif %}
+      {% if u_journal %}<a class="btn btn-sm btn-outline-primary" href="{{ u_journal }}">📓 {% trans "Journaux" %}</a>{% endif %}
+      {% if u_reports %}<a class="btn btn-sm btn-outline-dark" href="{{ u_reports }}">📈 {% trans "Rapports" %}</a>{% endif %}
+    </div>
+  </div>
+{% endblock %}
+
+{% block dashboard_content %}
+  {% safe_url "dashboard:accounting:index" as u_home %}
+  {% safe_url "dashboard:accounting:entries" as u_self %}
+
+  <div class="container-fluid px-3 px-lg-4 py-3">
+
+    <div class="rounded-4 bg-body border p-3 p-lg-4 mb-3">
+      <div class="d-flex align-items-start justify-content-between flex-wrap gap-2 mb-3">
+        <div>
+          <div class="h5 mb-1">{% trans "Écritures" %}</div>
+          <div class="text-muted small">
+            {% if page_obj and page_obj.paginator %}{{ page_obj.paginator.count }}{% else %}0{% endif %}
+            {% trans "élément(s)" %}
+          </div>
+        </div>
+        {% if u_home %}
+          <a class="btn btn-sm btn-outline-secondary" href="{{ u_home }}">{% trans "Dashboard" %}</a>
+        {% endif %}
+      </div>
+
+      <form class="row g-2 align-items-end" method="get" action="{{ u_self|default:request.path }}">
+        <div class="col-12 col-md-4">
+          <label class="form-label small mb-1">{% trans "Recherche" %}</label>
+          <input class="form-control form-control-sm"
+                 name="q"
+                 value="{{ q|default:'' }}"
+                 placeholder="{% trans 'memo, ref, provider_ref, user, source…' %}">
+        </div>
+
+        <div class="col-6 col-md-2">
+          <label class="form-label small mb-1">{% trans "Statut" %}</label>
+          <select class="form-select form-select-sm" name="status">
+            <option value="">{% trans "Tous" %}</option>
+            {% for v,l in status_choices %}
+              <option value="{{ v }}" {% if status == v %}selected{% endif %}>{{ l }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-6 col-md-2">
+          <label class="form-label small mb-1">{% trans "Journal" %}</label>
+          <select class="form-select form-select-sm" name="journal">
+            <option value="">{% trans "Tous" %}</option>
+            {% for j in journals %}
+              <option value="{{ j.id }}" {% if journal_id|stringformat:"s" == j.id|stringformat:"s" %}selected{% endif %}>
+                {{ j.code }} — {{ j.name }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-6 col-md-2">
+          <label class="form-label small mb-1">{% trans "Pôle" %}</label>
+          <select class="form-select form-select-sm" name="pole">
+            <option value="">{% trans "Tous" %}</option>
+            {% for v,l in pole_choices %}
+              <option value="{{ v }}" {% if pole == v %}selected{% endif %}>{{ l }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-6 col-md-2">
+          <label class="form-label small mb-1">{% trans "Devise" %}</label>
+          <input class="form-control form-control-sm" name="currency" value="{{ currency|default:'' }}" placeholder="XOF">
+        </div>
+
+        <div class="col-12 d-flex gap-2">
+          <button class="btn btn-sm btn-primary" type="submit">{% trans "Filtrer" %}</button>
+          <a class="btn btn-sm btn-outline-secondary" href="{{ u_self|default:request.path }}">{% trans "Reset" %}</a>
+        </div>
+      </form>
+    </div>
+
+    <div class="rounded-4 bg-body border overflow-hidden">
+      <div class="table-responsive">
+        <table class="table align-middle mb-0">
+          <thead>
+            <tr class="text-muted small">
+              <th style="min-width:180px;">{% trans "Journal / Date" %}</th>
+              <th style="min-width:260px;">{% trans "Mémo" %}</th>
+              <th>{% trans "Kind" %}</th>
+              <th>{% trans "Statut" %}</th>
+              <th style="min-width:180px;">{% trans "Source" %}</th>
+              <th class="text-end" style="min-width:140px;">{% trans "Total" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for e in entries %}
+              {% safe_url "dashboard:accounting:entry_detail" e.pk as u_detail %}
+              <tr>
+                <td>
+                  <div class="fw-semibold">
+                    {% if u_detail %}
+                      <a class="text-decoration-none" href="{{ u_detail }}">{{ e.journal.code|default:"—" }}</a>
+                    {% else %}
+                      {{ e.journal.code|default:"—" }}
+                    {% endif %}
+                    <span class="text-muted">—</span>
+                    <span class="text-muted">{{ e.date|date:"Y-m-d" }}</span>
+                  </div>
+                  <div class="text-muted small">{{ e.journal.name|default:"" }}</div>
+                </td>
+
+                <td>
+                  <div class="fw-semibold text-truncate" style="max-width:520px;">
+                    {% if u_detail %}
+                      <a class="text-decoration-none" href="{{ u_detail }}">
+                        {{ e.memo|default:"—" }}
+                      </a>
+                    {% else %}
+                      {{ e.memo|default:"—" }}
+                    {% endif %}
+                  </div>
+                  <div class="text-muted small">
+                    {% if e.metadata %}
+                      {% if e.metadata.provider %}{{ e.metadata.provider }}{% endif %}
+                      {% if e.metadata.payment_reference %} · {{ e.metadata.payment_reference }}{% endif %}
+                      {% if e.metadata.provider_ref %} · {{ e.metadata.provider_ref }}{% endif %}
+                    {% endif %}
+                  </div>
+                </td>
+
+                <td class="text-muted small">{{ e.kind|default:"—" }}</td>
+
+                <td>
+                  {% if e.status == "POSTED" %}
+                    <span class="badge text-bg-success">✅ {{ e.status }}</span>
+                  {% elif e.status == "DRAFT" %}
+                    <span class="badge text-bg-warning">✍️ {{ e.status }}</span>
+                  {% else %}
+                    <span class="badge text-bg-light border">{{ e.status|default:"—" }}</span>
+                  {% endif %}
+                </td>
+
+                <td class="text-muted small">
+                  {% if e.content_type %}
+                    {{ e.content_type.app_label }}.{{ e.content_type.model }}
+                  {% else %}
+                    —
+                  {% endif %}
+                  {% if e.object_id %}
+                    <div class="text-muted small">#{{ e.object_id }}</div>
+                  {% endif %}
+                </td>
+
+                <td class="text-end fw-semibold">
+                  {{ e.total_amount|default:e.total|default:"0.00" }}
+                  {% if e.currency %}{{ e.currency }}{% endif %}
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="6" class="text-muted">{% trans "Aucune écriture." %}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      {% if page_obj and page_obj.paginator and page_obj.paginator.num_pages > 1 %}
+        <div class="p-2">
+          <nav aria-label="{% trans 'Pagination' %}">
+            <ul class="pagination pagination-sm mb-0 flex-wrap">
+              {% if page_obj.has_previous %}
+                <li class="page-item">
+                  <a class="page-link"
+                     href="?page={{ page_obj.previous_page_number }}&q={{ q|urlencode }}&status={{ status|urlencode }}&journal={{ journal_id|urlencode }}&pole={{ pole|urlencode }}&currency={{ currency|urlencode }}">
+                    {% trans "Précédent" %}
+                  </a>
+                </li>
+              {% else %}
+                <li class="page-item disabled"><span class="page-link">{% trans "Précédent" %}</span></li>
+              {% endif %}
+
+              <li class="page-item disabled">
+                <span class="page-link">{{ page_obj.number }}/{{ page_obj.paginator.num_pages }}</span>
+              </li>
+
+              {% if page_obj.has_next %}
+                <li class="page-item">
+                  <a class="page-link"
+                     href="?page={{ page_obj.next_page_number }}&q={{ q|urlencode }}&status={{ status|urlencode }}&journal={{ journal_id|urlencode }}&pole={{ pole|urlencode }}&currency={{ currency|urlencode }}">
+                    {% trans "Suivant" %}
+                  </a>
+                </li>
+              {% else %}
+                <li class="page-item disabled"><span class="page-link">{% trans "Suivant" %}</span></li>
+              {% endif %}
+            </ul>
+          </nav>
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+{% endblock %}

@@ -1,0 +1,16 @@
+{# templates/economic/b2b/index/_header.html #}
+{% load i18n %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <div>
+    <h1 class="h4 mb-1">🏢 {% trans "Espace B2B" %}</h1>
+    <div class="text-muted small">
+      {% trans "Sélectionne une entreprise pour gérer commandes, factures et RFQ." %}
+    </div>
+  </div>
+
+  <a class="btn btn-sm btn-primary {% if not company_create_url %}disabled{% endif %}"
+     href="{{ company_create_url|default:'#' }}"
+     {% if not company_create_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+    + {% trans "Nouvelle entreprise" %}
+  </a>
+</div>

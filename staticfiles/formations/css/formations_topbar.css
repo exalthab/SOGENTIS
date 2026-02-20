@@ -55,3 +55,10 @@
     width: min(560px, 40vw);
   }
 }
+.ft-topbar a,
+.ft-topbar a:visited{
+  text-decoration: none !important;
+}
+.ft-topbar a.ft-chip{
+  color: rgba(15,23,42,.86) !important;
+}

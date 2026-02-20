@@ -1,0 +1,53 @@
+{# templates/economic/prestations/projects/project_detail.html #}
+{% extends "economic/prestations/base_prestations.html" %}
+{% load i18n dashboard_tags %}
+
+{% block prestations_title %}{{ project.title }}{% endblock %}
+
+{% block prestations_content %}
+  {% safe_url "economic:prestations:projects_list" as u_list %}
+  {% safe_url "economic:prestations:projects_bid" project.slug as u_bid %}
+
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb small mb-0">
+      <li class="breadcrumb-item">
+        <a class="text-decoration-none" href="{{ u_list|default:'#' }}">{% trans "Projets" %}</a>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">{{ project.title }}</li>
+    </ol>
+  </nav>
+
+  <section class="rounded-4 bg-body border p-3 p-lg-4 mb-3">
+    <div class="d-flex align-items-start justify-content-between gap-2">
+      <div>
+        <h1 class="h4 mb-1">{{ project.title }}</h1>
+        <div class="text-muted small">
+          {{ project.created_at|date:"Y-m-d" }}
+          {% if project.deadline %} · {% trans "Deadline" %}: {{ project.deadline|date:"Y-m-d" }}{% endif %}
+        </div>
+      </div>
+      <a class="btn btn-sm btn-outline-secondary" href="{{ u_list|default:'#' }}">{% trans "Retour" %}</a>
+    </div>
+
+    <div class="content mt-4">{{ project.description|linebreaks }}</div>
+  </section>
+
+  {% if user.is_authenticated %}
+    <section class="rounded-4 bg-body border p-3 p-lg-4">
+      <h2 class="h6 mb-2">{% trans "Envoyer une proposition" %}</h2>
+      <form method="post" action="{{ u_bid|default:request.path }}">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="form-label small">{% trans "Message" %}</label>
+          <textarea class="form-control" name="message" rows="6" minlength="40" required></textarea>
+          <div class="form-text">{% trans "Présentez votre offre, délai, budget estimatif, références." %}</div>
+        </div>
+        <button class="btn btn-primary" type="submit">{% trans "Envoyer" %}</button>
+      </form>
+    </section>
+  {% else %}
+    <div class="alert alert-light border rounded-4">
+      {% trans "Connectez-vous pour envoyer une proposition." %}
+    </div>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,28 @@
+{% load i18n %}
+<div class="mk-chips">
+
+  {% if request.GET.q %}
+    <a class="mk-chip" href="?{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}{% if sort %}sort={{ sort }}&{% endif %}{% if badge %}badge={{ badge }}&{% endif %}{% if request.GET.price_max %}price_max={{ request.GET.price_max }}{% endif %}">
+      “{{ request.GET.q|truncatechars:28 }}” <span class="mk-x">×</span>
+    </a>
+  {% endif %}
+
+  {% if request.GET.category %}
+    <a class="mk-chip" href="?{% if request.GET.q %}q={{ request.GET.q|urlencode }}&{% endif %}{% if sort %}sort={{ sort }}&{% endif %}{% if badge %}badge={{ badge }}&{% endif %}{% if request.GET.price_max %}price_max={{ request.GET.price_max }}{% endif %}">
+      {% trans "Catégorie" %} <span class="mk-x">×</span>
+    </a>
+  {% endif %}
+
+  {% if badge %}
+    <a class="mk-chip" href="?{% if request.GET.q %}q={{ request.GET.q|urlencode }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}{% if sort %}sort={{ sort }}&{% endif %}{% if request.GET.price_max %}price_max={{ request.GET.price_max }}{% endif %}">
+      {{ badge }} <span class="mk-x">×</span>
+    </a>
+  {% endif %}
+
+  {% if request.GET.price_max %}
+    <a class="mk-chip" href="?{% if request.GET.q %}q={{ request.GET.q|urlencode }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}{% if sort %}sort={{ sort }}&{% endif %}{% if badge %}badge={{ badge }}{% endif %}">
+      {% trans "Prix max" %} {{ request.GET.price_max }} <span class="mk-x">×</span>
+    </a>
+  {% endif %}
+
+</div>

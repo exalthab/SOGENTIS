@@ -1,0 +1,113 @@
+{# templates/economic/partials/menu/_eco_switcher.html #}
+{% load i18n %}
+
+<li class="nav-item dropdown">
+  <a class="nav-link eco-nav-link small dropdown-toggle"
+     href="#"
+     role="button"
+     data-bs-toggle="dropdown"
+     data-bs-auto-close="outside"
+     aria-expanded="false"
+     aria-label="{% trans 'Changer la langue, le pays et la devise' %}">
+    🌍 {{ lang }} / {{ country }} / {{ cur }}
+  </a>
+
+  <div class="dropdown-menu dropdown-menu-end p-3" style="min-width:240px;">
+    <form method="post" action="{{ switch_language_url|default:'#' }}">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ request.get_full_path|default:'/' }}">
+
+      <div class="mb-2">
+        <label class="form-label mb-1 small" for="ecoCountry">{% trans "Pays" %}</label>
+        <select id="ecoCountry" class="form-select form-select-sm" name="country">
+          <option value="SN" {% if country == "SN" %}selected{% endif %}>🇸🇳 {% trans "Sénégal" %}</option>
+          <option value="CI" {% if country == "CI" %}selected{% endif %}>🇨🇮 {% trans "Côte d’Ivoire" %}</option>
+          <option value="FR" {% if country == "FR" %}selected{% endif %}>🇫🇷 {% trans "France" %}</option>
+        </select>
+      </div>
+
+      <div class="mb-2">
+        <label class="form-label mb-1 small" for="ecoLang">{% trans "Langue" %}</label>
+        <select id="ecoLang" class="form-select form-select-sm" name="language">
+          <option value="fr" {% if request.LANGUAGE_CODE == "fr" %}selected{% endif %}>{% trans "Français" %}</option>
+          <option value="en" {% if request.LANGUAGE_CODE == "en" %}selected{% endif %}>{% trans "Anglais" %}</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label mb-1 small" for="ecoCurrency">{% trans "Devise" %}</label>
+        <select id="ecoCurrency" class="form-select form-select-sm" name="currency">
+          <option value="XOF" {% if cur == "XOF" %}selected{% endif %}>XOF (CFA BCEAO)</option>
+          <option value="XAF" {% if cur == "XAF" %}selected{% endif %}>XAF (CFA BEAC)</option>
+          <option value="EUR" {% if cur == "EUR" %}selected{% endif %}>EUR (€)</option>
+          <option value="USD" {% if cur == "USD" %}selected{% endif %}>USD ($)</option>
+        </select>
+      </div>
+
+      <button type="submit"
+              class="btn btn-dark btn-sm w-100"
+              {% if not switch_language_url %}disabled{% endif %}>
+        {% trans "Enregistrer" %}
+      </button>
+    </form>
+  </div>
+</li>
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/partials/menu/_eco_switcher.html #}
+{% load i18n %}
+<li class="nav-item dropdown">
+  <a class="nav-link eco-nav-link small dropdown-toggle"
+     href="#"
+     role="button"
+     data-bs-toggle="dropdown"
+     data-bs-auto-close="outside"
+     aria-expanded="false">
+    🌍 {{ lang }} / {{ country }} / {{ cur }}
+  </a>
+
+  <div class="dropdown-menu dropdown-menu-end p-3" style="min-width:240px;">
+    <form method="post" action="{{ switch_language_url|default:'#' }}">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ request.get_full_path }}">
+
+      <div class="mb-2">
+        <label class="form-label mb-1 small">{% trans "Pays" %}</label>
+        <select class="form-select form-select-sm" name="country">
+          <option value="SN" {% if country == "SN" %}selected{% endif %}>🇸🇳 {% trans "Sénégal" %}</option>
+          <option value="CI" {% if country == "CI" %}selected{% endif %}>🇨🇮 {% trans "Côte d’Ivoire" %}</option>
+          <option value="FR" {% if country == "FR" %}selected{% endif %}>🇫🇷 {% trans "France" %}</option>
+        </select>
+      </div>
+
+      <div class="mb-2">
+        <label class="form-label mb-1 small">{% trans "Langue" %}</label>
+        <select class="form-select form-select-sm" name="language">
+          <option value="fr" {% if request.LANGUAGE_CODE == "fr" %}selected{% endif %}>{% trans "Français" %}</option>
+          <option value="en" {% if request.LANGUAGE_CODE == "en" %}selected{% endif %}>{% trans "Anglais" %}</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label mb-1 small">{% trans "Devise" %}</label>
+        <select class="form-select form-select-sm" name="currency">
+          <option value="XOF" {% if cur == "XOF" %}selected{% endif %}>XOF (CFA BCEAO)</option>
+          <option value="XAF" {% if cur == "XAF" %}selected{% endif %}>XAF (CFA BEAC)</option>
+          <option value="EUR" {% if cur == "EUR" %}selected{% endif %}>EUR (€)</option>
+          <option value="USD" {% if cur == "USD" %}selected{% endif %}>USD ($)</option>
+        </select>
+      </div>
+
+      <button type="submit"
+              class="btn btn-dark btn-sm w-100"
+              {% if not switch_language_url %}disabled{% endif %}>
+        {% trans "Enregistrer" %}
+      </button>
+    </form>
+  </div>
+</li> {% endcomment %}

@@ -7,4 +7,5 @@ from .payment_service import *   # noqa
 from .pricing_service import *   # noqa
 from .stock_service import *     # noqa
 from .review_service import *  # noqa
+from .pdf_utils import *      # noqa
 

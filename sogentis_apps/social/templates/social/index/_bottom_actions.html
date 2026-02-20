@@ -1,0 +1,9 @@
+{% load i18n %}
+<div class="d-flex flex-column flex-md-row gap-2 justify-content-end position-relative">
+  <a href="{% url 'about:about_index' %}" class="btn btn-outline-primary mt-2 mt-md-0">
+    {% trans "Retour à propos" %}
+  </a>
+  <a href="{% url 'social:donation' %}" class="btn btn-danger shadow-lg mt-2 mt-md-0">
+    ❤️ {% trans "Faire un Don" %}
+  </a>
+</div>

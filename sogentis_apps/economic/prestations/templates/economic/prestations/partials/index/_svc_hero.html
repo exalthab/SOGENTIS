@@ -1,0 +1,733 @@
+{# templates/economic/prestations/partials/index/_svc_hero.html #}
+{% load i18n static dashboard_tags %}
+
+{% safe_url "economic:prestations:index" as prestations_index_url %}
+
+<section class="svc-hero mb-3">
+  <div class="svc-hero-card position-relative overflow-hidden">
+    <div class="svc-hero-bg">
+      <img src="{% static 'prestations/img/hero.jpg' %}"
+           alt="{% trans 'Image de couverture des prestations' %}"
+           loading="lazy">
+    </div>
+
+    <div class="svc-hero-overlay"></div>
+
+    <div class="svc-hero-content">
+      <div class="d-flex flex-column flex-lg-row align-items-lg-end justify-content-between gap-3">
+        <div class="min-w-0">
+          <h1 class="svc-hero-title mb-1">{% trans "Prestations & Solutions" %}</h1>
+          <p class="svc-hero-subtitle mb-0">
+            {% trans "Services numériques, accompagnement et packs prêts à l’emploi — du devis au paiement en ligne." %}
+          </p>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2">
+          <a class="btn btn-light btn-sm"
+             href="{{ prestations_index_url|default:'#' }}#catalogue"
+             {% if not prestations_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+            🧰 {% trans "Voir le catalogue" %}
+          </a>
+          <a class="btn btn-dark btn-sm"
+             href="{{ prestations_index_url|default:'#' }}#packs"
+             {% if not prestations_index_url %}aria-disabled="true" tabindex="-1"{% endif %}>
+            📦 {% trans "Voir les packs" %}
+          </a>
+        </div>
+      </div>
+
+      <div class="svc-hero-kpis mt-3">
+        <div class="row g-2">
+          <div class="col-6 col-lg-3">
+            <div class="svc-kpi">
+              <div class="svc-kpi-label">{% trans "Support" %}</div>
+              <div class="svc-kpi-value">{% trans "Réactif" %}</div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="svc-kpi">
+              <div class="svc-kpi-label">{% trans "Paiement" %}</div>
+              <div class="svc-kpi-value">{% trans "Sécurisé" %}</div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="svc-kpi">
+              <div class="svc-kpi-label">{% trans "Livrables" %}</div>
+              <div class="svc-kpi-value">{% trans "Instant" %}</div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="svc-kpi">
+              <div class="svc-kpi-label">{% trans "Packs" %}</div>
+              <div class="svc-kpi-value">{% trans "Prêts" %}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/partials/index/_svc_hero.html #}
+{% load i18n static ecom_money dashboard_tags %}
+
+{% safe_url "economic:prestations:index" as u_index %}
+{% safe_url "economic:prestations:tickets" as u_tickets %}
+{% safe_url "core:contact" as u_contact %}
+
+<section class="p-3 p-lg-4 rounded-4 bg-body border mb-3">
+  <div class="row g-3 align-items-center">
+    <div class="col-lg-7">
+      <div class="d-flex align-items-center gap-2 mb-2">
+        <span class="badge text-bg-primary">{% trans "Production" %}</span>
+        <span class="badge text-bg-light border">{% trans "Rapide" %}</span>
+        <span class="badge text-bg-light border">{% trans "Devis & packs" %}</span>
+      </div>
+
+      <h1 class="h3 h2-lg mb-2">{% trans "Trouvez la bonne prestation, demandez un devis, suivez vos tickets" %}</h1>
+      <p class="text-muted mb-3">
+        {% trans "Catalogue clair, filtres, packs prêts à l’emploi et demandes centralisées." %}
+      </p>
+
+      <div class="d-flex flex-wrap gap-2">
+        <a class="btn btn-primary" href="{{ u_index|default:'#' }}#catalogue">{% trans "Voir le catalogue" %}</a>
+        <a class="btn btn-outline-primary" href="{{ u_index|default:'#' }}#packs">{% trans "Voir les packs" %}</a>
+        <a class="btn btn-outline-secondary" href="{{ u_tickets|default:'#' }}">{% trans "Ouvrir un ticket" %}</a>
+        <a class="btn btn-link" href="{{ u_contact|default:'#' }}">{% trans "Parler à l’équipe" %}</a>
+      </div>
+    </div>
+
+    <div class="col-lg-5">
+      <div class="ratio ratio-16x9 rounded-4 overflow-hidden bg-light border">
+        <img
+          src="{% static 'prestations/img/hero.jpg' %}"
+          alt="{% trans 'Prestations — visuel' %}"
+          style="object-fit:cover; width:100%; height:100%;"
+          loading="lazy"
+        >
+      </div>
+    </div>
+  </div>
+</section> {% endcomment %}
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/partials/index/_svc_hero.html - good #}
+{% load i18n %}
+
+<section id="prestations" class="svc-hero-wrap">
+  <div class="container py-4 py-lg-5">
+    <div class="svc-hero rounded-4 overflow-hidden border position-relative">
+      <div class="row g-0 align-items-stretch">
+
+        <div class="col-lg-7">
+          <div class="p-4 p-md-5">
+
+            <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+              <span class="badge text-bg-dark rounded-pill px-3 py-2">
+                <i class="fa-solid fa-wand-sparkles me-2"></i>
+                {% trans "Prestations & Offres" %}
+              </span>
+              <span class="badge text-bg-light border rounded-pill px-3 py-2">
+                <i class="fa-solid fa-shield-halved me-2"></i>
+                {% trans "Pilotées depuis l’admin" %}
+              </span>
+              <span class="badge text-bg-light border rounded-pill px-3 py-2">
+                <i class="fa-solid fa-gauge-high me-2"></i>
+                {% trans "Délais clairs" %}
+              </span>
+            </div>
+
+            <h1 class="display-6 fw-bold mb-2">
+              {% trans "Accélérez votre activité avec des solutions professionnelles" %}
+            </h1>
+
+            <p class="lead text-muted mb-4">
+              {% trans "Design, hébergement, développement, automatisation, maintenance et sécurité — avec un suivi par tickets et devis." %}
+            </p>
+
+            <div class="d-flex flex-wrap gap-2">
+              <a class="btn btn-primary btn-lg {% if not u_tickets %}disabled{% endif %}"
+                 href="{% if u_tickets %}{{ u_tickets }}{% else %}#{% endif %}"
+                 {% if not u_tickets %}aria-disabled="true" tabindex="-1"{% endif %}>
+                <i class="fa-solid fa-ticket me-2"></i>
+                {% trans "Ouvrir un ticket" %}
+              </a>
+
+              <a class="btn btn-outline-dark btn-lg" href="#packs">
+                <i class="fa-solid fa-box-open me-2"></i>
+                {% trans "Voir les packs" %}
+              </a>
+
+              <a class="btn btn-outline-secondary btn-lg" href="#prestations-list">
+                <i class="fa-solid fa-layer-group me-2"></i>
+                {% trans "Explorer les prestations" %}
+              </a>
+            </div>
+
+            <div class="mt-4 d-flex flex-wrap gap-3 small text-muted">
+              <div class="d-flex align-items-center gap-2">
+                <i class="fa-regular fa-circle-check"></i>
+                <span>{% trans "Devis rapide" %}</span>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <i class="fa-regular fa-circle-check"></i>
+                <span>{% trans "Livrables pro" %}</span>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <i class="fa-regular fa-circle-check"></i>
+                <span>{% trans "Support & maintenance" %}</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="col-lg-5">
+          <div class="svc-hero-side h-100 p-4 p-md-5 d-flex flex-column justify-content-between">
+
+            <div>
+              <div class="text-uppercase small fw-semibold opacity-75">
+                {% trans "Chiffres clés" %}
+              </div>
+
+              <div class="row g-3 mt-2">
+
+                <div class="col-6">
+                  <div class="svc-kpi rounded-4 border bg-white p-3">
+                    <div class="svc-kpi-label small text-muted">
+                      {% trans "Prestations" %}
+                    </div>
+                    <div class="svc-kpi-value h3 fw-bold mb-0">
+                      {% if page_obj %}
+                        {{ page_obj.paginator.count }}
+                      {% elif services %}
+                        {{ services|length }}
+                      {% else %}
+                        0
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-6">
+                  <div class="svc-kpi rounded-4 border bg-white p-3">
+                    <div class="svc-kpi-label small text-muted">
+                      {% trans "Packs" %}
+                    </div>
+                    <div class="svc-kpi-value h3 fw-bold mb-0">
+                      {% if packs_page_obj %}
+                        {{ packs_page_obj.paginator.count }}
+                      {% elif packages %}
+                        {{ packages|length }}
+                      {% else %}
+                        0
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-12">
+                  <div class="svc-kpi rounded-4 border bg-white p-3">
+                    <div class="d-flex align-items-center justify-content-between gap-2">
+                      <div>
+                        <div class="svc-kpi-label small text-muted">
+                          {% trans "Besoin d’un devis ?" %}
+                        </div>
+                        <div class="fw-semibold">
+                          {% trans "Expliquez votre besoin, on répond vite." %}
+                        </div>
+                      </div>
+                      <a class="btn btn-dark btn-sm" href="#prestations-list">
+                        <i class="fa-solid fa-arrow-down me-2"></i>
+                        {% trans "Voir" %}
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-top small opacity-75">
+              <div class="d-flex align-items-center gap-2">
+                <i class="fa-solid fa-lock"></i>
+                <span>{% trans "Paiement / facturation selon devis validé" %}</span>
+              </div>
+              <div class="d-flex align-items-center gap-2 mt-2">
+                <i class="fa-solid fa-file-signature"></i>
+                <span>{% trans "Devis éditables depuis l’administration" %}</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section> {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/prestations/partials/index/_svc_hero.html #}
+{% load i18n %}
+
+<section id="services" class="svc-hero-wrap">
+  <div class="container py-4 py-lg-5">
+    <div class="svc-hero rounded-4 overflow-hidden border position-relative">
+      <div class="row g-0 align-items-stretch">
+
+        <div class="col-lg-7">
+          <div class="p-4 p-md-5">
+
+            <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+              <span class="badge text-bg-dark rounded-pill px-3 py-2">
+                <i class="fa-solid fa-wand-sparkles me-2"></i>
+                {% trans "Services & Offres" %}
+              </span>
+              <span class="badge text-bg-light border rounded-pill px-3 py-2">
+                <i class="fa-solid fa-shield-halved me-2"></i>
+                {% trans "Pilotés depuis l’admin" %}
+              </span>
+              <span class="badge text-bg-light border rounded-pill px-3 py-2">
+                <i class="fa-solid fa-gauge-high me-2"></i>
+                {% trans "Délais clairs" %}
+              </span>
+            </div>
+
+            <h1 class="display-6 fw-bold mb-2">
+              {% trans "Accélérez votre activité avec des solutions professionnelles" %}
+            </h1>
+
+            <p class="lead text-muted mb-4">
+              {% trans "Design, hébergement, développement, automatisation, maintenance et sécurité — avec un suivi par tickets et devis." %}
+            </p>
+
+            <div class="d-flex flex-wrap gap-2">
+              <a class="btn btn-primary btn-lg {% if not u_tickets %}disabled{% endif %}"
+                 href="{% if u_tickets %}{{ u_tickets }}{% else %}#{% endif %}"
+                 {% if not u_tickets %}aria-disabled="true" tabindex="-1"{% endif %}>
+                <i class="fa-solid fa-ticket me-2"></i>
+                {% trans "Ouvrir un ticket" %}
+              </a>
+
+              <a class="btn btn-outline-dark btn-lg" href="#packs">
+                <i class="fa-solid fa-box-open me-2"></i>
+                {% trans "Voir les packs" %}
+              </a>
+
+              <a class="btn btn-outline-secondary btn-lg" href="#services-list">
+                <i class="fa-solid fa-layer-group me-2"></i>
+                {% trans "Explorer les services" %}
+              </a>
+            </div>
+
+            <div class="mt-4 d-flex flex-wrap gap-3 small text-muted">
+              <div class="d-flex align-items-center gap-2">
+                <i class="fa-regular fa-circle-check"></i>
+                <span>{% trans "Devis rapide" %}</span>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <i class="fa-regular fa-circle-check"></i>
+                <span>{% trans "Livrables pro" %}</span>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <i class="fa-regular fa-circle-check"></i>
+                <span>{% trans "Support & maintenance" %}</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="col-lg-5">
+          <div class="svc-hero-side h-100 p-4 p-md-5 d-flex flex-column justify-content-between">
+
+            <div>
+              <div class="text-uppercase small fw-semibold opacity-75">
+                {% trans "Chiffres clés" %}
+              </div>
+
+              <div class="row g-3 mt-2">
+
+                <div class="col-6">
+                  <div class="svc-kpi rounded-4 border bg-white p-3">
+                    <div class="svc-kpi-label small text-muted">
+                      {% trans "Services" %}
+                    </div>
+                    <div class="svc-kpi-value h3 fw-bold mb-0">
+                      {% if page_obj %}
+                        {{ page_obj.paginator.count }}
+                      {% elif services %}
+                        {{ services|length }}
+                      {% else %}
+                        0
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-6">
+                  <div class="svc-kpi rounded-4 border bg-white p-3">
+                    <div class="svc-kpi-label small text-muted">
+                      {% trans "Packs" %}
+                    </div>
+                    <div class="svc-kpi-value h3 fw-bold mb-0">
+                      {% if packs_page_obj %}
+                        {{ packs_page_obj.paginator.count }}
+                      {% elif packages %}
+                        {{ packages|length }}
+                      {% else %}
+                        0
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-12">
+                  <div class="svc-kpi rounded-4 border bg-white p-3">
+                    <div class="d-flex align-items-center justify-content-between gap-2">
+                      <div>
+                        <div class="svc-kpi-label small text-muted">
+                          {% trans "Besoin d’un devis ?" %}
+                        </div>
+                        <div class="fw-semibold">
+                          {% trans "Expliquez votre besoin, on répond vite." %}
+                        </div>
+                      </div>
+                      <a class="btn btn-dark btn-sm" href="#services-list">
+                        <i class="fa-solid fa-arrow-down me-2"></i>
+                        {% trans "Voir" %}
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-top small opacity-75">
+              <div class="d-flex align-items-center gap-2">
+                <i class="fa-solid fa-lock"></i>
+                <span>{% trans "Paiement / facturation selon devis validé" %}</span>
+              </div>
+              <div class="d-flex align-items-center gap-2 mt-2">
+                <i class="fa-solid fa-file-signature"></i>
+                <span>{% trans "Devis éditables depuis l’administration" %}</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section> {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/services/partials/index/_svc_hero.html #}
+{% load i18n %}
+
+<section id="services" class="svc-hero-wrap">
+  <div class="container py-4 py-lg-5">
+    <div class="svc-hero rounded-4 overflow-hidden border position-relative">
+      <div class="row g-0 align-items-stretch">
+
+        {# ================= LEFT ================= #}
+        <div class="col-lg-7">
+          <div class="p-4 p-md-5">
+
+            <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+              <span class="badge text-bg-dark rounded-pill px-3 py-2">
+                <i class="fa-solid fa-wand-sparkles me-2"></i>
+                {% trans "Services & Offres" %}
+              </span>
+              <span class="badge text-bg-light border rounded-pill px-3 py-2">
+                <i class="fa-solid fa-shield-halved me-2"></i>
+                {% trans "Pilotés depuis l’admin" %}
+              </span>
+              <span class="badge text-bg-light border rounded-pill px-3 py-2">
+                <i class="fa-solid fa-gauge-high me-2"></i>
+                {% trans "Délais clairs" %}
+              </span>
+            </div>
+
+            <h1 class="display-6 fw-bold mb-2">
+              {% trans "Accélérez votre activité avec des solutions professionnelles" %}
+            </h1>
+
+            <p class="lead text-muted mb-4">
+              {% trans "Design, hébergement, développement, automatisation, maintenance et sécurité — avec un suivi par tickets et devis." %}
+            </p>
+
+            <div class="d-flex flex-wrap gap-2">
+              <a class="btn btn-primary btn-lg {% if not u_tickets %}disabled{% endif %}"
+                 href="{% if u_tickets %}{{ u_tickets }}{% else %}#{% endif %}"
+                 {% if not u_tickets %}aria-disabled="true" tabindex="-1"{% endif %}>
+                <i class="fa-solid fa-ticket me-2"></i>
+                {% trans "Ouvrir un ticket" %}
+              </a>
+
+              <a class="btn btn-outline-dark btn-lg" href="#packs">
+                <i class="fa-solid fa-box-open me-2"></i>
+                {% trans "Voir les packs" %}
+              </a>
+
+              <a class="btn btn-outline-secondary btn-lg" href="#services-list">
+                <i class="fa-solid fa-layer-group me-2"></i>
+                {% trans "Explorer les services" %}
+              </a>
+            </div>
+
+            <div class="mt-4 d-flex flex-wrap gap-3 small text-muted">
+              <div class="d-flex align-items-center gap-2">
+                <i class="fa-regular fa-circle-check"></i>
+                <span>{% trans "Devis rapide" %}</span>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <i class="fa-regular fa-circle-check"></i>
+                <span>{% trans "Livrables pro" %}</span>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <i class="fa-regular fa-circle-check"></i>
+                <span>{% trans "Support & maintenance" %}</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        {# ================= RIGHT ================= #}
+        <div class="col-lg-5">
+          <div class="svc-hero-side h-100 p-4 p-md-5 d-flex flex-column justify-content-between">
+
+            <div>
+              <div class="text-uppercase small fw-semibold opacity-75">
+                {% trans "Chiffres clés" %}
+              </div>
+
+              <div class="row g-3 mt-2">
+
+                {# SERVICES COUNT #}
+                <div class="col-6">
+                  <div class="svc-kpi rounded-4 border bg-white p-3">
+                    <div class="svc-kpi-label small text-muted">
+                      {% trans "Services" %}
+                    </div>
+                    <div class="svc-kpi-value h3 fw-bold mb-0">
+                      {% if page_obj %}
+                        {{ page_obj.paginator.count }}
+                      {% elif services %}
+                        {{ services|length }}
+                      {% else %}
+                        0
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+
+                {# PACKS COUNT #}
+                <div class="col-6">
+                  <div class="svc-kpi rounded-4 border bg-white p-3">
+                    <div class="svc-kpi-label small text-muted">
+                      {% trans "Packs" %}
+                    </div>
+                    <div class="svc-kpi-value h3 fw-bold mb-0">
+                      {% if packs_page_obj %}
+                        {{ packs_page_obj.paginator.count }}
+                      {% elif packages %}
+                        {{ packages|length }}
+                      {% else %}
+                        0
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+
+                {# CTA #}
+                <div class="col-12">
+                  <div class="svc-kpi rounded-4 border bg-white p-3">
+                    <div class="d-flex align-items-center justify-content-between gap-2">
+                      <div>
+                        <div class="svc-kpi-label small text-muted">
+                          {% trans "Besoin d’un devis ?" %}
+                        </div>
+                        <div class="fw-semibold">
+                          {% trans "Expliquez votre besoin, on répond vite." %}
+                        </div>
+                      </div>
+                      <a class="btn btn-dark btn-sm" href="#services-list">
+                        <i class="fa-solid fa-arrow-down me-2"></i>
+                        {% trans "Voir" %}
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-top small opacity-75">
+              <div class="d-flex align-items-center gap-2">
+                <i class="fa-solid fa-lock"></i>
+                <span>{% trans "Paiement / facturation selon devis validé" %}</span>
+              </div>
+              <div class="d-flex align-items-center gap-2 mt-2">
+                <i class="fa-solid fa-file-signature"></i>
+                <span>{% trans "Devis éditables depuis l’administration" %}</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section> {% endcomment %}
+
+
+
+
+
+
+{% comment %} {# templates/economic/services/partials/index/_svc_hero.html #}
+{% load i18n %}
+
+<section class="svc-hero-wrap">
+  <div class="container py-4 py-lg-5">
+    <div class="svc-hero rounded-4 overflow-hidden border position-relative">
+      <div class="row g-0 align-items-stretch">
+        <div class="col-lg-7">
+          <div class="p-4 p-md-5">
+
+            <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+              <span class="badge text-bg-dark rounded-pill px-3 py-2">
+                <i class="fa-solid fa-sparkles me-2"></i>{% trans "Services & Offres" %}
+              </span>
+              <span class="badge text-bg-light border rounded-pill px-3 py-2">
+                <i class="fa-solid fa-shield-halved me-2"></i>{% trans "Pilotés depuis l’admin" %}
+              </span>
+              <span class="badge text-bg-light border rounded-pill px-3 py-2">
+                <i class="fa-solid fa-gauge-high me-2"></i>{% trans "Délais clairs" %}
+              </span>
+            </div>
+
+            <h1 class="display-6 fw-bold mb-2">
+              {% trans "Accélérez votre activité avec des solutions professionnelles" %}
+            </h1>
+
+            <p class="lead text-muted mb-4">
+              {% trans "Design, hébergement, développement, automatisation, maintenance et sécurité — avec un suivi par tickets et devis." %}
+            </p>
+
+            <div class="d-flex flex-wrap gap-2">
+              {% if u_tickets %}
+                <a class="btn btn-primary btn-lg" href="{{ u_tickets }}">
+                  <i class="fa-solid fa-ticket me-2"></i>{% trans "Ouvrir un ticket" %}
+                </a>
+              {% endif %}
+
+              <a class="btn btn-outline-dark btn-lg" href="#packs">
+                <i class="fa-solid fa-box-open me-2"></i>{% trans "Voir les packs" %}
+              </a>
+
+              <a class="btn btn-outline-secondary btn-lg" href="#services">
+                <i class="fa-solid fa-layer-group me-2"></i>{% trans "Explorer les services" %}
+              </a>
+            </div>
+
+            <div class="mt-4 d-flex flex-wrap gap-3 small text-muted">
+              <div class="d-flex align-items-center gap-2">
+                <i class="fa-regular fa-circle-check"></i>
+                <span>{% trans "Devis rapide" %}</span>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <i class="fa-regular fa-circle-check"></i>
+                <span>{% trans "Livrables pro" %}</span>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <i class="fa-regular fa-circle-check"></i>
+                <span>{% trans "Support & maintenance" %}</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="col-lg-5">
+          <div class="svc-hero-side h-100 p-4 p-md-5 d-flex flex-column justify-content-between">
+
+            <div>
+              <div class="text-uppercase small fw-semibold opacity-75">{% trans "Chiffres clés" %}</div>
+              <div class="row g-3 mt-2">
+                <div class="col-6">
+                  <div class="svc-kpi rounded-4 border bg-white p-3">
+                    <div class="svc-kpi-label small text-muted">{% trans "Services" %}</div>
+                    <div class="svc-kpi-value h3 fw-bold mb-0">
+                      {{ page_obj.paginator.count|default:services|length|default:0 }}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-6">
+                  <div class="svc-kpi rounded-4 border bg-white p-3">
+                    <div class="svc-kpi-label small text-muted">{% trans "Packs" %}</div>
+                    <div class="svc-kpi-value h3 fw-bold mb-0">
+                      {{ packs_page_obj.paginator.count|default:packages|length|default:0 }}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-12">
+                  <div class="svc-kpi rounded-4 border bg-white p-3">
+                    <div class="d-flex align-items-center justify-content-between gap-2">
+                      <div>
+                        <div class="svc-kpi-label small text-muted">{% trans "Besoin d’un devis ?" %}</div>
+                        <div class="fw-semibold">{% trans "Expliquez votre besoin, on répond vite." %}</div>
+                      </div>
+                      <a class="btn btn-dark btn-sm" href="#services">
+                        <i class="fa-solid fa-arrow-down me-2"></i>{% trans "Voir" %}
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-top small opacity-75">
+              <div class="d-flex align-items-center gap-2">
+                <i class="fa-solid fa-lock"></i>
+                <span>{% trans "Paiement / facturation selon devis validé" %}</span>
+              </div>
+              <div class="d-flex align-items-center gap-2 mt-2">
+                <i class="fa-solid fa-file-signature"></i>
+                <span>{% trans "Devis éditables depuis l’administration" %}</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section> {% endcomment %}
